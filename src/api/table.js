@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
-export function getList(params) {
+export function getHistory(data) {
   return request({
-    url: '/table/list',
-    method: 'get',
-    params
+    url: '/POST//tryout/wallet/logs',
+    method: 'post',
+    data
   })
 }

@@ -1,27 +1,27 @@
 import request from '@/utils/request'
+// import { getToken } from '@/utils/auth' // 验权
 
-export function login(username, password) {
+export function login(data) {
   return request({
-    url: '/user/login',
+    url: '/POST//tryout/login',
     method: 'post',
-    data: {
-      username,
-      password
-    }
+    data
   })
 }
-
-export function getInfo(token) {
+export function register(data) {
   return request({
-    url: '/user/info',
+    url: '/POST//tryout/register',
+    method: 'post',
+    data
+  })
+}
+export function getInfo() {
+  return request({
+    url: '/GET//tryout/home/data',
     method: 'get',
-    params: { token }
+    // header : {
+    //   'yb-tryout-merchant-token' : token
+    // }
   })
 }
 
-export function logout() {
-  return request({
-    url: '/user/logout',
-    method: 'post'
-  })
-}

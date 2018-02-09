@@ -4,17 +4,17 @@
     <breadcrumb></breadcrumb>
     <el-dropdown class="avatar-container" trigger="click">
       <div class="avatar-wrapper">
-        <img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'">
+        <img  class="user-avatar" src="../../../assets/imgs/logo.png">
         <i class="el-icon-caret-bottom"></i>
       </div>
       <el-dropdown-menu class="user-dropdown" slot="dropdown">
         <router-link class="inlineBlock" to="/">
           <el-dropdown-item>
-            Home
+            首页
           </el-dropdown-item>
         </router-link>
         <el-dropdown-item divided>
-          <span @click="logout" style="display:block;">LogOut</span>
+          <span @click="logout" style="display:block;">退出登录</span>
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
@@ -45,6 +45,9 @@ export default {
       this.$store.dispatch('LogOut').then(() => {
         location.reload() // 为了重新实例化vue-router对象 避免bug
       })
+      //   .catch( err => {
+      //   console.log(err) ;
+      // })
     }
   }
 }
@@ -52,41 +55,42 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 .navbar {
-  height: 50px;
-  line-height: 50px;
-  border-radius: 0px !important;
+  height: 0.50rem;
+  line-height: 0.50rem;
+  border-radius: 0rem !important;
   .hamburger-container {
-    line-height: 58px;
-    height: 50px;
+    line-height: 0.02rem;
+    height: 0.50rem;
     float: left;
-    padding: 0 10px;
+    padding: 0 0.10rem;
   }
   .screenfull {
     position: absolute;
-    right: 90px;
-    top: 16px;
+    right: 0.90rem;
+    top: 0.16rem;
     color: red;
   }
   .avatar-container {
-    height: 50px;
+    height: 0.50rem;
     display: inline-block;
     position: absolute;
-    right: 35px;
+    right: 0.35rem;
     .avatar-wrapper {
       cursor: pointer;
-      margin-top: 5px;
+      margin-top: 0.05rem;
       position: relative;
       .user-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
+        width: 0.40rem;
+        height: 0.40rem;
+        border-radius: 0.10rem;
       }
       .el-icon-caret-bottom {
         position: absolute;
-        right: -20px;
-        top: 25px;
-        font-size: 12px;
+        right: -0.20rem;
+        top: 0.25rem;
+        font-size: 0.12rem;
       }
+
     }
   }
 }

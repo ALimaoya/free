@@ -1,0 +1,79 @@
+$bg:#2d3a4b;
+$dark_gray:#889aa4;
+$light_gray:#eee;
+
+.login-container {
+  position: fixed;
+  height: 100%;
+  width:100%;
+  background-color: $bg;
+  input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0rem 1000rem #293444 inset !important;
+    -webkit-text-fill-color: #fff !important;
+  }
+  input {
+    background: transparent;
+    border: 0rem;
+    -webkit-appearance: none;
+    border-radius: 0rem;
+    padding: 0.12rem 0.05rem 0.12rem 0.15rem;
+    color: $light_gray;
+    height: 0.47rem;
+  }
+  .el-input {
+    display: inline-block;
+    height: 0.47rem;
+    width: 85%;
+  }
+  .tips {
+    font-size: 0.14rem;
+    color: #fff;
+    margin-bottom: 0.10rem;
+  }
+  .svg-container {
+    padding: 0.06rem 0.05rem 0.06rem 0.15rem;
+    color: $dark_gray;
+    vertical-align: middle;
+    width: 0.30rem;
+    display: inline-block;
+    &_login {
+      font-size: 0.20rem;
+    }
+  }
+  .title {
+    font-size: 0.26rem;
+    font-weight: 400;
+    color: $light_gray;
+    margin: 0rem auto 0.40rem auto;
+    text-align: center;
+    font-weight: bold;
+  }
+  .login-form {
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 4rem;
+    padding: 0.35rem 0.35rem 0.15rem 0.35rem;
+    margin: 1.20rem auto;
+  }
+  .el-form-item {
+    border: 0.01rem solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 0.05rem;
+    color: #454545;
+  }
+  .show-pwd {
+    position: absolute;
+    right: 0.10rem;
+    top: 0.07rem;
+    font-size: 0.16rem;
+    color: $dark_gray;
+    cursor: pointer;
+    user-select:none;
+  }
+  .thirdparty-button{
+    position: absolute;
+    right: 0.35rem;
+    bottom: 0.28rem;
+  }
+}

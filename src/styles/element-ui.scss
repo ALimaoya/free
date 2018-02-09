@@ -8,7 +8,20 @@
 .el-upload__input {
   display: none;
 }
+ .el-table thead{
+   font-size : 0.14rem ;
+   color : #333;
+ }
+ .cell{
+   text-align : center;
 
+ }
+ .el-table th.is-leaf{
+   border-color : #aaa ;
+ }
+ .el-date-editor .el-range-separator{
+   width : 8% ;
+ }
 //暂时性解决diolag 问题 https://github.com/ElemeFE/element/issues/2461
 .el-dialog {
   transform: none;
@@ -16,14 +29,81 @@
   position: relative;
   margin: 0 auto;
 }
-
+.el-menu,.el-submenu{
+  //display : flex;
+  //flex : 1 ;
+  //width : 100% ;
+  //flex-wrap : wrap ;
+  //height : auto ;
+  overflow : hidden ;
+}
+ .el-dropdown-menu__item{
+   text-align : center ;
+ }
+// .el-submenu__title{
+//   width : 1.8rem ;
+// }
+// .el-submenu .el-menu-item{
+//  width : 1.8rem ;
+//  box-sizing: border-box;
+//  display: block;
+//   height : 100% ;
+//}
 //element ui upload
 .upload-container {
   .el-upload {
     width: 100%;
     .el-upload-dragger {
       width: 100%;
-      height: 200px;
+      height: 2rem;
     }
   }
 }
+.el-table--border, .el-table--group{
+  border : 1px solid  #666 ;
+}
+ .el-message__icon ,.el-icon-error,.el-message__icon::before{
+   content : '';
+ }
+ .el-pagination__sizes{
+   margin-right : 4rem ;
+ }
+ .el-popover{
+   color : #8f949a;
+   font-size : 0.13rem ;
+   line-height : 0.22rem ;
+ }
+ .el-popover__title{
+   font-weight : bold ;
+   height : 0.3rem ;
+   line-height : 0.3rem ;
+   border-bottom : 1px solid #D3D3D3;
+   color : #8f949a;
+ }
+ .el-table td, .el-table th.is-leaf{
+   border-color : #D3D3D3 ;
+ }
+ //.el-table td{
+ //  padding : 0.08rem  0;
+ //}
+ .el-table__row{
+   td{
+     padding : 0.05rem  0;
+
+   }
+ }
+ .el-table thead{
+   color : #555555;
+   font-size : 0.15rem ;
+ }
+  .el-upload{
+    width : 1.5rem ;
+    height : 1.5rem ;
+    border : 1px dashed #99a9bf;
+    border-radius : 0.06rem ;
+    display : flex ;
+    justify-content: center;
+    align-items: center ;
+
+
+  }
