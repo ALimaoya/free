@@ -52,7 +52,7 @@ export const constantRouterMap = [
     children: [
       {
         path: 'index',
-        name: 'Index',
+        name: 'Home',
         component: () => import('@/views/center/index'),
         meta: { title: '商家首页', icon: 'index' }
       },
@@ -97,7 +97,7 @@ export const constantRouterMap = [
         meta: { title: '投诉反馈', icon: 'feedback' }
       },
       {
-        path: 'detail',
+        path: 'detail/:order',
         name: 'Detail',
         component: () => import('@/views/activity/detail'),
         hidden: true ,
@@ -134,6 +134,7 @@ export const constantRouterMap = [
         path: 'buyVip',
         name: 'BuyVip',
         component: () => import('@/views/userInfor/buyVip'),
+        meta: { title: '开通会员', icon: 'vip' },
         hidden : true
       }
     ]
@@ -155,6 +156,8 @@ export const constantRouterMap = [
         path: 'alipay',
         name: 'Alipay',
         component: () => import('@/views/fund/recharge/alipay'),
+        meta: { title: '充值支付', icon: 'recharge' },
+
         hidden : true
       },
 

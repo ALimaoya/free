@@ -21,9 +21,10 @@
         <span class="svg-container">
           <img src="../../assets/imgs/verify2.png" alt=""/>
         </span>
-        <el-input name="captcha"  :type="pwdType"  v-model="loginForm.captcha" autoComplete="on"
+        <el-input name="captcha" style="width : 1.5rem;" :type="pwdType"  v-model="loginForm.captcha" autoComplete="on"
                   placeholder="请输入验证码"></el-input>
-        <span class="show-captcha">{{validCap}}</span>
+        <img class="show-captcha" :src="'data:image/png;base64,'+ imgCode" alt="" @click="changeCaptcha"/>
+
       </el-form-item>
       <el-form-item>
         <el-button type="primary" style="width:100%;" :loading="loading" @click.native.prevent="handleLogin('loginForm')">
@@ -40,7 +41,7 @@
 
 <script>
 import { validatePhone } from '@/utils/validate'
-
+import { getCaptcha } from "@/api/login"
 export default {
   name: 'login',
   data() {
@@ -53,7 +54,7 @@ export default {
         }
         callback()
       }
-    }
+    };
     const validatePass = (rule, value, callback) => {
       if (value.length < 6) {
         callback(new Error('密码不能小于6位'))
@@ -61,7 +62,16 @@ export default {
 
         callback()
       }
-    }
+    };
+    const validCaptcha = (rule, value , callback) => {
+      if(value === ''){
+        callback(new Error('请输入验证码'))
+      }else{
+        // if(value !== this.imgCode){
+        //   callback(new Error('验证码输入错误，请重新输入'))
+        // }
+      }
+    };
     return {
       loginForm: {
         mobile: '',
@@ -71,8 +81,11 @@ export default {
       },
       loginRules: {
         mobile: [{ required: true, trigger: 'blur', validator: validateTel }],
-        password: [{ required: true, trigger: 'blur', validator: validatePass }]
+        password: [{ required: true, trigger: 'blur', validator: validatePass }],
+        captcha : [{ trigger : 'blur' ,validator : validCaptcha}]
       },
+      imgCode : '',
+      userToken : '',
       loading: false,
       pwdType: 'password',
       validCap : '',
@@ -81,6 +94,7 @@ export default {
     }
   },
   methods: {
+
     showPwd() {
       if (this.pwdType === 'password') {
         this.pwdType = ''
@@ -92,9 +106,9 @@ export default {
     handleLogin(loginForm) {
       this.$refs[loginForm].validate(valid => {
         if (valid) {
-          this.loading = true
+          this.loading = true;
           this.$store.dispatch('Login', { mobile : this.loginForm.mobile, password : this.loginForm.password }).then(() => {
-            this.loading = false
+            this.loading = false;
             this.$router.push({ path: '/' })
           }).catch(() => {
 
@@ -106,6 +120,19 @@ export default {
 
           return false
         }
+      })
+    },
+
+    //更换验证码
+    changeCaptcha(){
+      getCaptcha().then( res => {
+        console.log(res);
+        if(res.data.status === '000000000'){
+          this.imgCode = res.data.data.image ;
+          this.userToken = res.data.data.token ;
+        }
+      }).catch( err =>{
+        alert('服务器开小差啦，请稍等~')
       })
     }
   }

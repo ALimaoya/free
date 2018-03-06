@@ -2,7 +2,7 @@
   <div class="money">
     <div class="title">
       <p>类型：</p>
-      <el-select v-model="detail" placeholder="全部明细" size="small">
+      <el-select v-model="coinSearch.detail" placeholder="全部明细" size="small">
         <el-option
           v-for="item in options"
           :key="item.value"
@@ -13,23 +13,19 @@
       <p class="timeSetting">时间设置：</p>
       <div class="block">
         <span class="demonstration">开始时间：</span>
-        <el-date-picker size="small"
-                        v-model="date.startDate" value-format="yyyy-MM-dd HH:mm:ss"
-                        type="datetime"
-                        placeholder="选择日期时间">
+        <el-date-picker size="small" v-model="coinSearch.startDate" value-format="yyyy-MM-dd HH:mm:ss"
+            type="datetime" placeholder="选择日期时间">
         </el-date-picker>
       </div>
       <div class="block">
         <span class="demonstration">结束时间：</span>
-        <el-date-picker size="small"
-                        v-model="date.endDate" value-format="yyyy-MM-dd HH:mm:ss"
-                        type="datetime"
-                        placeholder="选择日期时间">
+        <el-date-picker size="small" v-model="coinSearch.endDate" value-format="yyyy-MM-dd HH:mm:ss"
+             type="datetime" placeholder="选择日期时间">
         </el-date-picker>
       </div>
-      <el-button type="primary" size="small" @click="search">查询</el-button>
+      <el-button type="primary" size="mini" @click="search(coinSearch)">查询</el-button>
     </div>
-    <el-table :data="tableData" style="width: 100%" border height="0.3rem">
+    <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" style="width: 100%" border height="0.3rem">
       <el-table-column prop="ID" label="编号"></el-table-column>
       <el-table-column prop="type" label="交易类型"></el-table-column>
       <el-table-column prop="amount" label="金币数量"></el-table-column>
@@ -37,16 +33,30 @@
       <el-table-column prop="note" label="备注"></el-table-column>
       <el-table-column prop="time" label="操作时间"></el-table-column>
     </el-table>
+    <div class="block2" v-if="tableData.length">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-sizes="[10, 15, 20]"
+        :page-size="pageSize"
+        layout=" sizes, prev, pager, next, jumper"
+        :total="tableData.length">
+      </el-pagination>
+      <span class="totalItems">共{{Math.ceil(tableData.length/pageSize)}}页，{{tableData.length}}条记录</span>
+    </div>
   </div>
 </template>
 
 <script>
+  import { getWallet } from "@/api/money"
 
   export default {
     name: "coin",
     data(){
       return{
-        date:{
+        coinSearch:{
+          detail : '',
           startDate : '',
           endDate : ''
         },
@@ -64,7 +74,6 @@
             value : '3'
           }
         ],
-        detail : '',
         tableData : [
           {
             ID : '1',
@@ -74,16 +83,40 @@
             note : 'csdodfj',
             time : 'fsdfs'
           }
-        ]
+        ] ,
+        currentPage : 1 ,
+        pageSize : 10
       }
     },
 
-
+    mounted(){
+      // this.getList();
+    },
     methods : {
-      search(){
+      search(form){
+        // this.getList(form);
 
+        console.log(form)
+      },
 
-        console.log(this.date,this.detail)
+      getList(){
+        // getWallet().then( res => {
+        //   if(  res.data.code === '000000000'){
+        //     this.tableData = res.data.data ;
+        //   }
+        // }).catch( err => {
+        //   alert('服务器开小差啦，请稍等~')
+        // })
+      },
+
+      handleSizeChange(val) {
+        this.pageSize = val
+        // this.tableData.slice(this.currentPage-1,val);
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        this.currentPage = val ;
+        console.log(`当前页: ${val}`);
       }
     }
 
@@ -113,6 +146,7 @@
       .timeSetting{
         width : 1.2rem ;
         margin-left : 0.2rem ;
+        text-align : right ;
       }
 
       .demonstration{
@@ -132,6 +166,18 @@
     .el-table{
       border-color : #aaa ;
       border-radius : 0.05rem ;
+    }
+    .block2{
+      padding : 0.3rem ;
+      width : 100% ;
+      box-sizing: border-box;
+      .totalItems{
+        display : block ;
+        height : 0.3rem ;
+        color : #666 ;
+        text-align : right ;
+        margin-top : 0.3rem ;
+      }
     }
   }
 </style>

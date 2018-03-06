@@ -5,17 +5,18 @@ import 'nprogress/nprogress.css'// Progress 进度条样式
 import { Message } from 'element-ui'
 import { getToken } from '@/utils/auth' // 验权
 
-const whiteList = ['/login','/register'] // 不重定向白名单
+const whiteList = ['/login','/register','/changePsw']; // 不重定向白名单
 router.beforeEach((to, from, next) => {
-  NProgress.start()
-  if (getToken()) {
-    if (to.path === '/login'|| to.path === '/register') {
-      next()
+  NProgress.start();
+  const token = getToken() ;
+  if (token) {
+    if (to.path === '/login'|| to.path === '/register' || to.path === '/changePsw') {
+      next();
       console.log(1)
     } else{
       next()
-      console.log(2)
-      // store.dispatch('GetInfo').then(res => { // 拉取用户信息
+      // console.log(2)
+      // store.dispatch('GetInfo',token).then(res => { // 拉取用户信息
       //     console.log(res);
       //     next()
       //   }).catch(() => {
@@ -36,7 +37,7 @@ router.beforeEach((to, from, next) => {
     if (whiteList.indexOf(to.path) !== -1) {
       next()
     } else {
-      next('/login')
+      next('/login');
       NProgress.done()
     }
   }

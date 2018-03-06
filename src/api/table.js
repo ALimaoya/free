@@ -5,5 +5,5 @@ export function getHistory(data) {
     url: '/POST//tryout/wallet/logs',
     method: 'post',
     data
-  })
+})
 }

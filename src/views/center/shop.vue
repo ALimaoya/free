@@ -4,76 +4,160 @@
       <p>店铺管理<button @click="toNew">绑定新店铺</button></p>
     </div>
 
-    <el-table class="list" :data="tableData" stripe border style="width: 100%">
-        <el-table-column prop="shop" label="店铺" width="180"></el-table-column>
-        <el-table-column prop="type" label="平台类型" width="180"></el-table-column>
-        <el-table-column prop="ID" label="旺旺ID/咚咚ID"></el-table-column>
-        <el-table-column prop="status" label="状态">
-          <!--<template slot-scope="scope">-->
-            <!--<el-button size="mini" @click="tips(scope.$index)" class="tips"></el-button>-->
-          <!--</template>-->
-          <!--<div class="pop">-->
-            <!--<p><img src="../../assets/imgs/close.png" alt="" /></p>-->
-            <!--<h2>说明</h2>-->
-            <!--<span>绑定的第一个店铺加入会员后不收费，状态变化为（审核中>>>>&#45;&#45;审核通过），第二个店铺起，中间增加支付（审核中>>>>&#45;&#45;待支付>>>>&#45;&#45;审核通过）</span>-->
-          <!--</div>-->
-        </el-table-column>
+    <div class="search">
+      <el-select size="small" v-model="shop.EQ_platformType" filterable placeholder="请选择平台类型">
+        <el-option
+          v-for="item in platformOptions"
+          :key="item.value"
+          :label="item.name"
+          :value="item.value">
+        </el-option>
+      </el-select>
+      <el-select size="small" v-model="shop.EQ_status" filterable placeholder="请选择店铺状态">
+        <el-option
+          v-for="item in activityOptions"
+          :key="item.value"
+          :label="item.name"
+          :value="item.value">
+        </el-option>
+      </el-select>
+      <el-button size="small" round type="primary" @click="search(shop)">搜索店铺</el-button>
+    </div>
+
+    <el-table class="list" :data="tableData.slice((currentPage-1)*pageSize,currentPage.pageSize)" stripe border style="width: 100%">
+        <el-table-column prop="shopName" label="店铺" width="180"></el-table-column>
+        <el-table-column prop="platform" label="平台类型" width="180"></el-table-column>
+        <el-table-column prop="messageId" label="旺旺ID/咚咚ID"></el-table-column>
+        <el-table-column prop="status" label="状态"></el-table-column>
         <el-table-column prop="action" label="操作">
           <template slot-scope="scope" >
             <div v-if="scope.row.action==='1'">
-              <el-button size="mini" @click="reason(scope.$index)" class="tips" style="width : 0.6rem ;padding : 0.07rem;">查看原因</el-button>
-              <el-button size="mini" @click="change(scope.$index)" class="tips" style="width: 0.6rem ;">修改</el-button>
+              <el-button size="mini" @click="reason(scope.$index,scope.row.reason)"  style="width : 0.6rem ;padding : 0.07rem 0.06rem;">查看原因</el-button>
+              <el-button size="mini" @click="change(scope.$index)"  style="width: 0.6rem ;">修改</el-button>
             </div>
             <span v-else>--</span>
           </template>
         </el-table-column>
-        <el-table-column prop="date" label="绑定时间"></el-table-column>
+        <el-table-column prop="updateTime" label="绑定时间"></el-table-column>
       </el-table>
     <el-dialog title="详情" :visible.sync="reasonBox" class="detail" top="22%">
       <span>招商审核备注</span>
-      <el-input type="textarea" :rows="3" v-model="reasonInfo"></el-input>
-      <el-button class="close" type="info" size="small" @click="reasonBox=false ;" >关闭</el-button>
+      <el-input type="textarea" :rows="3" v-model="reasonWord"></el-input>
+      <el-button class="close" type="info" size="small" @click="reasonBox=false " >关闭</el-button>
     </el-dialog>
+    <div class="block2">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-sizes="[10, 15, 20]"
+        :page-size="pageSize"
+        layout=" sizes, prev, pager, next, jumper"
+        :total="tableData.length">
+      </el-pagination>
+      <span class="totalItems">共{{totalPages }}页，{{ tableData.length }}条记录</span>
+    </div>
   </div>
 </template>
 
 <script>
-
+  import { shopList  } from "@/api/shop"
   export default {
         name: "Shop",
 
         data(){
           return{
-            tableData : [
+            platformOptions : [
               {
-                shop : '淘宝',
-                type : '淘宝',
-                ID : '旺旺',
-                status : '需更新资料',
-                action : '1' ,
-                date : '1232-32-22'
+                value: '1',
+                name : '淘宝'
               },
               {
-                shop : '淘宝',
-                type : '淘宝',
-                ID : '旺旺',
-                status : '需更新资料',
-                action : '2' ,
-                date : '1232-32-22'
+                value : '2',
+                name : '天猫'
+              },
+              {
+                value : '3',
+                name : '京东'
+              },
+              {
+                value : '4',
+                name : '拼多多'
               }
             ],
+            activityOptions : [
+              {
+                name : '审核中',
+                value : '1'
+              },
+              {
+                name : '审核通过',
+                value : '2'
+              },
+              {
+                name : '审核拒绝',
+                value : '3'
+              },
+              {
+                name : '需要更新资料',
+                value : '4'
+              }
+            ],
+            shop : {
+              EQ_platformType :'',
+              EQ_status : ''
+            },
+            tableData : [],
             reasonBox : false ,
-            reasonInfo : ''
+            reasonWord : '',
+            currentPage : 1,
+            pageSize : 10 ,
+            totalPages : ''
           }
+        },
+        mounted(){
+          this.getShopList();
         },
         methods : {
           toNew(){
             this.$router.push('/newshop')
           },
+          //搜索店铺
+          search(form){
+            this.getShopList(form);
+          },
+          //获取店铺列表
+          getShopList(form){
+            shopList(form).then( res => {
+              if(res.data.status === '000000000'){
+                console.log(res.data);
+                this.tableData = res.data.data ;
+                this.totalPages = res.data.totalPages ;
+              }
+            }).catch(err => {
+              alert('服务器开小差啦，请稍等~')
+            })
+          },
           reason(index){
             console.log(index);
             this.reasonBox = true ;
-            this.reasonInfo = 'blnanlab';
+            this.reasonWord = this.tableData[index].reasonInfo;
+          },
+
+          change(index){
+            console.log(index);
+          },
+
+          handleSizeChange(val) {
+            // this.pageSize = val ;
+            this.pageSize = val ;
+            // this.tableData.slice(this.currentPage-1,val);
+            console.log(`每页 ${val} 条`);
+          },
+
+          handleCurrentChange(val) {
+            this.currentPage = val ;
+            console.log(`当前页: ${val}`);
           }
         }
     }
@@ -96,7 +180,7 @@
           width : 1rem ;
           height : 0.34rem ;
           border-radius: 0.05rem ;
-          background : rgba(22, 155, 213, 1) ;
+          background : #409EFF ;
           color : #fff ;
           font-size : 0.14rem ;
           text-align: center;
@@ -106,6 +190,16 @@
           margin : 0.23rem 0.8rem ;
 
         }
+      }
+    }
+    .search{
+      width : 100% ;
+      padding : 0.3rem 0.5rem 0.2rem;
+      border-bottom : 1px solid #aaa ;
+      margin-bottom : 0.3rem ;
+      .el-select{
+        margin-right : 0.2rem ;
+        width : 1.6rem ;
       }
     }
     .list{
@@ -126,6 +220,18 @@
 
       .close{
         margin-top : 0.2rem ;
+      }
+    }
+    .block2{
+      padding : 0.3rem ;
+      width : 100% ;
+      box-sizing: border-box;
+      .totalItems{
+        display : block ;
+        height : 0.3rem ;
+        color : #666 ;
+        text-align : right ;
+        margin-top : 0.3rem ;
       }
     }
   }

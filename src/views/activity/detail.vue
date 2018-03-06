@@ -3,65 +3,75 @@
     <div class="title">活动商品详情</div>
     <div class="content">
       <ul class="detailInfor">
-        <li>1、活动类型：{{ detailInfo.activity}}</li>
-        <li>2、商品来源：{{detailInfo.resource}}</li>
-        <li>3、活动标题：{{ detailInfo.title }}</li>
-        <li>4、试用品类型：{{ detailInfo.type}}</li>
-        <li>5、商品链接：{{ detailInfo.link}}</li>
-        <li>6、下单规格：{{ detailInfo.size }} </li>
-        <li class="keys">  件数：{{ detailInfo.number }}  </li>
-        <li class="keys">  金额：{{detailInfo.money }}  </li>
-        <li class="keys">  包邮：{{detailInfo.passway}}</li>
-        <li>7、找到推广宝贝的入口 </li>
-        <li class="keys">关键词：{{detailInfo.key}}</li>
-        <li class="keys">淘口令：{{ detailInfo.tao }}</li>
-        <li>8、上架时间：{{detailInfo.date }}</li>
+        <!--<li>1、活动类型：{{ detailInfo.activity}}</li>-->
+        <!--<li>2、商品来源：{{detailInfo.resource}}</li>-->
+        <!--<li>3、活动标题：{{ detailInfo.title }}</li>-->
+        <!--<li>4、试用品类型：{{ detailInfo.type}}</li>-->
+        <!--<li>5、商品链接：{{ detailInfo.link}}</li>-->
+        <!--<li>6、下单规格：{{ detailInfo.size }} </li>-->
+        <!--<li class="keys">  件数：{{ detailInfo.number }}  </li>-->
+        <!--<li class="keys">  金额：{{detailInfo.money }}  </li>-->
+        <!--<li class="keys">  包邮：{{detailInfo.passway}}</li>-->
+        <!--<li>7、找到推广宝贝的入口 </li>-->
+        <!--<li class="keys">关键词：{{detailInfo.key}}</li>-->
+        <!--<li class="keys">淘口令：{{ detailInfo.tao }}</li>-->
+        <!--<li>8、上架时间：{{detailInfo.date }}</li>-->
+        <li>1、试客任务编号：{{ detailInfo.activityCode }}</li>
+        <li>2、试客任务编号：{{ detailInfo.orderCode}}</li>
+        <li>3、商铺名称：{{ detailInfo.shopName }}</li>
+        <li>4、平台类型：{{ detailInfo.platform }}</li>
+        <li>5、第三方单号：{{ detailInfo.thirdOrderCode }}</li>
+        <li>6、中奖时间： {{ detailInfo.winTime }}</li>
+        <li>7、开奖时间：{{ detailInfo.receiveTime }}</li>
+        <li>8、订单价格：{{ detailInfo.amount }}</li>
+        <li class="detailPic">9、图片详情：
+          <dl v-for="item in detailInfo.orderImageList">
+            <dt>{{ imgType[item.type-1]}}</dt>
+            <dd>
+              <img :src="item.imageUrl" alt="" />
+            </dd>
+          </dl>
+        </li>
       </ul>
-      <div class="detailPic">
-        <dl>
-          <dt>试用品图例</dt>
-          <dd><img src="../../assets/imgs/default0.png" alt="" /></dd>
-        </dl>
-        <dl>
-          <dt>商品主图</dt>
-          <dd><img src="../../assets/imgs/default0.png" alt="" /></dd>
-        </dl>
-        <ul>
-          <li>试用品份数：{{detailInfo.piece }}</li>
-          <li>每日最多申请人数：{{detailInfo.peaple}}</li>
-          <li>日均投放量{{ detailInfo.amount}}单</li>
-        </ul>
-      </div>
+      <!--<div class="detailPic">-->
+        <!--<dl>-->
+          <!--<dt>试用品图例</dt>-->
+          <!--<dd><img src="../../assets/imgs/default0.png" alt="" /></dd>-->
+        <!--</dl>-->
+        <!--<dl>-->
+          <!--<dt>商品主图</dt>-->
+          <!--<dd><img src="../../assets/imgs/default0.png" alt="" /></dd>-->
+        <!--</dl>-->
+        <!--<ul>-->
+          <!--<li>试用品份数：{{detailInfo.piece }}</li>-->
+          <!--<li>每日最多申请人数：{{detailInfo.peaple}}</li>-->
+          <!--<li>日均投放量{{ detailInfo.amount}}单</li>-->
+        <!--</ul>-->
+      <!--</div>-->
     </div>
 
   </div>
 </template>
 
 <script>
+  import { orderDetail } from '@/api/activity'
     export default {
         name: "detail" ,
       data(){
           return  {
-            detailInfo : {
-              activity : '',
-              resource : '',
-              title : '',
-              type : '',
-              link :'',
-              size : '',
-              number : '',
-              money : '',
-              passway : '',
-              key : '',
-              tao : '',
-              date : '',
-              piece : '',
-              people : '',
-              amount : ''
-
-            }
+            detailInfo : {},
+            imgType : ['商品收藏截图','店铺收藏截图','订单截图','评价截图']
 
           }
+      },
+      mounted(){
+        orderDetail().then( res => {
+          if(res.data.status === '000000000'){
+            this.detailInfo = res.data.data
+          }
+        }).catch( err => {
+          alert('服务器开小差啦，请稍等~')
+        })
       }
     }
 </script>
@@ -121,10 +131,12 @@
           height : 0.4rem ;
         }
         dd{
-          margin : 0;
+          margin : 0.2rem auto;
+          width : 80% ;
           img{
             width : 100% ;
-
+            border : 1px solid #D3D3D3;
+            border-radius : 0.05rem ;
           }
         }
       }

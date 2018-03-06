@@ -3,53 +3,78 @@
       <div class="title">
         <p>商家开通VIP</p>
         <span class="tips">充值到账可能会有延时，若<b>30分钟</b>内未到账请联系在线客服</span>
-        <div class="vipInfo"><span>账号：</span><b>{{ userTel }}</b><span>，当前为</span><strong></strong><b>{{ userType }}</b><span>，会员有效期已过</span></div>
+        <div class="vipInfo"><span>账号：</span><b>{{ userTel }}</b><span>，当前为</span><strong></strong><b>{{ userType }}</b><span v-if="isVip.type==='1'">，会员有效期已过</span><span v-else="isVip.type==='2'">，会员到期时间：{{ isVip.date }}</span></div>
       </div>
+      <el-form :model="choose" ref="choose" :rules="chooseRules">
       <div class="step1">
+        <el-form-item prop="money">
         <p class="choiceDate">1.选择开通会员的时长</p>
-        <ul class="payTime" @click.capture="chooseVip">
-          <li class="timeImg" :class="target=='1'?'active':''" data-index="1"><img src="../../assets/imgs/1y.png" alt="" /><span class="target" v-show="target=='1'"></span></li>
-          <li class="timeImg" :class="target=='2'?'active':''" data-index="2"><img src="../../assets/imgs/2y.png" alt="" /><span class="percent1"></span><span class="target" v-show="target=='2'"></span></li>
-          <li class="timeImg" :class="target=='3'?'active':''" data-index="3"><img src="../../assets/imgs/3y.png" alt="" /><span class="king"></span><span class="percent2"></span><span class="target" v-show="target=='3'"></span></li>
-        </ul>
-        <div class="choose" v-if="target!== ''">
-          <p>您已选择购买会员<span>{{ choose.time }}</span>个月，有效期至：<span>{{ choose.date }}</span></p>
-          <p>支付金额：<span>{{ choose.money }}</span>元</p>
+          <ul class="payTime" @click.capture="chooseVip" v-model="choose.money">
+            <li class="timeImg" :class="target=='1'?'active':''" data-index="1"><img src="../../assets/imgs/1y.png" alt="" /><span class="target" v-show="target=='1'"></span></li>
+            <li class="timeImg" :class="target=='2'?'active':''" data-index="2"><img src="../../assets/imgs/2y.png" alt="" /><span class="percent1"></span><span class="target" v-show="target=='2'"></span></li>
+            <li class="timeImg" :class="target=='3'?'active':''" data-index="3"><img src="../../assets/imgs/3y.png" alt="" /><span class="king"></span><span class="percent2"></span><span class="target" v-show="target=='3'"></span></li>
+          </ul>
+          <div class="choose" v-if="target!== ''" >
+            <p>您已选择购买会员<span>{{ choose.time }}</span>个月，有效期至：<span>{{ choose.date }}</span></p>
+            <p>支付金额：<span>{{ choose.money }}</span>元</p>
+          </div>
+        </el-form-item>
+
+      </div>
+        <div class="step2">
+          <p class="payType">2.请选择支付方式</p>
+          <ul>
+            <el-form-item prop="radio">
+              <el-radio-group v-model="choose.radio">
+                <li><el-radio :label="1"><img src="../../assets/imgs/pay1.png" alt="" /><p>押金支付（可用押金：<span></span>元）</p></el-radio></li>
+                <li><el-radio :label="2"><img src="../../assets/imgs/pay2.png" alt="" /><p>微信支付</p></el-radio></li>
+                <li><el-radio :label="3"><img src="../../assets/imgs/pay3.png" alt="" /><p>支付宝支付</p></el-radio></li>
+                <!--<li><el-radio :label="4"><img src="../../assets/imgs/pay4.png" alt="" /><p>银行支付</p></el-radio></li>-->
+              </el-radio-group>
+            </el-form-item>
+              <span class="total" v-if="target!=''">支付：<b>{{ choose.money }}</b>元</span>
+          </ul>
         </div>
-      </div>
-      <div class="step2">
-        <p class="payType">2.请选择支付方式</p>
-        <ul>
-          <el-radio-group v-model="radio">
-            <li><el-radio :label="1"><img src="../../assets/imgs/pay1.png" alt="" /><p>押金支付（可用押金：<span></span>元）</p></el-radio></li>
-            <li><el-radio :label="2"><img src="../../assets/imgs/pay2.png" alt="" /><p>微信支付</p></el-radio></li>
-            <li><el-radio :label="3"><img src="../../assets/imgs/pay3.png" alt="" /><p>支付宝支付</p></el-radio></li>
-            <li><el-radio :label="4"><img src="../../assets/imgs/pay4.png" alt="" /><p>银行支付</p></el-radio></li>
-          </el-radio-group>
-          <span class="total">支付：<b>{{ choose.money }}</b>元</span>
-        </ul>
-      </div>
-      <div class="submitOrder">
-        <el-button type="primary">确定</el-button>
-        <el-button type="info">取消</el-button>
-      </div>
+        <el-form-item class="submitOrder">
+          <el-button type="primary" @click="submit('choose')">确定</el-button>
+          <el-button type="info" @click="cancel('choose')">取消</el-button>
+        </el-form-item>
+      </el-form>
     </div>
 </template>
 
 <script>
-  import { parseTime, DateAdd } from '@/utils/index'
+  import { parseTime, DateAdd , GetTimeByTimeStr } from '@/utils/index'
+  import ElFormItem from "element-ui/packages/form/src/form-item";
   export default {
+    components: {
+      ElFormItem
+    },
     name: "buy-vip",
     data(){
       return{
         userTel : '1111',
         userType : '普通商家',
         target : '',
-        radio:'',
         choose :{
           time : '',
           date : '',
-          money : ''
+          money : '',
+          radio:''
+
+        },
+        chooseRules : {
+          radio : [
+            {
+              required : true , message : '请选择支付方式', trigger : 'change'
+            }
+          ],
+          money : [
+            {
+              required : true , message : '请选择开通会员时长',trigger : 'click'
+
+            }
+          ]
         },
         vipTime : [
           {
@@ -68,22 +93,37 @@
             money : '9572'
           }
         ],
+        isVip:{
+
+        }
 
       }
     },
+    mounted(){
+      this.isVip =  this.$route.params
+      console.log(this.isVip)
+    },
     methods : {
+
       chooseVip(){
         var targets = document.getElementsByClassName('payTime')[0];
         var target = targets.getElementsByTagName('li');
-        var nowDate = new Date();
 
         for(let i of target){
           i.onclick = ()=>{
             const index = i.dataset.index ;
             this.target = index ;
-            var now = new Date() ;
-            var newDate = DateAdd("y ",index*1,now) ;
-            console.log(newDate);
+            let newDate = '';
+            let now ;
+            if(this.isVip.type === '1'){
+              now = new Date() ;
+              newDate = DateAdd("y ",index*1,now) ;
+
+            }else{
+              now = GetTimeByTimeStr(this.isVip.date);
+              newDate = DateAdd("y ",index*1,now ) ;
+            }
+
             this.choose.time = this.vipTime[index-1].time ;
             this.choose.date =  parseTime(newDate,'{y}-{m}-{d}');
             this.choose.money = this.vipTime[index-1].money ;
@@ -93,6 +133,36 @@
         }
 
 
+      },
+
+    //  支付提交
+      submit(formName){
+        this.$refs[formName].validate((valid) => {
+          if(valid){
+            this.$message({
+              message : '提交成功，即将前往支付页面',
+              center : true ,
+              type : 'success'
+            });
+            console.log(this.choose);
+
+          }else{
+            this.$message({
+              message : '提交失败，请确定信息后重新提交',
+              type : 'error',
+              center : true
+            });
+
+            return false ;
+          }
+
+        })
+      },
+
+    //  取消选择
+      cancel(formName){
+        this.$refs[formName].resetFields();
+        this.target = '' ;
       }
     }
     }
@@ -175,7 +245,6 @@
         position : relative ;
         padding : 0.27rem;
         box-sizing: border-box;
-
         img{
           width : 100% ;
           height : 100% ;
@@ -270,7 +339,7 @@
           float : left ;
           padding-left : 0.2rem ;
           border-bottom : 1px solid #aaa ;
-          &:nth-child(4){
+          &:nth-last-child(1){
             border-bottom : none;
           }
           img,p{

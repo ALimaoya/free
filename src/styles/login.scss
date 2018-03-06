@@ -44,9 +44,8 @@ $light_gray:#eee;
     font-size: 0.26rem;
     font-weight: 400;
     color: $light_gray;
-    margin: 0rem auto 0.40rem auto;
+    margin: 0 auto 0.40rem auto;
     text-align: center;
-    font-weight: bold;
   }
   .login-form {
     position: absolute;
@@ -75,5 +74,21 @@ $light_gray:#eee;
     position: absolute;
     right: 0.35rem;
     bottom: 0.28rem;
+  }
+  .show-captcha{
+    display : inline-block ;
+    height: 0.47rem ;
+    width : 1rem ;
+    float : right ;
+  }
+  .codeBtn{
+    width : 0.8rem ;
+    height : 0.35rem ;
+    color : #666;
+    margin-top : 0.1rem ;
+    margin-right : 0.1rem ;
+    padding : 0 ;
+    line-height : 0.35rem ;
+    text-align : center;
   }
 }

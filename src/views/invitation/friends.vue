@@ -8,7 +8,7 @@
     <span>邀请方式一</span>
     <p>复制您的专属链接，发给您的QQ、微信好友，好友通过您的邀请链接注册商家并成功开通VIP商家，即可获得邀请奖励</p>
     <div class="link">
-      <div class="linkIpt"><el-input ></el-input></div><el-button type="primary">复制链接</el-button>
+      <div class="linkIpt"><span v-model="link">{{ link }}</span></div><el-button type="primary" @click="copy(link,$event)">复制链接</el-button>
     </div>
     <div class="center"><img src="../../assets/imgs/u1032.png" alt="" /></div>
       <el-table :data="tableData" border height="0.3rem" style="width: 100%">
@@ -32,7 +32,8 @@
 </template>
 
 <script>
-    import ElButton from "element-ui/packages/button/src/button";
+  import clip from '@/utils/clipboard' // use clipboard directly
+  import ElButton from "element-ui/packages/button/src/button";
 
     export default {
       components: {
@@ -41,8 +42,24 @@
       name: "friends" ,
       data(){
         return{
-          tableData : []
+          tableData : [] ,
+          link : 'http://rap2.taobao.org/repository/editor?id=3968&mod=8485&itf=24811'
         }
+      },
+      created(){
+
+      },
+      methods : {
+        copy(text,event){
+          clip(text, event)
+          this.$message({
+            message: '复制成功',
+            type: 'success',
+            duration: 1500 ,
+            center : true
+          });
+          console.log(text);
+        },
       }
     }
 </script>
@@ -84,12 +101,16 @@
        width : 70% ;
        /*float : left ;*/
        margin :  0.2rem 0 0.2rem 0.5rem;
-       .el-input {
+       span {
          width : 100% ;
-         height : 0.3rem ;
-         border : 0;
-         box-shadow: 0.01rem 0.01rem 0.2rem #8f949a  ;
-
+         height : 0.4rem ;
+         line-height : 0.4rem ;
+         border-radius : 0.05rem ;
+         display : block ;
+         box-shadow: 0.01rem 0.001rem 0.1rem #8f949a  ;
+         white-space: nowrap;
+         overflow : hidden ;
+         text-overflow :  ellipsis ;
        }
      }
 

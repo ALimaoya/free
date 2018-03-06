@@ -82,6 +82,9 @@
  }
  .el-table td, .el-table th.is-leaf{
    border-color : #D3D3D3 ;
+   &:nth-last-child(1){
+     border-right : 0;
+   }
  }
  //.el-table td{
  //  padding : 0.08rem  0;
@@ -107,3 +110,12 @@
 
 
   }
+
+  .el-dialog__header{
+    background : #f2f1f1;
+    color : #345 ;
+    padding-top : 0.2rem ;
+  }
+ .el-dialog__title{
+   color : #333 ;
+ }

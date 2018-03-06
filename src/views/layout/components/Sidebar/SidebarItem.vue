@@ -11,7 +11,7 @@
       <!--一级目录有子菜单-->
       <el-submenu v-else :index="item.name||item.path" :key="item.name">
         <!--有内容的一级目录-->
-        <template v-if="item.name=='Publish'" slot="title">
+        <template v-if="item.name==='Publish'" slot="title">
           <router-link :to="item.path+'/'+item.children[0].path">
               <svg-icon v-if="item.meta&&item.meta.icon" :icon-class="item.meta.icon"></svg-icon>
               <span v-if="item.meta&&item.meta.title">{{item.meta.title}}</span>
@@ -25,11 +25,11 @@
         </template>
         <!--二级目录-->
         <template v-for="child in item.children" v-if="!child.hidden">
-          <sidebar-item :is-nest="true" class="nest-menu" v-if="child.children&&child.children.length>0&&child.name!='Shop'" :routes="[child]" :key="child.path"></sidebar-item>
+          <sidebar-item :is-nest="true" class="nest-menu" v-if="child.children&&child.children.length>0" :routes="[child]" :key="child.path"></sidebar-item>
 
           <!--首页-->
-          <router-link v-else-if="child.name=='Index'||child.name=='Shop'||child.name=='Newshop'" :to="'/'+child.path" :key="child.name">
-            <el-menu-item :index="item.path+'/'+child.path">
+          <router-link v-else-if="child.name==='Home'||child.name==='Shop'||child.name==='Newshop'" :to="'/'+child.path" :key="child.name">
+            <el-menu-item :index="'/'+child.path"  >
               <svg-icon v-if="child.meta&&child.meta.icon" :icon-class="child.meta.icon"></svg-icon>
               <span v-if="child.meta&&child.meta.title">{{child.meta.title}}</span>
             </el-menu-item>

@@ -6,34 +6,34 @@
       </p>
       <el-form ref="sizeForm" :model="sizeForm" label-width="1.4rem" size="mini" :rules="rules">
         <el-form-item label="店铺首页网址：" prop="address">
-          <el-input v-model.trim="sizeForm.address" class="ipt"></el-input>
+          <el-input v-model.trim="sizeForm.address" class="big"></el-input>
         </el-form-item>
-        <el-form-item label="店铺名称：" prop="name">
-          <el-input v-model.trim="sizeForm.name"  class="ipt"></el-input>
+        <el-form-item label="店铺名称：" prop="shopName">
+          <el-input v-model.trim="sizeForm.shopName"  class="big"></el-input>
         </el-form-item>
-        <el-form-item label="店铺旺旺/咚咚ID："  prop="ID">
-          <el-input v-model.trim="sizeForm.ID" class="ipt"></el-input>
+        <el-form-item label="店铺旺旺/咚咚ID："  prop="messageId">
+          <el-input v-model.trim="sizeForm.messageId" class="big"></el-input>
         </el-form-item>
-        <el-form-item label="验证码："  prop="val">
-          <el-input v-model.trim="sizeForm.val" class="small"></el-input>
-          <el-button class="copyBtn" type="primary" plain  @click="copy(sizeForm.val,$event)">复制</el-button>
+        <el-form-item label="验证码：">
+          <span  class="small">{{ sizeForm.captcha }}</span>
+          <el-button class="copyBtn" type="primary" plain  @click="copy(sizeForm.captcha,$event)">复制</el-button>
         </el-form-item>
         <ul>
           <li>1、将验证码加到您的店铺某个上架商品的标题上，如下图:</li>
           <img src="../../assets/imgs/u445.png" alt=""/>
           <li>2、再将这个商品的详情页链接，复制到下面输入框中进行验证。</li>
         </ul>
-        <el-form-item label="待验证商品链接：" label-width="1.4rem" prop="addr">
-          <el-input v-model.trim="sizeForm.addr" class="big"></el-input>
+        <el-form-item label="待验证商品链接：" label-width="1.4rem" prop="productUrl">
+          <el-input v-model.trim="sizeForm.productUrl" class="big"></el-input>
         </el-form-item>
-        <el-form-item label="负责人QQ：" prop="QQ">
-          <el-input v-model.trim="sizeForm.QQ" class="big"></el-input>
+        <el-form-item label="负责人QQ：" prop="managerQq">
+          <el-input v-model.trim="sizeForm.managerQq" class="big"></el-input>
         </el-form-item>
-        <el-form-item label="负责人微信：" prop="wx">
-          <el-input v-model.trim="sizeForm.wx" class="big"></el-input>
+        <el-form-item label="负责人微信：" prop="managerWechat">
+          <el-input v-model.trim="sizeForm.managerWechat" class="big"></el-input>
         </el-form-item>
-        <el-form-item label="负责人手机：" prop="phone">
-          <el-input v-model.number="sizeForm.phone" class="big"></el-input>
+        <el-form-item label="负责人手机：" prop="managerMobile">
+          <el-input v-model.number="sizeForm.managerMobile" class="big"></el-input>
         </el-form-item>
         <el-form-item size="large" class="submit">
           <el-button type="primary" @click="onSubmit('sizeForm')" >提交</el-button>
@@ -47,7 +47,7 @@
 
 <script>
   import clip from '@/utils/clipboard' // use clipboard directly
-
+  import { shopInfo } from "@/api/shop"
   import ElButton from "element-ui/packages/button/src/button";
   import { validateURL ,validateWX ,validatePhone ,validQQ } from '@/utils/validate'
   export default {
@@ -57,7 +57,6 @@
       ElButton
     },
     data(){
-
       var validateAddr = (rule,value,callback) => {
         if(value === ''){
           callback(new Error('请输入店铺首页网址'))
@@ -85,13 +84,6 @@
         callback();
 
       }
-      // var validateVal = (rule,value ,callback) => {
-      //   if(value === ''){
-      //     callback(new Error('请输入验证码'))
-      //   }
-      //
-      //     callback();
-      // }
       var validGoodsAddr = (rule,value,callback) => {
         if(value === ''){
           callback(new Error('请输入待验证商品链接'))
@@ -139,13 +131,13 @@
         tips : true ,
         sizeForm : {
           address : '',
-          name : '',
-          ID : '',
-          val : '',
-          addr : '',
-          QQ : '',
-          wx : '',
-          phone : ''
+          shopName: '',
+          messageId : '',
+          captcha : '1111',
+          productUrl : '',
+          managerQq : '',
+          managerWechat : '',
+          managerMobile : ''
         },
         rules : {
           address : [
@@ -161,11 +153,6 @@
           ID : [
             {
               validator : validateID , trigger : 'blur',required : true
-            }
-          ],
-          val : [
-            {
-               trigger : 'blur', required : true
             }
           ],
           addr : [
@@ -192,10 +179,13 @@
         }
       }
     },
+
+    mounted(){
+
+    },
     methods : {
       copy(text,event){
         clip(text, event)
-
         this.$message({
           message: '复制成功',
           type: 'success',
@@ -203,16 +193,22 @@
         })
       },
       onSubmit(formName){
-        // console.log(formName)
         this.$refs[formName].validate((valid) => {
           if(valid){
-            this.$message({
-              type : 'success',
-              message : '提交成功',
-              center : true
+            shopInfo({ data : formName }).then( res => {
+              if(res.data.status === '000000000'){
+                this.$message({
+                  type : 'success',
+                  message : '提交成功',
+                  center : true
+                })
+                console.log(this.sizeForm,res)
+                this.$router.push('/shop')
+              }
+            }).catch( err => {
+              alert('服务器开小差啦，请稍等~')
             })
-            this.$router.push('/shop')
-            // alert('提交成功')
+
           }else{
             this.$message({
               type :'error' ,
@@ -222,8 +218,8 @@
             return false ;
           }
         })
-        console.log(this.sizeForm)
       },
+
       close(){
         this.tips = false
       }
@@ -277,11 +273,19 @@
       .el-form-item__label{
         text-align : left ;
       }
-      .ipt{
-        width : 2rem ;
-      }
+      /*.ipt{*/
+        /*width : 2rem ;*/
+      /*}*/
       .small{
         width : 1.6rem ;
+        height : 0.28rem ;
+        border : 1px solid #dcdfe6;
+        border-radius : 0.04rem ;
+        display : block ;
+        float : left ;
+        text-align : center;
+        line-height : 0.28rem ;
+        color : #666 ;
       }
       .big{
         width : 2.4rem ;

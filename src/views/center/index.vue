@@ -4,19 +4,32 @@
         <li>
           <img class="photo" src="../../assets/imgs/logo.png" alt=""/>
           <p>
-            <span>您好，{{user}}</span>
-            <span>会员等级：{{vip}}
+            <span>您好，{{userInfo.name}}</span>
+            <span>会员等级：{{ userInfo.vipLevel }}
               <img src="../../assets/imgs/VIP.png" alt="" />
             </span>
-            <span>会员到期时间：{{d_day}}</span>
-            <span>续费会员</span>
+            <span>会员到期时间：{{ userInfo.vip_time}}</span>
+            <el-button @click="vipPlus" type="primary" size="small" style="width:1rem">续费会员</el-button>
           </p>
         </li>
         <li>
-          <div class="title">您的专属客服：{{service}}</div>
+          <div class="title">
+            <span>您的专属客服：</span>
+            <img :src="attendant.avator" alt="" />
+          </div>
           <div class="service">
-            <img  src="../../assets/imgs/qq.png" alt=""/>
-            <img  src="../../assets/imgs/weixin.png" alt=""/>
+            <dl>
+              <dd>
+                <img  src="../../assets/imgs/qq.png" alt=""/>
+              </dd>
+              <dt>{{ attendant.qq }}</dt>
+            </dl>
+            <dl>
+              <dd>
+                <img  src="../../assets/imgs/weixin.png" alt=""/>
+              </dd>
+              <dt>{{ attendant.wechat}}</dt>
+            </dl>
           </div>
 
         </li>
@@ -24,12 +37,12 @@
       <div class="money">
         <ul class="gold">
           <li class="useful"><span>可用押金</span><i></i></li>
-          <li class="cash">{{ money1 }}元</li>
-          <li><strong>冻结押金<i></i>:</strong><span>{{frozen}}元</span><el-button size="small" class="btn" @click="recharge(1)">充值</el-button><el-button size="small" class="btn" @click="recharge(2)">提现</el-button></li>
+          <li class="cash">{{ wallet.deposit }}元</li>
+          <li><strong>冻结押金<i></i>:</strong><span>{{ wallet.freeze_deposit}}元</span><el-button size="small" class="btn" @click="recharge(1)">充值</el-button><el-button size="small" class="btn" @click="recharge(2)">提现</el-button></li>
         </ul>
         <ul class="gold">
           <li class="useful"><span>可用金币</span><i></i></li>
-          <li class="cash">{{ money2 }}元</li>
+          <li class="cash">{{ wallet.gold }}元</li>
           <li><el-button size="small" class="btn" @click="recharge(3)">充值</el-button></li>
         </ul>
         <!--<ul class="detail">-->
@@ -102,9 +115,12 @@
       <div class="plan">
         <h2>参考方案</h2>
         <ul>
-          <li></li>
-          <li></li>
-          <li></li>
+          <li v-for="item in pub_plans" @click="plan(item.url)">
+            <p>{{ item.plan_title }}</p>
+            <img :src="item.plan_img" alt=""/>
+          </li>
+          <!--<li><img src="" /></li>-->
+          <!--<li><img src="" /></li>-->
         </ul>
       </div>
       <div class="case">
@@ -115,51 +131,79 @@
 </template>
 
 <script>
+  // import store from '@/store'
   import { getHistory } from '@/api/table'
-  export default {
-        // name: "index",
+  import { getToken } from '@/utils/auth'
 
+  export default {
+        name: "home",
         data() {
           return {
-            user : 'xxx',
-            vip : '钻石VIP',
-            d_day : '2017-12-31 00:00:00',
-            service : 'xx',
-            money1 : '0.00',
-            money2 : '0.00',
-            frozen : '0.00',
+            userInfo : {},
+            wallet : {
+              // deposit : '',
+            },
             tableData : [] ,
-            show : false,
-            show0 : false ,
-            show1 : false ,
-            show2 : false ,
-            note : {},
-            pop : '',
-            detail : [
-              {
-                name : '最近押金记录',
-                visible : false
-              },
-              {
-                name : '最近金币记录',
-                visible : false
-
-              },
-              {
-                name : '最近提现记录',
-                visible : false
-
-              }
-            ]
+            attendant : {},
+            pub_plans : []
+            // show : false,
+            // show0 : false ,
+            // show1 : false ,
+            // show2 : false ,
+            // note : {},
+            // pop : '',
+            // detail : [
+            //   {
+            //     name : '最近押金记录',
+            //     visible : false
+            //   },
+            //   {
+            //     name : '最近金币记录',
+            //     visible : false
+            //
+            //   },
+            //   {
+            //     name : '最近提现记录',
+            //     visible : false
+            //
+            //   }
+            // ]
           }
         },
-      create(){
 
-      },
+        mounted(){
+          const token = getToken() ;
+          // console.log(token) ;
+          this.$store.dispatch('GetInfo',token).then(res => {
+            this.attendant = this.$store.state.user.attendant ;
+            this.userInfo = this.$store.state.user.userInfo ;
+            this.wallet = this.$store.state.user.wallet ;
+            this.pub_plans = this.$store.state.user.pub_plans ;
+            const date = this.userInfo.vip_time ;
+            this.userInfo.vip_time = date.slice(0,4)+ ' - ' + date.slice(4,6) + ' - ' + date.slice(6,8) ;
+          }).catch(() => {
+            this.$store.dispatch('LogOut').then(() => {
+              this.$message.error('获取用户信息失败,请重新登录');
+              this.$router.push('/login')
+            })
+          })
+        },
         methods : {
+          vipPlus(){
+            this.$router.push('/userInfor/vip')
+          },
           //充值/提现
           recharge(type){
+            if(type === 2){
+              this.$router.push('/fund/cash')
+            }else{
+              this.$router.push('/fund/recharge')
+            }
+          },
 
+          //方案链接
+          plan(url){
+            console.log(url)
           }
           // look(index){
           //   if(index!='2'){
@@ -239,28 +283,64 @@
         justify-content: inherit;
         .title{
           width : 100% ;
-          font-size : 0.18rem ;
-          font-weight : bold ;
-          line-height : 0.25rem ;
-          height : 0.25rem ;
-          color : #333 ;
+          height : 0.35rem ;
+          span{
+            display: inline-block;
+            font-size : 0.18rem ;
+            font-weight : bold ;
+            height : 0.35rem ;
+            line-height : 0.35rem ;
+            color : #333 ;
+            float : left ;
+          }
+          img{
+            margin-left : 0.1rem ;
+            width : 0.25rem ;
+            height : 0.3rem ;
+          }
         }
         .service{
           width : 100% ;
-          height : 0.28rem ;
-          margin : 0.25rem auto ;
+          margin : 0.2rem auto 0 ;
           display : flex;
-          flex-direction: row;
+          flex-direction: column;
           justify-content: center;
-          img{
-            width : 0.24rem ;
-            height : 0.27rem ;
+          dl{
+            width : 100% ;
+            height : 0.5rem ;
+            display : flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            /*&:nth-child(1){*/
+              /*margin-bottom : 0.2rem ;*/
+            /*}*/
             &:nth-child(1){
-              margin-right : 0.8rem ;
+              dd{
+                width : 0.24rem ;
+                height : 0.27rem ;
+              }
             }
             &:nth-child(2){
-              width : 0.28rem ;
-              height : 0.26rem ;
+              dd{
+                width : 0.27rem ;
+                height : 0.25rem ;
+              }
+            }
+            dd{
+              img{
+                width : 100% ;
+                height : 100%;
+              }
+            }
+            dt{
+              width : 80% ;
+              height : 100% ;
+              line-height : 0.5rem ;
+              text-indent : 0.3rem ;
+              font-size : 0.17rem ;
+              color : #345;
+
             }
           }
         }
@@ -289,16 +369,7 @@
             margin-left :  0.03rem ;
           }
         }
-        span:nth-last-child(1){
-          width : 1.2rem ;
-          height : 0.3rem ;
-          line-height : 0.3rem ;
-          border-radius : 0.05rem ;
-          background : rgba(22, 155, 213, 1) ;
-          color : #fff ;
-          text-align : center;
-          margin-top : 0.1rem ;
-        }
+
       }
     }
     .money,.plan,.case{
@@ -311,13 +382,13 @@
 
     }
     .money{
-      height : 2rem ;
+      /*height : 2rem ;*/
       float : left ;
       .gold{
         width : 50% ;
         height : 1.3rem ;
         float : left ;
-        margin : 0.25rem 0;
+        margin : 0.1rem 0;
         padding : 0.1rem 0.4rem ;
         box-sizing: border-box;
         li{
@@ -346,7 +417,8 @@
         .cash{
           font-size : 0.16rem ;
           color : #ff0122 ;
-          line-height : 0.25rem ;
+          line-height : 0.5rem ;
+          text-indent : 0.38rem ;
         }
         li:nth-last-child(1){
           color : #666;
@@ -384,14 +456,35 @@
 
       }
       .gold:nth-child(1){
+        width : 55% ;
         border-right : 1px solid #aaa ;
         padding-left : 0 ;
+        li:nth-last-child(1){
+          position : relative ;
+          height : 0.6rem ;
+          .btn:nth-last-child(2){
+            position : absolute ;
+            right : 1rem ;
+            top : 0 ;
+          }
+          .btn:nth-last-child(1){
+            position : absolute ;
+            right : 0.1rem ;
+            top : 0 ;
+          }
+        }
       }
       .gold:nth-child(2){
+        width : 45% ;
         padding-right : 0 ;
         li:nth-last-child(1){
+          position : relative ;
+          height : 0.6rem ;
           .btn{
-            margin-left : 2rem ;
+            position : absolute ;
+            right : 0.1rem ;
+            top : 0 ;
+            /*margin-left : 2rem ;*/
           }
         }
 
@@ -485,13 +578,12 @@
     }
 
     .plan{
-      height : 2rem ;
       float : left ;
       padding : 0.25rem  0.28rem ;
-
       h2{
         width : 100% ;
         height : 0.2rem ;
+        line-height : 0.2rem ;
         font-size : 0.16rem ;
       }
       ul{
@@ -499,14 +591,24 @@
         flex-direction: row;
         flex-wrap: nowrap;
         flex : 1 ;
-        margin-top : 0.25rem ;
+        margin : 0.25rem 0;
         justify-content:space-around;
 
         li{
           width : 2.2rem ;
-          height : 0.8rem ;
-          border : 1px solid #555;
-          border-radius: 0.05rem ;
+          p{
+            height : 0.4rem ;
+            line-height : 0.4rem ;
+            color : #346 ;
+            text-align : center;
+          }
+          img{
+            width : 100% ;
+            height : 0.8rem ;
+            border : 1px solid #aaa;
+            border-radius: 0.05rem ;
+          }
+
         }
 
       }

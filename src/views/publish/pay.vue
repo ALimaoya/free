@@ -1,25 +1,26 @@
 <template>
   <div class="pay">
     <div class="stepImg"><img src="../../assets/imgs/u258.png" alt="" /></div>
-    <p>您现在为{{ title }}存入试用活动款（合计总费用）{{ money }}元</p>
+    <p>您现在为{{ activity.activityTitle }}存入试用活动款（合计总费用）{{ activity.activityTotalAmount }}元</p>
     <div class="note">费用说明：</div>
     <table border="1" bordercolor="#d3d3dd">
       <tr>
         <td>商品担保金</td>
-        <td>下单价格*发放份数*拍的数量</td>
+        <td>下单价格*发放份数*拍的数量: ={{ activity.activityDepositAmount }}元</td>
+        <!--{{ form.buyProductAmount}}*{{ form.activityCalendar.buyProductQuantity}}*{{ form.buyProductQuantity}}-->
       </tr>
       <tr>
         <td>活动服务费</td>
-        <td>商品担保金*费率</td>
+        <td> 商品担保金*费率 = {{ activity.activityServiceAmount }} 元</td>
       </tr>
       <tr>
         <td>合计</td>
         <td>商品担保金*活动服务费</td>
       </tr>
     </table>
-    <div class="result">您当前的押金余额为：{{ rest }}元，本次总共要支付的金额为：{{ recharge }}元。</div>
+    <div class="result">您当前的押金余额为：{{ activity.activityTitle }}元，本次总共要支付的金额为：{{ activity.activityTotalAmount }}元。</div>
     <div class="btn">
-      <el-button type="primary">确认支付</el-button>
+      <el-button type="primary" @click="checkPay">确认支付</el-button>
       <el-button type="text" @click="goActivity">试用活动管理</el-button>
       <el-button type="text" @click="back">返回编辑活动</el-button>
     </div>
@@ -27,22 +28,44 @@
 </template>
 
 <script>
-    export default {
+  import { publishActivity } from "@/api/activity"
+
+  export default {
         name: "pay" ,
       data(){
           return{
-            title : '',
-            money : '',
-            rest : '',
-            recharge : ''
+
+            form : {},
+            tryoutObj : {},
+            activity :{}
           }
       },
+
+      mounted(){
+        this.form = this.$store.state.publishInfo.publishForm ;
+        this.tryoutObj = this.$store.state.publishInfo.tryoutObj ;
+        publishActivity(this.form).then( res => {
+          if(res.data.status === '000000000'){
+            this.activity = res.data.data ;
+          }
+        }).catch( err => {
+          alert('服务器开小差啦，请稍等~')
+        });
+
+      },
       methods : {
+        checkPay(){
+          this.$router.push('/publish/step3')
+        },
         goActivity(){
           this.$router.push('/activity/approval')
         },
         back(){
-          window.history.go(-1) ;
+
+          // this.$store.dispatch('saveTryoutItem',this.tryoutObj);
+          this.$store.dispatch('savePublishInfo',this.form);
+          this.$router.push('/publish/step1');
+
         }
       }
     }

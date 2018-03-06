@@ -10,7 +10,7 @@
       <tr>
         <td>支付密码</td>
         <td>设置密码后开启提现功能，可将平台资产转出</td>
-        <td><span class="set rightnow" @click="setting" v-if="user.payPassword==''">立即设置</span><span class="set" v-else @click="changeSetting('2')">修改</span></td>
+        <td><span class="set rightnow" @click="setting" v-if="payPassword==''">立即设置</span><span class="set" v-else @click="changeSetting('2')">修改</span></td>
       </tr>
       <tr class="warn">
         <td>联系方式</td>
@@ -25,7 +25,7 @@
 
       <tr>
         <td>手机</td>
-        <td class="telTips"><span  @click="tips">
+        <td class="telTips">{{ this.user.mobile }}<span  @click="tips">
           <el-popover ref="popover"
             placement="bottom"
             title="说明"
@@ -42,91 +42,99 @@
     <el-dialog title="设置支付密码" :visible.sync="pswVisible" center :before-close="close">
       <el-form ref="pswForm" :model="pswForm" :rules="pswRule">
         <el-form-item label="密码：" :label-width="pswWidth" prop="payPsw">
-          <el-input placeholde="请输入密码" v-model.trim="pswForm.payPsw"></el-input>
+          <el-input class="pswIpt" :type="pwdType" placeholder="请输入密码" v-model.trim="pswForm.payPsw"></el-input>
+          <span class="show-pwd" @click="showPwd"><svg-icon icon-class="eyeopen" v-if="pwdType===''" /><svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon></span>
+          <div class="getNum" style="width : 1.1rem ;float : right ;"></div>
         </el-form-item>
         <el-form-item label="确认密码：" :label-width="pswWidth" prop="payPsw2">
-          <el-input placeholde="请再次输入密码" v-model.trim="pswForm.payPsw2"></el-input>
+          <el-input class="pswIpt" :type="pwdType" placeholder="请再次输入密码" v-model.trim="pswForm.payPsw2"></el-input>
+          <span class="show-pwd" @click="showPwd"><svg-icon icon-class="eyeopen" v-if="pwdType===''" /><svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon></span>
+          <div class="getNum" style="width : 1.1rem ;float : right ;"></div>
         </el-form-item>
         <el-form-item class="paynum">
           <el-button type="primary" @click="onSubmitPsw('pswForm')">确 认</el-button>
           <el-button @click="cancel('pswForm')">取 消</el-button>
+          <div class="getNum" style="width : 1.1rem ;float : right ;"></div>
         </el-form-item>
       </el-form>
     </el-dialog>
 
-    <!--修改密码-->
-    <el-dialog :title="pswType" :visible.sync="dialogFormVisible" center :before-close="close">
+    <!--修改登录/支付密码-->
+    <el-dialog :title="pswType" :visible.sync="dialogFormVisible" center :before-close="close" >
         <el-form :model="changePsw" ref="changePsw" :rules="changePswRules">
-          <p class="tel" >绑定手机号：</p>
+          <div class="phoneNum">
+            <p class="tel" >绑定手机号：</p><span>{{ user.mobile}}</span>
+          </div>
           <el-form-item label="验证码：" :label-width="formLabelWidth" prop="pswVerify">
             <el-input placeholder="请输入验证码" v-model.trim="changePsw.pswVerify"></el-input><el-button class="getNum" @click="getNum" :disabled="disabled">{{ btntext }}</el-button>
           </el-form-item>
           <!--<div v-if="pswType==='修改登录密码'">-->
             <el-form-item label="新密码：" :label-width="formLabelWidth" prop="newPsw">
-              <el-input placeholder="请输入新密码" v-model.trim="changePsw.newPsw"></el-input>
+              <el-input class="pswIpt" :type="pwdType" placeholder="请输入新密码" v-model.trim="changePsw.newPsw"></el-input><div class="getNum" style="width : 1.1rem ;float : right ;"></div>
+              <span class="show-pwd" @click="showPwd"><svg-icon icon-class="eyeopen" v-if="pwdType===''" /><svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon></span>
             </el-form-item>
             <el-form-item label="确认新密码：" :label-width="formLabelWidth" prop="checkPsw">
-              <el-input placeholder="请再次输入新密码" v-model.trim="changePsw.checkPsw"></el-input>
+              <el-input class="pswIpt" :type="pwdType" placeholder="请再次输入新密码" v-model.trim="changePsw.checkPsw"></el-input><div class="getNum" style="width : 1.1rem ;float : right ;"></div>
+              <span class="show-pwd" @click="showPwd"><svg-icon icon-class="eyeopen" v-if="pwdType===''" /><svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon></span>
             </el-form-item >
         </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="onSubmit('changePsw',pswType)">确 定</el-button>
+        <el-button type="primary" @click="onSubmit('changesw',pswType)">确 定</el-button>
         <el-button @click="cancel('changePsw')">取 消</el-button>
       </div>
     <!--</div>-->
       </el-dialog>
     <!--设置||修改qq/微信/email-->
-    <el-dialog :title="concatType" :visible.sync="contactVisible" center width="5rem" top="18%" :before-close="close">
+    <el-dialog :title="concatType" :visible.sync="contactVisible"  center width="5rem" top="18%" :before-close="close">
       <!---->
-      <el-form :model="QQ" :rules="QQrule" ref="QQ" v-if="ways==='QQ'">
-        <el-form-item :label="labelname" :label-width="formLabelWidth" prop="qqNum" >
-          <el-input placeholder="请输入内容" v-model.number="QQ.qqNum"></el-input>
+      <el-form :model="QQ" :rules="QQrule" ref="QQ" v-if="ways==='QQ'" class="contactInfo">
+        <el-form-item :label="labelname" label-width="0.95rem" prop="qqNum" >
+          <el-input placeholder="请输入内容" v-model.trim="QQ.qqNum"></el-input>
         </el-form-item>
       </el-form>
-      <el-form :model="wx" :rules="wxRule" ref="wx" v-else-if="ways==='wx'">
-        <el-form-item :label="labelname" :label-width="formLabelWidth" prop="wechat" >
+      <el-form :model="wx" :rules="wxRule" ref="wx" v-else-if="ways==='wx'" class="contactInfo">
+        <el-form-item :label="labelname" label-width="0.95rem" prop="wechat" >
           <el-input placeholder="请输入内容" v-model.trim="wx.wechat"></el-input>
         </el-form-item>
       </el-form>
-      <el-form :model="email" :rules="emailRule" ref="email" v-else-if="ways==='email'">
-        <el-form-item :label="labelname" :label-width="formLabelWidth" prop="emailStr" >
+      <el-form :model="email" :rules="emailRule" ref="email" v-else-if="ways==='email'" class="contactInfo">
+        <el-form-item :label="labelname" label-width="0.95rem" prop="emailStr" >
           <el-input placeholder="请输入内容" v-model.trim="email.emailStr"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="onSubmitCon(ways)">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+        <el-button @click="cancel(ways)">取 消</el-button>
       </div>
       <!--</div>-->
     </el-dialog>
     <!--修改手机号-->
-    <el-dialog :title="phonetitle" :visible.sync="phoneVisible" center width="5rem" top="18%" :before-close="cancel">
-      <el-form v-if="oldNumber">
-        <p class="tel tel2" >验证原绑定手机号码：</p>
-        <el-form-item label="验证码：" >
-          <el-input v-model="oldnum" placeholder="请输入验证码" @blur="verifyNum(oldnum)"></el-input>
+    <el-dialog :title="phonetitle" :visible.sync="phoneVisible" center  top="18%" :before-close="close">
+      <el-form v-if="oldNumber" :model="verifyForm" ref="verifyForm" :rules="verifyRules" class="phoneBox">
+        <p class="tel tel2" >验证原绑定手机号码：{{user.mobile}}</p>
+        <el-form-item label="验证码：" prop="oldnum">
+          <el-input v-model="verifyForm.oldnum" placeholder="请输入验证码" ></el-input>
           <el-button class="getNum" @click="getNum" :disabled="disabled">{{btntext}}</el-button>
         </el-form-item>
-        <span v-if="isYZM" class="noipt">请输入验证码</span>
-
         <el-form-item  class="nextBtn">
-          <el-button type="primary" @click="next">下一步</el-button>
-          <el-button @click="cancel">取 消</el-button>
+          <el-button type="primary" @click="next('verifyForm')">下一步</el-button>
+          <el-button @click="cancel('verifyForm')">取&nbsp;&nbsp;&nbsp;&nbsp;消</el-button>
         </el-form-item>
       </el-form>
-        <el-form ref="phoneForm" :model="phoneForm" :rules="phoneRule" v-else-if="newNumber">
+        <el-form ref="phoneForm" :model="phoneForm" :rules="phoneRule" v-else-if="newNumber" class="phoneBox">
           <el-form-item label="新手机：" prop="newnumber" >
-            <el-input v-model.number="phoneForm.newnumber" placeholder="请输入手机号"></el-input>
+            <el-input v-model.trim="phoneForm.newnumber" placeholder="请输入手机号"></el-input>
           </el-form-item>
           <el-form-item label="验证码：" prop="verify">
-            <el-input :model.number="phoneForm.verify" placeholder="请输入验证码"></el-input>
+            <el-input v-model="phoneForm.verify" placeholder="请输入验证码"></el-input>
             <el-button class="getNum" @click="getNum" :disabled="disabled">{{btntext}}</el-button>
           </el-form-item>
+          <el-form-item class="nextBtn">
+              <el-button type="primary" @click="onsubmitTel('phoneForm')">确&nbsp;&nbsp;&nbsp;&nbsp;定</el-button>
+              <el-button @click="cancel('phoneForm')">取&nbsp;&nbsp;&nbsp;&nbsp;消</el-button>
+          </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer" v-if="newNumber">
-        <el-button type="primary" @click="onsubmitTel('phoneForm')">确定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
+
     </el-dialog>
   </div>
 </template>
@@ -134,10 +142,12 @@
 <script>
   import ElButton from "element-ui/packages/button/src/button";
   import {  validateWX ,validatePhone ,validQQ ,validateEmail } from '@/utils/validate'
+  import ElFormItem from "element-ui/packages/form/src/form-item";
 
   export default {
       name: "settings",
       components: {
+        ElFormItem,
         ElButton,
       },
     data(){
@@ -180,8 +190,10 @@
         }else{
           if(value !== this.verifyNumber){
             callback(new Error('验证码有误，请重新输入'))
+          }else{
+            callback();
           }
-          callback();
+
         }
       };
       const validateTel = (rule ,value ,callback) => {
@@ -201,36 +213,39 @@
         }else{
           if( rule.field === 'payPsw'){
             if(this.pswForm.payPsw2 !==''){
-              this.firstPsw = value ;
               this.$refs.pswForm.validateField('payPsw2')
             }
-            callback();
-          }else
-            if( rule.field === 'newPsw'){
+              callback();
+          }else if( rule.field === 'newPsw'){
             if(this.changePsw.checkPsw !==''){
-              this.firstPsw = value;
               this.$refs.changePsw.validateField('checkPsw')
             }
-            callback();
+              callback();
           }
-
         }
       };
       const validPsw2 =(rule,value ,callback) => {
         if(value===''){
           callback(new Error('请再次输入新密码'))
-        }else{
-          if(value !== this.firstPsw){
-            callback(new Error('两次输入的密码不一致，请重新确认'))
-
+        }else {
+          if (rule.field === 'payPsw2') {
+            if (this.pswForm.payPsw !== value) {
+              callback(new Error('两次输入的密码不一致，请重新确认后再次输入'))
+            }else{
+              callback();
+            }
+          } else if (rule.field === 'checkPsw') {
+            if (this.changePsw.newPsw !== value) {
+              callback(new Error('两次输入的密码不一致，请重新确认后再次输入'))
+            } else {
+              callback();
+            }
           }
-          callback();
         }
+
       };
         return{
           telTips : false ,
-          // setBox : false ,
-          // changeBox : false ,
           popover : false ,
           dialogFormVisible: false,
           contactVisible : false ,
@@ -318,25 +333,38 @@
           },
           btntext : ' 获取验证码',
           isYZM : false ,
-          oldnum : '',
-          firstPsw : '',
+          isWrong : false ,
+          verifyForm : {
+            oldnum : '',
+          },
+          verifyRules : {
+            oldnum : [
+              {
+                validator : validateYZM , trigger : 'blur',required : true
+
+              }
+            ]
+          },
           disabled : false ,
           getNew : false ,
           verifyNumber : '',
           user : {
-            mobile: '',
+            mobile: '13222222222',
             qq : '',
             wechat : '',
-            payPassword : ''
-          }
+          },
+          payPassword : '' ,
+          pwdType : 'password'
+
+
         }
     },
     computed : {
       userInfo(){
-        this.user.modile = this.$store.state.mobile ,
-        this.user.qq = this.$store.state.qq ,
-        this.user.wechat = this.$store.state.wechat
-        return this.user
+        // this.user.modile = this.$store.state.mobile ,
+        // this.user.qq = this.$store.state.qq ,
+        // this.user.wechat = this.$store.state.wechat
+        // return this.user
       }
     },
     methods:{
@@ -417,8 +445,10 @@
               center: true
             });
             this.pswVisible = false;
-            this.user.payPassword = this.pswForm.payPsw ;
-            console.log(this.pswForm)
+            this.payPassword = this.pswForm.payPsw ;
+            console.log(this.pswForm ,this.payPassword);
+            this.$refs[formName].resetFields();
+
           } else {
             this.$message({
               message: '设置失败',
@@ -428,7 +458,6 @@
             return false ;
 
           }
-          this.$refs[formName].resetFields();
 
         })
       },
@@ -448,13 +477,14 @@
 
             }else if(type === '修改支付密码'){
               console.log('修改支付密码');
-              this.user.payPassword = this.changePsw.payPsw ;
+              this.payPassword = this.changePsw.payPsw ;
 
             }
-            this.$refs[formName].resetFields();
+            console.log(this.changePsw)
             this.dialogFormVisible = false ;
             // this.pswVisible = false;
-            console.log(this.pswForm)
+            this.$refs[formName].resetFields();
+
           } else {
             this.$message({
               message: '修改失败，请重新尝试',
@@ -477,19 +507,19 @@
               type: 'success',
               center : true
             });
-            // this.user.qq = this.contactInfo.QQ ;
-            // this.user.wechat = this.contactInfo.wechat ;
-            // this.user.email = this.contactInfo.email ;
+
             this.contactVisible = false ;
             if(ways === 'QQ'){
               this.user.qq = this.QQ.qqNum ;
               this.contactType[0].value = this.QQ.qqNum ;
               console.log(this.QQ)
             }else if( ways === 'wx'){
+              this.user.wechat = this.wx.wechat
               this.contactType[1].value = this.wx.wechat ;
               console.log(this.wx,this.contactType[1].value)
 
             }else if(ways === 'email'){
+              // this.user.email = this.email.emailStr ;
               this.contactType[2].value = this.email.emailStr ;
               console.log(this.email)
 
@@ -519,7 +549,10 @@
             });
             this.phoneVisible = false ;
             this.newNumber = false ;
-            console.log(this.phoneForm)
+            this.user.mobile = this.phoneForm.newnumber ;
+            console.log(this.phoneForm) ;
+            this.$refs[formName].resetFields();
+
           }else{
             this.$message({
               message : '提交失败',
@@ -542,13 +575,7 @@
           num-- ;
           this.disabled = true ;
 
-          if(this.getNew==true){
-            this.btntext = "获取验证码" ;
-            clearInterval(timer) ;
-            this.disabled = false ;
-
-
-          } else if(num === 0){
+          if(this.getNew==true|| num === 0){
             this.btntext = "获取验证码" ;
             clearInterval(timer) ;
             this.disabled = false ;
@@ -558,31 +585,23 @@
         },1000)
       },
 
-      //核对修改绑定手机号时的验证码
-      verifyNum(num){
-        if(num == ''){
-          this.isYZM = true ;
-        }else{
-          this.isYZM = false ;
-        }
-      },
-
-
-      next(){
-        this.verifyNum(this.oldnum);
-            if(this.isYZM == true){
-              return false
-            }else{
+      //修改绑定手机号第一步：验证输入验证码
+      next(formName){
+          this.$refs[formName].validate((valid) => {
+            if(valid){
               this.getNew = true ;
               setTimeout(() =>{
                 this.oldNumber = false ;
                 this.newNumber = true ;
                 this.phonetitle = '设置新手机号码' ;
                 console.log(this.newNumber)
-              },800)
+              },500);
+              this.$refs[formName].resetFields()
 
+            }else{
+              return false ;
             }
-
+          })
 
       },
 
@@ -601,16 +620,19 @@
 
       //叉号关闭弹窗
       close(){
-        this.$confirm('确认关闭？')
-          .then(_ => {
-            this.pswVisible = false;
-            this.dialogFormVisible = false;
-            this.getNew = true ;
-            location.reload();
-          })
-          .catch(_ => { });
+        this.pswVisible = false;
+        this.dialogFormVisible = false;
+        this.getNew = true ;
+        location.reload();
+      },
 
-      }
+      showPwd() {
+        if (this.pwdType === 'password') {
+          this.pwdType = ''
+        } else {
+          this.pwdType = 'password'
+        }
+      },
     }
     }
 </script>
@@ -710,9 +732,42 @@
 
     }
     .el-dialog{
+      .el-form{
+        display : flex ;
+        flex-direction: column;
+        align-items: center;
+      }
+      .pswIpt{
+        position : relative ;
+      }
+      .show-pwd {
+        position: absolute;
+        left: 1.8rem;
+        top: 0.03rem;
+        font-size: 0.16rem;
+        color: #889aa4;
+        cursor: pointer;
+        user-select:none;
+      }
        .paynum{
          padding-left : 1.85rem ;
        }
+      .phoneNum{
+        width : 4.6rem;
+        margin : 0 auto ;
+        p{
+          width : 1.2rem ;
+          float : left ;
+        }
+        span{
+          width : 60% ;
+          /*float : right ;*/
+          height : 0.4rem ;
+          line-height : 0.4rem ;
+          display : inline-block ;
+          color : #333 ;
+        }
+      }
       .tel{
         padding-left : 0.25rem ;
         height : 0.4rem ;
@@ -723,8 +778,27 @@
       .tel2{
         padding-left : 0.02rem;
       }
+      .phoneBox{
+        display : flex;
+        align-items: center;
+        .tel{
+          width : 80% ;
+          text-align : left ;
+        }
+        .el-form-item{
+          width : 80% ;
+          /*margin : 0.1rem auto ;*/
+          display : flex;
+          flex-direction: row;
+          /*justify-content: center;*/
+        }
+
+      }
       .nextBtn{
-        padding: 0 1.28rem ;
+        display : flex ;
+        flex : 1 ;
+        justify-content: center;
+        flex-direction: row;
       }
       .noipt{
         width : 100% ;
@@ -741,6 +815,11 @@
         margin-left : 0.3rem ;
         padding :  0.12rem 0.15rem;
 
+      }
+      .contactInfo{
+        .el-form-item{
+          width : 80% ;
+        }
       }
       .el-input{
         width : 2rem ;

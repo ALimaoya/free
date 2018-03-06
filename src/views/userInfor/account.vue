@@ -11,20 +11,20 @@
     <div v-if="accountBox" class="form">
       <p>绑定支付宝</p>
         <el-form  ref="payForm" :model="payForm" :rules="payRule" center>
-          <el-form-item label="支付宝姓名：" label-windth="1.2rem">
+          <el-form-item label="支付宝姓名："  prop="name">
             <el-input v-model.trim="payForm.name"></el-input>
           </el-form-item>
-          <el-form-item label="支付宝账号：" label-windth="1.2rem">
+          <el-form-item label="支付宝账号：" label-windth="1.2rem" prop="account">
             <el-input v-model.trim="payForm.account"></el-input>
           </el-form-item>
           <span>温馨提示：如果您填写的支付宝账号不正确，可能无法成功返款，平台不承担由此产生的一切费用。</span>
           <el-form-item class="btn">
-            <el-button @click="accountBox=false">取消</el-button>
+            <el-button @click="cancel('payForm')">取消</el-button>
             <el-button type="primary" @click="onSubmit('payForm')">确定</el-button>
           </el-form-item>
         </el-form>
     </div>
-    <div v-if="userInfo==false&&accountBox==false"  class="accountImg">
+    <div v-if="accountBox==false&&payForm.account===''"  class="accountImg">
       <img src="../../assets/imgs/u860.png" alt="" />
     </div>
     <div v-if="userInfo" class="payInfo">
@@ -72,8 +72,8 @@
               account : ''
             },
             payRule : {
-              name : [{ validator : validateName ,required : true ,trigger : 'click' }],
-              account : [{ validator : validateAccount ,required : true ,trigger : 'click' }]
+              name : [{ validator : validateName ,required : true ,trigger : 'blur' }],
+              account : [{ validator : validateAccount ,required : true ,trigger : 'blur' }]
 
             }
           }
@@ -82,6 +82,7 @@
       binding(){
         this.accountBox = true ;
       },
+      // 添加支付宝账号
       onSubmit(formName){
         this.$refs[formName].validate( (valid) => {
           if(valid){
@@ -95,18 +96,25 @@
           }else{
             this.$message({
               type : 'error' ,
-              message : '提交失败',
+              message : '提交失败，请确认信息后重新提交',
               center : true
             });
             return false
           }
         })
       },
+      //解绑支付宝账号
       removeAccount(){
         this.payForm.name = '';
         this.payForm.account = '';
         this.userInfo = false ;
+      },
+
+      cancel(formName){
+        this.$refs[formName].resetFields();
+        this.accountBox = false ;
       }
+
     }
 
   }
@@ -163,27 +171,34 @@
         margin : 0 auto 0.2rem;
         text-align : center ;
       }
-      .el-form-item{
-        padding-left :  1rem ;
+      .el-form{
+        display : flex ;
+        flex-direction: column;
+        align-items:  center ;
+        .el-form-item{
+          flex-direction: row;
+          display : flex;
+        }
+        .btn{
+          .el-button:nth-child(1){
+            margin-right : 0.3rem ;
+          }
+        }
+        .el-input{
+          width : 2.5rem ;
+        }
+        span{
+          width : 100%;
+          height : 0.5rem ;
+          line-height : 0.5rem ;
+          font-size : 0.12rem ;
+          color : #4a4a4a;
+          display : block ;
+          text-align : center ;
 
-      }
-      .btn{
-          padding-left : 2rem ;
-        .el-button:nth-child(1){
-          margin-right : 0.3rem ;
         }
       }
-      .el-input{
-        width : 2.5rem ;
-      }
-      span{
-        width : 100%;
-        font-size : 0.12rem ;
-        color : #4a4a4a;
-        padding-left : 0.3rem ;
-        margin-bottom : 0.2rem ;
-        display : block ;
-      }
+
     }
     .payInfo{
       width : 2.5rem ;
