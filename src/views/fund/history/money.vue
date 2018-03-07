@@ -56,7 +56,7 @@
 <script>
 
   import ElFormItem from "element-ui/packages/form/src/form-item";
-  import { getWallet } from "@/api/money"
+  import { getWalletLog } from "@/api/fund"
   export default {
     components: {ElFormItem},
     name: "money",
@@ -95,7 +95,7 @@
           }
       },
       mounted(){
-        // this.getList();
+        this.getMoneyList();
       },
       methods : {
         search(form){
@@ -103,14 +103,19 @@
           console.log(form)
         },
 
-        getList(){
-          // getWallet().then( res => {
-          //   if(  res.data.code === '000000000'){
-          //     this.tableData = res.data.data ;
-          //   }
-          // }).catch( err => {
-          //   alert('服务器开小差啦，请稍等~')
-          // })
+        getMoneyList(){
+          let _data={
+            page:this.currentPage,
+            size:this.pageSize,
+            type:this.type,
+          }
+          getWalletLog(_data).then( res => {
+            if(  res.data.code === '000000000'){
+              this.tableData = res.data.data ;
+            }
+          }).catch( err => {
+            alert('服务器开小差啦，请稍等~')
+          })
         },
 
         handleSizeChange(val) {

@@ -191,7 +191,6 @@
       },
       handleLogin() {
         this.$refs.RegForm.validate(valid => {
-
           if (valid) {
             this.loading = true ;
 
