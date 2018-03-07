@@ -67,6 +67,7 @@ export default {
       if(value === ''){
         callback(new Error('请输入验证码'))
       }else{
+        callback();
         // if(value !== this.imgCode){
         //   callback(new Error('验证码输入错误，请重新输入'))
         // }
@@ -82,13 +83,11 @@ export default {
       loginRules: {
         mobile: [{ required: true, trigger: 'blur', validator: validateTel }],
         password: [{ required: true, trigger: 'blur', validator: validatePass }],
-        captcha : [{ trigger : 'blur' ,validator : validCaptcha}]
       },
       imgCode : '',
       userToken : '',
       loading: false,
       pwdType: 'password',
-      validCap : '',
       examine : false
 
     }

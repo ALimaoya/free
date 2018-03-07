@@ -27,7 +27,7 @@ service.interceptors.response.use(
 
   response => {
 //     // const res = response
-    if (response.data.code !== '000000000') {
+    if (response.data.status !== '000000000') {
       Message({
             message: '服务器开小差了，请稍等~',
             type: 'error',

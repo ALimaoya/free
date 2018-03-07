@@ -179,7 +179,7 @@
                   <div v-if="item===''"></div>
                   <!--<div v-else="item == day"><span>{{item }}</span><p>试用展示时间</p></div>-->
                   <div class="setGoods" v-else-if="item.date" >
-                    <span class="dateNum">{{ item.date }}</span>
+                    <span class="dateNum">{{ item.num }}</span>
                     <div>
                       <input type="button" class="miniBtn" @click="setNum(1,goodsAmount[item.index],item.index,item.date)" value="-"/>
                       <input v-model="goodsAmount[item.index]"  @blur="numIpt(goodsAmount[item.index],item.index,item.date)" placeholder="投放数量" />
@@ -638,17 +638,17 @@
           if(restDay){
             let index = 0 ;
             for(let i = startDay;i<= dayLong ;i++){
-              daysArr.push({ date : i , index : index});
+              daysArr.push({ date : parseTime(date.getTime()+ (index+1)*24*3600*1000) ,num : i, index : index});
               index ++ ;
             }
             for(let j = 1; j <= restDay ;j ++ ){
-              daysArr.push({ date : j , index : index});
+              daysArr.push({ date : parseTime(date.getTime()+ (index+1)*24*3600*1000) , num : j,index : index});
               index ++ ;
             }
           }else{
             let index = 0 ;
             for(let i = startDay;i<= startDay +dayLength ;i++){
-              daysArr.push({ date : i , index : index});
+              daysArr.push({ date : parseTime(date.getTime()+ (index+1)*24*3600*1000) ,num : i, index : index});
               index ++ ;
             }
           }
@@ -680,16 +680,20 @@
           }else{
               this.goodsAmount[index] = ++value ;
           }
-          console.log(this.goodsAmount,this.form.activityCalendar);
-          this.form.activityCalendar.splice(index ,0,{ activityDate : date , tryoutQuantity :this.goodsAmount[index] });
-          console.log(this.goodsAmount,this.form.activityCalendar);
+          if(this.form.activityCalendar[index] === undefined){
+            this.form.activityCalendar.splice(index ,0,{ activityDate : date , tryoutQuantity :this.goodsAmount[index] });
+          }else{
+            this.form.activityCalendar.splice(index ,1,{ activityDate : date , tryoutQuantity :this.goodsAmount[index] });
+
+          }
+          console.log(this.goodsAmount,this.form.activityCalendar,date);
 
           this.getProgress(index,date);
 
         },
 
         //输入框修改投放数量
-        numIpt(value,index){
+        numIpt(value,index,date){
           if(value< 1 || isNaN(value)){
             this.warn = true ;
           }else{
@@ -699,11 +703,16 @@
         },
 
         getProgress(index,date){
-
+          if(this.form.activityStartTime === ''){
+            this.form.activityStartTime = new Date().toString();
+            // console.log(this.form.activityStartTime,2);
+          }
           if(index !== 0){
             for(let j = 0 ; j < index ; j++){
               if(this.goodsAmount[j] === undefined){
                 this.goodsAmount[j] = 1 ;
+                this.form.activityCalendar.splice(j ,0,{ activityDate : (parseTime(new Date(this.form.activityStartTime).getTime()+(j+1)*24*3600*1000)) , tryoutQuantity :1 });
+
                 console.log(date);
                 // this.form.activityCalendar[j].activityDate =
               }
@@ -711,17 +720,13 @@
           }
           let dayAmount = 0 ;
           this.goodsAmount.map((i) => {
-            // this.form.activityCalendar[i].tryoutQuantity = i ;
             dayAmount = (dayAmount + i)*1 ;
           });
           this.tryoutAmount = dayAmount ;
           this.tryoutObj.dayNum = this.goodsAmount.length ;
 
           // console.log(this.form.activityStartTime.getTime(),1111111)
-          if(this.form.activityStartTime === ''){
-            this.form.activityStartTime = new Date().toString();
-            // console.log(this.form.activityStartTime,2);
-          }
+
           this.form.endTime = parseTime(new Date(this.form.activityStartTime).getTime() + this.tryoutObj.dayNum * 24* 3600*1000 );
           // console.log(this.form.endTime,1);
 

@@ -37,6 +37,9 @@ const user = {
           const token = response.data.data;
           setToken(token);
           commit('SET_TOKEN', token);
+          // if(response.data.code === '000000000'){
+          //
+          // }
           resolve()
         }).catch(error => {
           console.log(error);

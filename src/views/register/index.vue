@@ -70,8 +70,8 @@
         if(value === ''){
           callback(new Error('请输入图片验证码'))
         }else{
-          this.getPhoneCode(value);
-
+          this.phoneMessaage = true ;
+          callback();
         }
       };
       const validMessage = ( rule,value ,callback) => {
@@ -172,11 +172,19 @@
 
       },
       getPhoneCode(value){
+        console.log({ captcha : value , token : this.userToken},1);
+
         getMessageCode(this.RegForm.mobile,{ captcha : value , token : this.userToken}).then( res => {
-          if(res.data.status === '000000000'){
-            this.phoneMessaage = true ;
-            this.mobileCode = res.data.data ;
-          }
+          // if(res.data.status === "000000000"){
+          //   this.phoneMessaage = true ;
+          //   this.mobileCode = res.data.data ;
+          // }else{
+          //   this.$message({
+          //     massage : '图片验证码输入错误，请重新输入',
+          //     type : 'error',
+          //     center : true
+          //   })
+          // }
         }).catch( err => {
           alert('服务器开小差啦，请稍等~')
         });

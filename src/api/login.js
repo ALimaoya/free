@@ -2,22 +2,31 @@ import request from '@/utils/request'
 
 export function login(data) {
   return request({
-    url: '/tryout/login',
+    url: '/POST/tryout/login',
+    // url: '/tryout/login',
     method: 'post',
-    data
+    headers : {
+      'Content-Type' : 'multipart/form-data'
+    },
+    data: data
   })
 }
 export function register(data) {
   return request({
-    url: '/tryout/register',
+    url: '/POST/tryout/account/register',
+    // url: '/tryout/account/register',
     method: 'post',
-    data
+    headers : {
+      'Content-Type' : 'multipart/form-data'
+    },
+    data : data
   })
 }
 export function getInfo() {
   return request({
-    url: '/tryout/home/data',
-    method: 'get',
+    url: '/GET/tryout/home/data',
+    // url: '/tryout/home/data',
+    method: 'GET',
 
   })
 }
@@ -32,7 +41,8 @@ export function changePsw(){
 export function getCaptcha(){
   return request({
     url : '/tryout/captcha',
-    method : 'get'
+    method : 'get',
+
   })
 }
 
@@ -40,6 +50,9 @@ export function getMessageCode(mobile ,data){
   return request({
     url : '/tryout/captcha/'+ mobile ,
     method : 'post',
-    data : data
+    data : data ,
+    headers : {
+      'Content-Type' : 'multipart/form-data'
+    },
   })
 }
