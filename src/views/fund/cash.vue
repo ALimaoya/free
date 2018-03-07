@@ -58,7 +58,7 @@
 <script>
     import ElForm from "element-ui/packages/form/src/form";
     import ElFormItem from "element-ui/packages/form/src/form-item";
-    import { handleCash } from "@/api/money"
+    import { handleCash } from "@/api/fund"
     export default {
       components: {
         ElFormItem,

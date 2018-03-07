@@ -10,7 +10,7 @@
       <tr>
         <td>支付密码</td>
         <td>设置密码后开启提现功能，可将平台资产转出</td>
-        <td><span class="set rightnow" @click="setting" v-if="payPassword==''">立即设置</span><span class="set" v-else @click="changeSetting('2')">修改</span></td>
+        <td><span class="set rightnow" @click="setting" v-if="!user.isBindPayPassword">立即设置</span><span class="set" v-else @click="changeSetting('2')">修改</span></td>
       </tr>
       <tr class="warn">
         <td>联系方式</td>
@@ -143,6 +143,7 @@
   import ElButton from "element-ui/packages/button/src/button";
   import {  validateWX ,validatePhone ,validQQ ,validateEmail } from '@/utils/validate'
   import ElFormItem from "element-ui/packages/form/src/form-item";
+  import { getThirdAccount,setThirdAccount} from "@/api/userInfor"
 
   export default {
       name: "settings",
@@ -349,9 +350,10 @@
           getNew : false ,
           verifyNumber : '',
           user : {
-            mobile: '13222222222',
+            mobile: '',
             qq : '',
             wechat : '',
+            isBindPayPassword:false,
           },
           payPassword : '' ,
           pwdType : 'password'
@@ -359,18 +361,26 @@
 
         }
     },
-    computed : {
-      userInfo(){
-        // this.user.modile = this.$store.state.mobile ,
-        // this.user.qq = this.$store.state.qq ,
-        // this.user.wechat = this.$store.state.wechat
-        // return this.user
-      }
+    created(){
+      this.getThirdInfo()
     },
     methods:{
         tips(){
           this.telTips = true ;
         },
+        // 获取第三方账号信息
+        getThirdInfo(){
+          getThirdAccount().then( res => {
+          if(res.data.status === '00000000'){
+              this.user=res.data.data;
+              this.contactType[0].value = this.user.qq;
+              this.contactType[1].value = this.user.wechat;
+              this.contactType[2].value = this.user.email;
+          }
+        }).catch( err =>{
+          alert('服务器开小差啦，请稍等~')
+        })
+      },
       //设置支付密码/QQ/微信/邮箱弹窗
       setting(type){
         if(type === 'QQ'){
@@ -404,7 +414,6 @@
           if (index === '1') {
             this.pswType = '修改登录密码'
           } else if (index === '2') {
-
             this.pswType = '修改支付密码'
           }
         }else if(index==='手机'){
@@ -507,32 +516,43 @@
               type: 'success',
               center : true
             });
-
+            let _typeId="";
+            let _account="";
             this.contactVisible = false ;
             if(ways === 'QQ'){
               this.user.qq = this.QQ.qqNum ;
-              this.contactType[0].value = this.QQ.qqNum ;
-              console.log(this.QQ)
+              _account = this.QQ.qqNum ;
+              _typeId='1';
             }else if( ways === 'wx'){
               this.user.wechat = this.wx.wechat
-              this.contactType[1].value = this.wx.wechat ;
-              console.log(this.wx,this.contactType[1].value)
+              _account = this.wx.wechat ;
+              _typeId='2'
 
             }else if(ways === 'email'){
               // this.user.email = this.email.emailStr ;
-              this.contactType[2].value = this.email.emailStr ;
-              console.log(this.email)
+              _account = this.email.emailStr ;
+              _typeId='3'
 
             }
-            this.$refs[ways].resetFields();
-
-          }else{
-            this.$message({
-              message : '提交失败',
-              type : 'error',
-              center : true
-            });
-            return false ;
+            let _data={
+              account:_account,
+              type:_typeId
+            }
+            setThirdAccount(_data).then( res => {
+              if(res.data.status === '00000000'){
+                  this.getThirdInfo();
+                  this.$refs[ways].resetFields();
+                }else{
+                  this.$message({
+                    message: res.data.message,
+                    type: 'success',
+                    center : true
+                  });
+                }
+              }).catch( err =>{
+                alert('服务器开小差啦，请稍等~')
+            })
+         
           }
         })
         // console.log(formName)
@@ -634,7 +654,7 @@
         }
       },
     }
-    }
+ }
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">

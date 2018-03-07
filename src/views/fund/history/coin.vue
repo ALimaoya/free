@@ -49,7 +49,7 @@
 </template>
 
 <script>
-  import { getWallet } from "@/api/money"
+  import { getWallet } from "@/api/fund"
 
   export default {
     name: "coin",

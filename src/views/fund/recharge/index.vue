@@ -63,7 +63,7 @@
     import ElFormItem from "element-ui/packages/form/src/form-item";
     import ElButton from "element-ui/packages/button/src/button";
     import ElRadioGroup from "element-ui/packages/radio/src/radio-group";
-    import { handleRecharge ,handleGold} from "@/api/money"
+    import { handleRecharge ,handleGold} from "@/api/fund"
     export default {
       components: {
         ElRadioGroup,
