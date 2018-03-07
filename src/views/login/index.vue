@@ -21,7 +21,7 @@
         <span class="svg-container">
           <img src="../../assets/imgs/verify2.png" alt=""/>
         </span>
-        <el-input name="captcha" style="width : 1.5rem;" :type="pwdType"  v-model="loginForm.captcha" autoComplete="on"
+        <el-input style="width : 1.5rem;" :type="pwdType"  v-model="loginForm.captcha" autoComplete="on"
                   placeholder="请输入验证码"></el-input>
         <img class="show-captcha" :src="'data:image/png;base64,'+ imgCode" alt="" @click="changeCaptcha"/>
 
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { validatePhone } from '@/utils/validate'
+import { validatePhone ,validPassWord } from '@/utils/validate'
 import { getCaptcha } from "@/api/login"
 export default {
   name: 'login',
@@ -56,8 +56,8 @@ export default {
       }
     };
     const validatePass = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('密码不能小于6位'))
+      if (!validPassWord(value)) {
+        callback(new Error('密码为8-16位的数字、字母组合'))
       } else {
 
         callback()
@@ -68,9 +68,7 @@ export default {
         callback(new Error('请输入验证码'))
       }else{
         callback();
-        // if(value !== this.imgCode){
-        //   callback(new Error('验证码输入错误，请重新输入'))
-        // }
+
       }
     };
     return {
@@ -83,6 +81,7 @@ export default {
       loginRules: {
         mobile: [{ required: true, trigger: 'blur', validator: validateTel }],
         password: [{ required: true, trigger: 'blur', validator: validatePass }],
+        captcha : [{ required : this.examine , trigger : 'blur' ,validator : validCaptcha}]
       },
       imgCode : '',
       userToken : '',
@@ -91,6 +90,9 @@ export default {
       examine : false
 
     }
+  },
+  mounted(){
+    this.changeCaptcha();
   },
   methods: {
 
@@ -106,17 +108,41 @@ export default {
       this.$refs[loginForm].validate(valid => {
         if (valid) {
           this.loading = true;
-          this.$store.dispatch('Login', { mobile : this.loginForm.mobile, password : this.loginForm.password }).then(() => {
+          let formData = new FormData();
+          formData.append('mobile',this.loginForm.mobile);
+          formData.append('password',this.loginForm.password);
+          formData.append('captcha',this.loginForm.captcha);
+          formData.append('token',this.userToken);
+          this.$store.dispatch('Login', formData ).then((res) => {
+            console.log(res);
             this.loading = false;
-            this.$router.push({ path: '/' })
-          }).catch(() => {
+
+            if(res.data.status === '000000000'){
+              this.$router.push({ path: '/' });
+              // this.$router.push('/activity/approval')
+            }else{
+              this.examine = true ;
+              if( res.data.status === '001003006'){
+                this.$message({
+                  message : '登录密码输入错误，请确认后重新输入',
+                  type : 'error',
+                  center : 'true'
+                })
+              }else if( res.data.status === '001003003'){
+                this.$message({
+                  message : res.data.message ,
+                  type : 'error',
+                  center : 'true'
+                })
+              }
+            }
+
+          }).catch(err => {
 
             this.loading = false
           })
         } else {
           console.log('登录失败，请重试');
-          this.examine = true ;
-
           return false
         }
       })

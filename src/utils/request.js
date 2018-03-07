@@ -27,25 +27,25 @@ service.interceptors.response.use(
 
   response => {
 //     // const res = response
-    if (response.data.status !== '000000000') {
-      Message({
-            message: '服务器开小差了，请稍等~',
-            type: 'error',
-            duration: 5 * 1000
-          });
-    }
+//     if (response.data.status !== '000000000') {
+//       Message({
+//             message: '服务器开小差了，请稍等~',
+//             type: 'error',
+//             duration: 5 * 1000
+//           });
+//     }
 //
-    if (response.message !== 'success') {
-
-        Message({
-          message: response.message,
-          type: 'error',
-          duration: 5 * 1000
-        })
-        // store.dispatch('LogOut').then(() => {
-        //   location.reload()// 为了重新实例化vue-router对象 避免bug
-        // })
-      }
+//     if (response.message !== 'success') {
+//
+//         Message({
+//           message: response.message,
+//           type: 'error',
+//           duration: 5 * 1000
+//         })
+//         // store.dispatch('LogOut').then(() => {
+//         //   location.reload()// 为了重新实例化vue-router对象 避免bug
+//         // })
+//       }
 // //     // //
 // //     // //
 // //     // //   // 50008:非法的token; 50012:其他客户端登录了;  50014:Token 过期了;

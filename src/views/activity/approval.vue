@@ -1,7 +1,7 @@
 <template>
   <div class="approval">
     <div class="search">
-      <el-select size="small" v-model="activity.EQ_platformType" filterable placeholder="请选择活动状态">
+      <el-select size="small" v-model="activity.EQ_platformType" filterable placeholder="请选择活动平台">
         <el-option
           v-for="item in platformOptions"
           :key="item.value"

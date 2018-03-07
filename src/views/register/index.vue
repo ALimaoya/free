@@ -20,9 +20,10 @@
         <span class="svg-container svg-container_login">
           <svg-icon icon-class="user" />
         </span>
-        <el-input type="text" v-model="RegForm.message" autoComplete="on" placeholder="请输入短信验证码" />
+        <el-input type="text" v-model.trim="RegForm.message"  autoComplete="on" placeholder="请输入短信验证码" />
         <el-button class="show-captcha codeBtn" size="mini" plain @click="getMessage" :disabled="disabled">{{ btntext }}</el-button>
       </el-form-item>
+      <!--<span v-if="messageWarn" class="messageWarn">{{ warnText }}</span>-->
       <el-form-item prop="password">
         <span class="svg-container">
           <svg-icon icon-class="password"></svg-icon>
@@ -49,7 +50,7 @@
 </template>
 
 <script>
-  import { validatePhone } from '@/utils/validate'
+  import { validatePhone ,validPassWord } from '@/utils/validate'
   import { getCaptcha , getMessageCode } from "@/api/login"
   import SvgIcon from "../../components/SvgIcon/index";
   export default {
@@ -78,14 +79,12 @@
         if(value === ''){
           callback(new Error('请输入短信验证码'))
         }else{
-          if( value !== this.mobileCode ){
-            callback(new Error('验证码输入错误，请重新输入'))
-          }
+          callback();
         }
       };
       const validatePass = (rule, value, callback) => {
-        if (value.length < 6) {
-          callback(new Error('密码不能小于6位'))
+        if (!validPassWord(value)) {
+          callback(new Error('密码为8-16位的数字、字母组合'))
         } else {
           if(this.RegForm.checkPsw !== ''){
             this.$refs.RegForm.validateField('checkPsw') ;
@@ -114,14 +113,15 @@
         RegRules: {
           mobile: [{ required: true, trigger: 'blur', validator: validateTel }],
           imgNum : [{ required : true ,trigger :' blur' ,validator : validCaptcha}],
-          message : [{ required : true ,trigger :' blur' ,validator : validMessage}],
+          message : [{ required : true ,trigger :' blur', validator : validMessage  }],
           password: [{ required: true, trigger: 'blur', validator: validatePass }],
           checkPsw: [{ required: true, trigger: 'blur', validator: validateCheck }]
 
         },
         loading: false,
         pwdType: 'password',
-        mobileCode : '',
+        // messageWarn : false ,
+        // warnText : '',
         imgCode : '' ,
         userToken : '',
         btntext : '获取验证码',
@@ -172,44 +172,70 @@
 
       },
       getPhoneCode(value){
-        console.log({ captcha : value , token : this.userToken},1);
+        let form = new FormData();
+        form.append('captcha',value);
+        form.append('token',this.userToken);
+        getMessageCode(this.RegForm.mobile,  form).then( res => {
 
-        getMessageCode(this.RegForm.mobile,{ captcha : value , token : this.userToken}).then( res => {
-          // if(res.data.status === "000000000"){
-          //   this.phoneMessaage = true ;
-          //   this.mobileCode = res.data.data ;
-          // }else{
-          //   this.$message({
-          //     massage : '图片验证码输入错误，请重新输入',
-          //     type : 'error',
-          //     center : true
-          //   })
-          // }
+          if(res.data.status === "000000000"){
+            this.phoneMessaage = true ;
+          }else{
+            if( res.data.status === '001003003'){
+              this.$message({
+                message : '图片验证码错误，请重新确认后输入',
+                center : true ,
+                type : 'error'
+              })
+            }else if(res.data.status === "001003005" ){
+              this.$message({
+                message : res.data.message,
+                center : true ,
+                type : 'error'
+              })
+            }
+          }
         }).catch( err => {
           alert('服务器开小差啦，请稍等~')
         });
       },
+
       handleLogin() {
         this.$refs.RegForm.validate(valid => {
 
           if (valid) {
             this.loading = true ;
+            let formData = new FormData();
+            formData.append('mobile', this.RegForm.mobile);
+            formData.append('password',this.RegForm.password);
+            formData.append('captcha',this.RegForm.message);
+            console.log(111);
+            this.$store.dispatch('Register', formData).then(res => {
+              console.log(222,res);
 
-            this.$store.dispatch('Register', {mobile :this.RegForm.mobile,password : this.RegForm.password}).then(() => {
-              this.loading = false;
-              this.$message({
-                title: '注册成功',
-                message: '注册成功',
-                type: 'success',
-              });
-              this.$router.push({ path: '/' })
+              if(res.data.status === '000000000'){
+                  this.loading = false;
+                  this.$message({
+                    title: '注册成功',
+                    message: '注册成功',
+                    type: 'success',
+                  });
+                  this.$router.push({ path: '/' })
+
+              } else {
+                this.$message({
+                  title: '信息错误',
+                  message: res.data.message,
+                  type: 'error',
+                });
+              }
+
             }).catch(() => {
               this.loading = false
             })
           } else {
             this.$message({
               title: '错误',
-              message: '提交失败',
+              message: '信息填写有误，请确认后再次提交',
               type: 'error',
 
             });
@@ -235,5 +261,11 @@
     .el-input{
       width : 1.6rem ;
     }
+  }
+  .messageWarn{
+    font-size : 0.12rem ;
+    color : #f56c6c ;
+    line-height : 1 ;
+    padding-top : 0.04rem ;
   }
 </style>

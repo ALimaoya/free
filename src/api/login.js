@@ -1,9 +1,10 @@
 import request from '@/utils/request'
 
 export function login(data) {
+
   return request({
-    url: '/POST/tryout/login',
-    // url: '/tryout/login',
+    // url: '/POST/tryout/login',
+    url: '/tryout/account/login',
     method: 'post',
     headers : {
       'Content-Type' : 'multipart/form-data'
@@ -12,9 +13,10 @@ export function login(data) {
   })
 }
 export function register(data) {
+
   return request({
-    url: '/POST/tryout/account/register',
-    // url: '/tryout/account/register',
+    // url: '/POST/tryout/account/register',
+    url: '/tryout/account/register',
     method: 'post',
     headers : {
       'Content-Type' : 'multipart/form-data'
@@ -47,6 +49,7 @@ export function getCaptcha(){
 }
 
 export function getMessageCode(mobile ,data){
+  console.log(data);
   return request({
     url : '/tryout/captcha/'+ mobile ,
     method : 'post',

@@ -5,8 +5,16 @@
         <img class="close" src="../../assets/imgs/close.png" @click="close" alt="" />
       </p>
       <el-form ref="sizeForm" :model="sizeForm" label-width="1.4rem" size="mini" :rules="rules">
-        <el-form-item label="店铺首页网址：" prop="address">
-          <el-input v-model.trim="sizeForm.address" class="big"></el-input>
+        <el-form-item label="平台类型：" prop="platformType">
+          <el-radio-group v-model="sizeForm.platformType">
+            <el-radio label="1">淘宝</el-radio>
+            <el-radio label="2">天猫</el-radio>
+            <el-radio label="3">京东</el-radio>
+            <el-radio label="4">拼多多</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="店铺首页网址：" prop="shopAddress">
+          <el-input v-model.trim="sizeForm.shopAddress" class="big"></el-input>
         </el-form-item>
         <el-form-item label="店铺名称：" prop="shopName">
           <el-input v-model.trim="sizeForm.shopName"  class="big"></el-input>
@@ -47,13 +55,17 @@
 
 <script>
   import clip from '@/utils/clipboard' // use clipboard directly
-  import { shopInfo } from "@/api/shop"
+  import { shopInfo ,shopCaptcha } from "@/api/shop"
   import ElButton from "element-ui/packages/button/src/button";
   import { validateURL ,validateWX ,validatePhone ,validQQ } from '@/utils/validate'
+  import ElFormItem from "element-ui/packages/form/src/form-item";
+  import ElRadioGroup from "element-ui/packages/radio/src/radio-group";
   export default {
     name: "Newshop" ,
 
     components: {
+      ElRadioGroup,
+      ElFormItem,
       ElButton
     },
     data(){
@@ -130,7 +142,8 @@
       return{
         tips : true ,
         sizeForm : {
-          address : '',
+          platformType : '',
+          shopAddress : '',
           shopName: '',
           messageId : '',
           captcha : '1111',
@@ -140,37 +153,38 @@
           managerMobile : ''
         },
         rules : {
-          address : [
+          platformType : [{ required : true , message : '请选择平台类型'}],
+          shopAddress : [
             {
               validator : validateAddr , trigger : 'blur' , required: true
             }
           ],
-          name : [
+          shopName : [
             {
               validator : validateName , trigger : 'blur' , required : true
             }
           ],
-          ID : [
+          messageId : [
             {
               validator : validateID , trigger : 'blur',required : true
             }
           ],
-          addr : [
+          productUrl : [
             {
               validator : validGoodsAddr , trigger : 'blur',required : true
             }
           ],
-          QQ : [
+          managerQq : [
             {
               validator : validateQQ , trigger : 'blur',required : true
             }
           ],
-          wx : [
+          managerWechat : [
             {
               validator : validateWx , trigger : 'blur',required : true
             }
           ],
-          phone : [
+          managerMobile : [
             {
               validator : validateTel , trigger : 'blur',required : true
             }
@@ -181,7 +195,13 @@
     },
 
     mounted(){
-
+      shopCaptcha().then( res => {
+        if(res.data.status === '000000000'){
+          this.sizeForm.captcha = res.data.data ;
+        }
+      }).catch( err => {
+        alert('服务器开小差啦，请稍等~')
+      })
     },
     methods : {
       copy(text,event){
@@ -265,6 +285,9 @@
       .el-form{
         margin : 0 auto ;
         width : 70% ;
+        .el-radio-group{
+          width : 3.2rem ;
+        }
       }
      label{
        text-align : left ;

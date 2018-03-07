@@ -26,9 +26,22 @@
 
     <el-table class="list" :data="tableData.slice((currentPage-1)*pageSize,currentPage.pageSize)" stripe border style="width: 100%">
         <el-table-column prop="shopName" label="店铺" width="180"></el-table-column>
-        <el-table-column prop="platform" label="平台类型" width="180"></el-table-column>
+        <el-table-column prop="platform" label="平台类型" width="180">
+          <template slot-scope="scope">
+            {{ platformOptions[scope.row.platform-1].name}}
+          </template>
+        </el-table-column>
         <el-table-column prop="messageId" label="旺旺ID/咚咚ID"></el-table-column>
-        <el-table-column prop="status" label="状态"></el-table-column>
+        <!--<el-table-column prop="status" label="状态">-->
+          <!--<template slot-scope="scope">-->
+            <!--{{ activityOptions[scope.row.status-1].name }}-->
+          <!--</template>-->
+        <!--</el-table-column>-->
+        <el-table-column prop="status" label="状态">
+          <template slot-scope="scope">
+            <span>{{ activityOptions[scope.row.status -1].name}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="action" label="操作">
           <template slot-scope="scope" >
             <div v-if="scope.row.action==='1'">

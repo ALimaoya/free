@@ -2,15 +2,15 @@
   <div class="step">
     <el-form :model="form" ref="form" :rules="formRule">
       <p class="title">第一步：填写活动信息</p>
-       <el-form-item label="活动类型：" labelWidth="1.3rem" prop="type">
-         <el-radio-group v-model="form.type">
+       <el-form-item label="活动类型：" labelWidth="1.3rem">
+         <el-radio-group v-model="type">
            <el-radio  label="1">超级试用</el-radio>
            <el-radio  label="2" disabled>折扣试用（待开放）</el-radio>
          </el-radio-group>
        </el-form-item>
-      <el-form-item label="商品来源：" labelWidth="1.3rem" prop="platformType">
-        <el-radio-group v-model="form.platformType" @change="resetSearch(form.platformType)">
-          <el-radio  v-for="(item,index) in platformType"  :key="index" :label="item.id">{{ item.name }}</el-radio>
+      <el-form-item label="商品来源：" labelWidth="1.3rem" prop="platformType" >
+        <el-radio-group v-model="form.platformType"  @change="resetSearch(form.platformType)">
+          <el-radio  v-for="(item,index) in platForm"   :key="index" :label="item.id" >{{ item.name }}</el-radio>
           <!--<el-radio  label="2">天猫</el-radio>-->
           <!--<el-radio  label="3">京东</el-radio>-->
           <!--<el-radio  label="4">拼多多</el-radio>-->
@@ -28,10 +28,9 @@
       <el-form-item label="试用品类型：" labelWidth="1.3rem" prop="categoryId">
         <el-select v-model="form.categoryId" placeholder="请选择商品类型" size="small">
           <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
+            v-for="(item ,index) in options"
+            :label="item.name" :key="index"
+            :value="item.id">
           </el-option>
         </el-select>
       </el-form-item>
@@ -53,17 +52,12 @@
       </el-form-item>
       <p class="title">第三步：选择目标推广宝贝</p>
       <el-form-item label="选择店铺：" labelWidth="1.3rem" prop="shopId">
-        <el-select v-model="form.shopId" placeholder="请选择店铺" size="small">
-          <el-option
-            v-for="item in shopOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
+        <el-select v-model="form.shopId"  placeholder="请选择店铺" size="small" @change="getShop(form.shopId)">
+          <el-option  v-for="(item,index) in shopOptions" :key="index" loading :label="item.name" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="商品链接：" labelWidth="1.3rem" prop="productUrl">
-        <el-input size="small" v-model.trim="form.productUrl" placeholder="请输入内容"></el-input>
+        <el-input size="small" v-model.trim="form.productUrl" placeholder="请输入内容" @blur="getGoodsDetail(form.productUrl)"></el-input>
         <span class="tips"><img src="../../assets/imgs/tips3.png" alt=""/>平台会根据您填写的商品链接抓取宝贝信息，试客无法看到此链接</span>
       </el-form-item>
       <el-form-item label="宝贝主图：" labelWidth="1.3rem" prop="mainImageUrl">
@@ -98,28 +92,23 @@
       </el-form-item>
       <p class="title">第四步：设置试客找到商品入口</p>
       <el-form-item label="APP关键词：" labelWidth="1.32rem">
-        <span >{{ tryoutObj.choosePlat }}</span>
+        <span >{{ choosePlat }}</span>
       </el-form-item>
       <el-form-item label="商品淘口令：" labelWidth="1.3rem" v-if="form.platformType==='1'||form.platformType==='2'">
         <el-input type="textarea" :rows="4" class="textarea" placeholder="请输入内容" @blur="cancelWarn(form.productShareUrl,appKey)" v-model.trim="form.productShareUrl"></el-input>
       </el-form-item>
       <el-form-item v-for="(keyItem,index) in form.keyword" :label="'APP端关键词'+(index+1)*1+'：'"
             :key="index" :prop="'keyword.'+ index + '.key'" labelWidth="1.3rem">
-        <el-select class="search" v-model="keyItem.searchId" placeholder="搜索平台" size="small">
+        <el-select class="search" @focus="getType(form.platformType)" v-model="keyItem.searchId" placeholder="搜索平台" size="small">
           <el-option
-            v-for="item in searchOptions[form.platformType-1]"
-            :key="item.platformType"
+            v-for="(item ,index) in searchOptions"
+            :key="index"
             :label="item.name"
-            :value="item.platformType">
+            :value="item.id">
           </el-option>
         </el-select>
         <el-select class="search" v-model="keyItem.sortType" placeholder="综合排序" size="small">
-          <el-option
-            v-for="item in topOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
+          <el-option v-for="item in topOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
         <el-input class="key" placeholder="填写搜索关键词" v-model.trim="keyItem.searchKeyword" size="small"></el-input>
         <span>筛选条件：</span>
@@ -131,7 +120,6 @@
       </el-form-item>
       <span v-if="appKey==='1'" class="keyWarn">请选择淘口令或者APP端关键词中至少一项进行填写</span>
       <span v-else-if="appKey==='2'" class="keyWarn">请选择APP端关键词进行填写</span>
-
       <!--<div v-if="form.productShareUrl!=''&&appKey">-->
       <div>
         <p class="title">第五步：设置投放信息</p>
@@ -182,7 +170,7 @@
                     <span class="dateNum">{{ item.num }}</span>
                     <div>
                       <input type="button" class="miniBtn" @click="setNum(1,goodsAmount[item.index],item.index,item.date)" value="-"/>
-                      <input v-model="goodsAmount[item.index]"  @blur="numIpt(goodsAmount[item.index],item.index,item.date)" placeholder="投放数量" />
+                      <input v-model.number="goodsAmount[item.index]"  @blur="numIpt(goodsAmount[item.index],item.index,item.date)" placeholder="投放数量" />
                       <input type="button" class="miniBtn" @click="setNum(2,goodsAmount[item.index],item.index,item.date)" value="+">
                     </div>
                   </div>
@@ -205,7 +193,7 @@
               <td>投放总量（试用品份数）</td>
             </tr>
             <tr>
-              <td>{{ tryoutObj.dayNum }}</td>
+              <td>{{ dayNum }}</td>
               <td>{{ tryoutAmount }}</td>
             </tr>
           </table>
@@ -221,10 +209,11 @@
 
 <script>
     import ElFormItem from "element-ui/packages/form/src/form-item";
-    import { validateURL } from '@/utils/validate'
+    import { validateURL ,getQueryString } from '@/utils/validate'
     import { parseTime } from '@/utils'
     import ElRadioGroup from "element-ui/packages/radio/src/radio-group";
     import ElButtonGroup from "element-ui/packages/button/src/button-group";
+    import { getCategory ,getShopList ,searchTypeList } from "@/api/activity"
     export default {
       components: {
         ElButtonGroup,
@@ -232,6 +221,7 @@
         ElFormItem ,
       },
       name: "step",
+
       data(){
         const validLink = (rule,value,callback) => {
           if(value === ''){
@@ -269,8 +259,9 @@
           }
         };
         return{
+          type : '1',
           form : {},
-          platformType : [
+          platForm : [
             {
               name : '淘宝',
               id : '1',
@@ -289,95 +280,45 @@
             }
           ],
           options : [
-            {
-              label :'潮流女装',
-              value : '1'
-            },
-            {
-              label :'精品男装',
-              value : '2'
-            },
-            {
-              label :'鞋子箱包',
-              value : '3'
-            },
-            {
-              label :'时尚配饰',
-              value : '4'
-            },
-            {
-              label :'美食特产',
-              value : '5'
-            },
-            {
-              label :'数码家电',
-              value : '6'
-            },
-            {
-              label :'家具日用',
-              value : '7'
-            },
-            {
-              label :'美容护肤',
-              value : '8'
-            },
-            {
-              label :'综合试用',
-              value : '9'
-            }
+            // {
+            //   label :'潮流女装',
+            //   value : '1'
+            // },
+            // {
+            //   label :'精品男装',
+            //   value : '2'
+            // },
+            // {
+            //   label :'鞋子箱包',
+            //   value : '3'
+            // },
+            // {
+            //   label :'时尚配饰',
+            //   value : '4'
+            // },
+            // {
+            //   label :'美食特产',
+            //   value : '5'
+            // },
+            // {
+            //   label :'数码家电',
+            //   value : '6'
+            // },
+            // {
+            //   label :'家具日用',
+            //   value : '7'
+            // },
+            // {
+            //   label :'美容护肤',
+            //   value : '8'
+            // },
+            // {
+            //   label :'综合试用',
+            //   value : '9'
+            // }
           ] ,
-          shopOptions : [
-            {
-              label : '选项一',
-              value : '1'
-            },
-            {
-              label : '选项二',
-              value : '2'
-            },
-            {
-              label : '选项三',
-              value : '3'
-            }
-          ],
-          searchOptions : [
-            [
-              {
-                name : '淘宝搜索',
-                platformTypeType : '1'
-              },
-              // {
-              //   name : '淘宝直通车',
-              //   value : '2'
-              // },
-            ],
-            [
-              {
-                name : '天猫搜索',
-                platformTypeType : '2'
-              },
-            ],
-            [
-              {
-                name : '京东搜索',
-                platformTypeType : '3'
-              },
-              // {
-              //   name : '京东快车',
-              //   value : '5'
-              // },
-              // {
-              //   name : '京东微信',
-              //   value : '6'
-              // },
-            ],
-            [
-              {
-                name : '拼多多',
-                platformTypeType : '4'
-              }
-            ]
-          ],
+          shopOptions : [],
+          searchOptions : [],
           topOptions : [
             {
               label : '综合排序',
@@ -407,14 +348,14 @@
           supportWebp: false,   // 是否支持webp
           bucketHost: '',   // 上传图片的外链域名
           formRule : {
-            type : [
+            // type : [
+            //   {
+            //     required : true ,message : '请选择活动类型' ,
+            //   }
+            // ],
+            platformType: [
               {
-                required : true ,message : '请选择活动类型' ,
-              }
-            ],
-            platformType : [
-              {
-                required : true ,message : '请选择商品来源' , trigger : 'change'
+                required : true ,message : '请选择商品来源' , trigger : 'click'
               }
             ],
             receiveHours : [
@@ -468,6 +409,7 @@
               }
             ]
           },
+          choosePlat : '',
           appKey : '' ,
           keyArr : [],
           week : [
@@ -485,7 +427,7 @@
           today : '',
           weekItems : [],
           goodsAmount : [],
-          tryoutObj : {},
+          dayNum : '',
           tryoutAmount : '',
           warn : false ,
           daysWarn : false ,
@@ -501,13 +443,26 @@
         }
       },
 
-
       mounted(){
 
         this.form = this.$store.state.publishInfo.publishForm ;
-        this.tryoutObj = this.$store.state.publishInfo.tryoutItem ;
-        // this.dayNum = this.$store.publishInfo.tryoutItem ;
-        console.log(this.tryoutObj,1,this.$store.state.publishInfo) ;
+        if(this.form.activityCalendar){
+          this.dayNum = this.form.activityCalendar.length;
+          let num = 0 ;
+          this.form.activityCalendar.forEach((i) => {
+            num = num + i.tryoutQuantity ;
+          });
+          this.tryoutAmount = num ;
+
+        }
+        getCategory().then( res => {
+          if(res.data.status === '000000000'){
+            this.options = res.data.data ;
+          }
+        }).catch( err => {
+          alert('服务器开小差啦，请稍等~')
+        });
+        console.log(1,this.$store.state.publishInfo) ;
         this.setRate(this.form.activityStartTime);
 
       },
@@ -546,27 +501,47 @@
           this.form.mainImageUrl = URL.createObjectURL(file.raw);
         },
 
-        // beforeGoodsUpload(file) {this.appKey
-        //   const isLt2M = file.size / 1024 / 1024 < 2;
-        // },
+        //获取店铺列表
+        getShop(value){
+          getShopList(value).then( res => {
+            if( res.data.status === '000000000'){
+              this.shopOptions = res.data.data ;
+            }
+          }).catch( err => {
+            alert('服务器开小差啦，请稍等~')
+          })
+        },
+        beforeGoodsUpload(file) {this.appKey
+          const isLt2M = file.size / 1024 / 1024 < 2;
+        },
 
-         resetSearch(index){
-
+         //获取平台类型
+        getType(value){
+          console.log(1234);
+          searchTypeList(value).then( res => {
+            if(res.data.status === '000000000'){
+              console.log(res,2);
+              this.searchOptions = res.data.data ;
+              console.log(this.searchOptions);
+            }
+          }).catch( err => {
+            console.log(err);
+          })
+        },
+         resetSearch(value){
+          this.choosePlat = this.platForm[value-1].name ;
+          this.getShop(value);
           if(this.appKey !== ''){
-            if(index === '1'||index === '2'){
+            if(value === '1'||value === '2'){
               this.appKey = '1';
             }else{
               this.appKey = '2' ;
             }
           }
-          this.tryoutObj.choosePlat = this.platformType[index-1].name ;
-          this.form.keyword.map( (i) => {
-            i.searchKeyword = {} ;
-          });
+
           // this.$refs['resetKey'].resetFields();
           // var resetForm = document.getElementById('resetKeyForm');
           // resetForm.reset() ;
-          console.log(this.form.keyword)
 
         },
 
@@ -604,9 +579,10 @@
           let date ;
           this.weekItems = [] ;
           this.form.activityCalendar = [] ;
+          this.goodsAmount = [];
           let daysArr = [] ;
           this.tryoutAmount = '';
-          this.tryoutObj.dayNum = '' ;
+          this.dayNum = '' ;
           if(value === '' || value === undefined || value === null){
             date = new Date();
           }else{
@@ -680,12 +656,7 @@
           }else{
               this.goodsAmount[index] = ++value ;
           }
-          if(this.form.activityCalendar[index] === undefined){
-            this.form.activityCalendar.splice(index ,0,{ activityDate : date , tryoutQuantity :this.goodsAmount[index] });
-          }else{
-            this.form.activityCalendar.splice(index ,1,{ activityDate : date , tryoutQuantity :this.goodsAmount[index] });
 
-          }
           console.log(this.goodsAmount,this.form.activityCalendar,date);
 
           this.getProgress(index,date);
@@ -703,6 +674,12 @@
         },
 
         getProgress(index,date){
+          if(this.form.activityCalendar[index] === undefined){
+            this.form.activityCalendar.splice(index ,0,{ activityDate : date , tryoutQuantity :this.goodsAmount[index] });
+          }else{
+            this.form.activityCalendar.splice(index ,1,{ activityDate : date , tryoutQuantity :this.goodsAmount[index] });
+
+          }
           if(this.form.activityStartTime === ''){
             this.form.activityStartTime = new Date().toString();
             // console.log(this.form.activityStartTime,2);
@@ -714,23 +691,21 @@
                 this.form.activityCalendar.splice(j ,0,{ activityDate : (parseTime(new Date(this.form.activityStartTime).getTime()+(j+1)*24*3600*1000)) , tryoutQuantity :1 });
 
                 console.log(date);
-                // this.form.activityCalendar[j].activityDate =
               }
             }
           }
           let dayAmount = 0 ;
           this.goodsAmount.map((i) => {
-            dayAmount = (dayAmount + i)*1 ;
+            dayAmount = (dayAmount+i)*1 ;
           });
           this.tryoutAmount = dayAmount ;
-          this.tryoutObj.dayNum = this.goodsAmount.length ;
+          this.dayNum = this.goodsAmount.length ;
 
-          // console.log(this.form.activityStartTime.getTime(),1111111)
 
-          this.form.endTime = parseTime(new Date(this.form.activityStartTime).getTime() + this.tryoutObj.dayNum * 24* 3600*1000 );
+          this.form.endTime = parseTime(new Date(this.form.activityStartTime).getTime() + this.dayNum * 24* 3600*1000 );
           // console.log(this.form.endTime,1);
 
-          if(this.tryoutObj.dayNum<3){
+          if(this.dayNum<3){
             this.daysWarn = true ;
           }else{
             this.daysWarn = false ;
@@ -738,15 +713,6 @@
 
         },
 
-        // getArr(oldArr){
-        //   let arr = [] ;
-        //   for(let i = 0 ; i < oldArr.length ; i++){
-        //     if(oldArr[i] !== undefined){
-        //       arr.push({ value : oldArr[i] ,index :i});
-        //     }
-        //   }
-        //   return arr ;
-        // },
 
         //提交试用信息
         onSubmit(formName){
@@ -779,8 +745,7 @@
                 center : true
               },1000);
               // this.$store.dispatch('savePublishInfo',this.form);
-              // this.$store.dispatch('saveTryoutItem',this.tryoutObj);
-              console.log(this.tryoutObj);
+
               this.$router.push({ path :'/publish/step2' });
             }else{
               this.$message({
@@ -791,8 +756,16 @@
               return false ;
             }
           })
-        }
+        },
 
+        //获取商品详情
+        getGoodsDetail(url){
+          if( url.indexOf('?') !== -1 ){
+            const num = getQueryString(url,'id');
+            console.log(num);
+          }
+
+        }
       }
     }
 </script>
@@ -927,7 +900,7 @@
       }
     }
     .datePicker{
-      width : 80% ;
+      width : 90% ;
       margin : 0.3rem auto ;
       display : flex;
       flex-direction : column;

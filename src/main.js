@@ -12,11 +12,11 @@ import router from './router'
 import store from './store'
 
 import '@/icons' // icon
-import '@/permission' // permission control
+// import '@/permission' // permission control
 // import '@/utils/rem.js'
-Vue.use(ElementUI)
+Vue.use(ElementUI);
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false ;
 
 new Vue({
   el: '#app',

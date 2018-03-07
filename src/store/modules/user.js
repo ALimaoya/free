@@ -37,10 +37,9 @@ const user = {
           const token = response.data.data;
           setToken(token);
           commit('SET_TOKEN', token);
-          // if(response.data.code === '000000000'){
-          //
+          // if(response.data.status === '000000000'){
+            resolve(response);
           // }
-          resolve()
         }).catch(error => {
           console.log(error);
           reject(error)
@@ -54,7 +53,7 @@ const user = {
             const token = response.data.token;
             setToken(token);
             commit('SET_TOKEN', token);
-            resolve()
+            resolve(response);
         }).catch(error => {
           console.log(error);
           reject(error)

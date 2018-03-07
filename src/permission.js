@@ -12,26 +12,10 @@ router.beforeEach((to, from, next) => {
   if (token) {
     if (to.path === '/login'|| to.path === '/register' || to.path === '/changePsw') {
       next();
-      console.log(1)
     } else{
       next()
-      // console.log(2)
-      // store.dispatch('GetInfo',token).then(res => { // 拉取用户信息
-      //     console.log(res);
-      //     next()
-      //   }).catch(() => {
-      //     store.dispatch('LogOut').then(() => {
-      //       Message.error('获取用户信息失败,请重新登录')
-      //       next({ path: '/login' })
-      //     })
-      //   })
-
     }
-      // if (store.getters.name.length !== 0) {
 
-      // } else {
-      //   next()
-      // }
   } else {
 
     if (whiteList.indexOf(to.path) !== -1) {
@@ -41,8 +25,8 @@ router.beforeEach((to, from, next) => {
       NProgress.done()
     }
   }
-})
+});
 
 router.afterEach(() => {
   NProgress.done() // 结束Progress
-})
+});

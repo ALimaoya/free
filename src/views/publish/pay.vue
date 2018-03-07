@@ -1,24 +1,24 @@
 <template>
   <div class="pay">
     <div class="stepImg"><img src="../../assets/imgs/u258.png" alt="" /></div>
-    <p>您现在为{{ activity.activityTitle }}存入试用活动款（合计总费用）{{ activity.activityTotalAmount }}元</p>
+    <p>您现在为<b>“&nbsp;{{ activity.activityTitle }}&nbsp;”</b>存入试用活动款（合计总费用）：<b>{{ activity.activityTotalAmount }}</b>元</p>
     <div class="note">费用说明：</div>
     <table border="1" bordercolor="#d3d3dd">
       <tr>
         <td>商品担保金</td>
-        <td>下单价格*发放份数*拍的数量: ={{ activity.activityDepositAmount }}元</td>
+        <td>{{ activity.activityDepositAmount }}元</td>
         <!--{{ form.buyProductAmount}}*{{ form.activityCalendar.buyProductQuantity}}*{{ form.buyProductQuantity}}-->
       </tr>
       <tr>
         <td>活动服务费</td>
-        <td> 商品担保金*费率 = {{ activity.activityServiceAmount }} 元</td>
+        <td>  {{ activity.activityServiceAmount }} 元</td>
       </tr>
       <tr>
         <td>合计</td>
-        <td>商品担保金*活动服务费</td>
+        <td>{{ activity.activityTotalAmount }} 元</td>
       </tr>
     </table>
-    <div class="result">您当前的押金余额为：{{ activity.activityTitle }}元，本次总共要支付的金额为：{{ activity.activityTotalAmount }}元。</div>
+    <div class="result">您当前的押金余额为：{{ activity.totalDeposit }}元，本次总共要支付的金额为：{{ activity.activityTotalAmount }}元。</div>
     <div class="btn">
       <el-button type="primary" @click="checkPay">确认支付</el-button>
       <el-button type="text" @click="goActivity">试用活动管理</el-button>
@@ -43,7 +43,7 @@
 
       mounted(){
         this.form = this.$store.state.publishInfo.publishForm ;
-        this.tryoutObj = this.$store.state.publishInfo.tryoutObj ;
+        console.log(this.form);
         publishActivity(this.form).then( res => {
           if(res.data.status === '000000000'){
             this.activity = res.data.data ;
@@ -78,11 +78,15 @@
     .stepImg{
       width : 100% ;
       margin : 0.5rem 0;
+
       img{
         width : 80% ;
         height : 100% ;
         margin : 0 auto ;
       }
+    }
+    b{
+      color : #ff0011 ;
     }
     p,.note,.result{
       color : #333 ;

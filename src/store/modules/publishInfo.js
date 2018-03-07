@@ -1,8 +1,7 @@
 const publishInfo ={
   state : {
     publishForm : {
-      type : '1',
-      platformType : '',
+      platformType: '',
       receiveHours : '24',
       categoryId : '',
       activityTitle : '',
@@ -21,16 +20,13 @@ const publishInfo ={
         'searchKeyword' : '',
         'searchCondition' : ''
       }],
-      people :'',
       activityStartTime : '',
       activityCalendar : [],
-      dayNum : '',
+      productName : '',
+      productDetail : ''
     },
-    tryoutItem : {
-      // goodsAmount : [],
-      dayNum : '',
-      choosePlat : ''
-    }
+
+    // goodsAmount : [],
   },
   mutations : {
     SAVE_PUBLISHINFO : (state,form)=>{
