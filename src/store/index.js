@@ -5,7 +5,6 @@ import user from './modules/user'
 import getters from './getters'
 import tagsView from './modules/tagsView'
 import publishInfo from './modules/publishInfo'
-
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
@@ -13,8 +12,7 @@ const store = new Vuex.Store({
     app,
     user,
     tagsView,
-    publishInfo
-
+    publishInfo,
   },
   getters
 });

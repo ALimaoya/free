@@ -182,10 +182,10 @@
             const date = this.userInfo.vip_time ;
             this.userInfo.vip_time = date.slice(0,4)+ ' - ' + date.slice(4,6) + ' - ' + date.slice(6,8) ;
           }).catch(() => {
-            this.$store.dispatch('LogOut').then(() => {
-              this.$message.error('获取用户信息失败,请重新登录');
-              this.$router.push('/login')
-            })
+            // this.$store.dispatch('LogOut').then(() => {
+            //   this.$message.error('获取用户信息失败,请重新登录');
+            //   this.$router.push('/login')
+            // })
           })
         },
         methods : {

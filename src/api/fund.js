@@ -3,7 +3,7 @@ import request from '@/utils/request'
 //充值押金
 export function handleRecharge(data){
   return request({
-    url: '/POST/tryout/recharge',
+    url: '/tryout/recharge/deposit',
     method: 'post',
     data
   })
@@ -12,7 +12,7 @@ export function handleRecharge(data){
 //提现押金
 export function handleCash(data){
   return request({
-    url: '/POST/tryout/cash',
+    url: '/tryout/recharge/deposit',
     method: 'post',
     data
   })
@@ -33,5 +33,12 @@ export function getWalletLog(data){
     url: '/POST/tryout/wallet/logs',
     method: 'post',
     data
+  })
+}
+//获取押金金额
+export function getDeposit(){
+  return request({
+    url: '/tryout/merchant/deposit',
+    method: 'get',
   })
 }
