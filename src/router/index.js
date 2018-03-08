@@ -153,16 +153,6 @@ export const constantRouterMap = [
         meta: {title: '我要充值', icon: 'recharge'},
       },
       {
-        path: 'alipay',
-        name: 'Alipay',
-        component: () => import('@/views/fund/recharge/alipay'),
-        meta: { title: '充值支付', icon: 'recharge' },
-
-        hidden : true
-      },
-
-
-      {
         path: 'cash',
         name: 'Cash',
         component: () => import('@/views/fund/cash'),
@@ -170,60 +160,66 @@ export const constantRouterMap = [
 
       },
       {
-        path: '/fund/history',
-        name: 'History',
-        component: () => import('@/views/fund/history/index'),
-        meta: { title: '资金记录', icon: 'history' },
-        children: [
-          {
-            path: 'money',
-            name: 'Money',
-            component: () => import('@/views/fund/history/money'),
-            meta: { title: '资金明细', icon: 'money' }
-          },
-          {
-            path: 'coin',
-            name: 'Coin',
-            component: () => import('@/views/fund/history/coin'),
-            meta: { title: '金币明细', icon: 'coin' }
+        path: 'money',
+        name: 'Money',
+        component: () => import('@/views/fund/history/money'),
+        meta: { title: '资金明细', icon: 'money' }
+      }
+      // {
+      //   path: '/fund/history',
+      //   name: 'History',
+      //   component: () => import('@/views/fund/history/index'),
+      //   meta: { title: '资金记录', icon: 'history' },
+      //   children: [
+      //     {
+      //       path: 'money',
+      //       name: 'Money',
+      //       component: () => import('@/views/fund/history/money'),
+      //       meta: { title: '资金明细', icon: 'money' }
+      //     },
+      //     {
+      //       path: 'coin',
+      //       name: 'Coin',
+      //       component: () => import('@/views/fund/history/coin'),
+      //       meta: { title: '金币明细', icon: 'coin' }
 
-          }
-        ]
-      }
+      //     }
+      //   ]
+      // }
     ]
   },
-  {
-    path: '/invitation',
-    name: 'Invitation',
-    component: Layout,
-    meta: { title: '邀请返利', icon: 'invitation' },
-    children: [
-      {
-        path: 'friends',
-        name: 'Friends',
-        component: () => import('@/views/invitation/friends'),
-        meta: { title: '好友邀请', icon: 'friends' }
-      },
-      {
-        path: 'rewards',
-        name: 'Rewards',
-        component: () => import('@/views/invitation/rewards'),
-        meta: { title: '邀请奖励', icon: 'rewards' }
-      }
-    ]
-  },
-  {
-    path: '/news',
-    name: 'News',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'newsItems',
-        component: () => import('@/views/news/index'),
-        meta: { title: '消息中心', icon: 'news' }
-      }]
-  },
+  // {
+  //   path: '/invitation',
+  //   name: 'Invitation',
+  //   component: Layout,
+  //   meta: { title: '邀请返利', icon: 'invitation' },
+  //   children: [
+  //     {
+  //       path: 'friends',
+  //       name: 'Friends',
+  //       component: () => import('@/views/invitation/friends'),
+  //       meta: { title: '好友邀请', icon: 'friends' }
+  //     },
+  //     {
+  //       path: 'rewards',
+  //       name: 'Rewards',
+  //       component: () => import('@/views/invitation/rewards'),
+  //       meta: { title: '邀请奖励', icon: 'rewards' }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/news',
+  //   name: 'News',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: 'newsItems',
+  //       component: () => import('@/views/news/index'),
+  //       meta: { title: '消息中心', icon: 'news' }
+  //     }]
+  // },
   { path: '/404', component: () => import('@/views/404'), hidden: true },
   { path: '*', redirect: '/404', hidden: true }
 ]

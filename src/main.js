@@ -13,6 +13,7 @@ import store from './store'
 import '@/icons' // icon
 import $ from 'jQuery'
 import '@/permission' // permission control
+
 // import '@/utils/rem.js'
 Vue.use(ElementUI);
 // Vue.use(VueResource);

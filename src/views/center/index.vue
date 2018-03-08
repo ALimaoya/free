@@ -192,13 +192,9 @@
             }
           }).catch(() => {
             // this.$store.dispatch('LogOut').then(() => {
-              this.$message({
-                message:'获取用户信息失败' ,
-                center : true ,
-                type : 'error'
-              }
-                );
-              // this.$router.push('/login')
+            
+            //   this.$message.error('获取用户信息失败,请重新登录');
+            //   this.$router.push('/login')
             // })
           })
         },
