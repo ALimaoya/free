@@ -16,7 +16,7 @@ const publishInfo ={
       productShareUrl : '',
       keyword : [{
         'searchId' : '',
-        'sortType' : '1',
+        'sortType' : '',
         'searchKeyword' : '',
         'searchCondition' : ''
       }],
@@ -25,6 +25,10 @@ const publishInfo ={
       productName : '',
       productDetail : ''
     },
+    imgUrl : {
+      showImg : '',
+      mainImg : '',
+    }
 
     // goodsAmount : [],
   },
@@ -32,8 +36,8 @@ const publishInfo ={
     SAVE_PUBLISHINFO : (state,form)=>{
       state.publishForm = form
     },
-    SAVE_TRYOUTITEM : (state,obj) => {
-      state.tryoutItem = obj
+    SAVE_IMAGEURL : (state,obj) => {
+      state.imageUrl = obj
     }
   },
   actions : {
@@ -43,7 +47,7 @@ const publishInfo ={
     saveTryoutItem( { commit } ,obj ){
       console.log(obj);
 
-      commit('SAVE_TRYOUTITEM',obj)
+      commit('SAVE_IMAGEURL',obj)
     }
   }
 }

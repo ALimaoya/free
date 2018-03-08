@@ -26,7 +26,7 @@ export function register(data) {
 }
 export function getInfo() {
   return request({
-    url: '/GET/tryout/home/data',
+    url: '/tryout/home/data',
     // url: '/tryout/home/data',
     method: 'GET',
 

@@ -20,7 +20,7 @@
     </table>
     <div class="result">您当前的押金余额为：{{ activity.totalDeposit }}元，本次总共要支付的金额为：{{ activity.activityTotalAmount }}元。</div>
     <div class="btn">
-      <el-button type="primary" @click="checkPay">确认支付</el-button>
+      <el-button type="primary" @click="checkPay(activity.activityId)">确认支付</el-button>
       <el-button type="text" @click="goActivity">试用活动管理</el-button>
       <el-button type="text" @click="back">返回编辑活动</el-button>
     </div>
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-  import { publishActivity } from "@/api/activity"
+  import { publishActivity , activityPay } from "@/api/activity"
 
   export default {
         name: "pay" ,
@@ -36,7 +36,6 @@
           return{
 
             form : {},
-            tryoutObj : {},
             activity :{}
           }
       },
@@ -45,6 +44,7 @@
         this.form = this.$store.state.publishInfo.publishForm ;
         console.log(this.form);
         publishActivity(this.form).then( res => {
+          console.log(res);
           if(res.data.status === '000000000'){
             this.activity = res.data.data ;
           }
@@ -54,8 +54,25 @@
 
       },
       methods : {
-        checkPay(){
-          this.$router.push('/publish/step3')
+        checkPay(id){
+          let formData = new FormData();
+          formData.append('activityId',id);
+          activityPay(formData).then( res => {
+            if(res.data.status === '000000000'){
+
+              this.$router.push('/publish/step3')
+
+            }else{
+              this.$message({
+                message : res.data.message ,
+                center : true ,
+                type : 'error'
+              })
+            }
+
+          }).catch( err => {
+            alert('服务器开小差啦，请稍等~')
+          });
         },
         goActivity(){
           this.$router.push('/activity/approval')

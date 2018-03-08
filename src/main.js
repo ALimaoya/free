@@ -10,12 +10,12 @@ import '@/styles/index.scss' // global css
 import App from './App'
 import router from './router'
 import store from './store'
-
 import '@/icons' // icon
-
+import $ from 'jQuery'
 import '@/permission' // permission control
 // import '@/utils/rem.js'
 Vue.use(ElementUI);
+// Vue.use(VueResource);
 
 Vue.config.productionTip = false ;
 

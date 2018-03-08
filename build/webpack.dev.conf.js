@@ -57,7 +57,13 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       favicon: resolve('favicon.ico'),
       title: 'vue-element-admin'
     }),
-  ]
+  // new webpack.optimize.CommonsChunkPlugin('common.js'),
+  new webpack.ProvidePlugin({
+    jQuery: "jquery",
+    $: "jquery"
+  })
+],
+
 })
 
 module.exports = new Promise((resolve, reject) => {

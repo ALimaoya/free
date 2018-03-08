@@ -35,12 +35,9 @@
         </el-select>
       </el-form-item>
       <el-form-item label="试用品展示图：" labelWidth="1.3rem" prop="showImageUrl">
-        <el-upload class="upload" v-model.trim="form.showImageUrl"
-          action="https://jsonplaceholder.typicode.com/posts/"
-          :show-file-list="false"
-          :on-success="handleShowSuccess"
-          :before-upload="beforeShowUpload">
-          <img v-if="form.showImageUrl" :src="form.showImageUrl" class="avatar">
+        <el-upload class="upload" v-model.trim="form.showImageUrl" :action="imgUrl" :show-file-list="false"
+          :on-success="handleShowSuccess" :before-upload="beforeShowUpload">
+          <img v-if="showImg" :src="showImg" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
         <ul class="require">
@@ -53,7 +50,7 @@
       <p class="title">第三步：选择目标推广宝贝</p>
       <el-form-item label="选择店铺：" labelWidth="1.3rem" prop="shopId">
         <el-select v-model="form.shopId"  placeholder="请选择店铺" size="small" @change="getShop(form.shopId)">
-          <el-option  v-for="(item,index) in shopOptions" :key="index" loading :label="item.name" :value="item.id"></el-option>
+          <el-option  v-for="(item,index) in shopOptions" :key="index" :label="item.name" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="商品链接：" labelWidth="1.3rem" prop="productUrl">
@@ -61,8 +58,9 @@
         <span class="tips"><img src="../../assets/imgs/tips3.png" alt=""/>平台会根据您填写的商品链接抓取宝贝信息，试客无法看到此链接</span>
       </el-form-item>
       <el-form-item label="宝贝主图：" labelWidth="1.3rem" prop="mainImageUrl">
-        <el-upload  class="upload" v-model.trim="form.mainImageUrl" action="https://jsonplaceholder.typicode.com/posts/"  :show-file-list="false" :on-success="handleGoodsSuccess" :before-upload="beforeShowUpload">
-          <img v-if="form.mainImageUrl"  :src="form.mainImageUrl" class="avatar">
+        <el-upload  class="upload" v-model.trim="form.mainImageUrl" :action="imgUrl"
+                    :show-file-list="false" :on-success="handleGoodsSuccess" :before-upload="beforeMainUpload" >
+          <img v-if="mainImg"  :src="mainImg" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
         <ul class="require">
@@ -98,7 +96,7 @@
         <el-input type="textarea" :rows="4" class="textarea" placeholder="请输入内容" @blur="cancelWarn(form.productShareUrl,appKey)" v-model.trim="form.productShareUrl"></el-input>
       </el-form-item>
       <el-form-item v-for="(keyItem,index) in form.keyword" :label="'APP端关键词'+(index+1)*1+'：'"
-            :key="index" :prop="'keyword.'+ index + '.key'" labelWidth="1.3rem">
+            :key="index" :prop="'keyword.'+ index + '.searchKeyword'" labelWidth="1.3rem">
         <el-select class="search" @focus="getType(form.platformType)" v-model="keyItem.searchId" placeholder="搜索平台" size="small">
           <el-option
             v-for="(item ,index) in searchOptions"
@@ -213,7 +211,8 @@
     import { parseTime } from '@/utils'
     import ElRadioGroup from "element-ui/packages/radio/src/radio-group";
     import ElButtonGroup from "element-ui/packages/button/src/button-group";
-    import { getCategory ,getShopList ,searchTypeList } from "@/api/activity"
+    import { getCategory ,getShopList ,searchTypeList , uploadImage } from "@/api/activity"
+
     export default {
       components: {
         ElButtonGroup,
@@ -346,7 +345,9 @@
           dialogVisible: false ,
           isUploadShow: false,  // 是否显示upload组件
           supportWebp: false,   // 是否支持webp
-          bucketHost: '',   // 上传图片的外链域名
+          imgUrl: 'http://192.168.0.210:8087',   // 上传图片的外链域名
+          showImg : '',
+          mainImg : '',
           formRule : {
             // type : [
             //   {
@@ -446,13 +447,17 @@
       mounted(){
 
         this.form = this.$store.state.publishInfo.publishForm ;
-        if(this.form.activityCalendar){
+        console.log(this.form);
+        if(this.form.platformType !== '' ){
+          this.resetSearch(this.form.platformType);
+          this.getType(this.form.platformType);
           this.dayNum = this.form.activityCalendar.length;
           let num = 0 ;
           this.form.activityCalendar.forEach((i) => {
             num = num + i.tryoutQuantity ;
           });
           this.tryoutAmount = num ;
+          console.log(this.tryoutAmount,123)
 
         }
         getCategory().then( res => {
@@ -476,24 +481,44 @@
 
         //判断需要上传的图片的尺寸
         beforeShowUpload(file) {
-          // var imgFile = file;
           let reader = new FileReader();
           let ret = [];
           let _this = this ;
           reader.onload = (e)=>{
             let image = new Image();
-            image.onload = function(){
-              const isHeight = this.height ;
+            image.onload = function() {
+              const isHeight = this.height;
               const isWidth = this.width;
-              if(isWidth>800||isHeight>800){
+              if (isWidth > 800 || isHeight > 800) {
                 _this.$message.error('图片尺寸过大，请重新选择后上传');
-                return false ;
-              }
-
+                return false;
+              }else{
+                let formData = new FormData();
+                formData.append('image',file);
+                console.log(file);
+                  uploadImage(formData).then( res => {
+                    if(res.data.status === '000000000'){
+                      console.log(res);
+                      _this.showImg = res.data.data.filePath ;
+                      _this.form.showImageUrl = res.data.data.fileName ;
+                    }else{
+                      _this.$message({
+                        message : res.data.message ,
+                        center : true ,
+                        type : 'error'
+                      })
+                    }
+                  }).catch( err => {
+                    console.log(err) ;
+                  })
+                }
             };
             image.src = e.target.result ;
           };
             reader.readAsDataURL(file);
+
+
+
         },
 
         //上传商品主图
@@ -501,23 +526,60 @@
           this.form.mainImageUrl = URL.createObjectURL(file.raw);
         },
 
+        beforeMainUpload(file) {
+          let reader = new FileReader();
+          let ret = [];
+          let _this = this ;
+          reader.onload = (e)=>{
+            let image = new Image();
+            image.onload = function() {
+              const isHeight = this.height;
+              const isWidth = this.width;
+              if (isWidth > 800 || isHeight > 800) {
+                _this.$message.error('图片尺寸过大，请重新选择后上传');
+                return false;
+              }else {
+                let formData = new FormData();
+                formData.append('image',file);
+                uploadImage(formData).then( res => {
+                  if(res.data.status === '000000000'){
+                    _this.mainImg = res.data.data.filePath ;
+                    _this.form.mainImageUrl = res.data.data.fileName ;
+                  }else{
+                    _this.$message({
+                      message : res.data.message ,
+                      center : true ,
+                      type : 'error'
+                    })
+                  }
+                }).catch( err => {
+                  console.log(err) ;
+                })
+              }
+            }
+            image.src = e.target.result ;
+          };
+          reader.readAsDataURL(file);
+          },
+
+
         //获取店铺列表
         getShop(value){
+
           getShopList(value).then( res => {
+            console.log(res);
             if( res.data.status === '000000000'){
+
               this.shopOptions = res.data.data ;
             }
           }).catch( err => {
             alert('服务器开小差啦，请稍等~')
           })
         },
-        beforeGoodsUpload(file) {this.appKey
-          const isLt2M = file.size / 1024 / 1024 < 2;
-        },
+
 
          //获取平台类型
         getType(value){
-          console.log(1234);
           searchTypeList(value).then( res => {
             if(res.data.status === '000000000'){
               console.log(res,2);
@@ -560,7 +622,7 @@
           console.log(this.form.keyword);
           this.form.keyword.push({
             'searchId' : '',
-            'sortType' : '1',
+            'sortType' : '',
             'searchKeyword' : '',
             'searchCondition': '',
           })
@@ -700,8 +762,6 @@
           });
           this.tryoutAmount = dayAmount ;
           this.dayNum = this.goodsAmount.length ;
-
-
           this.form.endTime = parseTime(new Date(this.form.activityStartTime).getTime() + this.dayNum * 24* 3600*1000 );
           // console.log(this.form.endTime,1);
 
@@ -743,7 +803,7 @@
                 type : 'success',
                 message : '提交成功',
                 center : true
-              },1000);
+              },500);
               // this.$store.dispatch('savePublishInfo',this.form);
 
               this.$router.push({ path :'/publish/step2' });
@@ -762,7 +822,44 @@
         getGoodsDetail(url){
           if( url.indexOf('?') !== -1 ){
             const num = getQueryString(url,'id');
-            console.log(num);
+            let params = {'item_num_id': num };
+            let _this = this ;
+            $.ajax({
+              url: 'https://hws.m.taobao.com/cache/mtop.wdetail.getItemDescx/4.1/?type=jsonp&data=' + JSON.stringify(params),
+              dataType: 'jsonp',
+              success: function (data) {
+                if (data['ret'][0] === 'SUCCESS::接口调用成功') {
+                   _this.form.productDetail = JSON.stringify(data['data']['images']);
+                  console.log(_this.form.productDetail);
+                } else {
+                  alert(data['ret'][0]);
+                }
+              }
+            });
+            let infoParams = {
+              jsv: '2.4.8',
+              t: new Date().getTime(),
+              api: 'mtop.taobao.detail.getdetail',
+              v: '6.0',
+              H5Request: true,
+              type: 'jsonp',
+              dataType: 'jsonp',
+              data: JSON.stringify({exParams: {id: num, itemNumId: num }})
+            };
+            $.ajax({
+              url: 'https://h5api.m.taobao.com/h5/mtop.taobao.detail.getdetail/6.0/' ,
+              data : infoParams,
+              dataType: 'jsonp',
+              success: function (data) {
+                if (data['ret'][0] == 'SUCCESS::调用成功') {
+                  var _data = data.data;
+                  _this.form.productName = data.data.item.title ;
+                  console.log(_this.form.productName);
+                }else{
+                  alert(data['ret'][0]);
+                }
+              }
+            })
           }
 
         }

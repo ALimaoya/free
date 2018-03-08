@@ -21,7 +21,7 @@
         <span class="svg-container">
           <img src="../../assets/imgs/verify2.png" alt=""/>
         </span>
-        <el-input style="width : 1.5rem;" :type="pwdType"  v-model="loginForm.captcha" autoComplete="on"
+        <el-input style="width : 1.5rem;"  v-model="loginForm.captcha" autoComplete="on"
                   placeholder="请输入验证码"></el-input>
         <img class="show-captcha" :src="'data:image/png;base64,'+ imgCode" alt="" @click="changeCaptcha"/>
 
