@@ -3,7 +3,6 @@
     <div class="new">
       <p>店铺管理<button @click="toNew">绑定新店铺</button></p>
     </div>
-
     <div class="search">
       <el-select size="small" v-model="shop.EQ_platformType" filterable placeholder="请选择平台类型">
         <el-option
@@ -141,7 +140,14 @@
           },
           //获取店铺列表
           getShopList(form){
-            shopList(form).then( res => {
+            let formData ;
+            if(form !== undefined ){
+              formData = new FormData();
+              formData.append('EQ_platformType' , form.EQ_platformType);
+              formData.append('EQ_status',form.EQ_status);
+            }
+
+            shopList(formData).then( res => {
               if(res.data.status === '000000000'){
                 console.log(res.data);
                 this.tableData = res.data.data ;

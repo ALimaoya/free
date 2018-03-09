@@ -25,12 +25,12 @@
         <li>7、开奖时间：{{ detailInfo.receiveTime }}</li>
         <li>8、订单价格：{{ detailInfo.amount }}</li>
         <li class="detailPic">9、图片详情：
-          <dl v-for="item in detailInfo.orderImageList">
-            <dt>{{ imgType[item.type-1]}}</dt>
-            <dd>
-              <img :src="item.imageUrl" alt="" />
-            </dd>
-          </dl>
+            <dl v-for="item in detailInfo.orderImageList">
+                <dt>{{ imgType[item.type-1]}}</dt>
+                <dd>
+                  <img :src="item.imageUrl" alt="" />
+                </dd>
+            </dl>
         </li>
       </ul>
       <!--<div class="detailPic">-->
@@ -65,7 +65,10 @@
           }
       },
       mounted(){
-        orderDetail().then( res => {
+        let order = this.$route.params.order ;
+        console.log(order);
+        orderDetail(order).then( res => {
+          console.log(res);
           if(res.data.status === '000000000'){
             this.detailInfo = res.data.data
           }

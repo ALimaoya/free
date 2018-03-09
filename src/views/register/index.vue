@@ -154,21 +154,8 @@
       },
       //获取短信验证码
       getMessage(){
-        let num = 60 ;
         this.getPhoneCode(this.RegForm.imgNum);
-          let timer = setInterval(()=>{
-            this.btntext = `重新发送(${num}s)` ;
-            num-- ;
-            this.disabled = true ;
 
-            if( !num ){
-              this.btntext = "获取验证码" ;
-              clearInterval(timer) ;
-              this.disabled = false ;
-
-            }
-
-          },1000);
 
       },
       getPhoneCode(value){
@@ -179,6 +166,20 @@
 
           if(res.data.status === "000000000"){
             this.phoneMessaage = true ;
+            let num = 60 ;
+            let timer = setInterval(()=>{
+              this.btntext = `重新发送(${num}s)` ;
+              num-- ;
+              this.disabled = true ;
+
+              if( !num ){
+                this.btntext = "获取验证码" ;
+                clearInterval(timer) ;
+                this.disabled = false ;
+
+              }
+
+            },1000);
           }else{
             if( res.data.status === '001003003'){
               this.$message({
@@ -221,6 +222,7 @@
                   this.$router.push({ path: '/' })
 
               } else {
+                this.loading = false;
                 this.$message({
                   title: '信息错误',
                   message: res.data.message,
@@ -238,6 +240,8 @@
               type: 'error',
 
             });
+            this.loading = false;
+
             return false
           }
         })

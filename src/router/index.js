@@ -20,17 +20,17 @@ export const constantRouterMap = [
     children : [
       {
         path : 'step1',
-        name : 'step',
+        name : 'Step',
         // hidden : true ,
         component: () => import('@/views/publish/step'),
-        meta: { title: '发布试用', icon: 'pay' },
+        meta: { title: '发布试用', icon: 'pay' ,noCache: true },
 
       },
       {
         path: 'step2',
         name: 'Pay',
         component: () => import('@/views/publish/pay'),
-        meta: { title: '支付押金', icon: 'pay' },
+        meta: { title: '支付押金', icon: 'pay',noCache: true  },
         hidden : true
       },
       {

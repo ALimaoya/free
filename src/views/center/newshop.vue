@@ -212,10 +212,19 @@
           duration: 1500
         })
       },
-      onSubmit(formName){
-        this.$refs[formName].validate((valid) => {
+      onSubmit(form){
+        this.$refs[form].validate((valid) => {
           if(valid){
-            shopInfo({ data : formName }).then( res => {
+            let formData = new FormData();
+            formData.append('platformType',this.sizeForm.platformType);
+            formData.append('shopName' , this.sizeForm.shopName);
+            formData.append('messageId' , this.sizeForm.messageId) ;
+            formData.append('captcha' ,this.sizeForm.messageId);
+            formData.append('productUrl' ,this.sizeForm.productUrl) ;
+            formData.append('managerQq' ,this.sizeForm.managerQq);
+            formData.append('managerWechat' , this.sizeForm.managerWechat) ;
+            formData.append('managerMobile' ,this.sizeForm.managerMobile) ;
+            shopInfo(formData).then( res => {
               if(res.data.status === '000000000'){
                 this.$message({
                   type : 'success',

@@ -1,7 +1,7 @@
 <template>
   <div class="pay">
     <div class="stepImg"><img src="../../assets/imgs/u258.png" alt="" /></div>
-    <p>您现在为<b>“&nbsp;{{ activity.activityTitle }}&nbsp;”</b>存入试用活动款（合计总费用）：<b>{{ activity.activityTotalAmount }}</b>元</p>
+    <p class="tips">您现在为《<span>&nbsp;{{ activity.activityTitle }}&nbsp;</span>》存入试用活动款（合计总费用）：<span>{{ activity.activityTotalAmount }}</span>元</p>
     <div class="note">费用说明：</div>
     <table border="1" bordercolor="#d3d3dd">
       <tr>
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-  import { publishActivity , activityPay } from "@/api/activity"
+  import { publishActivity , activityPay , changeDetail } from "@/api/activity"
 
   export default {
         name: "pay" ,
@@ -41,27 +41,49 @@
       },
 
       mounted(){
-        this.form = this.$store.state.publishInfo.publishForm ;
-        console.log(this.form);
-        publishActivity(this.form).then( res => {
-          console.log(res);
-          if(res.data.status === '000000000'){
-            this.activity = res.data.data ;
+          if(this.$$route.query.order !== ''){
+            let activity = this.$route.query.order ;
+            this.form  = this.$store.state.publishInfo.changePublish ;
+            this.$store.dispatch('changePublishInfo',this.form).then( res => {
+              console.log(res);
+              if (res.data.status === '000000000') {
+                this.activity = res.data.data
+
+                // this.$router.push('/publish/step3')
+              } else {
+                this.$message({
+                  message: res.data.message,
+                  center: true,
+                  type: 'error'
+                })
+              }
+            }).catch( err => {
+              alert('服务器开小差啦，请稍等~')
+            });
+
+          }else{
+            this.activity = this.$store.state.publishInfo.activity ;
+            this.form = this.$store.state.publishInfo.publishForm ;
           }
-        }).catch( err => {
-          alert('服务器开小差啦，请稍等~')
-        });
+
+
+        console.log(this.form);
+        // publishActivity(this.form).then( res => {
+        //   if(res.data.status === '000000000'){
+        //     this.activity = res.data.data ;
+        //   }
+        // }).catch( err => {
+        //   alert('服务器开小差啦，请稍等~')
+        // });
 
       },
       methods : {
         checkPay(id){
           let formData = new FormData();
           formData.append('activityId',id);
-          activityPay(formData).then( res => {
+          this.$store.dispatch('saveActivity',formData).then( res => {
             if(res.data.status === '000000000'){
-
               this.$router.push('/publish/step3')
-
             }else{
               this.$message({
                 message : res.data.message ,
@@ -78,10 +100,8 @@
           this.$router.push('/activity/approval')
         },
         back(){
-
-          // this.$store.dispatch('saveTryoutItem',this.tryoutObj);
-          this.$store.dispatch('savePublishInfo',this.form);
-          this.$router.push('/publish/step1');
+          // this.$store.dispatch('savePublishInfo',this.form);
+          this.$router.push({ path : '/publish/step1' ,query : { editor :'1' ,order : this.activity.activityId }})
 
         }
       }
@@ -102,9 +122,12 @@
         margin : 0 auto ;
       }
     }
-    b{
-      color : #ff0011 ;
+    .tips{
+      span{
+        color : #ff0011 ;
+      }
     }
+
     p,.note,.result{
       color : #333 ;
       font-weight : bold ;

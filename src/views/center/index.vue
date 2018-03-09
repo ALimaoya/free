@@ -116,8 +116,8 @@
         <h2>参考方案</h2>
         <ul>
           <li v-for="item in pub_plans" @click="plan(item.url)">
-            <p>{{ item.plan_title }}</p>
-            <img :src="item.plan_img" alt=""/>
+            <p>{{ item.planTitle }}</p>
+            <img :src="item.planImg" alt=""/>
           </li>
           <!--<li><img src="" /></li>-->
           <!--<li><img src="" /></li>-->
@@ -132,7 +132,6 @@
 
 <script>
   // import store from '@/store'
-  import { getHistory } from '@/api/table'
   import { getToken } from '@/utils/auth'
 
   export default {
@@ -172,11 +171,12 @@
         },
 
         mounted(){
-          const token = getToken() ;
+          // const token = getToken() ;
           // console.log(token) ;
-          this.$store.dispatch('GetInfo',token).then(res => {
-            if( res.data.code === '000000000'){
-              console.log(res.data);
+          this.$store.dispatch('GetInfo').then(res => {
+            console.log(res);
+
+            if( res.data.status === '000000000'){
               this.attendant = this.$store.state.user.attendant ;
               this.userInfo = this.$store.state.user.userInfo ;
               this.wallet = this.$store.state.user.wallet ;
@@ -192,7 +192,7 @@
             }
           }).catch(() => {
             // this.$store.dispatch('LogOut').then(() => {
-            
+
             //   this.$message.error('获取用户信息失败,请重新登录');
             //   this.$router.push('/login')
             // })
@@ -213,6 +213,7 @@
 
           //方案链接
           plan(url){
+            window.open(url);
             console.log(url)
           }
           // look(index){

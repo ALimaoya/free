@@ -64,13 +64,13 @@ export function  DateAdd(interval, number, date) {
       return date;
       break;
     }
-    case "q ": {
-      date.setMonth(date.getMonth() + number * 3);
-      return date;
-      break;
-    }
+    // case "q ": {
+    //   date.setMonth(date.getMonth() + number * 3);
+    //   return date;
+    //   break;
+    // }
     case "m ": {
-      date.setMonth(date.getMonth() + number);
+      date.setMonth(date.getMonth() + number * 3);
       return date;
       break;
     }

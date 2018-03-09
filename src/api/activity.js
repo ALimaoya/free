@@ -58,34 +58,54 @@ export function searchTypeList(data){
 export function getActivity(data) {
   return request({
     // url: '/POST/activity/list',
-    url : '/activity/list',
+    url : '/tryout/activity/list',
     method: 'post',
-    data : data
+    data : data ,
+    headers : {
+      'Content-Type' : 'multipart/form-data'
+    }
   })
 }
 
-//获取活动详情
+//查看活动详情
 export function getDetail(data) {
   return request({
-    url: `/activity/detail/${data}`,
+    url: `/tryout/activity/detail/${data}`,
     method: 'get',
 
+  })
+}
+
+//修改活动详情
+export function changeDetail(data){
+  return request({
+    url: '/tryout/activity/update',
+    method: 'post',
+    data: data ,
+    headers : {
+      'Content-Type' : 'multipart/form-data'
+    }
   })
 }
 
 export function getOrderList(data) {
   return request({
-    url: '/POST/order/list',
+    url: '/tryout/order/list',
     method: 'post',
-    data : data
+    data : data ,
+    headers : {
+      'Content-Type' : 'multipart/form-data'
+    }
   })
 }
 
 export function orderDetail(data) {
   return request({
-    url: '/GET/order/detail/{orderId}',
+    url: `/tryout/order/detail/${ data }`,
     method: 'get',
-
+    headers : {
+      'Content-Type' : 'application/json'
+    }
   })
 }
 

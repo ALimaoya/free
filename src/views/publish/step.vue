@@ -17,7 +17,7 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item label="领取时间：" labelWidth="1.3rem" prop="receiveHours">
-        <el-radio v-model="form.receiveHours" label="24">24小时内</el-radio>
+        <el-radio v-model="form.receiveHours+''" label="24">24小时内</el-radio>
         <span class="tips">（试客获得资格后会在24小时内下单领取，逾期将终止试用。）</span>
       </el-form-item>
       <p class="title">第二步：填写试用品展示信息</p>
@@ -49,7 +49,7 @@
       </el-form-item>
       <p class="title">第三步：选择目标推广宝贝</p>
       <el-form-item label="选择店铺：" labelWidth="1.3rem" prop="shopId">
-        <el-select v-model="form.shopId"  placeholder="请选择店铺" size="small" @change="getShop(form.shopId)">
+        <el-select v-model="form.shopId"  placeholder="请选择店铺" size="small" >
           <el-option  v-for="(item,index) in shopOptions" :key="index" :label="item.name" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
@@ -92,9 +92,9 @@
       <el-form-item label="APP关键词：" labelWidth="1.32rem">
         <span >{{ choosePlat }}</span>
       </el-form-item>
-      <el-form-item label="商品淘口令：" labelWidth="1.3rem" v-if="form.platformType==='1'||form.platformType==='2'">
-        <el-input type="textarea" :rows="4" class="textarea" placeholder="请输入内容" @blur="cancelWarn(form.productShareUrl,appKey)" v-model.trim="form.productShareUrl"></el-input>
-      </el-form-item>
+      <!--<el-form-item label="商品淘口令：" labelWidth="1.3rem" v-if="form.platformType==='1'||form.platformType==='2'">-->
+        <!--<el-input type="textarea" :rows="4" class="textarea" placeholder="请输入内容" @blur="cancelWarn(form.productShareUrl,appKey)" v-model.trim="form.productShareUrl"></el-input>-->
+      <!--</el-form-item>-->
       <el-form-item v-for="(keyItem,index) in form.keyword" :label="'APP端关键词'+(index+1)*1+'：'"
             :key="index" :prop="'keyword.'+ index + '.searchKeyword'" labelWidth="1.3rem">
         <el-select class="search" @focus="getType(form.platformType)" v-model="keyItem.searchId" placeholder="搜索平台" size="small">
@@ -108,7 +108,8 @@
         <el-select class="search" v-model="keyItem.sortType" placeholder="综合排序" size="small">
           <el-option v-for="item in topOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
-        <el-input class="key" placeholder="填写搜索关键词" v-model.trim="keyItem.searchKeyword" size="small"></el-input>
+        <el-input class="key" placeholder="填写搜索关键词" :rule="{ message : true , trigger : 'blur' , required : true }"
+                  v-model.trim="keyItem.searchKeyword" size="small"></el-input>
         <span>筛选条件：</span>
         <el-input class="key" placeholder="如价格区间、销量区间等" size="small" v-model.trim="keyItem.searchCondition"></el-input>
         <el-button slot size="small" @click="deleteKey(keyItem)">删除</el-button>
@@ -116,8 +117,7 @@
       <el-form-item labelWidth="1.3rem">
         <el-button type="primary" @click="addKey">添加一个APP关键词</el-button>
       </el-form-item>
-      <span v-if="appKey==='1'" class="keyWarn">请选择淘口令或者APP端关键词中至少一项进行填写</span>
-      <span v-else-if="appKey==='2'" class="keyWarn">请选择APP端关键词进行填写</span>
+      <!--<span v-if="appKey==='1'" class="keyWarn">请选择淘口令或者APP端关键词中至少一项进行填写</span>-->
       <!--<div v-if="form.productShareUrl!=''&&appKey">-->
       <div>
         <p class="title">第五步：设置投放信息</p>
@@ -191,14 +191,18 @@
               <td>投放总量（试用品份数）</td>
             </tr>
             <tr>
-              <td>{{ dayNum }}</td>
-              <td>{{ tryoutAmount }}</td>
+              <td v-if="goodsAmount.length">{{ goodsAmount.length }}</td>
+              <td v-else></td>
+              <td v-if="tryoutAmount">{{ tryoutAmount }}</td>
+              <td v-else></td>
             </tr>
           </table>
         </el-form-item>
       </div>
       <el-form-item class="submit">
-        <el-button type="primary" @click="onSubmit('form')">提交活动报名</el-button>
+        <el-button type="primary" v-if="editor==='1'" @click="onSubmit('form',2)">修改活动</el-button>
+        <el-button type="info" v-else-if="editor==='2'" @click="goTryout">返回试用管理</el-button>
+        <el-button type="primary" @click="onSubmit('form',1)" v-else>提交活动报名</el-button>
       </el-form-item>
     <!--</el-form-item>-->
     </el-form>
@@ -211,7 +215,8 @@
     import { parseTime } from '@/utils'
     import ElRadioGroup from "element-ui/packages/radio/src/radio-group";
     import ElButtonGroup from "element-ui/packages/button/src/button-group";
-    import { getCategory ,getShopList ,searchTypeList , uploadImage } from "@/api/activity"
+    import { getCategory ,getShopList ,searchTypeList , uploadImage , publishActivity ,getDetail , changeDetail} from "@/api/activity"
+    import $ from '../../../static/js/jquery-3.3.1.min.js'
 
     export default {
       components: {
@@ -345,7 +350,8 @@
           dialogVisible: false ,
           isUploadShow: false,  // 是否显示upload组件
           supportWebp: false,   // 是否支持webp
-          imgUrl: 'http://192.168.0.210:8087',   // 上传图片的外链域名
+          imgUrl: 'http://192.168.0.210:8087',   // 上传图片的域名
+          getImage : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/', //获取图片的外链域名
           showImg : '',
           mainImg : '',
           formRule : {
@@ -411,8 +417,6 @@
             ]
           },
           choosePlat : '',
-          appKey : '' ,
-          keyArr : [],
           week : [
             { value : '日'},
             { value : '一'},
@@ -430,35 +434,82 @@
           goodsAmount : [],
           dayNum : '',
           tryoutAmount : '',
-          warn : false ,
-          daysWarn : false ,
+          warn : true ,
+          daysWarn : true ,
           pickerOptions : {
             disabledDate(time){
               let curDate = (new Date()).getTime() ;
               return time.getTime() < Date.now()  - 8.64e7 ;
             }
           } ,
-          clearable : false
-
-
+          clearable : true ,
+          editor : '',
+          order : '',
         }
       },
 
-      mounted(){
 
+      mounted(){
         this.form = this.$store.state.publishInfo.publishForm ;
-        console.log(this.form);
-        if(this.form.platformType !== '' ){
+
+        if(this.$route.query.editor !== '' ) {
+          this.editor = this.$route.query.editor;
+          let order = this.$route.query.order ;
+          if( this.editor === '2'){
+            console.log(this.$route.params);
+            this.$store.dispatch('getPublishDetail',order).then( res => {
+              console.log(res);
+              if(res.data.status === '000000000'){
+                this.form = res.data.data ;
+              }else{
+                this.$message({
+                  message : res.data.message ,
+                  center : true ,
+                  type : 'error'
+                })
+              }
+            });
+            console.log(this.form)
+          }else{
+            if( order !== ''){
+              this.order = order ;
+              this.$store.dispatch('getPublishDetail',order).then( res => {
+                console.log(res);
+                if (res.data.status === '000000000') {
+                  this.form = res.data.data;
+                } else {
+                  this.$message({
+                    message: res.data.message,
+                    center: true,
+                    type: 'error'
+                  })
+                }
+              }).catch( err => {
+                  alert('服务器开小差啦，请稍等~')
+              })
+            }
+          }
+        }
+        if(this.form.productId !== '' ){
           this.resetSearch(this.form.platformType);
           this.getType(this.form.platformType);
-          this.dayNum = this.form.activityCalendar.length;
+          this.mainImg = this.getImage + this.form.mainImageUrl ;
+          this.showImg = this.getImage + this.form.showImageUrl ;
           let num = 0 ;
-          this.form.activityCalendar.forEach((i) => {
-            num = num + i.tryoutQuantity ;
-          });
-          this.tryoutAmount = num ;
-          console.log(this.tryoutAmount,123)
+          if(this.form.activityCalendar.length !== 0){
+            this.form.activityCalendar.forEach((i) => {
+              num = num + i.tryoutQuantity ;
+              this.goodsAmount.push(i.tryoutQuantity);
 
+            });
+          }
+
+          this.tryoutAmount = num ;
+          console.log(this.goodsAmount);
+          this.setRate(this.form.activityStartTime,this.tryoutAmount,this.goodsAmount);
+
+        }else{
+          this.setRate();
         }
         getCategory().then( res => {
           if(res.data.status === '000000000'){
@@ -467,8 +518,6 @@
         }).catch( err => {
           alert('服务器开小差啦，请稍等~')
         });
-        console.log(1,this.$store.state.publishInfo) ;
-        this.setRate(this.form.activityStartTime);
 
       },
 
@@ -562,10 +611,9 @@
           reader.readAsDataURL(file);
           },
 
-
-        //获取店铺列表
-        getShop(value){
-
+        //获取对应平台店铺列表
+        resetSearch(value){
+          this.choosePlat = this.platForm[value-1].name ;
           getShopList(value).then( res => {
             console.log(res);
             if( res.data.status === '000000000'){
@@ -575,8 +623,8 @@
           }).catch( err => {
             alert('服务器开小差啦，请稍等~')
           })
-        },
 
+        },
 
          //获取平台类型
         getType(value){
@@ -590,22 +638,53 @@
             console.log(err);
           })
         },
-         resetSearch(value){
-          this.choosePlat = this.platForm[value-1].name ;
-          this.getShop(value);
-          if(this.appKey !== ''){
-            if(value === '1'||value === '2'){
-              this.appKey = '1';
-            }else{
-              this.appKey = '2' ;
-            }
+
+        //获取商品详情
+        getGoodsDetail(url){
+          if( url.indexOf('?') !== -1 ){
+            const num = getQueryString(url,'id');
+            this.form.productId = num ;
+            let params = {'item_num_id': num };
+            let _this = this ;
+            $.ajax({
+              url: 'https://hws.m.taobao.com/cache/mtop.wdetail.getItemDescx/4.1/?type=jsonp&data=' + JSON.stringify(params),
+              dataType: 'jsonp',
+              success: function (data) {
+                if (data['ret'][0] === 'SUCCESS::接口调用成功') {
+                  _this.form.productDetail = JSON.stringify(data['data']['images']);
+                  console.log(_this.form.productDetail);
+                } else {
+                  alert(data['ret'][0]);
+                }
+              }
+            });
+            let infoParams = {
+              jsv: '2.4.8',
+              t: new Date().getTime(),
+              api: 'mtop.taobao.detail.getdetail',
+              v: '6.0',
+              H5Request: true,
+              type: 'jsonp',
+              dataType: 'jsonp',
+              data: JSON.stringify({exParams: {id: num, itemNumId: num }})
+            };
+            $.ajax({
+              url: 'https://h5api.m.taobao.com/h5/mtop.taobao.detail.getdetail/6.0/' ,
+              data : infoParams,
+              dataType: 'jsonp',
+              success: function (data) {
+                if (data['ret'][0] == 'SUCCESS::调用成功') {
+                  var _data = data.data;
+                  _this.form.productName = data.data.item.title ;
+                  console.log(_this.form.productName);
+                }else{
+                  alert(data['ret'][0]);
+                }
+              }
+            })
           }
 
-          // this.$refs['resetKey'].resetFields();
-          // var resetForm = document.getElementById('resetKeyForm');
-          // resetForm.reset() ;
-
-        },
+        } ,
 
         //删除APP端关键词
         deleteKey(item){
@@ -628,23 +707,29 @@
           })
         },
 
-        cancelWarn(value,key){
-          if(value !==''){
-            this.appKey = '' ;
-          }else{
-            this.appKey = key ;
-          }
-        },
+        // cancelWarn(value,key){
+        //   if(value !==''){
+        //     this.appKey = '' ;
+        //   }else{
+        //     this.appKey = key ;
+        //   }
+        // },
 
         //转化率日历
-        setRate(value){
+        setRate(value,total,dayItem ){
           let date ;
           this.weekItems = [] ;
-          this.form.activityCalendar = [] ;
-          this.goodsAmount = [];
+          this.form.activityCalendar = [];
+          if(total !== undefined){
+            this.goodsAmount = dayItem;
+            this.tryoutAmount = total;
+
+          }else{
+            this.goodsAmount = [];
+            this.tryoutAmount = '';
+          }
           let daysArr = [] ;
-          this.tryoutAmount = '';
-          this.dayNum = '' ;
+          // this.dayNum = '' ;
           if(value === '' || value === undefined || value === null){
             date = new Date();
           }else{
@@ -727,15 +812,26 @@
 
         //输入框修改投放数量
         numIpt(value,index,date){
-          if(value< 1 || isNaN(value)){
+          if(value.length === 0) {
+            if(this.goodsAmount.length-1 > index){
+              this.warn = false ;
+
+            }else{
+              this.warn = true ;
+              this.getProgress(index,date);
+
+            }
+
+
+          }else if(value< 1 || isNaN(value)){
             this.warn = true ;
-          }else{
-            this.warn = false ;
+          } else {
             this.getProgress(index,date);
           }
         },
 
         getProgress(index,date){
+          this.warn = false ;
           if(this.form.activityCalendar[index] === undefined){
             this.form.activityCalendar.splice(index ,0,{ activityDate : date , tryoutQuantity :this.goodsAmount[index] });
           }else{
@@ -746,67 +842,102 @@
             this.form.activityStartTime = new Date().toString();
             // console.log(this.form.activityStartTime,2);
           }
-          if(index !== 0){
+          if(index !== 0 ){
             for(let j = 0 ; j < index ; j++){
-              if(this.goodsAmount[j] === undefined){
+              if(this.goodsAmount[j] === undefined  ){
                 this.goodsAmount[j] = 1 ;
                 this.form.activityCalendar.splice(j ,0,{ activityDate : (parseTime(new Date(this.form.activityStartTime).getTime()+(j+1)*24*3600*1000)) , tryoutQuantity :1 });
 
                 console.log(date);
+              }else if( this.goodsAmount[j] === '' ){
+                console.log(j,this.goodsAmount.length);
+
+                // if( j === this.goodsAmount.length -1){
+                //   this.form.activityCalendar.splice(j ,1);
+                //
+                // }else{
+                  this.goodsAmount[j] = 1 ;
+                  this.form.activityCalendar.splice(j ,1,{ activityDate : (parseTime(new Date(this.form.activityStartTime).getTime()+(j+1)*24*3600*1000)) , tryoutQuantity :1 });
+
+                // }
+
               }
             }
           }
-          let dayAmount = 0 ;
-          this.goodsAmount.map((i) => {
-            dayAmount = (dayAmount+i)*1 ;
-          });
-          this.tryoutAmount = dayAmount ;
-          this.dayNum = this.goodsAmount.length ;
-          this.form.endTime = parseTime(new Date(this.form.activityStartTime).getTime() + this.dayNum * 24* 3600*1000 );
-          // console.log(this.form.endTime,1);
 
-          if(this.dayNum<3){
+          if(this.goodsAmount[this.goodsAmount.length-1].length === 0 ){
+            this.goodsAmount.splice(this.goodsAmount.length-1,1)
+          }
+          this.hasWarn();
+
+        },
+
+        hasWarn(){
+          let dayAmount = 0 ;
+          for(let i = 0 ; i < this.goodsAmount.length; i++  ){
+            dayAmount = (dayAmount+this.goodsAmount[i])*1 ;
+            if(this.goodsAmount[i]>0){
+              this.warn = false ;
+            }else{
+              this.warn = true ;
+
+            }
+          }
+          this.tryoutAmount = dayAmount ;
+          let dayNum = this.goodsAmount.length ;
+
+          if(dayNum<3){
             this.daysWarn = true ;
           }else{
             this.daysWarn = false ;
           }
-
         },
 
-
         //提交试用信息
-        onSubmit(formName){
-          this.form.keyword.map((i) => {
-            if(i.searchKeyword!== ''){
-              this.keyArr.push(i.searchKeyword) ;
-            }
-
-          });
-          if(this.form.platformType === '1'||this.form.platformType === '2'){
-            if(this.form.productShareUrl === ''&& this.keyArr.length===0){
-              this.appKey = '1' ;
-            }else{
-              this.appKey = '' ;
-            }
-          }else{
-            if(this.keyArr.length === 0 ){
-              this.appKey = '2' ;
-
-            }else{
-              this.appKey = '' ;
-
-            }
-          }
+        onSubmit(formName,index){
+         console.log(index);
+          this.hasWarn();
           this.$refs[formName].validate((valid) => {
-            if(valid && !this.appKey && !this.warn && !this.daysWarn){
-              this.$message({
-                type : 'success',
-                message : '提交成功',
-                center : true
-              },500);
-              // this.$store.dispatch('savePublishInfo',this.form);
+            if (valid  && !this.warn && !this.daysWarn) {
+                if(index === 1){
+                  this.$store.dispatch('savePublishInfo',this.form).then( res => {
+                    if(res.data.status === '000000000'){
+                      this.$message({
+                        type: 'success',
+                        message: '提交成功',
+                        center: true
+                      }, 500);
+                      this.$router.push({path: '/publish/step2'});
+                    } else {
+                      this.$message({
+                        message: res.data.message,
+                        center: true,
+                        type: 'error'
+                      })
+                    }
+                  }).catch( err => {
+                    alert('服务器开小差啦，请稍等~')
+                  });
+                }else{
+                  if( index === 2){
+                    this.form['activityId']  = this.order ;
+                    console.log(this.form);
+                    this.$store.dispatch('changePublish', this.form).then( res => {
+                      if (res.data.status === '000000000') {
+                        this.$message({
+                          type: 'success',
+                          message: '提交成功',
+                          center: true
+                        }, 500);
+                        this.$router.push({path: '/publish/step2' , query : { order : this.order}});
+                        console.log(res);
 
-              this.$router.push({ path :'/publish/step2' });
+                      }
+                    }).catch( err =>{
+                      alert('服务器开小差啦，请稍等~')
+                    })
+                  }
+                }
             }else{
               this.$message({
                 type : 'error',
@@ -818,51 +949,13 @@
           })
         },
 
-        //获取商品详情
-        getGoodsDetail(url){
-          if( url.indexOf('?') !== -1 ){
-            const num = getQueryString(url,'id');
-            let params = {'item_num_id': num };
-            let _this = this ;
-            $.ajax({
-              url: 'https://hws.m.taobao.com/cache/mtop.wdetail.getItemDescx/4.1/?type=jsonp&data=' + JSON.stringify(params),
-              dataType: 'jsonp',
-              success: function (data) {
-                if (data['ret'][0] === 'SUCCESS::接口调用成功') {
-                   _this.form.productDetail = JSON.stringify(data['data']['images']);
-                  console.log(_this.form.productDetail);
-                } else {
-                  alert(data['ret'][0]);
-                }
-              }
-            });
-            let infoParams = {
-              jsv: '2.4.8',
-              t: new Date().getTime(),
-              api: 'mtop.taobao.detail.getdetail',
-              v: '6.0',
-              H5Request: true,
-              type: 'jsonp',
-              dataType: 'jsonp',
-              data: JSON.stringify({exParams: {id: num, itemNumId: num }})
-            };
-            $.ajax({
-              url: 'https://h5api.m.taobao.com/h5/mtop.taobao.detail.getdetail/6.0/' ,
-              data : infoParams,
-              dataType: 'jsonp',
-              success: function (data) {
-                if (data['ret'][0] == 'SUCCESS::调用成功') {
-                  var _data = data.data;
-                  _this.form.productName = data.data.item.title ;
-                  console.log(_this.form.productName);
-                }else{
-                  alert(data['ret'][0]);
-                }
-              }
-            })
-          }
 
+
+      // 跳转到试用管理
+        goTryout(){
+          this.$router.push('/activity/approval')
         }
+
       }
     }
 </script>

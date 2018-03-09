@@ -54,14 +54,14 @@
       <el-table-column prop="progress" label="活动进度"></el-table-column>
       <el-table-column  label="操作">
         <template slot-scope="scope">
-          <el-button class="check" type="text"  v-if="scope.row.status!=='4'" @click="detail(scope.$index,scope.row.activityId)">查看详情</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='4'" @click="handle(scope.$index,scope.row.activityId)">修改</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='4'" @click="reason(scope.$index,scope.row.status)">查看原因</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='5'" @click="off(scope.$index,scope.row)">下架</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='6'" @click="shelves(scope.$index,scope.row)">重新上架</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='6'" @click="applyAccounts(scope.$index,scope.row)">申请结算</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='7'" @click="cancelAccounts(scope.$index,scope.row)">取消结算</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='9'" @click="publish(scope.$index,scope.row)">重新发布</el-button>
+          <el-button class="check" type="text"  v-if="scope.row.status!=='2'" @click="detail(scope.$index,scope.row.activityId)">查看详情</el-button>
+          <el-button class="check" type="text" v-if="scope.row.status==='2'" @click="handle(scope.$index,scope.row.activityId)">修改</el-button>
+          <el-button class="check" type="text" v-if="scope.row.status==='2'" @click="reason(scope.$index,scope.row.status)">查看原因</el-button>
+          <el-button class="check" type="text" v-if="scope.row.status==='4'" @click="off(scope.$index,scope.row)">下架</el-button>
+          <el-button class="check" type="text" v-if="scope.row.status==='5'" @click="shelves(scope.$index,scope.row)">重新上架</el-button>
+          <el-button class="check" type="text" v-if="scope.row.status==='5'" @click="applyAccounts(scope.$index,scope.row)">申请结算</el-button>
+          <el-button class="check" type="text" v-if="scope.row.status==='6'" @click="cancelAccounts(scope.$index,scope.row)">取消结算</el-button>
+          <el-button class="check" type="text" v-if="scope.row.status==='7'" @click="publish(scope.$index,scope.row)">重新发布</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -171,7 +171,7 @@
         // pageSize : 10,
         reasonBox : false ,
         reasonDetail : '',
-        form : ''
+        activityDetail : {}
       }
 
     },
@@ -182,21 +182,33 @@
 
       //获取搜索时间
       getTime(time){
-        this.activity.LT_activityEndTime = time[0] ;
-        this.activity.GT_activityStartTime = time[1] ;
+        this.activity.GT_activityStartTime = time[0] ;
+        this.activity.LT_activityEndTime = time[1] ;
       },
 
       //搜索指定试用活动
       search(form){
+
         this.getData(form);
         console.log(form)
       },
       //请求数据
       getData(form) {
-        getActivity({ data : form }).then(res => {
+        let formData = form;
+        if(form !== undefined){
+          formData = new FormData();
+          formData.append('EQ_platformType', form.EQ_platformType);
+          formData.append('EQ_activityCode', form.EQ_activityCode);
+          formData.append('EQ_activityStatus',form.EQ_activityStatus);
+          formData.append('LT_activityEndTime',form.LT_activityEndTime);
+          formData.append('GT_activityStartTime',form.GT_activityStartTime);
+          formData.append('currentPage',form.currentPage);
+          formData.append('pageSize',form.pageSize);
+        }
+        getActivity(formData).then(res => {
           if (res.data.status === '000000000') {
             this.tableData = res.data.data;
-            console.log(this.tableData) ;
+            console.log(this.tableData ,res.data.totalPages) ;
             this.activity.currentPage = (res.data.currentPage+1)*1 ;
             this.activity.pageSize = res.data.pageSize ;
             this.totalPages = res.data.totalPages ;
@@ -209,10 +221,10 @@
       detail( index,order ){
         getDetail(order).then( res =>{
           if(res.data.status === '000000000'){
-            this.form = res.data.data ;
-            this.$store.dispatch('savePublishInfo',this.form);
-            this.$router.push('/publish/step1')
-
+            this.activityDetail = res.data.data ;
+            // this.$store.dispatch('savePublishInfo',this.activityDetail);
+            this.$router.push({ path : '/publish/step1' ,query : { editor : '2', order : order }})
+            // this.$router.push({ name : 'Step' ,params : { editor :'2' , order : order }})
           }
 
         }).catch( err => {
@@ -223,10 +235,10 @@
         console.log(index)
       },
 
-      //跳转到指定试用发布详情
+      //修改指定试用发布内容
       handle(index ,order){
+            this.$router.push({ path : '/publish/step1' ,query : { editor : '1', order : order }})
         console.log(order) ;
-        console.log(index) ;
         // this.$router.push('/Activity/detail/'+index)
 
       },
@@ -252,7 +264,7 @@
       },
       handleSizeChange(val) {
         // this.pageSize = val ;
-        this.activity.pageSize =val-1 ;
+        this.activity.pageSize = val ;
         this.getData(this.order);
         // this.tableData.slice(this.currentPage-1,val);
         console.log(`每页 ${val} 条`);

@@ -2,7 +2,7 @@
   <div class="order">
     <h1>订单查询</h1>
       <div class="search">
-        <el-select size="small"  v-model="order.EQ_tryoutActivity.platformType" filterable placeholder="请选择试用平台">
+        <el-select size="small"  v-model="order.platformType" filterable placeholder="请选择试用平台">
           <el-option
             v-for="item in platformOptions"
             :key="item.value"
@@ -11,7 +11,7 @@
           </el-option>
         </el-select>
         <el-input size="small" v-model.trim="order.thirdAccount" placeholder="请输入试客第三方账号"></el-input>
-        <el-input size="small" v-model.trim="order.EQ_tryoutOrderWin.thirdOrderCode" placeholder="请输入第三方订单编号"></el-input>
+        <el-input size="small" v-model.trim="order.thirdOrderCode" placeholder="请输入第三方订单编号"></el-input>
         <el-select size="small"  v-model="order.EQ_status" filterable placeholder="请选择订单状态">
           <el-option
             v-for="item in options"
@@ -23,10 +23,9 @@
         <el-button size="small"  @click="searchOrder(order)" class="searchOrder">查询</el-button>
       </div>
       <div class="note">备注：以上搜索条件可根据单一条件进行搜索，当单独试客淘宝号搜索不到有用信息时，可尝试输入淘宝订单编号，反之亦然</div>
-      <el-table
-          :data="tableData" border>
-          <el-table-column prop="orderCode" label="试客任务编号" width="180"></el-table-column>
-          <el-table-column prop="activityCode" label="试客子订单编号" width="180"></el-table-column>
+      <el-table :data="tableData" border>
+          <el-table-column prop="activityCode" label="试客任务编号" width="180"></el-table-column>
+          <el-table-column prop="orderCode" label="试客子订单编号" width="180"></el-table-column>
           <el-table-column prop="goods" label="商品"></el-table-column>
           <el-table-column prop="platform" label="平台类型">
             <template slot-scope="scope">
@@ -42,7 +41,7 @@
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button  type="text" @click="goDetail(scope.$index,scope.row.orderCode)">查看详情</el-button>
+              <el-button  type="text" @click="goDetail(scope.$index,scope.row.orderId)">查看详情</el-button>
               <!--<el-button  type="text" @click="changeStatus(scope.$index)">修改状态</el-button>-->
               <!--<el-button size="small"   @click="handleComplaint(scope.$index,scope.row)">投诉</el-button>-->
             </template>
@@ -141,10 +140,8 @@
         order : {
           EQ_status: '',
           thirdAccount: '',
-          EQ_tryoutActivity : {
-            platformType : ''
-          },
-          EQ_tryoutOrderWin: {thirdOrderCode: ''},
+          platformType : '' ,
+          thirdOrderCode: '',
           currentPage : 1,
           pageSize : 10
         },
@@ -194,16 +191,26 @@
       //订单查询
       searchOrder(order){
         this.getList(order);
-        console.log(order)
       },
 
       //获取订单列表
       getList(order){
-        getOrderList({ data : order}).then( res=> {
+        let formData = order;
+        console.log(order);
+        if(order !== undefined){
+          formData = new FormData();
+          formData.append('EQ_tryoutActivity.platformType',order.platformType);
+          formData.append('EQ_tryoutOrderWin.thirdOrderCode',order.thirdOrderCode);
+          formData.append('EQ_status',order.EQ_status);
+          formData.append('currentPage', order.currentPage);
+          formData.append('pageSize', order.pageSize);
+        }
+        getOrderList(formData).then( res=> {
+          console.log(res);
           if(res.data.status === '000000000'){
             this.tableData = res.data.data ;
             this.totalPages = res.data.totalPages ;
-            this.order.pageSize = (res.data.pageSize+1)*1 ;
+            this.order.pageSize = res.data.pageSize ;
             this.order.currentPage = (res.data.currentPage+1)*1 ;
           }
         }).catch( err => {
@@ -269,13 +276,13 @@
 
       handleSizeChange(val) {
         // this.pageSize = val ;
-        this.order.pageSize = val -1 ;
+        this.order.pageSize = val ;
         this.getList(this.order);
         // this.tableData.slice(this.currentPage-1,val);
         console.log(`每页 ${val} 条`);
       },
       handleCurrentChange(val) {
-        this.order.currentPage = val -1 ;
+        this.order.currentPage = val;
         this.getList(this.order);
 
         console.log(`当前页: ${val}`);

@@ -55,13 +55,13 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       template: 'index.html',
       inject: true,
       favicon: resolve('favicon.ico'),
-      title: 'vue-element-admin'
+      title: '丫贝试客'
     }),
-  // new webpack.optimize.CommonsChunkPlugin('common.js'),
-  new webpack.ProvidePlugin({
-    jQuery: "jquery",
-    $: "jquery"
-  })
+  new webpack.optimize.CommonsChunkPlugin('common.js'),
+  // new webpack.ProvidePlugin({
+  //   jQuery: "jquery",
+  //   $: "jquery"
+  // })
 ],
 
 })
