@@ -46,13 +46,21 @@ export function validatAlphabets(str) {
   const reg = /^[A-Za-z]+$/
   return reg.test(str)
 }
-
+/*验证码*/
+export function validateCode(textval) {
+  const urlregex = /^[0-9]{6}$/
+  return urlregex.test(textval)
+}
 /*登录注册密码*/
 export function validPassWord(str){
   const reg =  /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}/;
   return reg.test(str)
 }
-
+/*验证姓名*/
+export function validName(str){
+  const reg =  /^[\u4e00-\u9fa5]+$/;
+  return reg.test(str)
+}
 /*获取url参数*/
 export function getQueryString(url,name) {
   // let reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
