@@ -30,7 +30,7 @@ export function handleGold(data){
 //获取资金明细
 export function getWalletLog(data){
   return request({
-    url: '/POST/tryout/wallet/logs',
+    url: '/tryout/wallet/logs',
     method: 'post',
     data
   })
