@@ -19,7 +19,7 @@ export function setThirdAccount(data) {
 //修改绑定支付宝账号
 export function setApilyAccount(data) {
   return request({
-    url: 'tryout/settings/editAlipay',
+    url: '/tryout/settings/alipay',
     method: 'post',
     data
 })
@@ -67,3 +67,33 @@ export function getCaptcha(){
   })
 }
 
+//获取会员信息
+export function getMember(){
+  return request({
+    url : 'tryout/member/data',
+    method : 'get',
+  })
+}
+//获取会员订单列表
+export function getMemberOrder(data){
+  return request({
+    url : '/tryout/member/orders',
+    method : 'post',
+    data:data
+  })
+}
+//获取会员类型列表
+export function getVipType(){
+  return request({
+    url : '/tryout/vip/list',
+    method : 'get',
+  })
+}
+//购买会员
+export function buyVip(data){
+  return request({
+    url : 'tryout/vip/buy',
+    method : 'post',
+    data:data
+  })
+}

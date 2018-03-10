@@ -5,27 +5,27 @@
     <div class="content">
       <p>会员状态：</p>
       <el-table :data="statusData" border style="width: 100%">
-        <el-table-column prop="type" label="会员类型" >
+        <el-table-column prop="vipLevel" label="会员类型" >
           <template slot-scope="scope">
-            <span v-if="scope.row.type==='1'">非会员</span>
-            <span v-else-if="scope.row.type==='2'">会员</span>
+            <span v-if="scope.row.vipLevel==0||!scope.row.vipLevel">非会员</span>
+            <span> <span style="color:red">vip:{{scope.row.vipLevel}}</span> 会员</span>
           </template>
         </el-table-column>
-        <el-table-column prop="date" label="到期时间" ></el-table-column>
+        <el-table-column prop="vipTime" label="到期时间" ></el-table-column>
         <el-table-column prop="action" label="操作">
           <template slot-scope="scope">
-            <el-button v-if="scope.row.type==='1'" @click="handleVip(scope.row.date,scope.row.type)" type="text" size="small">购买正式会员</el-button>
-            <el-button v-else="scope.row.type==='2'" @click="handleVip(scope.row.date,scope.row.type)" type="text" size="small">续费会员</el-button>
+            <el-button v-if="scope.row.vipLevel==0||!scope.row.vipLevel" @click="handleVip(scope.row.vipLevel,scope.row.vipTime)" type="text" size="small">购买正式会员</el-button>
+            <el-button v-else @click="handleVip(scope.row.vipLevel,scope.row.vipTime)" type="text" size="small">续费会员</el-button>
           </template>
         </el-table-column>
       </el-table>
       <p>会员充值记录：</p>
-      <el-table border :data="historyData.slice((currentPage-1)*pageSize,currentPage*pageSize)" stripe style="width: 100%">
-        <el-table-column prop="date" label="时间" ></el-table-column>
-        <el-table-column prop="startDate" label="开通时间" ></el-table-column>
-        <el-table-column prop="money" label="充值金额"></el-table-column>
+      <el-table border :data="historyData" stripe style="width: 100%">
+        <el-table-column prop="creatTime" label="时间" ></el-table-column>
+        <el-table-column prop="usefulMonth" label="开通时间长(月)" ></el-table-column>
+        <el-table-column prop="amount" label="充值金额"></el-table-column>
         <el-table-column prop="type" label="充值类型" ></el-table-column>
-        <el-table-column prop="status" label="状态"></el-table-column>
+        <!-- <el-table-column prop="status" label="状态"></el-table-column> -->
       </el-table>
       <div class="block2" v-if="historyData.length">
         <el-pagination
@@ -45,31 +45,63 @@
 </template>
 
 <script>
-
+import {getMember,getMemberOrder} from "@/api/userInfor"
   export default {
     name:    "vip",
     data(){
       return{
         statusData : [
-          {
-            type: '1',
-            date : '2011-11-11',
-          }
         ] ,
         historyData : [],
         pageSize : 10,
-        currentPage : 1
-
+        currentPage : 1,
+        vipInfo:{}
       }
+    },
+    mounted(){
+      this.getVipInfo();
+      this.getOrderList();
     },
     methods : {
       //购买vip
-      handleVip(date,type){
+      handleVip(type,date){
           this.$router.push({ name : 'BuyVip', params : { type : type ,date : date}});
-
       },
-
-
+      getVipInfo(){
+        getMember().then(res=>{
+          if (res.data.status == '000000000') {
+            this.statusData.push(res.data.data)
+            console.log(this.statusData)
+            }else{
+              this.$message({
+                message:res.data.message,
+                type: 'error',
+                center: true
+              });
+            }
+        }).catch(err=>{
+          alert('服务器开小差啦，请稍等~')
+        })
+      },
+      getOrderList(){
+        let formdata=new FormData();
+        formdata.append('currentPageNumber',this.currentPage)
+        formdata.append('pageSize',this.pageSize)
+        getMemberOrder(formdata).then(res=>{
+          if (res.data.status == '000000000') {
+            this.historyData=res.data.data
+            console.log(this.statusData)
+            }else{
+              this.$message({
+                message:res.data.message,
+                type: 'error',
+                center: true
+              });
+            }
+        }).catch(err=>{
+          alert('服务器开小差啦，请稍等~')
+        })
+      },
       handleSizeChange(val) {
         this.pageSize = val
         console.log(`每页 ${val} 条`);

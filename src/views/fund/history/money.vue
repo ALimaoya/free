@@ -29,14 +29,22 @@
       </div>
           <el-button type="primary" size="mini" @click="search(searchForm)">查询</el-button>
     </div>
-    <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" style="width: 100%" border height="0.3rem">
-      <el-table-column prop="ID" label="编号"></el-table-column>
-      <el-table-column prop="type" label="交易类型"></el-table-column>
-      <el-table-column prop="money" label="金额"></el-table-column>
-      <el-table-column prop="note" label="资金备注"></el-table-column>
-      <el-table-column prop="rest" label="当前结余"></el-table-column>
-      <el-table-column prop="status" label="交易状态"></el-table-column>
-      <el-table-column prop="time" label="操作时间"></el-table-column>
+    <el-table :data="tableData" style="width: 100%;"  border> 
+      <el-table-column prop="" label="编号"> 
+          <template slot-scope="scope">
+              {{scope.$index+1}}
+          </template>
+      </el-table-column>
+      <el-table-column prop="changeType" label="交易类型">
+          <template slot-scope="scope">
+              {{options[scope.row.changeType].label}}
+          </template>
+      </el-table-column>
+      <el-table-column prop="amount" label="金额(元)"></el-table-column>
+      <el-table-column prop="remarks" label="资金备注"></el-table-column>
+      <el-table-column prop="amountResult" label="当前结余(元)"></el-table-column>
+      <!-- <el-table-column prop="options" label="交易状态"></el-table-column> -->
+      <el-table-column prop="createTime" label="操作时间"></el-table-column>
     </el-table>
     <div class="block2" v-if="tableData.length">
       <el-pagination
@@ -46,9 +54,9 @@
         :page-sizes="[10, 15, 20]"
         :page-size="pageSize"
         layout=" sizes, prev, pager, next, jumper"
-        :total="tableData.length">
+        :total="moneyRecord.totalElements">
       </el-pagination>
-      <span class="totalItems">共{{Math.ceil(tableData.length/pageSize)}}页，{{tableData.length}}条记录</span>
+      <span class="totalItems">共{{moneyRecord.totalPages}}页，{{moneyRecord.totalElements}}条记录</span>
     </div>
   </div>
 </template>
@@ -68,6 +76,10 @@
               endDate : ''
             },
             options : [
+              {
+                label : '全部类型',
+                value : ''
+              },
               {
                 label : '账户充值',
                 value : '1'
@@ -89,10 +101,12 @@
                 value : '5'
               },
             ],
-            tableData : [],
+            tableData : [
+            ],
             currentPage : 1 ,
             pageSize : 10,
-            type:""
+            type:"",
+            moneyRecord:{}
           }
       },
       mounted(){
@@ -100,19 +114,29 @@
       },
       methods : {
         search(form){
-          // this.getList(form);
-          console.log(form)
+          this.getMoneyList();
         },
 
         getMoneyList(){
-          let _data={
-            page:this.currentPage,
-            size:this.pageSize,
-            type:this.type,
-          }
-          getWalletLog(_data).then( res => {
-            if(  res.data.code === '000000000'){
-              this.tableData = res.data.data ;
+          let formdata=new FormData();
+          formdata.append('currentPage',this.currentPage)
+          formdata.append('pageSize',this.pageSize)
+          formdata.append('EQ_changeType',this.searchForm.detail)
+          formdata.append('GT_createTime',this.searchForm.startDate)
+          formdata.append('LT_createTime',this.searchForm.endDate)
+          getWalletLog(formdata).then( res => {
+            console.log(res)
+            if( res.data.status === '000000000'){
+              this.tableData = res.data.data;
+              this.moneyRecord=res.data
+              console.log(this.tableData)
+            }else{
+              this.$message({
+                  message: res.data.message,
+                  type: 'error',
+                  center: true
+                });
+                return
             }
           }).catch( err => {
             alert('服务器开小差啦，请稍等~')
@@ -121,12 +145,11 @@
 
         handleSizeChange(val) {
           this.pageSize = val ;
-          // this.tableData.slice(this.currentPage-1,val);
-          console.log(`每页 ${val} 条`);
+          this.getMoneyList()
         },
         handleCurrentChange(val) {
           this.currentPage = val ;
-          console.log(`当前页: ${val}`);
+          this.getMoneyList()
         }
       }
 

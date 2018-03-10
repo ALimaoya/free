@@ -67,3 +67,21 @@ a:hover {
 .app-container {
   padding: 0.20rem;
 }
+ .buyVip .payPsw{
+  .el-form-item__label{
+    width: 1.5rem;
+    text-align:right;
+  }
+  .el-form-item__error{
+    top:80%;
+    left: 50%;
+  }
+}
+.money_color{color: red}
+.c666{color: #666}
+.f18{font-size: 0.18rem}
+.f14{font-size: 0.14rem}
+.ml40{margin-left: .4rem}
+.ml10{margin-left: .1rem}
+.line_through{text-decoration: line-through}
+.text-center{text-align: center}
