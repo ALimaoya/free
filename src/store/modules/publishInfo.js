@@ -61,25 +61,27 @@ const publishInfo ={
       totalDeposit : '',
       activityId : '',
       activityServiceAmount : '',
-    }
+      payStatus : ''
+
+    },
+
 
     // goodsAmount : [],
   },
   mutations : {
     SAVE_PUBLISHINFO : (state,form)=>{
-      state.publishForm = form
-    },
-
-    SAVE_ACTIVITY : (state , obj) => {
-      state.activity = obj
+      state.publishForm  = form
     },
 
     CHANGE_PUBLISHINFO : ( state, form ) => {
       state.changePublish = form ;
     },
+    PAY_DETAIL : ( state ,data) => {
+      state.activity = data ;
+    },
 
     GET_DETAIL : (state ,form ) => {
-      state.publishForm = form ;
+      state.changePublish = form ;
     }
   },
   actions : {
@@ -88,7 +90,8 @@ const publishInfo ={
         publishActivity(form).then(response => {
 
           const data = response.data.data ;
-          commit('SAVE_PUBLISHINFO',data);
+          commit('SAVE_PUBLISHINFO',form);
+          commit('PAY_DETAIL',data);
 
           resolve(response)
         }).catch(error => {
@@ -98,28 +101,15 @@ const publishInfo ={
       })
     },
 
-    saveActivity( { commit } ,form ){
-      return new Promise((resolve, reject) => {
-        activityPay(form).then(response => {
 
-          const data = response.data.data ;
-          commit('SAVE_ACTIVITY' ,form) ;
-
-          resolve(response)
-        }).catch(error => {
-
-          reject(error)
-        })
-      })
-    },
 
     changePublishInfo({ commit } ,form){
       return new Promise((resolve, reject) => {
         changeDetail(form).then(response => {
 
           const data = response.data.data ;
-          commit('CHANGE_PUBLISHINFO',data);
-
+          commit('CHANGE_PUBLISHINFO',form);
+          commit('PAY_DETAIL',data);
           resolve(response)
         }).catch(error => {
 
@@ -131,7 +121,6 @@ const publishInfo ={
     getPublishDetail({ commit } ,order ){
       return new Promise((resolve, reject) => {
         getDetail(order).then(response => {
-
           const data = response.data.data ;
           commit('GET_DETAIL',data);
 
@@ -139,6 +128,18 @@ const publishInfo ={
         }).catch(error => {
 
           reject(error)
+        })
+      })
+    },
+
+    getPayDetail({ commit } ,order ){
+      return new Promise((resolve,reject) => {
+        getPayInfo(order).then(response => {
+          const data = response.data ;
+          commit('PAY_DETAIL',data);
+          resolve(response);
+        }).catch( err => {
+          reject(err);
         })
       })
     }

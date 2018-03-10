@@ -9,6 +9,17 @@ export function publishActivity(data){
   })
 }
 
+//获取试用活动支付详情
+export function getPayDetail(order){
+  return request({
+    url : '/tryout/activity/payParams',
+    method : 'get',
+    params : {
+      activityId : order
+    }
+  })
+}
+
 //试用活动支付
 export function activityPay(data){
   return request({
@@ -16,7 +27,7 @@ export function activityPay(data){
     method : 'post',
     data : data ,
     headers : {
-      'Content-Type' : 'multipart/form-data'
+      'Content-Type' : 'application/json'
     }
   })
 }
@@ -61,9 +72,9 @@ export function getActivity(data) {
     url : '/tryout/activity/list',
     method: 'post',
     data : data ,
-    headers : {
-      'Content-Type' : 'multipart/form-data'
-    }
+    // headers : {
+    //   'Content-Type' : 'multipart/form-data'
+    // }
   })
 }
 
@@ -82,9 +93,9 @@ export function changeDetail(data){
     url: '/tryout/activity/update',
     method: 'post',
     data: data ,
-    headers : {
-      'Content-Type' : 'multipart/form-data'
-    }
+    // headers : {
+    //   'Content-Type' : 'multipart/form-data'
+    // }
   })
 }
 
@@ -109,9 +120,10 @@ export function orderDetail(data) {
   })
 }
 
+//修改试用活动状态
 export function changeStatus(data) {
   return request({
-    url: '/POST/order/updateStatus',
+    url: '/tryout/activity/updateStatus',
     method: 'post',
     data : data
   })
@@ -123,11 +135,21 @@ export function uploadImage(file){
     url : "/tryout/file/upload" ,
     method : 'post' ,
     data : file ,
-    headers : {
-      'Content-Type' : 'multipart/form-data'
-    }
+    // headers : {
+    //   'Content-Type' : 'multipart/form-data'
+    // }
   })
 }
 
+//获取京东平台下的商品详情
+export function getJDetail(url){
+  return request({
+    url : '/tryout/thirdProduct/detail/jd',
+    method : 'get',
+    params : {
+      productUrl : url
+    }
+  })
+}
 
 

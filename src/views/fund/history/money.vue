@@ -109,7 +109,7 @@
             page:this.currentPage,
             size:this.pageSize,
             type:this.type,
-          }
+          };
           getWalletLog(_data).then( res => {
             if(  res.data.code === '000000000'){
               this.tableData = res.data.data ;

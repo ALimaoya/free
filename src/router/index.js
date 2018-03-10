@@ -90,12 +90,12 @@ export const constantRouterMap = [
         component: () => import('@/views/activity/order'),
         meta: { title: '订单查询', icon: 'order' }
       },
-      {
-        path: 'feedback',
-        name: 'Feedback',
-        component: () => import('@/views/activity/feedback'),
-        meta: { title: '投诉反馈', icon: 'feedback' }
-      },
+      // {
+      //   path: 'feedback',
+      //   name: 'Feedback',
+      //   component: () => import('@/views/activity/feedback'),
+      //   meta: { title: '投诉反馈', icon: 'feedback' }
+      // },
       {
         path: 'detail/:order',
         name: 'Detail',

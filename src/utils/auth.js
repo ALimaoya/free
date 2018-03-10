@@ -20,3 +20,4 @@ export function getMobile() {
 export function setMobile(mobile) {
   return Cookies.set(Mobile, mobile)
 }
+

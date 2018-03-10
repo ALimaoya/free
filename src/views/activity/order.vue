@@ -23,10 +23,10 @@
         <el-button size="small"  @click="searchOrder(order)" class="searchOrder">查询</el-button>
       </div>
       <div class="note">备注：以上搜索条件可根据单一条件进行搜索，当单独试客淘宝号搜索不到有用信息时，可尝试输入淘宝订单编号，反之亦然</div>
-      <el-table :data="tableData" border>
+      <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" border>
           <el-table-column prop="activityCode" label="试客任务编号" width="180"></el-table-column>
           <el-table-column prop="orderCode" label="试客子订单编号" width="180"></el-table-column>
-          <el-table-column prop="goods" label="商品"></el-table-column>
+          <el-table-column prop="activityTitle" label="商品名称"></el-table-column>
           <el-table-column prop="platform" label="平台类型">
             <template slot-scope="scope">
               {{ platformOptions[scope.row.platform -1].name }}
@@ -51,11 +51,11 @@
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="order.currentPage"
+        :current-page="currentPage"
         :page-sizes="[10, 15, 20]"
-        :page-size="order.pageSize"
+        :page-size="pageSize"
         layout=" sizes, prev, pager, next, jumper"
-        :total="tableData.length">
+        :total="totalElements">
       </el-pagination>
       <span class="totalItems">共{{ totalPages }}页，{{tableData.length}}条记录</span>
     </div>
@@ -142,13 +142,14 @@
           thirdAccount: '',
           platformType : '' ,
           thirdOrderCode: '',
-          currentPage : 1,
-          pageSize : 10
+          // currentPage : 1,
+          // pageSize : 10
         },
         tableData : [],
-        // currentPage : 1 ,
-        // pageSize : 10 ,
+        currentPage : 1 ,
+        pageSize : 10 ,
         totalPages : '',
+        totalElements : 0 ,
         complaintOrder : '',
         complainBox : false ,
         reasonOptions : [
@@ -195,23 +196,25 @@
 
       //获取订单列表
       getList(order){
-        let formData = order;
+
+        let formData = new FormData();
         console.log(order);
         if(order !== undefined){
-          formData = new FormData();
           formData.append('EQ_tryoutActivity.platformType',order.platformType);
           formData.append('EQ_tryoutOrderWin.thirdOrderCode',order.thirdOrderCode);
           formData.append('EQ_status',order.EQ_status);
-          formData.append('currentPage', order.currentPage);
-          formData.append('pageSize', order.pageSize);
+
         }
+        formData.append('currentPage', this.currentPage);
+        formData.append('pageSize', this.pageSize);
         getOrderList(formData).then( res=> {
           console.log(res);
           if(res.data.status === '000000000'){
             this.tableData = res.data.data ;
             this.totalPages = res.data.totalPages ;
-            this.order.pageSize = res.data.pageSize ;
-            this.order.currentPage = (res.data.currentPage+1)*1 ;
+            this.pageSize = res.data.pageSize ;
+            this.currentPage = res.data.currentPage ;
+            this.totalElements = res.data.data.totalElements ;
           }
         }).catch( err => {
           alert('服务开小差啦，请稍等~');
@@ -276,16 +279,16 @@
 
       handleSizeChange(val) {
         // this.pageSize = val ;
-        this.order.pageSize = val ;
+        this.pageSize = val ;
         this.getList(this.order);
         // this.tableData.slice(this.currentPage-1,val);
         console.log(`每页 ${val} 条`);
       },
       handleCurrentChange(val) {
-        this.order.currentPage = val;
-        this.getList(this.order);
+        this.currentPage = val ;
+        // this.getList(this.order);
 
-        console.log(`当前页: ${val}`);
+        console.log(`当前页: ${(val+1)}`);
       }
     }
     }

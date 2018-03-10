@@ -100,8 +100,9 @@
       }
     },
     mounted(){
-      this.isVip =  this.$route.params
-      console.log(this.isVip)
+
+      // this.isVip =  this.$route.params
+      // console.log(this.isVip)
     },
     methods : {
 
@@ -114,18 +115,24 @@
             const index = i.dataset.index ;
             this.target = index ;
             let newDate = '';
+            let vipTime = '';
             let now ;
             if(this.isVip.type === '1'){
               now = new Date() ;
-              newDate = DateAdd("y ",index*1,now) ;
+              newDate = DateAdd("y",index*1,now) ;
+              vipTime = DateAdd("m",3,newDate) ;
 
             }else{
+              console.log(this.isVip.date);
               now = GetTimeByTimeStr(this.isVip.date);
-              newDate = DateAdd("y ",index*1,now ) ;
+
+              newDate = DateAdd("y",index*1,now ) ;
+              vipTime = DateAdd("m",3,newDate) ;
+
             }
 
             this.choose.time = this.vipTime[index-1].time ;
-            this.choose.date =  parseTime(newDate,'{y}-{m}-{d}');
+            this.choose.date =  parseTime(vipTime,'{y}-{m}-{d}');
             this.choose.money = this.vipTime[index-1].money ;
 
 

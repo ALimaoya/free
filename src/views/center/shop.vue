@@ -4,7 +4,7 @@
       <p>店铺管理<button @click="toNew">绑定新店铺</button></p>
     </div>
     <div class="search">
-      <el-select size="small" v-model="shop.EQ_platformType" filterable placeholder="请选择平台类型">
+      <el-select size="small" clearable v-model="shop.EQ_platformType" filterable placeholder="请选择平台类型">
         <el-option
           v-for="item in platformOptions"
           :key="item.value"
@@ -12,7 +12,7 @@
           :value="item.value">
         </el-option>
       </el-select>
-      <el-select size="small" v-model="shop.EQ_status" filterable placeholder="请选择店铺状态">
+      <el-select size="small" v-model="shop.EQ_status" filterable placeholder="请选择店铺状态" clearable>
         <el-option
           v-for="item in activityOptions"
           :key="item.value"

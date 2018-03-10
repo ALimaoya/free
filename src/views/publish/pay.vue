@@ -19,8 +19,15 @@
       </tr>
     </table>
     <div class="result">您当前的押金余额为：{{ activity.totalDeposit }}元，本次总共要支付的金额为：{{ activity.activityTotalAmount }}元。</div>
+    <div class="payPsw">
+      <span>支付密码：</span>
+      <el-input :type="pwdType"  v-model.trim="password" placeholder="请输入支付密码" ></el-input>
+      <span class="show-pwd" @click="showPwd">
+          <svg-icon icon-class="eyeopen" v-if="pwdType===''" /><svg-icon v-else="pwdType==='password'" icon-class="eyeclose" />
+      </span>
+    </div>
     <div class="btn">
-      <el-button type="primary" @click="checkPay(activity.activityId)">确认支付</el-button>
+      <el-button type="primary" @click="checkPay(activity.activityId , password)">确认支付</el-button>
       <el-button type="text" @click="goActivity">试用活动管理</el-button>
       <el-button type="text" @click="back">返回编辑活动</el-button>
     </div>
@@ -28,81 +35,92 @@
 </template>
 
 <script>
-  import { publishActivity , activityPay , changeDetail } from "@/api/activity"
+  import {   activityPay , getPayDetail } from "@/api/activity"
 
   export default {
         name: "pay" ,
       data(){
           return{
 
-            form : {},
-            activity :{}
+            activity :{},
+            pwdType : 'password',
+            password : ''
           }
       },
 
       mounted(){
-          if(this.$$route.query.order !== ''){
-            let activity = this.$route.query.order ;
-            this.form  = this.$store.state.publishInfo.changePublish ;
-            this.$store.dispatch('changePublishInfo',this.form).then( res => {
-              console.log(res);
-              if (res.data.status === '000000000') {
-                this.activity = res.data.data
-
-                // this.$router.push('/publish/step3')
-              } else {
-                this.$message({
-                  message: res.data.message,
-                  center: true,
-                  type: 'error'
-                })
-              }
-            }).catch( err => {
-              alert('服务器开小差啦，请稍等~')
-            });
-
-          }else{
-            this.activity = this.$store.state.publishInfo.activity ;
-            this.form = this.$store.state.publishInfo.publishForm ;
+            let order = this.$route.query.order ;
+        console.log(this.$route.query);
+        // this.form = this.$store.state.publishInfo.changePublish ;
+        getPayDetail(order).then( res => {
+          console.log(res);
+          if (res.data.status === '000000000') {
+            this.activity = res.data.data ;
+            console.log(this.activity);
+          } else {
+            this.$message({
+              message: res.data.message,
+              center: true,
+              type: 'error'
+            })
           }
+        }).catch( err => {
+          alert('服务器开小差啦，请稍等~')
+        });
 
-
-        console.log(this.form);
-        // publishActivity(this.form).then( res => {
-        //   if(res.data.status === '000000000'){
-        //     this.activity = res.data.data ;
-        //   }
-        // }).catch( err => {
-        //   alert('服务器开小差啦，请稍等~')
-        // });
 
       },
       methods : {
-        checkPay(id){
-          let formData = new FormData();
-          formData.append('activityId',id);
-          this.$store.dispatch('saveActivity',formData).then( res => {
-            if(res.data.status === '000000000'){
-              this.$router.push('/publish/step3')
-            }else{
-              this.$message({
-                message : res.data.message ,
-                center : true ,
-                type : 'error'
-              })
-            }
+        //  确认支付
+        checkPay(id,password){
+          console.log(id,password.length);
 
-          }).catch( err => {
-            alert('服务器开小差啦，请稍等~')
-          });
+          if( password.length === 6){
+
+            activityPay({ activityId : id+'' ,payPassword : password }).then( res => {
+              if(res.data.status === '000000000'){
+                this.$router.push('/publish/step3')
+              }else{
+                this.$message({
+                  message : res.data.message ,
+                  center : true ,
+                  type : 'error'
+                })
+              }
+
+            }).catch( err => {
+              alert('服务器开小差啦，请稍等~')
+            });
+          }else{
+
+            this.$message({
+              message : '请输入六位支付密码',
+              type : 'error',
+              center : true
+            })
+
+          }
+
         },
+
+        //跳转到试用活动管理
         goActivity(){
           this.$router.push('/activity/approval')
         },
+
+        //返回修改活动
         back(){
-          // this.$store.dispatch('savePublishInfo',this.form);
           this.$router.push({ path : '/publish/step1' ,query : { editor :'1' ,order : this.activity.activityId }})
 
+        },
+
+        //切换密码是否可见
+        showPwd(){
+          if(this.pwdType === 'password'){
+            this.pwdType = ''
+          }else{
+            this.pwdType  = 'password'
+          }
         }
       }
     }
@@ -163,6 +181,28 @@
       justify-content: center;
       .el-button:nth-child(1){
         margin-right : 0.3rem ;
+      }
+    }
+    .payPsw{
+     width : 100% ;
+      height : 1.2rem ;
+      position : relative ;
+
+      span{
+        display : block;
+        width : 0.8rem ;
+        height : 0.3rem ;
+        line-height : 0.3rem ;
+        float : left ;
+      }
+      .el-input{
+        float : left ;
+        width : 30% ;
+      }
+      .show-pwd{
+        position : absolute ;
+        left : 3.2rem;
+        top : 0.04rem ;
       }
     }
   }

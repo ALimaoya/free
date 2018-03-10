@@ -14,8 +14,8 @@
         <el-table-column prop="date" label="到期时间" ></el-table-column>
         <el-table-column prop="action" label="操作">
           <template slot-scope="scope">
-            <el-button v-if="scope.row.type==='1'" @click="handleVip(scope.row.date,scope.row.type)" type="text" size="small">购买正式会员</el-button>
-            <el-button v-else="scope.row.type==='2'" @click="handleVip(scope.row.date,scope.row.type)" type="text" size="small">续费会员</el-button>
+            <el-button v-if="scope.row.type==='1'" @click="handleVip" type="text" size="small">购买正式会员</el-button>
+            <el-button v-else="scope.row.type==='2'" @click="handleVip" type="text" size="small">续费会员</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -64,8 +64,8 @@
     },
     methods : {
       //购买vip
-      handleVip(date,type){
-          this.$router.push({ name : 'BuyVip', params : { type : type ,date : date}});
+      handleVip(){
+          this.$router.push('/userInfor/buyVip');
 
       },
 

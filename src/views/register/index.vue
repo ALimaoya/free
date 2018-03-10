@@ -16,7 +16,7 @@
         <el-input type="text"  v-model="RegForm.imgNum" autoComplete="on" placeholder="请输入图形验证码" />
         <img class="show-captcha" :src="'data:image/png;base64,'+imgCode" alt="" @click="changeCaptcha"/>
       </el-form-item>
-      <el-form-item prop="message" class="validateCode" v-if="phoneMessaage">
+      <el-form-item prop="message" class="validateCode" >
         <span class="svg-container svg-container_login">
           <svg-icon icon-class="user" />
         </span>
@@ -79,7 +79,11 @@
         if(value === ''){
           callback(new Error('请输入短信验证码'))
         }else{
-          callback();
+          if(this.RegForm.imgNum !== '' && this.RegForm.mobile !== '' ){
+            callback();
+          }else{
+            callback(new Error('请输入手机号及图片验证码'))
+          }
         }
       };
       const validatePass = (rule, value, callback) => {
@@ -126,7 +130,6 @@
         userToken : '',
         btntext : '获取验证码',
         disabled : false ,
-        phoneMessaage : false
       }
     },
     mounted(){
@@ -154,7 +157,15 @@
       },
       //获取短信验证码
       getMessage(){
-        this.getPhoneCode(this.RegForm.imgNum);
+        if(this.RegForm.imgNum !== '' && this.RegForm.mobile !=='' ){
+          this.getPhoneCode(this.RegForm.imgNum);
+        }else{
+          this.$message({
+            message : '请先输入正确的手机号及图片验证码' ,
+            type : 'error',
+            center : true
+          })
+        }
 
 
       },
@@ -163,15 +174,13 @@
         form.append('captcha',value);
         form.append('token',this.userToken);
         getMessageCode(this.RegForm.mobile,  form).then( res => {
-
+          console.log(res);
           if(res.data.status === "000000000"){
-            this.phoneMessaage = true ;
             let num = 60 ;
             let timer = setInterval(()=>{
               this.btntext = `重新发送(${num}s)` ;
               num-- ;
               this.disabled = true ;
-
               if( !num ){
                 this.btntext = "获取验证码" ;
                 clearInterval(timer) ;
@@ -181,19 +190,12 @@
 
             },1000);
           }else{
-            if( res.data.status === '001003003'){
-              this.$message({
-                message : '图片验证码错误，请重新确认后输入',
-                center : true ,
-                type : 'error'
-              })
-            }else if(res.data.status === "001003005" ){
               this.$message({
                 message : res.data.message,
                 center : true ,
                 type : 'error'
-              })
-            }
+              }) ;
+
           }
         }).catch( err => {
           alert('服务器开小差啦，请稍等~')
@@ -208,10 +210,7 @@
             formData.append('mobile', this.RegForm.mobile);
             formData.append('password',this.RegForm.password);
             formData.append('captcha',this.RegForm.message);
-            console.log(111);
             this.$store.dispatch('Register', formData).then(res => {
-              console.log(222,res);
-
               if(res.data.status === '000000000'){
                   this.loading = false;
                   this.$message({

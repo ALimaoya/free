@@ -123,9 +123,9 @@
           <!--<li><img src="" /></li>-->
         </ul>
       </div>
-      <div class="case">
-        <p>待办事项<span>下方如有数字提示请点击操作，超过48小时未操作，平台将自动确认</span></p>
-      </div>
+      <!--<div class="case">-->
+        <!--<p>待办事项<span>下方如有数字提示请点击操作，超过48小时未操作，平台将自动确认</span></p>-->
+      <!--</div>-->
 
     </div>
 </template>
@@ -181,8 +181,8 @@
               this.userInfo = this.$store.state.user.userInfo ;
               this.wallet = this.$store.state.user.wallet ;
               this.pub_plans = this.$store.state.user.pub_plans ;
-              const date = this.userInfo.vip_time ;
-              this.userInfo.vip_time = date.slice(0,4)+ ' - ' + date.slice(4,6) + ' - ' + date.slice(6,8) ;
+              // const date = this.userInfo.vip_time ;
+              // this.userInfo.vip_time = date.slice(0,4)+ ' - ' + date.slice(4,6) + ' - ' + date.slice(6,8) ;
             }else{
               this.$message({
                 message : res.data.message ,
