@@ -167,6 +167,7 @@
           if (valid) {
             let form = new FormData();
             form.append("amount", this.form.money)
+            form.append("returnUrl", window.location.href)
             handleRecharge(form).then(res => {
               if (res.data.status == '000000000') {
                 this.dialogVisible=true;

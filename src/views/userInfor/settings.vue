@@ -13,8 +13,8 @@
         <td>支付密码</td>
         <td>设置密码后开启提现功能，可将平台资产转出</td>
         <td>
-          <span class="set rightnow" @click="setting" v-if="!user.isBindPayPassword">立即设置</span>
-          <span class="set" v-else @click="changeSetting('2')">修改</span>
+          <span class="set rightnow" @click="setting" v-if="!user.bindPayPassword">立即设置</span>
+          <span class="set " v-else @click="changeSetting('2')" style="width:1rem">修改支付密码</span>
         </td>
       </tr>
       <tr class="warn">
@@ -535,7 +535,6 @@
             let formdata = new FormData();
             formdata.append('captcha', this.pswForm.pswVerify);
             formdata.append('payPassword', this.pswForm.payPsw);
-            formdata.append('mobile', this.user.mobile);
             editPayPsw(formdata).then(res => {
               if (res.data.status == "000000000") {
                 this.$message({
@@ -544,6 +543,7 @@
                   center: true
                 });
                 this.$refs[formName].resetFields();
+                this.getThirdInfo();
                 this.pswVisible = false;
               } else {
                 this.$message({
@@ -572,7 +572,6 @@
             let formdata = new FormData();
             formdata.append('password', this.changePsw.newPsw)
             formdata.append('captcha', this.changePsw.pswVerify)
-            formdata.append('mobile', this.user.mobile)
             editLoginPsw(formdata).then(res => {
               if (res.data.status == "000000000") {
                 this.$store.dispatch('LogOut').then(() => {

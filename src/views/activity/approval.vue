@@ -28,7 +28,7 @@
       <el-button round size="small" type="primary" @click="search(activity)">查询</el-button>
 
     </div>
-    <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"  border>
+    <el-table :data="tableData"  border>
       <el-table-column prop="activityId" label="序号" width="70"></el-table-column>
       <el-table-column prop="code" label="试用活动编号" width="140"></el-table-column>
       <el-table-column prop="platform" label="平台类型">
@@ -298,14 +298,16 @@
       handleSizeChange(val) {
 
         this.pageSize = val ;
-        this.getData(this.activity);
+        this.getData();
         console.log(`每页 ${val} 条`);
       },
 
       handleCurrentChange(val) {
 
-          this.currentPage = val ;
-          console.log(`当前页: ${val}`);
+        this.currentPage = val ;
+        // this.getData();
+
+        console.log(`当前页: ${val}`);
 
 
       }

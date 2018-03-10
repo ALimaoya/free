@@ -51,9 +51,9 @@
 <script>
   import ElForm from "element-ui/packages/form/src/form";
   import ElFormItem from "element-ui/packages/form/src/form-item";
-  import {getCaptcha, getMobile} from '@/utils/auth'
+  import {getMobile} from '@/utils/auth'
   import {validatePhone,validateEmail,validateCode,validName} from '@/utils/validate'
-  import { setApilyAccount,getApilyInfo } from "@/api/userInfor"
+  import { setApilyAccount,getApilyInfo,getCaptcha } from "@/api/userInfor"
  
    
   export default {
@@ -105,6 +105,7 @@
           account: '',
           pswVerify:'',
         },
+        apilyInfo:{},
         getNew: false,
         disabled: false,
         btntext: ' 获取验证码',
@@ -135,9 +136,11 @@
       getApilyAccount(){
         getApilyInfo().then(res=>{
           if (res.data.status == '000000000') {
+             this.apilyInfo=res.data.data
+            }else{
               this.$message({
-                message: '短信验证码发送成功',
-                type: 'success',
+                message:res.data.message,
+                type: 'error',
                 center: true
               });
             }
@@ -195,13 +198,12 @@
       onSubmit(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            console.log(this.payForm)
             let formdata=new FormData()
-            formdata.append('mobile',this.payForm.mobile);
-            formdata.append('name',this.payForm.name);
+            formdata.append('thirdName',this.payForm.name);
             formdata.append('captcha',this.payForm.pswVerify);
-            formdata.append('alipay',this.payForm.account);
+            formdata.append('thirdAccount',this.payForm.account);
             setApilyAccount(formdata).then(res => {
+              console.log(res)
               if (res.data.status === '000000000') {
                 this.$message({
                   type: 'success',
@@ -212,7 +214,7 @@
                 this.userInfo = true;
               }else{
                 this.$message({
-                message:message,
+                message:res.data.message,
                 type: 'error',
                 center: true
               });
