@@ -20,7 +20,7 @@
             :value="item.value">
           </el-option>
         </el-select>
-        <el-button size="small"  @click="searchOrder(order)" class="searchOrder">查询</el-button>
+        <el-button size="small"  @click="getList()" class="searchOrder">查询</el-button>
       </div>
       <div class="note">备注：以上搜索条件可根据单一条件进行搜索，当单独试客淘宝号搜索不到有用信息时，可尝试输入淘宝订单编号，反之亦然</div>
       <el-table :data="tableData" border>
@@ -29,14 +29,15 @@
           <el-table-column prop="activityTitle" label="商品名称"></el-table-column>
           <el-table-column prop="platform" label="平台类型">
             <template slot-scope="scope">
-              {{ platformOptions[scope.row.platform -1].name }}
+              {{ platformOptions[scope.row.platform].name }}
             </template>
           </el-table-column>
           <el-table-column prop="thirdAccount" label="试客第三方账号"></el-table-column>
           <el-table-column prop="thirdOrderCode" label="第三方订单编号"></el-table-column>
           <el-table-column prop="status" label="状态">
             <template slot-scope="scope">
-              <span>{{ options[scope.row.status -1].name}}</span>
+              <span v-if="scope.row.status==99">已完成</span>
+              <span v-else>{{ options[scope.row.status].name}}</span>
             </template>
           </el-table-column>
           <el-table-column label="操作">
@@ -47,7 +48,7 @@
             </template>
           </el-table-column>
         </el-table>
-    <div class="block2">
+    <div class="block2" v-if="tableData.length>0">
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -57,7 +58,7 @@
         layout=" sizes, prev, pager, next, jumper"
         :total="totalElements">
       </el-pagination>
-      <span class="totalItems">共{{ totalPages }}页，{{tableData.length}}条记录</span>
+      <span class="totalItems">共{{ totalPages }}页，{{totalElements}}条记录</span>
     </div>
     <!--投诉弹窗-->
     <!--<el-dialog title="投诉" :visible.sync="complainBox" :before-close="close">-->
@@ -99,6 +100,10 @@
       return{
         platformOptions : [
           {
+            value: '',
+            name : '全部平台'
+          },
+          {
             value: '1',
             name : '淘宝'
           },
@@ -116,8 +121,12 @@
           }
         ],
         options : [
+        {
+            name : '全部状态',
+            value : ''
+          },
           {
-            name : '待申请',
+            name : '未中奖',
             value : '1'
           },
           {
@@ -125,17 +134,48 @@
             value : '2'
           },
           {
-            name : '待领奖',
+            name : '中奖待领取',
             value : '3'
           },
           {
-            name : '待确认收货',
+            name : '领取审核中',
             value : '4'
           },
           {
-            name : '待确认收货',
+            name : '待评价',
             value : '5'
+          },  {
+            name : '评价审核中',
+            value : '6'
           },
+          {
+            name : '中奖已取消',
+            value : '7'
+          },
+          {
+            name : '领取审核拒绝',
+            value : '8'
+          },
+          {
+            name : '评价审核拒绝',
+            value : '9'
+          },
+          {
+            name : '投诉处理中',
+            value : '10'
+          },
+          {
+            name : '订单失败',
+            value : '11'
+          },
+          {
+            name : '结算中',
+            value : '12'
+          },
+          {
+            name : '已完成',
+            value : '99'
+          }
         ],
         order : {
           EQ_status: '',
@@ -185,36 +225,25 @@
       }
     },
     mounted(){
+      console.log(2)
       this.getList();
-
     },
     methods : {
-      //订单查询
-      searchOrder(order){
-        this.getList(order);
-      },
-
       //获取订单列表
-      getList(order){
-
+      getList(){
+        console.log(1)
         let formData = new FormData();
-        console.log(order);
-        if(order !== undefined){
-          formData.append('EQ_tryoutActivity.platformType',order.platformType);
-          formData.append('EQ_tryoutOrderWin.thirdOrderCode',order.thirdOrderCode);
-          formData.append('EQ_status',order.EQ_status);
-
-        }
-        formData.append('currentPage', this.currentPage);
-        formData.append('pageSize', this.pageSize);
+          formData.append('EQ_tryoutActivity.platformType',this.order.platformType);
+          formData.append('EQ_tryoutOrderWin.thirdOrderCode',this.order.thirdOrderCode);
+          formData.append('EQ_status',this.order.EQ_status);
+          formData.append('currentPage', this.currentPage);
+          formData.append('pageSize', this.pageSize);
         getOrderList(formData).then( res=> {
-          console.log(res);
           if(res.data.status === '000000000'){
             this.tableData = res.data.data ;
             this.totalPages = res.data.totalPages ;
-            this.pageSize = res.data.pageSize ;
-            this.currentPage = res.data.currentPage ;
-            this.totalElements = res.data.data.totalElements ;
+            this.totalElements = res.data.totalElements ;
+            console.log( this.totalElements)
           }
         }).catch( err => {
           alert('服务开小差啦，请稍等~');
@@ -278,17 +307,13 @@
       // } ,
 
       handleSizeChange(val) {
-        // this.pageSize = val ;
         this.pageSize = val ;
         this.getList();
-        // this.tableData.slice(this.currentPage-1,val);
-        console.log(`每页 ${val} 条`);
       },
       handleCurrentChange(val) {
+        console.log(val)
         this.currentPage = val ;
-        // this.getList();
-
-        console.log(`当前页: ${(val+1)}`);
+        this.getList();
       }
     }
     }

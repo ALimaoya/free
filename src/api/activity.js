@@ -103,10 +103,7 @@ export function getOrderList(data) {
   return request({
     url: '/tryout/order/list',
     method: 'post',
-    data : data ,
-    headers : {
-      'Content-Type' : 'multipart/form-data'
-    }
+    data : data 
   })
 }
 

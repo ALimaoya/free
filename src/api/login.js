@@ -33,10 +33,11 @@ export function getInfo() {
   })
 }
 
-export function changePsw(){
+export function changePsw(data){
   return request({
-    url : '',
-    method : ''
+    url : '/tryout/account/findpassword',
+    method : 'post',
+    data:data
   })
 }
 
@@ -49,7 +50,6 @@ export function getCaptcha(){
 }
 
 export function getMessageCode(mobile ,data){
-  console.log(data);
   return request({
     url : '/tryout/captcha/'+ mobile ,
     method : 'post',

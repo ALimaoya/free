@@ -25,7 +25,7 @@
           range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
         </el-date-picker>
       </div>
-      <el-button round size="small" type="primary" @click="search(activity)">查询</el-button>
+      <el-button round size="small" type="primary" @click="getData()">查询</el-button>
 
     </div>
     <el-table :data="tableData"  border>
@@ -33,12 +33,13 @@
       <el-table-column prop="code" label="试用活动编号" width="140"></el-table-column>
       <el-table-column prop="platform" label="平台类型">
         <template slot-scope="scope">
-          {{ platformOptions[scope.row.platform-1].name}}
+          {{ platformOptions[scope.row.platform].name}}
         </template>
       </el-table-column>
       <el-table-column prop="status" label="活动状态">
         <template slot-scope="scope">
-          <span>{{ options[scope.row.status-1].name}}</span>
+          <span v-if="scope.row.status==9"></span>
+          <span v-else>{{ options[scope.row.status].name}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="tryoutQuantity" label="试用品份数"></el-table-column>
@@ -115,44 +116,48 @@
           },
         date : '',
         options : [
-          // {
-          //   name : '待付款',
-          //   value : '1'
-          // },
+        {
+            name : '全部试用活动状态',
+            value : ''
+          },
           {
-            name : '待审试用',
+            name : '待付款',
             value : '1'
           },
           {
-            name : '未通过',
+            name : '待审批',
             value : '2'
           },
           {
-            name : '审核通过',
+            name : '审批通过',
             value : '3'
           },
-          // {
-          //   name : '审核拒绝',
-          //   value : '4'
-          // },
           {
-            name : '已上架',
+            name : '审批拒绝',
             value : '4'
           },
           {
-            name : '已下架',
+            name : '已上架',
             value : '5'
           },
           {
-            name : '结算中',
+            name : '已下架',
             value : '6'
           },
           {
-            name : '已完成',
+            name : '结算中',
             value : '7'
+          },
+          {
+            name : '已完成',
+            value : '9'
           }
         ],
         platformOptions : [
+          {
+            value: '',
+            name : '全部平台'
+          },
           {
             value: '1',
             name : '淘宝'
@@ -200,33 +205,20 @@
 
       },
 
-      //搜索指定试用活动
-      search(form){
-
-        this.getData(form);
-        // console.log(form)
-      },
       //请求数据
-      getData(form) {
+      getData() {
         // console.log(form);
         let formData = new FormData();
-        if(form !== undefined){
-          formData.append('EQ_platformType', form.EQ_platformType);
-          formData.append('EQ_activityCode', form.EQ_activityCode);
-          formData.append('EQ_activityStatus',form.EQ_activityStatus);
-          formData.append('LT_activityEndTime',form.LT_activityEndTime);
-          formData.append('GT_activityStartTime',form.GT_activityStartTime);
-        }
-
+          formData.append('EQ_platformType', this.activity.EQ_platformType);
+          formData.append('EQ_activityCode', this.activity.EQ_activityCode);
+          formData.append('EQ_activityStatus',this.activity.EQ_activityStatus);
+          formData.append('LT_activityEndTime',this.activity.LT_activityEndTime);
+          formData.append('GT_activityStartTime',this.activity.GT_activityStartTime);
           formData.append('currentPage',this.currentPage);
           formData.append('pageSize',this.pageSize);
         getActivity(formData).then(res => {
-          console.log(res);
           if (res.data.status === '000000000') {
             this.tableData = res.data.data;
-            console.log(this.tableData ,res.data.totalPages) ;
-            this.currentPage = res.data.currentPage  ;
-            this.pageSize = res.data.pageSize ;
             this.totalPages = res.data.totalPages ;
             this.totalElements = res.data.totalElements ;
           }
@@ -299,17 +291,12 @@
 
         this.pageSize = val ;
         this.getData();
-        console.log(`每页 ${val} 条`);
       },
 
       handleCurrentChange(val) {
 
         this.currentPage = val ;
-        // this.getData();
-
-        console.log(`当前页: ${val}`);
-
-
+        this.getData();
       }
     }
     }

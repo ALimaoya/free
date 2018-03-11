@@ -20,7 +20,7 @@
           :value="item.value">
         </el-option>
       </el-select>
-      <el-button size="small" round type="primary" @click="search(shop)">搜索店铺</el-button>
+      <el-button size="small" round type="primary" @click="getShopList()">搜索店铺</el-button>
     </div>
 
     <el-table class="list" :data="tableData.slice((currentPage-1)*pageSize,currentPage.pageSize)" stripe border style="width: 100%">
@@ -67,7 +67,7 @@
         layout=" sizes, prev, pager, next, jumper"
         :total="tableData.length">
       </el-pagination>
-      <span class="totalItems">共{{totalPages }}页，{{ tableData.length }}条记录</span>
+      <span class="totalItems">共{{totalPages }}页，{{ totalElements }}条记录</span>
     </div>
   </div>
 </template>
@@ -124,7 +124,8 @@
             reasonWord : '',
             currentPage : 1,
             pageSize : 10 ,
-            totalPages : ''
+            totalPages : '',
+            totalElements:'',
           }
         },
         mounted(){
@@ -134,24 +135,19 @@
           toNew(){
             this.$router.push('/newshop')
           },
-          //搜索店铺
-          search(form){
-            this.getShopList(form);
-          },
           //获取店铺列表
-          getShopList(form){
-            let formData ;
-            if(form !== undefined ){
-              formData = new FormData();
-              formData.append('EQ_platformType' , form.EQ_platformType);
-              formData.append('EQ_status',form.EQ_status);
-            }
-
+          getShopList(){
+              let formData = new FormData();
+              formData.append('EQ_platformType' , this.shop.EQ_platformType);
+              formData.append('EQ_status',this.shop.EQ_status);
+              formData.append('currentPage' ,this.currentPage);
+              formData.append('pageSize' , this.pageSize);
             shopList(formData).then( res => {
               if(res.data.status === '000000000'){
                 console.log(res.data);
                 this.tableData = res.data.data ;
                 this.totalPages = res.data.totalPages ;
+                this.totalElements=res.data.totalElements;
               }
             }).catch(err => {
               alert('服务器开小差啦，请稍等~')
@@ -168,15 +164,13 @@
           },
 
           handleSizeChange(val) {
-            // this.pageSize = val ;
             this.pageSize = val ;
-            // this.tableData.slice(this.currentPage-1,val);
-            console.log(`每页 ${val} 条`);
+            this.getShopList();
           },
 
           handleCurrentChange(val) {
             this.currentPage = val ;
-            console.log(`当前页: ${val}`);
+            this.getShopList();
           }
         }
     }

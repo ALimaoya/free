@@ -89,15 +89,15 @@
                 value : '2'
               },
               {
-                label : '活动结算',
+                label : '账户提现',
                 value : '3'
               },
               {
-                label : '购买会员',
+                label : '活动结算',
                 value : '4'
               },
               {
-                label : '账户提现',
+                label : '购买会员',
                 value : '5'
               },
             ],

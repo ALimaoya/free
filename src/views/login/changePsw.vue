@@ -1,119 +1,310 @@
 <template>
-  <div class="login-container">
-    <el-form autoComplete="on" :model="changePswForm" :rules="pswRules" ref="changePswForm" label-position="left" label-width="0px"
-             class="card-box login-form">
-      <h3 class="title">丫贝试客商家中心</h3>
-      <el-form-item prop="phone">
-        <span class="svg-container svg-container_login">
-          <svg-icon icon-class="user" />
-        </span>
-        <el-input  type="text" v-model.trim="changePswForm.phone"  placeholder="请输入手机号" />
-      </el-form-item>
-      <el-form-item prop="password">
-        <span class="svg-container">
-          <svg-icon icon-class="password"></svg-icon>
-        </span>
-        <el-input name="password" :type="pwdType" v-model.trim="changePswForm.password" autoComplete="on"
-                  placeholder="请输入新密码"></el-input>
-        <span class="show-pwd" @click="showPwd"><svg-icon icon-class="eye" /></span>
-      </el-form-item>
-      <el-form-item prop="checkPsw">
-        <span class="svg-container">
-          <svg-icon icon-class="password"></svg-icon>
-        </span>
-        <el-input name="password" :type="pwdType" @keyup.enter="handleLogin" v-model.trim="changePswForm.checkPsw" autoComplete="on"
-                  placeholder="请再次确认新密码"></el-input>
-        <span class="show-pwd" @click="showPwd"><svg-icon icon-class="eye" /></span>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" style="width:100%;" :loading="loading" @click="handleLogin">
-          确认提交
-        </el-button>
-      </el-form-item>
-    </el-form>
-  </div>
-</template>
-
-<script>
-  import { validatePhone } from '@/utils/validate'
-
-  export default {
-    name: 'changePsw',
-    data() {
-      const validateTel = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入手机号'))
-        } else {
-          if (!validatePhone(value)) {
-            callback(new Error('请输入正确格式的手机号'))
+    <div class="login-container">
+      <el-form autoComplete="on" :model="RegForm" :rules="RegRules" ref="RegForm" label-position="left" label-width="0px" class="card-box login-form">
+        <h3 class="title">丫贝试客商家中心</h3>
+        <el-form-item prop="mobile">
+          <span class="svg-container svg-container_login">
+            <svg-icon icon-class="user" />
+          </span>
+          <el-input type="text" v-model="RegForm.mobile" autoComplete="on" placeholder="请输入手机号" />
+        </el-form-item>
+        <el-form-item prop="imgNum" class="validateCode">
+          <span class="svg-container svg-container_login">
+            <svg-icon icon-class="user" />
+          </span>
+          <el-input type="text" v-model="RegForm.imgNum" autoComplete="on" placeholder="请输入图形验证码" />
+          <img class="show-captcha" :src="'data:image/png;base64,'+imgCode" alt="" @click="changeCaptcha" />
+        </el-form-item>
+        <el-form-item prop="message" class="validateCode">
+          <span class="svg-container svg-container_login">
+            <svg-icon icon-class="user" />
+          </span>
+          <el-input type="text" v-model.trim="RegForm.message" autoComplete="on" placeholder="请输入短信验证码" />
+          <el-button class="show-captcha codeBtn" size="mini" plain @click="getMessage" :disabled="disabled">{{ btntext }}</el-button>
+        </el-form-item>
+        <!--<span v-if="messageWarn" class="messageWarn">{{ warnText }}</span>-->
+        <el-form-item prop="password">
+          <span class="svg-container">
+            <svg-icon icon-class="password"></svg-icon>
+          </span>
+          <el-input name="password" :type="pwdType" v-model.trim="RegForm.password" autoComplete="on" placeholder="请输入新密码"></el-input>
+          <span class="show-pwd" @click="showPwd">
+            <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
+            <svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>
+          </span>
+        </el-form-item>
+        <el-form-item prop="checkPsw">
+          <span class="svg-container">
+            <svg-icon icon-class="password"></svg-icon>
+          </span>
+          <el-input name="password" :type="pwdType" @keyup.enter.native="handleLogin" v-model.trim="RegForm.checkPsw" autoComplete="on"
+            placeholder="请再次确认新密码"></el-input>
+          <span class="show-pwd" @click="showPwd">
+            <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
+            <svg-icon v-else="pwdType==='password'" icon-class="eyeclose" />
+          </span>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" style="width:100%;" :loading="loading" @click.native.prevent="handleLogin">
+           确认提交
+          </el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+  </template>
+  
+  <script>
+    import {
+      validatePhone,
+      validPassWord
+    } from '@/utils/validate'
+    import {
+      getCaptcha,
+      getMessageCode
+    } from "@/api/login"
+    import SvgIcon from "../../components/SvgIcon/index";
+    export default {
+      components: {
+        SvgIcon
+      },
+      name: 'register',
+      data() {
+        const validateTel = (rule, value, callback) => {
+          if (value === '') {
+            callback(new Error('请输入手机号'))
+          } else {
+            if (!validatePhone(value)) {
+              callback(new Error('请输入正确格式的手机号'))
+            }
+            callback()
           }
-          callback()
-        }
-      };
-      const validatePass = (rule, value, callback) => {
-        if (value.length < 6) {
-          callback(new Error('密码不能小于6位'))
-        } else {
-          if(this.changePswForm.checkPsw !== ''){
-            this.$refs.changePswForm.validateField('checkPsw') ;
+        };
+        const validCaptcha = (rule, value, callback) => {
+          if (value === '') {
+            callback(new Error('请输入图片验证码'))
+          } else {
+            this.phoneMessaage = true;
+            callback();
           }
-          callback()
-        }
-      };
-      const validatePass2 = (rule, value ,callback) => {
-        if(value === ''){
-          callback(new Error('请再次输入密码'));
-        }else{
-          if(value !== this.changePswForm.password){
-            callback(new Error('两次输入密码不一致！'))
+        };
+        const validMessage = (rule, value, callback) => {
+          if (value === '') {
+            callback(new Error('请输入短信验证码'))
+          } else {
+            if (this.RegForm.imgNum !== '' && this.RegForm.mobile !== '') {
+              callback();
+            } else {
+              callback(new Error('请输入手机号及图片验证码'))
+            }
           }
-          callback()
-        }
-      };
-      return {
-        changePswForm: {
-          phone: '',
-          password: '',
-          checkPsw : ''
-        },
-        pswRules: {
-          phone: [{ required: true, trigger: 'blur', validator: validateTel }],
-          password: [{ required: true, trigger: 'blur', validator: validatePass }],
-          checkPsw: [{ required: true, trigger: 'blur', validator: validatePass2 }]
-        },
-        loading: false,
-        pwdType: 'password'
-      }
-    },
-    methods: {
-      showPwd() {
-        if (this.pwdType === 'password') {
-          this.pwdType = ''
-        } else {
-          this.pwdType = 'password'
+        };
+        const validatePass = (rule, value, callback) => {
+          if (!validPassWord(value)) {
+            callback(new Error('密码为8-16位的数字、字母组合'))
+          } else {
+            if (this.RegForm.checkPsw !== '') {
+              this.$refs.RegForm.validateField('checkPsw');
+            }
+            callback()
+          }
+        };
+        const validateCheck = (rule, value, callback) => {
+          if (value === '') {
+            callback(new Error('请再次输入密码'));
+          } else {
+            if (value !== this.RegForm.password) {
+              callback(new Error('两次输入密码不一致！'))
+            }
+            callback()
+          }
+        };
+        return {
+          RegForm: {
+            mobile: '',
+            imgNum: '',
+            message: '',
+            password: '',
+            checkPsw: ''
+          },
+          RegRules: {
+            mobile: [{
+              required: true,
+              trigger: 'blur',
+              validator: validateTel
+            }],
+            imgNum: [{
+              required: true,
+              trigger: ' blur',
+              validator: validCaptcha
+            }],
+            message: [{
+              required: true,
+              trigger: ' blur',
+              validator: validMessage
+            }],
+            password: [{
+              required: true,
+              trigger: 'blur',
+              validator: validatePass
+            }],
+            checkPsw: [{
+              required: true,
+              trigger: 'blur',
+              validator: validateCheck
+            }]
+  
+          },
+          loading: false,
+          pwdType: 'password',
+          // messageWarn : false ,
+          // warnText : '',
+          imgCode: '',
+          userToken: '',
+          btntext: '获取验证码',
+          disabled: false,
         }
       },
-      handleLogin() {
-        this.$refs.changePswForm.validate(valid => {
-          if(valid) {
-            this.loading = true;
-            // this.$store.dispatch('ChangePsw', this.changePswForm).then(() => {
-              this.loading = false;
-              this.$router.push({ path: '/login' })
-            // }).catch(() => {
-            //   this.loading = false;
-            // })
+      mounted() {
+        this.changeCaptcha();
+      },
+      methods: {
+        showPwd() {
+          if (this.pwdType === 'password') {
+            this.pwdType = ''
           } else {
-            console.log('修改失败，请确认填写信息后重新提交!!');
-            return false
+            this.pwdType = 'password'
           }
-        })
+        },
+        //图片验证码
+        changeCaptcha() {
+          getCaptcha().then(res => {
+            console.log(res);
+            if (res.data.status === '000000000') {
+              this.imgCode = res.data.data.image;
+              this.userToken = res.data.data.token;
+            }
+          }).catch(err => {
+            alert('服务器开小差啦，请稍等~')
+          })
+        },
+        //获取短信验证码
+        getMessage() {
+          if (this.RegForm.imgNum !== '' && this.RegForm.mobile !== '') {
+            this.getPhoneCode(this.RegForm.imgNum);
+          } else {
+            this.$message({
+              message: '请先输入正确的手机号及图片验证码',
+              type: 'error',
+              center: true
+            })
+          }
+  
+  
+        },
+        getPhoneCode(value) {
+          let form = new FormData();
+          form.append('captcha', value);
+          form.append('token', this.userToken);
+          getMessageCode(this.RegForm.mobile, form).then(res => {
+            console.log(res);
+            if (res.data.status === "000000000") {
+              let num = 60;
+              let timer = setInterval(() => {
+                this.btntext = `重新发送(${num}s)`;
+                num--;
+                this.disabled = true;
+                if (!num) {
+                  this.btntext = "获取验证码";
+                  clearInterval(timer);
+                  this.disabled = false;
+  
+                }
+  
+              }, 1000);
+            } else {
+              this.$message({
+                message: res.data.message,
+                center: true,
+                type: 'error'
+              });
+  
+            }
+          }).catch(err => {
+            alert('服务器开小差啦，请稍等~')
+          });
+        },
+  
+        handleLogin() {
+          this.$refs.RegForm.validate(valid => {
+            if (valid) {
+              this.loading = true;
+              let formData = new FormData();
+              formData.append('mobile', this.RegForm.mobile);
+              formData.append('password', this.RegForm.password);
+              formData.append('captcha', this.RegForm.message);
+              this.$store.dispatch('ChangePsw', formData).then(res => {
+                console.log(123)
+                console.log(res)
+                if (res.data.status === '000000000') {
+                  this.loading = false;
+                  this.$message({
+                    title: '修改密码成功',
+                    message: '修改密码成功',
+                    type: 'success',
+                  });
+                  this.$router.push({
+                    path: '/login'
+                  })
+  
+                } else {
+                  this.loading = false;
+                  this.$message({
+                    message: res.data.message,
+                    type: 'error',
+                    center: 'true'
+                  });
+                }
+  
+              }).catch(() => {
+                this.loading = false
+              })
+            } else {
+              this.loading = false;
+              return false
+            }
+          })
+        }
       }
     }
-  }
-</script>
-
-<style rel="stylesheet/scss" lang="scss">
-  @import "src/styles/login.scss";
-
-</style>
+  
+  </script>
+  
+  <style rel="stylesheet/scss" lang="scss">
+    @import "src/styles/login.scss";
+    .pop {
+      width: 10%;
+      height: 10%;
+    }
+  
+    .el-message__content {
+      text-align: center;
+      width: 100%;
+    }
+  
+    .login-container {
+      .validateCode {
+        .el-input {
+          width: 1.6rem;
+        }
+      }
+    }
+  
+    .messageWarn {
+      font-size: 0.12rem;
+      color: #f56c6c;
+      line-height: 1;
+      padding-top: 0.04rem;
+    }
+  
+  </style>
+  

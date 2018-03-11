@@ -64,9 +64,7 @@ const user = {
     ChangePsw({ commit }, form){
       return new Promise((resolve,reject) => {
         changePsw(form).then( response => {
-          console.log(response);
-
-          resolve();
+          resolve(response);
         }).catch( error => {
           console.log(error);
           reject(error);

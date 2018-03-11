@@ -7,11 +7,13 @@
       <div class="vipInfo">
         <span>账号：</span>
         <b>{{ userTel }}</b>
-        <span>，当前为</span>
-        <strong></strong>
-        <b>{{ userType }}</b>
-        <span v-if="isVip.type==='1'">，会员有效期已过</span>
-        <span v-else="isVip.type==='2'">，会员到期时间：{{ isVip.date }}</span>
+        <span v-if="statusData.vipLevel>0">
+          <span>，当前为</span>
+          <b>vip:{{ statusData.vipLevel }}商家会员</b>
+          <span v-if="statusData.isOverdue=='0'">，会员到期时间：{{ statusData.vipTime }}</span>
+          <span v-else>，会员有效期已过,请续费</span>
+        </span>
+        <span v-else>,您当前不是vip会员，快购买vip会员享受活动优惠。</span>
       </div>
     </div>
     <el-form :model="choose" ref="choose">
@@ -122,11 +124,15 @@
   import ElFormItem from "element-ui/packages/form/src/form-item";
   import {
     getVipType,
-    buyVip
+    buyVip,
+    getMember
   } from "@/api/userInfor"
   import {
     getDeposit
   } from "@/api/fund"
+  import {
+    getMobile
+  } from '@/utils/auth'
   export default {
     components: {
       ElFormItem
@@ -147,7 +153,7 @@
         }
       };
       return {
-        userTel: '1111',
+        userTel: getMobile(),
         userType: '普通商家',
         target: '',
         choose: {},
@@ -180,6 +186,7 @@
         pswForm: {
           payPsw: ''
         },
+        statusData: {},
         pswRule: {
           payPsw: [{
             validator: validPsw,
@@ -193,8 +200,25 @@
       this.isVip = this.$route.params
       this.getDepositMoney()
       this.getVipList();
+      this.getVipInfo();
     },
     methods: {
+      getVipInfo() {
+        getMember().then(res => {
+          if (res.data.status == '000000000') {
+            this.statusData = res.data.data;
+            console.log(this.statusData)
+          } else {
+            this.$message({
+              message: res.data.message,
+              type: 'error',
+              center: true
+            });
+          }
+        }).catch(err => {
+          alert('服务器开小差啦，请稍等~')
+        })
+      },
       showPwd() {
         if (this.pwdType === 'password') {
           this.pwdType = ''
@@ -262,7 +286,7 @@
             let _data = {
               payType: this.chooseWay - 0,
               vipId: this.choose.vipId,
-              payPassword:this.pswForm.payPsw
+              payPassword: this.pswForm.payPsw
             }
             this.goPay(_data);
           }
@@ -284,10 +308,10 @@
               this.dialogVisible = true;
             } else {
               this.$message({
-              message: "恭喜您成功购买会员",
-              type: 'success',
-              center: true
-            });
+                message: "恭喜您成功购买会员",
+                type: 'success',
+                center: true
+              });
               this.$router.push('/userInfor/vip')
             }
 
@@ -314,7 +338,7 @@
       },
       finishPay() {
         this.dialogVisible = false;
-        this.$router.push("/fund/money")
+        this.$router.push("/userInfor/vip")
       },
       hasQuestion() {
         this.dialogVisible = false;
@@ -377,15 +401,6 @@
           float: left;
           font-weight: 100;
 
-        }
-        strong {
-          width: 0.2rem;
-          height: 0.2rem;
-          display: block;
-          float: left;
-          margin-top: 0.05rem;
-          background: url('../../assets/imgs/Vip5.png') no-repeat center;
-          background-size: 90%;
         }
       }
     }

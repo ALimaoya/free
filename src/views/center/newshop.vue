@@ -142,7 +142,7 @@
       return{
         tips : true ,
         sizeForm : {
-          platformType : '',
+          platformType : '1',
           shopAddress : '',
           shopName: '',
           messageId : '',
@@ -238,14 +238,15 @@
               alert('服务器开小差啦，请稍等~')
             })
 
-          }else{
-            this.$message({
-              type :'error' ,
-              message : '提交失败，请重新确认信息',
-              center : true
-            })
-            return false ;
           }
+          // else{
+          //   this.$message({
+          //     type :'error' ,
+          //     message : '提交失败，请重新确认信息',
+          //     center : true
+          //   })
+          //   return false ;
+          // }
         })
       },
 
