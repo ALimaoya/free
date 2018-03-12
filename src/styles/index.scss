@@ -14,7 +14,7 @@ body {
 html {
   box-sizing: border-box;
   font-size : 100px;
-  line-height : 0px;
+
 }
 .settings .el-dialog__headerbtn{display: none}
 *,
@@ -75,6 +75,11 @@ a:hover {
   .el-form-item__error{
     top:80%;
     left: 50%;
+  }
+}
+.cash{
+  .el-form-item__error{
+    left: 12%;
   }
 }
 .money_color{color: red}

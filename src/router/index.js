@@ -173,32 +173,32 @@ export const constantRouterMap = [
 
       },
       {
-        path: 'money',
-        name: 'Money',
-        component: () => import('@/views/fund/history/money'),
-        meta: { title: '资金明细', icon: 'money' }
-      }
-      // {
-      //   path: '/fund/history',
-      //   name: 'History',
-      //   component: () => import('@/views/fund/history/index'),
-      //   meta: { title: '资金记录', icon: 'history' },
-      //   children: [
-      //     {
-      //       path: 'money',
-      //       name: 'Money',
-      //       component: () => import('@/views/fund/history/money'),
-      //       meta: { title: '资金明细', icon: 'money' }
-      //     },
-      //     {
-      //       path: 'coin',
-      //       name: 'Coin',
-      //       component: () => import('@/views/fund/history/coin'),
-      //       meta: { title: '金币明细', icon: 'coin' }
+        path: '/fund/history',
+        name: 'History',
+        component: () => import('@/views/fund/history/index'),
+        meta: { title: '资金明细', icon: 'history' },
+        children: [
+          {
+            path: 'money',
+            name: 'Money',
+            component: () => import('@/views/fund/history/money'),
+            meta: { title: '资金记录', icon: 'money' }
+          },
+          {
+            path: 'cash',
+            name: 'cash',
+            component: () => import('@/views/fund/history/cash'),
+            meta: { title: '取现记录', icon: 'cash' }
+          },
+          // {
+          //   path: 'coin',
+          //   name: 'Coin',
+          //   component: () => import('@/views/fund/history/coin'),
+          //   meta: { title: '金币明细', icon: 'coin' }
 
-      //     }
-      //   ]
-      // }
+          // }
+        ]
+      }
     ]
   },
   // {

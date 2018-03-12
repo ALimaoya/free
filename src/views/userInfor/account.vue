@@ -2,22 +2,22 @@
   <div class="account">
     <div class="title">
       <p>绑定支付宝</p>
-      <div v-show="userInfo==false">
-        <el-button type="primary" @click="binding">绑定支付宝</el-button>
+      <div>
+        <el-button type="primary" @click="binding">{{title}}</el-button>
         <span>支付宝关系到您的资金提现，请认真填写。</span>
       </div>
 
     </div>
     <div v-if="accountBox" class="form">
-      <p>绑定支付宝</p>
+      <p>{{title}}</p>
       <el-form ref="payForm" :model="payForm" :rules="payRule" center>
         <el-form-item label="绑定手机号：">
           <el-input v-model.trim="payForm.mobile" readonly style="border:none;outline:none"></el-input>
         </el-form-item>
         <el-form-item label="验证码：" prop="pswVerify" style="margin-left:1.6rem">
-            <el-input placeholder="请输入验证码" v-model.trim="payForm.pswVerify"></el-input>
-            <el-button class="getNum" @click="getNum" :disabled="disabled">{{ btntext }}</el-button>
-          </el-form-item>
+          <el-input placeholder="请输入验证码" v-model.trim="payForm.pswVerify"></el-input>
+          <el-button class="getNum" @click="getNum" :disabled="disabled">{{ btntext }}</el-button>
+        </el-form-item>
         <el-form-item label="支付宝姓名：" prop="name">
           <el-input v-model.trim="payForm.name"></el-input>
         </el-form-item>
@@ -26,22 +26,23 @@
         </el-form-item>
         <span>温馨提示：如果您填写的支付宝账号不正确，可能无法成功返款，平台不承担由此产生的一切费用。</span>
         <el-form-item class="btn">
-            <el-button type="primary" @click="onSubmit('payForm')">确定</el-button>
+          <el-button type="primary" @click="onSubmit('payForm')">确定</el-button>
           <el-button @click="cancel('payForm')">取消</el-button>
         </el-form-item>
       </el-form>
     </div>
-    <div v-if="accountBox==false&&payForm.account===''" class="accountImg">
+    <div v-if="!userInfo" class="accountImg">
       <img src="../../assets/imgs/u860.png" alt="" />
     </div>
-    <div v-if="userInfo" class="payInfo">
-      <div class="alipayImg">
-        <img src="../../assets/imgs/u878.png" alt="" />
-        <span @click="removeAccount">解绑</span>
+    <div v-if="userInfo&&!accountBox" class="payInfo detail">
+      <div>
+        <img src="../../assets/imgs/apily.png" alt="">
       </div>
-      <div class="detail">
-        <span>支付宝姓名：{{ payForm.name}}</span>
-        <span>支付宝账号：{{ payForm.account}}</span>
+      <div class="mt20">
+        <span class="f17 ">支付宝姓名：</span> {{ apilyInfo.thirdName}}
+      </div>
+      <div class="mt20">
+        <span class="f17">支付宝账号：</span> {{ apilyInfo.thirdAccount}}
       </div>
     </div>
 
@@ -51,10 +52,23 @@
 <script>
   import ElForm from "element-ui/packages/form/src/form";
   import ElFormItem from "element-ui/packages/form/src/form-item";
-  import {getMobile} from '@/utils/auth'
-  import {validatePhone,validateEmail,validateCode,validName} from '@/utils/validate'
-  import { setApilyAccount,getApilyInfo,getCaptcha } from "@/api/userInfor"
-
+  // import {getMobile} from '@/utils/auth'
+  // import {validatePhone,validateEmail,validateCode,validName} from '@/utils/validate'
+  // import { setApilyAccount,getApilyInfo,getCaptcha } from "@/api/userInfor"
+  import {
+    getMobile
+  } from '@/utils/auth'
+  import {
+    validatePhone,
+    validateEmail,
+    validateCode,
+    validName
+  } from '@/utils/validate'
+  import {
+    setApilyAccount,
+    getThirdInfo,
+    getCaptcha
+  } from "@/api/userInfor"
 
   export default {
     name: "account",
@@ -66,8 +80,8 @@
       const validateName = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入支付宝姓名'))
-        }else{
-          if(!validName(value)){
+        } else {
+          if (!validName(value)) {
             callback(new Error('请输入正确的支付宝姓名'))
           }
         }
@@ -76,9 +90,9 @@
       const validateAccount = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入支付宝账号'))
-        }else{
-          let status=validatePhone(value)||validateEmail(value)
-          if(!status){
+        } else {
+          let status = validatePhone(value) || validateEmail(value)
+          if (!status) {
             callback(new Error('请输入正确的支付宝账号'))
           }
         }
@@ -100,15 +114,16 @@
         accountBox: false,
         userInfo: false,
         payForm: {
-          mobile:getMobile(),
+          mobile: getMobile(),
           name: '',
           account: '',
-          pswVerify:'',
+          pswVerify: '',
         },
-        apilyInfo:{},
+        apilyInfo: {},
         getNew: false,
         disabled: false,
         btntext: ' 获取验证码',
+        title: '绑定支付宝',
         payRule: {
           name: [{
             validator: validateName,
@@ -133,30 +148,33 @@
       this.getApilyAccount()
     },
     methods: {
-      getApilyAccount(){
-        getApilyInfo().then(res=>{
+      getApilyAccount() {
+        getThirdInfo('1').then(res => {
           if (res.data.status == '000000000') {
-             this.apilyInfo=res.data.data
-            }else{
-              this.$message({
-                message:res.data.message,
-                type: 'error',
-                center: true
-              });
+            if (res.data.data.length > 0) {
+              this.userInfo = true;
+              this.apilyInfo = res.data.data[0];
+              this.title = "修改支付宝账号";
             }
-        }).catch(err=>{
+          } else {
+            this.$message({
+              message: res.data.message,
+              type: 'error',
+              center: true
+            });
+          }
+        }).catch(err => {
           alert('服务器开小差啦，请稍等~')
         })
       },
-       //获取验证码
-       getNum() {
+      //获取验证码
+      getNum() {
         var num = 60;
         this.getNew = false;
         var timer = setInterval(() => {
           this.btntext = `重新发送(${num}s)`;
           num--;
           this.disabled = true;
-
           if (this.getNew == true || num === 0) {
             this.btntext = "获取验证码";
             clearInterval(timer);
@@ -198,10 +216,10 @@
       onSubmit(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            let formdata=new FormData()
-            formdata.append('thirdName',this.payForm.name);
-            formdata.append('captcha',this.payForm.pswVerify);
-            formdata.append('thirdAccount',this.payForm.account);
+            let formdata = new FormData()
+            formdata.append('thirdName', this.payForm.name);
+            formdata.append('captcha', this.payForm.pswVerify);
+            formdata.append('thirdAccount', this.payForm.account);
             setApilyAccount(formdata).then(res => {
               console.log(res)
               if (res.data.status === '000000000') {
@@ -210,15 +228,14 @@
                   message: '支付宝绑定成功',
                   center: true
                 });
-                this.accountBox = false;
                 this.userInfo = true;
-              }else{
+              } else {
                 this.$message({
-                message:res.data.message,
-                type: 'error',
-                center: true
-              });
-              return
+                  message: res.data.message,
+                  type: 'error',
+                  center: true
+                });
+                return
               }
             }).catch(err => {
               alert('服务器开小差啦，请稍等~')
@@ -248,11 +265,11 @@
 <style scoped lang="scss" rel="stylesheet/scss">
   .account {
     .getNum {
-        width: 1.1rem;
-        margin-left: 0.3rem;
-        padding: 0.12rem 0.15rem;
+      width: 1.1rem;
+      margin-left: 0.3rem;
+      padding: 0.12rem 0.15rem;
 
-      }
+    }
     .title {
       width: 100%;
       height: 0.8rem;
@@ -272,7 +289,6 @@
       }
       .el-button {
         float: left;
-        width: 1.1rem;
         height: 0.4rem;
       }
       span {
@@ -332,48 +348,17 @@
 
     }
     .payInfo {
-      width: 2.5rem;
+      width: 5rem;
       margin: 0.3rem 0.5rem;
-      .alipayImg {
-        width: 100%;
-        height: 0.5rem;
-        position: relative;
-        margin-bottom: 0.2rem;
-        img {
-          width: 100%;
-          height: 100%;
-        }
-        span {
-          position: absolute;
-          top: 0;
-          right: 0;
-          width: 0.6rem;
-          height: 0.2rem;
-          line-height: 0.2rem;
-          font-size: 0.1rem;
-          text-align: center;
-          display: block;
-          color: #138CDD;
-          border: 1px solid #aaa;
-          border-radius: 0.06rem;
-        }
-      }
-      .detail {
-        border: 1px solid #aaa;
-        border-radius: 0.05rem;
-        width: 100%;
-        height: 0.8rem;
-        padding: 0 0.1rem;
-        span {
-          width: 100%;
-          line-height: 0.4rem;
-          height: 0.4rem;
-          font-size: 0.14rem;
-          color: #333;
-          display: block;
+       border: 1px solid #aaa;
+       padding: .2rem .4rem .5rem;
+       .mt20{
+         margin-top: 20px;
+       }
+       .f17{
+         font-size: .17rem
+       }
 
-        }
-      }
     }
     .accountImg {
       display: flex;

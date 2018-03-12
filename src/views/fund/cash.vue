@@ -3,31 +3,26 @@
     <div class="title">押金提现</div>
     <p class="subTitle">填写提现金额</p>
     <ul class="deposit">
-      <li><p class="tag">可用押金：</p><span v-if="restMoney!=''">￥{{restMoney}}元</span></li>
+      <li><p class="tag">可用押金：</p><span class="money_color">￥{{deposit.deposit}}</span></li>
       <el-form :model="payForm" ref="payForm" :rules="payRule">
           <li>
               <p class="tag">可用支付宝：</p>
-              <div v-if="payForm.account!=''" class="payInfo">
-                <div class="alipayImg">
-                  <img src="../../assets/imgs/u878.png" alt="" />
-                </div>
+              <div v-if="userInfo" class="payInfo">
                   <div class="detail">
-                    <span>支付宝姓名：{{ payForm.name}}</span>
-                    <span>支付宝账号：{{ payForm.account}}</span>
+                    <span>{{ apilyInfo.thirdAccount}}</span>
                   </div>
               </div>
-              <router-link v-else  class="noAli" to="/userInfor/account">还没有绑定支付宝，点我前去绑定</router-link>
-              <span v-if="acconutWarn==true" class="acconutWarn">请选择可用支付宝账号</span>
+              <router-link v-else  class="noAli" to="/userInfor/account">绑定支付宝</router-link>
           </li>
           <li>
             <el-form-item prop="money">
               <p class="tag">提现金额：</p><el-input placeholder="请输入提现金额" type="number" v-model.number="payForm.money" size="small"></el-input>&nbsp;&nbsp;元
             </el-form-item>
-            <span class="note">单次最少提现500元，提现操作平台将收取1%的手续费</span>
-            <span class="note">预计2个工作日内（国家法定节假日和双休日顺延）平台完成提现操作。到账时间以各大银行为准，预计3-5个工作日左右。</span>
+            <span class="note">单次最少提现100元，提现操作平台将收取{{deposit.rate*100}}%的手续费</span>
+            <span class="note">预计3-5个工作日内（国家法定节假日和双休日顺延）平台完成提现操作,到账时间以各大银行为准。</span>
           </li>
           <li>
-          <p class="tag">实际到账金额：</p><span v-if="payForm.money!=0">{{payForm.money*0.99}}元</span><span class="explain">（实际提现金额*99%，例如最低取现500元，实际到账495元）</span>
+          <p class="tag">实际到账金额：</p><span v-if="payForm.money!=0">{{payForm.money*0.99}}元</span><span class="explain">（实际提现金额*{{100-deposit.rate*100}}%，例如最低取现100元，实际到账{{100-100*deposit.rate}}元）</span>
         </li>
           <li>
             <el-form-item prop="payPsw">
@@ -58,7 +53,9 @@
 <script>
     import ElForm from "element-ui/packages/form/src/form";
     import ElFormItem from "element-ui/packages/form/src/form-item";
-    import { handleCash } from "@/api/fund"
+    import { handleCash,getDeposit} from "@/api/fund"
+    import { getThirdInfo } from "@/api/userInfor"
+    
     export default {
       components: {
         ElFormItem,
@@ -78,32 +75,26 @@
             callback(new Error('请输入提现金额'))
           }else{
             // if(!isNaN(value)){
-              if( value < 500 ){
-                callback(new Error('单次最少提现500元，请重新输入提现金额'))
+              if( value < 100 ){
+                callback(new Error('单次最少提现100元，请重新输入提现金额'))
               }else{
                 callback()
               }
-            // }else{
-            //   callback(new Error('请输入数值'))
-            //
-            // }
-
           }
         };
         const validPsw = (rule , value ,callback)=> {
           if(value === ''){
             callback(new Error('请输入支付密码'))
           }else{
-            if(value != this.payPassword){
-              callback(new Error('支付密码输入有误，请确认后重新输入'))
-            }else{
-              callback();
+            let rule=/^[0-9]{6}$/
+            if (!rule.test(value)){
+              callback(new Error('请输入6位数字组合的支付密码'))
             }
+            callback();
           }
         }
           return{
             userInfo : false ,
-            restMoney : '',
             payPassword : '111',
             payForm : {
               name : '111',
@@ -111,6 +102,8 @@
               money : '',
               payPsw : ''
             },
+            deposit:"",
+            apilyInfo:{},
             payRule:{
               // account : [
               //   {
@@ -128,24 +121,68 @@
                 }
               ]
             },
-            acconutWarn : false ,
             pwdType : 'password'
           }
       },
       mounted(){
-
+        this.getApilyAccount();
+        this.getDepositMoney();
       },
       methods : {
+        getDepositMoney() {
+        getDeposit().then(res => {
+          if (res.data.status == '000000000') {
+            this.deposit = res.data.data;
+            console.log( this.deposit)
+          }else{
+            this.$message({
+              message: res.data.message,
+              type: 'error',
+              center: true
+            });
+          }
+        }).catch(err => {
+          alert('服务器开小差啦，请稍等~')
+        })
+      },
+        getApilyAccount() {
+        getThirdInfo('1').then(res => {
+          if (res.data.status == '000000000') {
+            if (res.data.data.length > 0) {
+              this.userInfo = true;
+              this.apilyInfo = res.data.data[0];
+            }
+          } else {
+            this.$message({
+              message: res.data.message,
+              type: 'error',
+              center: true
+            });
+          }
+        }).catch(err => {
+          alert('服务器开小差啦，请稍等~')
+        })
+      },
         //  确认提现
         submit(formName){
           this.$refs[formName].validate((valid) => {
             if(valid){
-
-              if(this.payForm.account === ''){
-                this.acconutWarn = true ;
-
+              if(!this.userInfo){
+                this.$message({
+                  message : '提现前应先绑定您的支付宝账号',
+                  center : true ,
+                  type : 'error'
+                });
+                return
+              }
+             else if(this.deposit<this.payForm.money){
+                this.$message({
+                  message : '提现金额大于账户的押金',
+                  center : true ,
+                  type : 'error'
+                });
+                return
               }else{
-                this.acconutWarn = false ;
                 this.$message({
                   message : '信息提交成功，将为您进行提现操作',
                   center : true ,
@@ -165,12 +202,6 @@
               }
 
             }else{
-              this.$message({
-                message : '信息提交失败，请确定信息后重新提交',
-                type : 'error',
-                center : true
-              });
-
               return false ;
             }
 
@@ -261,17 +292,12 @@
         }
 
         .noAli{
-          color : #00CCeF;
+          color : #409EFF;
           font-size : 0.13rem ;
           /*display : block;*/
         }
-        .acconutWarn{
-          color : #f56c6c ;
-          font-size : 0.12rem ;
-        }
         .payInfo{
           width : 2.5rem ;
-          margin : 0.15rem 1.58rem 0.3rem;
           .alipayImg{
             width : 100% ;
             height : 0.5rem ;
@@ -297,10 +323,9 @@
             }
           }
           .detail{
-            border : 1px solid #aaa ;
             border-radius : 0.05rem ;
             width : 100% ;
-            height : 0.8rem ;
+            /* height : 0.8rem ; */
             padding : 0 0.1rem ;
             span{
               width : 100% ;
@@ -309,7 +334,7 @@
               font-size : 0.14rem ;
               color : #333 ;
               display : block ;
-              margin : 0;
+              margin-left: 1.5rem;
             }
           }
         }
