@@ -31,9 +31,17 @@ service.interceptors.request.use(config => {
 
 // respone拦截器
 service.interceptors.response.use(
-  response => response,
-
   response => {
+    if(response.status=='401'){
+      this.$message({
+        message : '登录已失效，请重新登录',
+        center : true ,
+        type : 'error'
+      });
+      store.dispatch('LogOut').then(() => {
+        location.reload() // 为了重新实例化vue-router对象 避免bug
+      })
+    }
     //     // const res = response
     //     if (response.data.status !== '000000000') {
     //       Message({
@@ -64,7 +72,6 @@ service.interceptors.response.use(
         type: 'warning'
       }).then(() => {
         store.dispatch('LogOut').then(() => {
-
           location.reload() // 为了重新实例化vue-router对象 避免bug
         })
       })
@@ -82,6 +89,7 @@ service.interceptors.response.use(
     // //       duration: 5 * 1000
     // //     })
     // //     return Promise.reject(error)
+    return response
   }
 )
 

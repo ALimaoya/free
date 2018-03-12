@@ -24,12 +24,11 @@ export function setApilyAccount(data) {
     data
 })
 }
-//查询支付宝账号信息
-export function getApilyInfo(data) {
+//查询第三方账号信息
+export function getThirdInfo(type) {
   return request({
-    url: '/tryout/settings/queryThird',
+    url: '/tryout/settings/third/'+type,
     method: 'get',
-    data
 })
 }
 //修改手机号

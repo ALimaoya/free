@@ -27,7 +27,7 @@ export function handleGold(data){
   })
 }
 
-//获取资金明细
+//获取资金记录
 export function getWalletLog(data){
   return request({
     url: '/tryout/wallet/logs',
@@ -40,5 +40,12 @@ export function getDeposit(){
   return request({
     url: '/tryout/merchant/deposit',
     method: 'get',
+  })
+}
+//获取取现列表
+export function getCashList(){
+  return request({
+    url: '/tryout/cash/list',
+    method: 'post',
   })
 }

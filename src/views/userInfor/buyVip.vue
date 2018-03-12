@@ -60,7 +60,7 @@
                 <el-radio label="3">
                   <img src="../../assets/imgs/pay1.png" alt="" />
                   <p>押金支付（可用押金：
-                    <span class="money_color">{{deposit}}</span>元）</p>
+                    <span class="money_color">{{deposit.deposit}}</span>元）</p>
                 </el-radio>
               </li>
               <!--<li><el-radio :label="4"><img src="../../assets/imgs/pay4.png" alt="" /><p>银行支付</p></el-radio></li>-->
