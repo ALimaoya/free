@@ -54,8 +54,8 @@
   import {getMobile} from '@/utils/auth'
   import {validatePhone,validateEmail,validateCode,validName} from '@/utils/validate'
   import { setApilyAccount,getApilyInfo,getCaptcha } from "@/api/userInfor"
- 
-   
+
+
   export default {
     name: "account",
     components: {

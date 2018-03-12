@@ -129,10 +129,11 @@
       width: 100%;
       height: 0.4rem;
       line-height: 0.4rem;
-      font-size: 0.2rem;
+      font-size: 0.22rem;
       margin: 0.4rem 0;
       border-bottom: 1px solid #aaa;
       text-indent: 0.3rem;
+      font-weight : bold ;
     }
 
     .content {

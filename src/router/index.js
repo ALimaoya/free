@@ -27,7 +27,7 @@ export const constantRouterMap = [
 
       },
       {
-        path: 'step2',
+        path: 'step2/:id',
         name: 'Pay',
         component: () => import('@/views/publish/pay'),
         meta: { title: '支付押金', icon: 'pay',noCache: true  },
@@ -67,7 +67,7 @@ export const constantRouterMap = [
         path: 'newshop',
         name: 'Newshop',
         component: () => import('@/views/center/newshop'),
-        meta: { title: '绑定新店铺', icon: 'newshop' }
+        meta: { title: '绑定店铺', icon: 'newshop' }
       }]
   },
 
@@ -90,6 +90,19 @@ export const constantRouterMap = [
         component: () => import('@/views/activity/order'),
         meta: { title: '订单查询', icon: 'order' }
       },
+      {
+        path: 'bonus',
+        name: 'Bonus',
+        component: () => import('@/views/activity/checkbonus'),
+        meta: { title: '领取审核', icon: 'bonus' }
+      },
+      {
+        path: 'view',
+        name: 'View',
+        component: () => import('@/views/activity/checkview'),
+        meta: { title: '评价审核', icon: 'view' }
+      },
+
       // {
       //   path: 'feedback',
       //   name: 'Feedback',

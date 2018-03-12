@@ -451,7 +451,7 @@
       mounted(){
         this.form = this.$store.state.publishInfo.publishForm ;
 
-        if(this.$route.query.editor !== undefined ) {
+        if(this.$route.query.order !== undefined ) {
           this.editor = this.$route.query.editor;
           let order = this.$route.query.order ;
           // if( this.editor === '2'){
@@ -926,7 +926,7 @@
                         message: '提交成功',
                         center: true
                       }, 500);
-                      this.$router.push({ path: '/publish/step2' , query : { order : res.data.data.activityId }});
+                      this.$router.push({ name: 'Pay', params :{ id : res.data.data.activityId  }  });
 
                     } else {
                       this.$message({
@@ -940,18 +940,25 @@
                   });
                 }else{
                   if( index === 2){
-                    console.log(this.form);
 
                     this.$store.dispatch('changePublishInfo', this.form).then( res => {
+                      console.log(res);
                       if (res.data.status === '000000000') {
                         this.$message({
                           type: 'success',
                           message: '提交成功',
                           center: true
                         }, 500);
-                        this.$router.push({path: '/publish/step2' , query : { order : this.order }});
+                        this.$router.push({name: 'Pay' , params : { id : this.order } });
 
+                      }else{
+                        this.$message({
+                          type: 'error',
+                          message: res.data.message ,
+                          center: true
+                        }, 500);
                       }
+
                     }).catch( err =>{
                       alert('服务器开小差啦，请稍等~')
                     })

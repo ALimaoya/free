@@ -7,12 +7,12 @@
       <el-select size="small" clearable v-model="shop.EQ_platformType" filterable placeholder="请选择平台类型">
         <el-option
           v-for="item in platformOptions"
-          :key="item.value"
+          :key="item.id"
           :label="item.name"
-          :value="item.value">
+          :value="item.id">
         </el-option>
       </el-select>
-      <el-select size="small" v-model="shop.EQ_status" filterable placeholder="请选择店铺状态" clearable>
+      <el-select size="small" v-model="shop.EQ_status"  filterable placeholder="请选择店铺状态" clearable>
         <el-option
           v-for="item in activityOptions"
           :key="item.value"
@@ -27,31 +27,26 @@
         <el-table-column prop="shopName" label="店铺" width="180"></el-table-column>
         <el-table-column prop="platform" label="平台类型" width="180">
           <template slot-scope="scope">
-            {{ platformOptions[scope.row.platform-1].name}}
+            {{ platformOptions[scope.row.platform -1].name}}
           </template>
         </el-table-column>
         <el-table-column prop="messageId" label="旺旺ID/咚咚ID"></el-table-column>
-        <!--<el-table-column prop="status" label="状态">-->
-          <!--<template slot-scope="scope">-->
-            <!--{{ activityOptions[scope.row.status-1].name }}-->
-          <!--</template>-->
-        <!--</el-table-column>-->
         <el-table-column prop="status" label="状态">
           <template slot-scope="scope">
             <span>{{ activityOptions[scope.row.status -1].name}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="action" label="操作">
-          <template slot-scope="scope" >
-            <div v-if="scope.row.action==='1'">
-              <el-button size="mini" @click="reason(scope.$index,scope.row.reason)"  style="width : 0.6rem ;padding : 0.07rem 0.06rem;">查看原因</el-button>
-              <el-button size="mini" @click="change(scope.$index)"  style="width: 0.6rem ;">修改</el-button>
-            </div>
-            <span v-else>--</span>
-          </template>
-        </el-table-column>
         <el-table-column prop="updateTime" label="绑定时间"></el-table-column>
-      </el-table>
+      <el-table-column prop="action" label="操作">
+        <template slot-scope="scope" >
+          <div v-if="scope.row.status === '3' || scope.row.status === '4'">
+            <el-button size="mini"   @click="reason(scope.$index,scope.row.reason)"  style="width : 0.6rem ;padding : 0.07rem 0.06rem;">查看原因</el-button>
+            <el-button size="mini" @click="change(scope.$index ,scope.row.shopId)"  style="width: 0.6rem ;">修改</el-button>
+          </div>
+          <span v-else>--</span>
+        </template>
+      </el-table-column>
+    </el-table>
     <el-dialog title="详情" :visible.sync="reasonBox" class="detail" top="22%">
       <span>招商审核备注</span>
       <el-input type="textarea" :rows="3" v-model="reasonWord"></el-input>
@@ -81,21 +76,21 @@
           return{
             platformOptions : [
               {
-                value: '1',
+                id: '1',
                 name : '淘宝'
               },
               {
-                value : '2',
+                id : '2',
                 name : '天猫'
               },
               {
-                value : '3',
+                id : '3',
                 name : '京东'
-              },
-              {
-                value : '4',
-                name : '拼多多'
               }
+              // {
+              //   id : '4',
+              //   name : '拼多多'
+              // }
             ],
             activityOptions : [
               {
@@ -111,7 +106,7 @@
                 value : '3'
               },
               {
-                name : '需要更新资料',
+                name : '需更新资料',
                 value : '4'
               }
             ],
@@ -156,10 +151,12 @@
           reason(index){
             console.log(index);
             this.reasonBox = true ;
-            this.reasonWord = this.tableData[index].reasonInfo;
+            this.reasonWord = this.tableData[index].reason;
           },
 
-          change(index){
+          //修改店铺信息
+          change(index,id){
+            this.$router.push({ path : '/newshop' , query : { editor : '1' ,id : id }}) ;
             console.log(index);
           },
 
@@ -219,7 +216,9 @@
       border : 1px solid #aaa ;
       margin-top : 0.4rem ;
       border-radius : 0.05rem ;
-
+      .el-button{
+        margin : 0 0.05rem ;
+      }
     }
     .detail{
       /*.el-dialog__header{*/

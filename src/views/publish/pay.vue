@@ -1,7 +1,7 @@
 <template>
   <div class="pay">
     <div class="stepImg"><img src="../../assets/imgs/u258.png" alt="" /></div>
-    <p class="tips">您现在为《<span>&nbsp;{{ activity.activityTitle }}&nbsp;</span>》存入试用活动款（合计总费用）：<span>{{ activity.activityTotalAmount }}</span>元</p>
+    <p class="tips">您现在为《<span>&nbsp;{{ activity.activityTitle }}&nbsp;</span>》试用活动存入试用活动款（合计总费用）：<span>{{ activity.activityTotalAmount }}</span>元</p>
     <div class="note">费用说明：</div>
     <table border="1" bordercolor="#d3d3dd">
       <tr>
@@ -18,7 +18,7 @@
         <td>{{ activity.activityTotalAmount }} 元</td>
       </tr>
     </table>
-    <div class="result">您当前的押金余额为：{{ activity.totalDeposit }}元，本次总共要支付的金额为：{{ activity.activityTotalAmount }}元。</div>
+    <div class="result">您当前的押金余额为：<span>{{ activity.totalDeposit }}</span> 元，本次总共要支付的金额为：<span>{{ activity.activityTotalAmount }}</span> 元。</div>
     <div class="payPsw">
       <span>支付密码：</span>
       <el-input :type="pwdType"  v-model.trim="password" placeholder="请输入支付密码" ></el-input>
@@ -28,6 +28,7 @@
     </div>
     <div class="btn">
       <el-button type="primary" @click="checkPay(activity.activityId , password)">确认支付</el-button>
+      <el-button type="info" @click="goRecharge">去充值</el-button>
       <el-button type="text" @click="goActivity">试用活动管理</el-button>
       <el-button type="text" @click="back">返回编辑活动</el-button>
     </div>
@@ -49,9 +50,8 @@
       },
 
       mounted(){
-            let order = this.$route.query.order ;
-        console.log(this.$route.query);
-        // this.form = this.$store.state.publishInfo.changePublish ;
+            let order = this.$route.params.id ;
+        console.log(this.$route);
         getPayDetail(order).then( res => {
           console.log(res);
           if (res.data.status === '000000000') {
@@ -73,33 +73,46 @@
       methods : {
         //  确认支付
         checkPay(id,password){
-          console.log(id,password.length);
-
-          if( password.length === 6){
-
-            activityPay({ activityId : id+'' ,payPassword : password }).then( res => {
-              if(res.data.status === '000000000'){
-                this.$router.push('/publish/step3')
-              }else{
-                this.$message({
-                  message : res.data.message ,
-                  center : true ,
-                  type : 'error'
-                })
-              }
-
-            }).catch( err => {
-              alert('服务器开小差啦，请稍等~')
-            });
-          }else{
-
+          if( this.activity.totalDeposit < this.activity.activityTotalAmount){
             this.$message({
-              message : '请输入六位支付密码',
-              type : 'error',
-              center : true
+              message : '您当前的押金余额不足，请充值押金后再支付',
+              center : true ,
+              type : 'error'
             })
+          }else{
+            if( password.length === 6){
+
+              activityPay({ activityId : id+'' ,payPassword : password }).then( res => {
+                if(res.data.status === '000000000'){
+                  this.$router.push('/publish/step3')
+                }else{
+                  this.$message({
+                    message : res.data.message ,
+                    center : true ,
+                    type : 'error'
+                  })
+                }
+
+              }).catch( err => {
+                alert('服务器开小差啦，请稍等~')
+              });
+            }else{
+
+              this.$message({
+                message : '请输入六位支付密码',
+                type : 'error',
+                center : true
+              })
+
+            }
 
           }
+
+        },
+
+        //跳转到押金充值页面
+        goRecharge(){
+          this.$router.push('/fund/recharge')
 
         },
 
@@ -141,26 +154,34 @@
       }
     }
     .tips{
+      text-align : left ;
+      color : #333 ;
+      line-height : 0.5rem ;
+
       span{
         color : #ff0011 ;
       }
     }
 
-    p,.note,.result{
+    .tips,.note,.result{
       color : #333 ;
       font-weight : bold ;
       font-size : 0.18rem ;
+      span{
+        color : #ff0011 ;
+      }
     }
     p{
       width : 80% ;
       text-align : center ;
-      height : 0.4rem ;
+      /*height : 0.4rem ;*/
       line-height : 0.4rem ;
 
     }
     .note{
       width : 50% ;
       margin : 0.3rem 0 ;
+      color : #666 ;
     }
     table{
       border-collapse: collapse;
@@ -173,7 +194,9 @@
       }
     }
     .result{
-      margin-left : 2rem ;
+      /*margin-left : 2rem ;*/
+      line-height : 0.5rem;
+      text-align : left ;
       margin-bottom : 0.5rem ;
     }
     .btn{
@@ -182,26 +205,34 @@
       .el-button:nth-child(1){
         margin-right : 0.3rem ;
       }
+      .el-button:nth-child(2){
+        width : 0.98rem ;
+        margin-right : 0.3rem ;
+      }
     }
     .payPsw{
-     width : 100% ;
+     width : 50% ;
       height : 1.2rem ;
       position : relative ;
 
       span{
         display : block;
-        width : 0.8rem ;
+        width : 35% ;
         height : 0.3rem ;
         line-height : 0.3rem ;
         float : left ;
+        text-align : right ;
+        color : #456 ;
       }
       .el-input{
-        float : left ;
-        width : 30% ;
+        float : right ;
+        width : 65% ;
       }
       .show-pwd{
+        width : 0.3rem ;
+        text-align : right ;
         position : absolute ;
-        left : 3.2rem;
+        right : 0.2rem;
         top : 0.04rem ;
       }
     }

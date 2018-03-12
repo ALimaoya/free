@@ -1,20 +1,22 @@
 <template>
   <div class="newShop">
     <div class="content">
-      <p class="tips" v-show="tips">绑定新店铺（请认真填写绑定信息，一经提交无法修改）
-        <img class="close" src="../../assets/imgs/close.png" @click="close" alt="" />
-      </p>
+      <p class="tips">绑定店铺</p>
+      <!--<p class="tips" v-show="tips">绑定新店铺（请认真填写绑定信息，一经提交无法修改）-->
+        <!--<img class="close" src="../../assets/imgs/close.png" @click="close" alt="" />-->
+      <!--</p>-->
       <el-form ref="sizeForm" :model="sizeForm" label-width="1.4rem" size="mini" :rules="rules">
         <el-form-item label="平台类型：" prop="platformType">
           <el-radio-group v-model="sizeForm.platformType">
-            <el-radio label="1">淘宝</el-radio>
-            <el-radio label="2">天猫</el-radio>
-            <el-radio label="3">京东</el-radio>
-            <el-radio label="4">拼多多</el-radio>
+            <el-radio v-for="item in platform" :disabled="sizeForm.platformType!==item.value" :key="item.value"
+                      :label="item.name"></el-radio>
+            <!--<el-radio label="2">天猫</el-radio>-->
+            <!--<el-radio label="3">京东</el-radio>-->
+            <!--<el-radio label="4">拼多多</el-radio>-->
           </el-radio-group>
         </el-form-item>
         <el-form-item label="店铺首页网址：" prop="shopAddress">
-          <el-input v-model.trim="sizeForm.shopAddress" class="big"></el-input>
+          <el-input v-model.trim="sizeForm.shopUrl" class="big"></el-input>
         </el-form-item>
         <el-form-item label="店铺名称：" prop="shopName">
           <el-input v-model.trim="sizeForm.shopName"  class="big"></el-input>
@@ -44,7 +46,8 @@
           <el-input v-model.number="sizeForm.managerMobile" class="big"></el-input>
         </el-form-item>
         <el-form-item size="large" class="submit">
-          <el-button type="primary" @click="onSubmit('sizeForm')" >提交</el-button>
+          <el-button type="primary" v-if="editor === '1'" @click="onSubmit('sizeForm' ,'1')" >确认修改</el-button>
+          <el-button type="primary" v-else @click="onSubmit('sizeForm')" >提交</el-button>
         </el-form-item>
       </el-form>
 
@@ -55,7 +58,7 @@
 
 <script>
   import clip from '@/utils/clipboard' // use clipboard directly
-  import { shopInfo ,shopCaptcha } from "@/api/shop"
+  import { shopDetail , shopInfo ,changeInfo ,shopCaptcha } from "@/api/shop"
   import ElButton from "element-ui/packages/button/src/button";
   import { validateURL ,validateWX ,validatePhone ,validQQ } from '@/utils/validate'
   import ElFormItem from "element-ui/packages/form/src/form-item";
@@ -141,12 +144,13 @@
       }
       return{
         tips : true ,
+        editor : '',
         sizeForm : {
-          platformType : '1',
+          platformType : '',
           shopAddress : '',
           shopName: '',
           messageId : '',
-          captcha : '1111',
+          captcha : '',
           productUrl : '',
           managerQq : '',
           managerWechat : '',
@@ -190,11 +194,47 @@
             }
           ]
 
-        }
+        },
+        shopId : '' ,
+        platform : [
+          {
+            value : '1',
+            name : '淘宝'
+          },
+          {
+            value : '2',
+            name : '京东'
+          },
+          {
+            value : '3',
+            name : '京东'
+          }
+        ]
+        // shopUrl : ''
       }
     },
 
     mounted(){
+      if(this.$route.query.editor !== undefined){
+        this.editor = this.$route.query.editor ;
+        this.shopId = this.$route.query.id ;
+        console.log(this.shopId,this.$route);
+        shopDetail(this.shopId).then( res => {
+          console.log(res);
+          if( res.data.status === '000000000'){
+            this.sizeForm = res.data.data ;
+          }else{
+            this.$message({
+              message : res.data.message ,
+              center : true ,
+              type : 'error'
+            })
+          }
+        }).catch( err => {
+          alert('服务器开小差啦，请稍等~')
+        })
+
+      }
       shopCaptcha().then( res => {
         if(res.data.status === '000000000'){
           this.sizeForm.captcha = res.data.data ;
@@ -212,31 +252,53 @@
           duration: 1500
         })
       },
-      onSubmit(form){
+      onSubmit(form,type){
         this.$refs[form].validate((valid) => {
           if(valid){
             let formData = new FormData();
-            formData.append('platformType',this.sizeForm.platformType);
             formData.append('shopName' , this.sizeForm.shopName);
             formData.append('messageId' , this.sizeForm.messageId) ;
-            formData.append('captcha' ,this.sizeForm.messageId);
             formData.append('productUrl' ,this.sizeForm.productUrl) ;
             formData.append('managerQq' ,this.sizeForm.managerQq);
             formData.append('managerWechat' , this.sizeForm.managerWechat) ;
             formData.append('managerMobile' ,this.sizeForm.managerMobile) ;
-            shopInfo(formData).then( res => {
-              if(res.data.status === '000000000'){
-                this.$message({
-                  type : 'success',
-                  message : '提交成功',
-                  center : true
-                })
-                console.log(this.sizeForm,res)
-                this.$router.push('/shop')
-              }
-            }).catch( err => {
-              alert('服务器开小差啦，请稍等~')
-            })
+            formData.append('shopUrl',this.sizeForm.shopUrl);
+
+            if(type === '1'){
+              formData.append('shopId',this.shopId);
+              changeInfo(formData).then( res => {
+                if(res.data.status === '000000000'){
+                  this.$message({
+                    type : 'success',
+                    message : '提交成功',
+                    center : true
+                  })
+                  console.log(this.sizeForm,res)
+                  this.$router.push('/shop')
+                }
+              }).catch( err => {
+                alert('服务器开小差啦，请稍等~')
+              })
+            }else{
+              formData.append('platformType',this.sizeForm.platformType);
+              formData.append('captcha' ,this.sizeForm.messageId);
+
+              shopInfo(formData).then( res => {
+                if(res.data.status === '000000000'){
+                  this.$message({
+                    type : 'success',
+                    message : '提交成功',
+                    center : true
+                  })
+                  console.log(this.sizeForm,res)
+                  this.$router.push('/shop')
+                }
+              }).catch( err => {
+                alert('服务器开小差啦，请稍等~')
+              })
+
+            }
+
 
           }
           // else{
@@ -273,24 +335,25 @@
       color : #666;
       .tips{
         width : 90% ;
-        height : 0.4rem ;
-        line-height : 0.4rem ;
-        color : #333 ;
+        height : 0.6rem ;
+        line-height : 0.6rem ;
+        color : #555 ;
         background : #f1f1f1 ;
-        font-size : 0.18rem ;
-        text-indent : 0.1rem ;
+        font-size : 0.22rem ;
+        font-weight : bold ;
+        /*text-indent : 0.1rem ;*/
+        text-align: center;
         margin : 0 auto 0.3rem ;
-        position : relative ;
-        .close{
+
+        /*position : relative ;*/
+       /* .close{
           width : 0.14rem ;
           height : 0.14rem ;
           position : absolute ;
           top : 50% ;
           right  : 0.08rem ;
           margin-top : -0.07rem ;
-
-
-        }
+        }*/
       }
       .el-form{
         margin : 0 auto ;

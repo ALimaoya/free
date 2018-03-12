@@ -778,7 +778,7 @@
       height: 0.5rem;
       line-height: 0.5rem;
       text-indent: 0.3rem;
-      font-size: 0.2rem;
+      font-size: 0.22rem;
       color: #333;
       font-weight: bold;
       border-bottom: 1px solid #aaa;

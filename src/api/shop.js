@@ -12,7 +12,7 @@ export function shopList(data){
   })
 }
 
-//修改商店信息
+//添加商店信息
 export function shopInfo(data){
   return request({
     url : '/tryout/shop/save',
@@ -24,10 +24,22 @@ export function shopInfo(data){
   })
 }
 
+//修改商店信息
+export function changeInfo(data){
+  return request({
+    url : '/tryout/shop/update',
+    method : 'post',
+    data ,
+    headers : {
+      'Content-Type' : 'multipart/form-data'
+    }
+  })
+}
+
 //获取店铺详情
 export function shopDetail(data){
   return request({
-    url : `/shop/detail/${data}`,
+    url : `/tryout/shop/detail/${data}`,
     method : 'get',
   })
 

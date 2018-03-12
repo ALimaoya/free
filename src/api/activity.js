@@ -9,6 +9,14 @@ export function publishActivity(data){
   })
 }
 
+//取消发布活动
+export function cancelActivity(data){
+  return request({
+    url : `/tryout/activity/cacel/${data}` ,
+    method : 'post'
+  })
+}
+
 //获取试用活动支付详情
 export function getPayDetail(order){
   return request({
@@ -103,10 +111,11 @@ export function getOrderList(data) {
   return request({
     url: '/tryout/order/list',
     method: 'post',
-    data : data 
+    data : data
   })
 }
 
+//订单详情
 export function orderDetail(data) {
   return request({
     url: `/tryout/order/detail/${ data }`,
@@ -123,6 +132,30 @@ export function changeStatus(data) {
     url: '/tryout/activity/updateStatus',
     method: 'post',
     data : data
+  })
+}
+
+//申请结算
+export function applyPay(id){
+  return request({
+    url : '/tryout/settlement/apply/'+ id ,
+    method : 'post'
+  })
+}
+
+//领取审核
+export function checkBonus(){
+  return request({
+    url : '',
+    method : ''
+  })
+}
+
+//评价审核
+export function checkView(){
+  return request({
+    url : '',
+    method : ''
   })
 }
 

@@ -10,7 +10,7 @@
             :value="item.value">
           </el-option>
         </el-select>
-        <el-input size="small" v-model.trim="order.thirdAccount" placeholder="请输入试客第三方账号"></el-input>
+        <el-input size="small" v-model.trim="order.activityCode" placeholder="请输入试客试用活动编号"></el-input>
         <el-input size="small" v-model.trim="order.thirdOrderCode" placeholder="请输入第三方订单编号"></el-input>
         <el-select size="small"  v-model="order.EQ_status" filterable placeholder="请选择订单状态">
           <el-option
@@ -52,9 +52,9 @@
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
+        :page-size="pageSize"
         :current-page="currentPage"
         :page-sizes="[10, 15, 20]"
-        :page-size="pageSize"
         layout=" sizes, prev, pager, next, jumper"
         :total="totalElements">
       </el-pagination>
@@ -115,10 +115,10 @@
             value : '3',
             name : '京东'
           },
-          {
-            value : '4',
-            name : '拼多多'
-          }
+          // {
+          //   value : '4',
+          //   name : '拼多多'
+          // }
         ],
         options : [
         {
@@ -179,8 +179,9 @@
         ],
         order : {
           EQ_status: '',
-          thirdAccount: '',
+          // thirdAccount: '',
           platformType : '' ,
+          activityCode : '',
           thirdOrderCode: '',
           // currentPage : 1,
           // pageSize : 10
@@ -225,15 +226,14 @@
       }
     },
     mounted(){
-      console.log(2)
       this.getList();
     },
     methods : {
       //获取订单列表
       getList(){
-        console.log(1)
         let formData = new FormData();
           formData.append('EQ_tryoutActivity.platformType',this.order.platformType);
+          formData.append('EQ_tryoutActivity.activityCode', this.order.activityCode);
           formData.append('EQ_tryoutOrderWin.thirdOrderCode',this.order.thirdOrderCode);
           formData.append('EQ_status',this.order.EQ_status);
           formData.append('currentPage', this.currentPage);
@@ -253,7 +253,6 @@
 
       //查看订单详情
       goDetail(index,order){
-        console.log(order);
         this.$router.push('/Activity/detail/'+ order) ;
       },
 
@@ -316,43 +315,15 @@
         this.getList();
       }
     }
-    }
+  }
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
+  @import "src/styles/table.scss" ;
+
   .order{
 
-    h1{
-      margin : 0.3rem 0 ;
-      padding : 0.2rem  0.4rem ;
-      border-bottom : 1px solid #666 ;
-    }
-    .search{
-      margin-left : 0.3rem ;
-      padding : 0.2rem 0.3rem ;
-      box-sizing: border-box;
-      .el-input{
-        width : 1.8rem ;
-        margin :  0 0.3rem ;
-        font-size : 0.14rem ;
-        color : #8f949a;
 
-      }
-      .el-select{
-        margin-left : 0.1rem ;
-        width : 1.4rem ;
-        background : #eee ;
-      }
-      .searchOrder{
-        width : 1rem ;
-        height : 0.34rem ;
-        border-radius : 0.2rem ;
-        font-size : 0.14rem ;
-        color : #fff;
-        background : #409EFF;
-        margin-left : 0.2rem ;
-      }
-    }
     .note{
       padding-left : 0.3rem ;
       width : 100% ;
@@ -364,33 +335,7 @@
       color : #999 ;
     }
 
-    .el-table{
-      width: 90%;
-      border-color:#aaa ;
-      border-radius : 0.05rem ;
-      margin : 0.4rem auto;
-      .el-button{
-        /*width : 0.9rem ;*/
-        /*border-radius : 0.08rem ;*/
-        font-size : 0.13rem ;
-        padding : 0;
-        margin : 0;
-      }
 
-    }
-    .block2{
-      padding : 0 0.3rem ;
-      width : 90% ;
-      margin : 0 auto;
-      box-sizing: border-box;
-      .totalItems{
-        display : block ;
-        height : 0.3rem ;
-        color : #666 ;
-        text-align : right ;
-        margin-top : 0.3rem ;
-      }
-    }
     .el-dialog{
       .el-form{
         padding : 0  0.3rem ;

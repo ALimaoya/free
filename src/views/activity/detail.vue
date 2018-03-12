@@ -16,19 +16,19 @@
         <!--<li class="keys">关键词：{{detailInfo.key}}</li>-->
         <!--<li class="keys">淘口令：{{ detailInfo.tao }}</li>-->
         <!--<li>8、上架时间：{{detailInfo.date }}</li>-->
-        <li>1、试客任务编号：{{ detailInfo.activityCode }}</li>
-        <li>2、试客任务编号：{{ detailInfo.orderCode}}</li>
-        <li>3、商铺名称：{{ detailInfo.shopName }}</li>
-        <li>4、平台类型：{{ detailInfo.platform }}</li>
-        <li>5、第三方单号：{{ detailInfo.thirdOrderCode }}</li>
-        <li>6、中奖时间： {{ detailInfo.winTime }}</li>
-        <li>7、开奖时间：{{ detailInfo.receiveTime }}</li>
-        <li>8、订单价格：{{ detailInfo.amount }}</li>
-        <li class="detailPic">9、图片详情：
+        <li><span>试客活动编号：</span><span>{{ detailInfo.activityCode }}</span></li>
+        <li><span>试客订单编号：</span><span>{{ detailInfo.orderCode}}</span></li>
+        <li><span>商铺名称：</span><span>{{ detailInfo.shopName }}</span></li>
+        <li><span>平台类型：</span><span>{{ platForm[detailInfo.platform] }}</span></li>
+        <li><span>第三方单号：</span><span>{{ detailInfo.thirdOrderCode }}</span></li>
+        <li><span>中奖时间：</span><span>{{ detailInfo.winTime }}</span></li>
+        <li><span>开奖时间：</span><span>{{ detailInfo.receiveTime }}</span></li>
+        <li><span>订单价格：</span><span>{{ detailInfo.amount }} 元</span></li>
+        <li class="detailPic"><p>图片详情：</p>
             <dl v-for="item in detailInfo.orderImageList">
                 <dt>{{ imgType[item.type-1]}}</dt>
                 <dd>
-                  <img :src="item.imageUrl" alt="" />
+                  <img @click="getImg(item.imageUrl)" :src="item.imageUrl" alt="" />
                 </dd>
             </dl>
         </li>
@@ -49,7 +49,9 @@
         <!--</ul>-->
       <!--</div>-->
     </div>
-
+    <div v-if="showImg" @click="close">
+      <img :src="bigImg" alt="" />
+    </div>
   </div>
 </template>
 
@@ -60,7 +62,10 @@
       data(){
           return  {
             detailInfo : {},
-            imgType : ['商品收藏截图','店铺收藏截图','订单截图','评价截图']
+            platForm : ['','淘宝','天猫', '京东'],
+            imgType : ['商品收藏截图','店铺收藏截图','订单截图','评价截图'] ,
+            showImg : false ,
+            bigImg : ''
 
           }
       },
@@ -75,7 +80,19 @@
         }).catch( err => {
           alert('服务器开小差啦，请稍等~')
         })
+      },
+      methods : {
+        getImg(url){
+          this.showImg = true ;
+          this.bigImg = url ;
+        },
+        close(){
+
+          this.showImg = false ;
+
+        }
       }
+
     }
 </script>
 
@@ -100,7 +117,7 @@
       justify-content: space-between;
     }
     .detailInfor{
-      width : 44% ;
+      width : 80% ;
       float : left;
 
       .keys{
@@ -114,11 +131,30 @@
       height : 0.4rem ;
       font-size : 0.16rem ;
       float : left ;
+      span{
+        display : inline-block;
+        &:nth-child(1){
+          width : 40% ;
+          text-align: right ;
+
+        }
+        &:nth-child(2){
+          width : 60% ;
+          text-indent : 0.3rem ;
+        }
+      }
     }
     .detailPic{
       float : left;
       padding-top : 0.2rem ;
-      width : 66% ;
+      width : 100% ;
+      p{
+        width : 40% ;
+        height : 0.3rem ;
+        line-height : 0.3rem ;
+        text-align: right ;
+
+      }
       dl{
         float : left;
         width : 46% ;
@@ -135,7 +171,7 @@
         }
         dd{
           margin : 0.2rem auto;
-          width : 80% ;
+          width : 100% ;
           img{
             width : 100% ;
             border : 1px solid #D3D3D3;

@@ -1,5 +1,6 @@
 <template>
   <div class="approval">
+    <h1>试用管理</h1>
     <div class="search">
       <el-select size="small" clearable v-model="activity.EQ_platformType" filterable placeholder="请选择活动平台">
         <el-option
@@ -20,9 +21,14 @@
       </el-select>
       <div class="block">
         <span class="demonstration">选择日期：</span>
-        <el-date-picker size="small" unlink-panels v-model="date" @change="getTime(date)" clearable
-          type="daterange" unlink-panels format="yyyy - MM - dd " value-format="yyyy-MM-dd"
-          range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+          <el-date-picker format="yyyy - MM - dd " value-format="yyyy-MM-dd" size="small"
+            v-model="activity.GT_activityStartTime" clearable type="date"
+            placeholder="开始时间" >
+          </el-date-picker>
+        <span class="demonstration">~</span>
+        <el-date-picker size="small" v-model="activity.LT_activityEndTime"  clearable
+          type="date" format="yyyy - MM - dd " value-format="yyyy-MM-dd"
+          placeholder="结束日期">
         </el-date-picker>
       </div>
       <el-button round size="small" type="primary" @click="getData()">查询</el-button>
@@ -38,8 +44,9 @@
       </el-table-column>
       <el-table-column prop="status" label="活动状态">
         <template slot-scope="scope">
-          <span v-if="scope.row.status==9"></span>
-          <span v-else>{{ options[scope.row.status].name}}</span>
+          <span v-if="scope.row.status==9">已完成</span>
+          <span v-else-if="scope.row.status===10">已取消</span>
+          <span v-else>{{ options[scope.row.status-1].name}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="tryoutQuantity" label="试用品份数"></el-table-column>
@@ -50,7 +57,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="progress" label="活动进度"></el-table-column>
-      <el-table-column prop="payStatus" label="支付进度">
+      <el-table-column prop="payStatus" label="支付状态">
         <template slot-scope="scope">
           <span v-if="scope.row.payStatus === '0'">未支付</span>
           <span v-else>支付完成</span>
@@ -58,16 +65,16 @@
       </el-table-column>
       <el-table-column  label="操作">
         <template slot-scope="scope">
-          <el-button class="check" type="text"  v-if="scope.row.status!=='2'" @click="detail(scope.$index,scope.row.activityId)">查看详情</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='2'" @click="editor(scope.$index,scope.row.activityId)">修改</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='2'" @click="reason(scope.$index,scope.row.reason)">查看原因</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='4'" @click="handle(scope.row.activityId,scope.row.status)">下架</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='5'" @click="handle(scope.row.activityId,scope.row.status)">重新上架</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='5'" @click="applyAccounts(scope.$index,scope.row)">申请结算</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='6'" @click="cancelAccounts(scope.$index,scope.row)">取消结算</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='7'" @click="publish(scope.$index,scope.row)">重新发布</el-button>
+          <el-button class="check" type="text"  v-if="scope.row.status!=='4'" @click="detail(scope.$index,scope.row.activityId)">查看详情</el-button>
+          <el-button class="check" type="text" v-if="scope.row.status==='4'" @click="editor(scope.$index,scope.row.activityId)">修改</el-button>
+          <el-button class="check" type="text" v-if="scope.row.status==='4'" @click="reason(scope.$index,scope.row.reason)">查看原因</el-button>
+          <el-button class="check" type="text" v-if="scope.row.status==='5'" @click="handle(scope.row.activityId,scope.row.status)">下架</el-button>
+          <el-button class="check" type="text" v-if="scope.row.status==='6'&& scope.row.endTime< time" @click="handle(scope.row.activityId,scope.row.status)">重新上架</el-button>
+          <el-button class="check" type="text" v-if="scope.row.status==='6'|| (scope.row.status==='2'&&scope.row.payStatus === '1')" @click="applyAccounts(scope.$index,scope.row.activityId)">申请结算</el-button>
+          <el-button class="check" type="text" v-if="scope.row.status==='7'" @click="cancelAccounts(scope.$index,scope.row.activityId)">取消结算</el-button>
+          <el-button class="check" type="text" v-if="scope.row.status==='2'" @click="publish(scope.$index,scope.row.activityId)">重新发布</el-button>
+          <el-button class="check" type="text" @click="handleCancel(scope.$index,scope.row.activityId)">取消发布</el-button>
           <el-button class="check" type="text" v-if="scope.row.payStatus==='0'" @click="toPay(scope.$index,scope.row.activityId)">去支付</el-button>
-
         </template>
       </el-table-column>
     </el-table>
@@ -95,7 +102,8 @@
 </template>
 
 <script>
-  import { getActivity ,getDetail , changeStatus} from '@/api/activity'
+  import { getActivity ,getDetail , changeStatus , applyPay , cancelActivity } from '@/api/activity'
+  import { parseTime } from "@/utils"
   import ElButton from "element-ui/packages/button/src/button";
 
   export default {
@@ -120,10 +128,10 @@
             name : '全部试用活动状态',
             value : ''
           },
-          {
-            name : '待付款',
-            value : '1'
-          },
+          // {
+          //   name : '待付款',
+          //   value : '1'
+          // },
           {
             name : '待审批',
             value : '2'
@@ -151,6 +159,10 @@
           {
             name : '已完成',
             value : '9'
+          },
+          {
+            name : '已取消',
+            value : '10'
           }
         ],
         platformOptions : [
@@ -170,40 +182,31 @@
             value : '3',
             name : '京东'
           },
-          {
-            value : '4',
-            name : '拼多多'
-          }
+          // {
+          //   value : '4',
+          //   name : '拼多多'
+          // }
         ],
         tableData : [],
         totalPages : '',
         totalElements : 0,
         currentPage : 1,
         pageSize : 10,
+        // clearable : true ,
         reasonBox : false ,
         reasonDetail : '',
         activityDetail : {} ,
+        time : ''
 
       }
 
     },
     mounted(){
       this.getData();
+      let now = new Date();
+      this.time = parseTime(now);
     },
     methods : {
-
-      //获取搜索时间
-      getTime(time){
-        console.log(time);
-        if(time !== null){
-          this.activity.LT_activityEndTime = time[1] ;
-          this.activity.GT_activityStartTime = time[0] ;
-        }else{
-          this.activity.LT_activityEndTime = '' ;
-          this.activity.GT_activityStartTime = '' ;
-        }
-
-      },
 
       //请求数据
       getData() {
@@ -217,6 +220,7 @@
           formData.append('currentPage',this.currentPage);
           formData.append('pageSize',this.pageSize);
         getActivity(formData).then(res => {
+          console.log(res);
           if (res.data.status === '000000000') {
             this.tableData = res.data.data;
             this.totalPages = res.data.totalPages ;
@@ -252,14 +256,18 @@
           console.log(index,word)
       },
       //上架/下架操作
-      handle(id , status){
+      handle(id , status  ){
         console.log(id,status,);
         let formData = new FormData();
         formData.append('activityId',id);
         formData.append('activityStatus',status);
-        changeStatus().then( res => {
+        changeStatus(formData).then( res => {
           if(res.data.status === '000000000'){
-
+            this.$message({
+              message : '操作成功',
+              type : 'success',
+              center : true
+            })
           }else{
             this.$message({
               message : res.data.message ,
@@ -272,19 +280,65 @@
         });
       },
 
-      applyAccounts(index){
-        console.log(index)
-      },
-      cancelAccounts(index){
-        console.log(index)
-      },
-      publish(index){
+      //申请结算
+      applyAccounts(index ,id){
+        applyPay(id).then( res => {
+          if( res.data.status === '000000000'){
+            this.$message({
+              message : '申请结算成功，请稍后确认',
+              center : true ,
+              type : 'success'
+            })
+          }else{
+            this.$message({
+              message :  res.data.message ,
+              center : true ,
+              type : 'error'
+            })
+          }
+        }).catch( err =>{
+          alert('服务器开小差啦，请稍等~')
+        });
         console.log(index)
       },
 
+      //取消结算
+      cancelAccounts(index){
+        console.log(index)
+      },
+
+      //重新发布
+      publish(index ,id){
+        this.$router.push({ path : '/publish/step1' , query : { order : id } });
+
+        console.log(index)
+      },
+
+      //取消发布
+      handleCancel(index, id){
+        cancelActivity(id).then( res=> {
+          if( res.data.status === '000000000'){
+            this.$message({
+              message : '取消成功',
+              type : 'success' ,
+              center : true
+            })
+          }else{
+            this.$message({
+              message : res.data.message ,
+              type : 'error' ,
+              center : true
+            })
+          }
+        }).catch( err =>{
+          alert('服务器开小差啦，请稍等~')
+        })
+      },
+
+
       //去支付
       toPay(index,order){
-        this.$router.push({ path : '/publish/step2' , query : { order : order } })
+        this.$router.push({ name : 'Pay',params : { id : order} })
       },
 
       handleSizeChange(val) {
@@ -304,10 +358,17 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
   .approval{
-
+    h1{
+      margin : 0.3rem 0 ;
+      padding : 0.2rem  0.4rem ;
+      border-bottom : 1px solid #666 ;
+      font-size : 0.22rem ;
+      line-height : 0.4rem ;
+    }
     .search{
       width : 100% ;
       padding : 0.3rem 0.5rem 0.2rem;
+      height : 1.5rem ;
       border-bottom : 1px solid #aaa ;
       margin-bottom : 0.3rem ;
       .el-input{
@@ -323,21 +384,25 @@
 
       }
       .block{
-        width : 40% ;
+        width : 60% ;
         float : left;
         margin-bottom : 0.2rem ;
 
         span{
-          width : 1rem ;
+          width : 0.9rem ;
           height : 100% ;
           line-height : 0.4rem ;
           display : block ;
           float : left;
-          text-align : right ;
+          text-align : left ;
           color : #333;
+          &:nth-last-child(2){
+            width : 0.2rem ;
+            text-align : center ;
+          }
         }
         .el-date-editor, .el-range-editor, .el-input__inner, .el-date-editor--daterange, .is-active{
-          width : 70% ;
+          width : 30% ;
           padding : 0 0.03rem;
 
         }
@@ -347,6 +412,8 @@
         width : 0.85rem ;
         margin-bottom : 0.2rem ;
         margin-left : 0.15rem ;
+        float : left;
+
       }
     }
     .el-table{
