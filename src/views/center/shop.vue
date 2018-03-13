@@ -23,7 +23,7 @@
       <el-button size="small" round type="primary" @click="getShopList()">搜索店铺</el-button>
     </div>
 
-    <el-table class="list" :data="tableData.slice((currentPage-1)*pageSize,currentPage.pageSize)" stripe border style="width: 100%">
+    <el-table class="list" :data="tableData" stripe border style="width: 100%">
         <el-table-column prop="shopName" label="店铺" width="180"></el-table-column>
         <el-table-column prop="platform" label="平台类型" width="180">
           <template slot-scope="scope">
@@ -60,7 +60,7 @@
         :page-sizes="[10, 15, 20]"
         :page-size="pageSize"
         layout=" sizes, prev, pager, next, jumper"
-        :total="tableData.length">
+        :total="totalElements">
       </el-pagination>
       <span class="totalItems">共{{totalPages }}页，{{ totalElements }}条记录</span>
     </div>
@@ -120,7 +120,7 @@
             currentPage : 1,
             pageSize : 10 ,
             totalPages : '',
-            totalElements:'',
+            totalElements: 0 ,
           }
         },
         mounted(){
@@ -138,6 +138,7 @@
               formData.append('currentPage' ,this.currentPage);
               formData.append('pageSize' , this.pageSize);
             shopList(formData).then( res => {
+
               if(res.data.status === '000000000'){
                 console.log(res.data);
                 this.tableData = res.data.data ;

@@ -36,6 +36,7 @@
     </div>
     <el-table :data="tableData"  border>
       <el-table-column prop="activityId" label="序号" width="70"></el-table-column>
+      <el-table-column prop="shopName" label="试用活动店铺" width="140"></el-table-column>
       <el-table-column prop="code" label="试用活动编号" width="140"></el-table-column>
       <el-table-column prop="platform" label="平台类型">
         <template slot-scope="scope">
@@ -44,13 +45,14 @@
       </el-table-column>
       <el-table-column prop="status" label="活动状态">
         <template slot-scope="scope">
-          <span v-if="scope.row.status==9">已完成</span>
-          <span v-else-if="scope.row.status===10">已取消</span>
+          <span v-if="scope.row.status==='9'">已完成</span>
+          <span v-else-if="scope.row.status==='10'">已取消</span>
           <span v-else>{{ options[scope.row.status-1].name}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="tryoutQuantity" label="试用品份数"></el-table-column>
-      <el-table-column prop="deposit" label="担保金"></el-table-column>
+      <el-table-column prop="deposit" label="担保金（元）"></el-table-column>
+      <el-table-column prop="service" label="服务费（元）"></el-table-column>
       <el-table-column prop="date" label="活动时间" width="300">
         <template slot-scope="scope">
           <span class="time">{{ scope.row.startTime}} ~ {{ scope.row.endTime}}</span>
@@ -68,13 +70,13 @@
           <el-button class="check" type="text"  v-if="scope.row.status!=='4'" @click="detail(scope.$index,scope.row.activityId)">查看详情</el-button>
           <el-button class="check" type="text" v-if="scope.row.status==='4'" @click="editor(scope.$index,scope.row.activityId)">修改</el-button>
           <el-button class="check" type="text" v-if="scope.row.status==='4'" @click="reason(scope.$index,scope.row.reason)">查看原因</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='5'" @click="handle(scope.row.activityId,scope.row.status)">下架</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='6'&& scope.row.endTime< time" @click="handle(scope.row.activityId,scope.row.status)">重新上架</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='6'|| (scope.row.status==='2'&&scope.row.payStatus === '1')" @click="applyAccounts(scope.$index,scope.row.activityId)">申请结算</el-button>
+          <el-button class="check" type="text" v-if="scope.row.status==='5'" @click="handleShelves(scope.row.activityId,scope.row.status)">下架</el-button>
+          <el-button class="check" type="text" v-if="scope.row.status==='6'&& scope.row.endTime< time" @click="handleShelves(scope.row.activityId,scope.row.status)">重新上架</el-button>
+          <el-button class="check" type="text" v-if="scope.row.status==='6'|| (scope.row.status==='3'&&scope.row.payStatus === '1')" @click="applyAccounts(scope.$index,scope.row.activityId)">申请结算</el-button>
           <el-button class="check" type="text" v-if="scope.row.status==='7'" @click="cancelAccounts(scope.$index,scope.row.activityId)">取消结算</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='2'" @click="publish(scope.$index,scope.row.activityId)">重新发布</el-button>
-          <el-button class="check" type="text" @click="handleCancel(scope.$index,scope.row.activityId)">取消发布</el-button>
-          <el-button class="check" type="text" v-if="scope.row.payStatus==='0'" @click="toPay(scope.$index,scope.row.activityId)">去支付</el-button>
+          <el-button class="check" type="text" @click="publish(scope.$index,scope.row.activityId)">重新发布</el-button>
+          <el-button class="check" type="text" v-if="scope.row.status !=='10'" @click="handleCancel(scope.$index,scope.row.activityId)">取消发布</el-button>
+          <el-button class="check" type="text" v-if="scope.row.payStatus==='0'&&scope.row.status !=='10'" @click="toPay(scope.$index,scope.row.activityId)">去支付</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -102,7 +104,7 @@
 </template>
 
 <script>
-  import { getActivity ,getDetail , changeStatus , applyPay , cancelActivity } from '@/api/activity'
+  import { getActivity ,getDetail , changeStatus , applyPay ,cancelPay , cancelActivity } from '@/api/activity'
   import { parseTime } from "@/utils"
   import ElButton from "element-ui/packages/button/src/button";
 
@@ -181,7 +183,7 @@
           {
             value : '3',
             name : '京东'
-          },
+          }
           // {
           //   value : '4',
           //   name : '拼多多'
@@ -192,7 +194,6 @@
         totalElements : 0,
         currentPage : 1,
         pageSize : 10,
-        // clearable : true ,
         reasonBox : false ,
         reasonDetail : '',
         activityDetail : {} ,
@@ -256,7 +257,7 @@
           console.log(index,word)
       },
       //上架/下架操作
-      handle(id , status  ){
+      handleShelves(id , status  ){
         console.log(id,status,);
         let formData = new FormData();
         formData.append('activityId',id);
@@ -267,7 +268,8 @@
               message : '操作成功',
               type : 'success',
               center : true
-            })
+            });
+            window.reload();
           }else{
             this.$message({
               message : res.data.message ,
@@ -288,7 +290,8 @@
               message : '申请结算成功，请稍后确认',
               center : true ,
               type : 'success'
-            })
+            });
+            window.location.reload() ;
           }else{
             this.$message({
               message :  res.data.message ,
@@ -303,8 +306,27 @@
       },
 
       //取消结算
-      cancelAccounts(index){
-        console.log(index)
+      cancelAccounts(index ,id){
+        console.log(index);
+        cancelPay(id).then( res => {
+          console.log(res);
+          if( res.data.status === '000000000'){
+            this.$message({
+              message : '取消结算成功，请稍后确认',
+              type : 'success' ,
+              center : true
+            });
+            window.location.reload();
+          }else{
+            this.$message({
+              message : res.data.message ,
+              type : 'error' ,
+              center : true
+            })
+          }
+        }).catch( err =>{
+          alert('服务器开小差啦，请稍等~')
+        })
       },
 
       //重新发布
@@ -316,13 +338,15 @@
 
       //取消发布
       handleCancel(index, id){
-        cancelActivity(id).then( res=> {
+        cancelActivity(id).then( res => {
+          console.log(res);
           if( res.data.status === '000000000'){
             this.$message({
-              message : '取消成功',
+              message : '已成功取消该活动发布，请稍后确认',
               type : 'success' ,
               center : true
-            })
+            });
+            window.location.reload();
           }else{
             this.$message({
               message : res.data.message ,
@@ -372,7 +396,7 @@
       border-bottom : 1px solid #aaa ;
       margin-bottom : 0.3rem ;
       .el-input{
-        width : 20% ;
+        width : 18% ;
         margin :0 0.25rem 0.2rem ;
         float : left;
 
@@ -389,21 +413,24 @@
         margin-bottom : 0.2rem ;
 
         span{
-          width : 0.9rem ;
+          width : 1.6rem ;
           height : 100% ;
           line-height : 0.4rem ;
           display : block ;
           float : left;
-          text-align : left ;
+          text-align : right ;
           color : #333;
+          margin-right : 0.25rem ;
           &:nth-last-child(2){
-            width : 0.2rem ;
+            width : 0.25rem ;
+            margin : 0 ;
             text-align : center ;
           }
         }
         .el-date-editor, .el-range-editor, .el-input__inner, .el-date-editor--daterange, .is-active{
           width : 30% ;
-          padding : 0 0.03rem;
+          margin : 0;
+          /*padding : 0 0.03rem;*/
 
         }
       }

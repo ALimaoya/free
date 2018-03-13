@@ -59,7 +59,7 @@
       </el-form-item>
       <el-form-item label="宝贝主图：" labelWidth="1.3rem" prop="mainImageUrl" v-model.trim="form.mainImageUrl">
         <el-upload  class="upload"  :action="imgUrl"
-                    :show-file-list="false" :on-success="handleGoodsSuccess" :before-upload="beforeMainUpload" >
+                    :show-file-list="false"  :before-upload="beforeMainUpload" >
           <img v-if="mainImg"  :src="mainImg" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
@@ -143,7 +143,7 @@
         <el-form-item label="选择活动时间：" labelWidth="1.3rem" prop="activityStartTime">
           <div class="block">
             <el-date-picker v-model="form.activityStartTime"  format="yyyy-MM-dd" value-format="yyyy-MM-dd" size="small" :picker-options="pickerOptions"
-              type="date" clearable placeholder="开始日期" @blur="setRate(form.activityStartTime)">
+              type="date" clearable placeholder="开始日期" @blur="setRate(form.activityStartTime)" >
             </el-date-picker>
           </div>
         </el-form-item>
@@ -264,7 +264,31 @@
         };
         return{
           type : '1',
-          form : {},
+          form : {
+            platformType: '1',
+            receiveHours : '24',
+            categoryId : '',
+            productId : '',
+            activityTitle : '',
+            productUrl: '',
+            shopId : '' ,
+            mainImageUrl : '',
+            showImageUrl : '',
+            buyProductSpec:'',
+            buyProductQuantity : '1',
+            buyProductAmount : '',
+            post : '1',
+            keyword : [{
+              'searchId' : '',
+              'sortType' : '',
+              'searchKeyword' : '',
+              'searchCondition' : ''
+            }],
+            activityStartTime : '',
+            activityCalendar : [],
+            productName : '',
+            productDetail : ''
+          },
           platForm : [
             {
               name : '淘宝',
@@ -444,31 +468,22 @@
           } ,
           editor : '',
           order : '',
+          pickTime : '' ,
+          pickerOptions: {
+            disabledDate(time) {
+              return time.getTime() < Date.now();
+            }
+          },
         }
       },
 
 
       mounted(){
-        this.form = this.$store.state.publishInfo.publishForm ;
+        // this.form = this.$store.state.publishInfo.publishForm ;
 
         if(this.$route.query.order !== undefined ) {
           this.editor = this.$route.query.editor;
           let order = this.$route.query.order ;
-          // if( this.editor === '2'){
-          //   this.$store.dispatch('getPublishDetail',order).then( res => {
-          //     console.log(res);
-          //     if(res.data.status === '000000000'){
-          //       this.form = res.data.data ;
-          //     }else{
-          //       this.$message({
-          //         message : res.data.message ,
-          //         center : true ,
-          //         type : 'error'
-          //       })
-          //     }
-          //   });
-          //   console.log(this.form)
-          // }else{
             if( order !== undefined){
               this.order = order ;
               this.$store.dispatch('getPublishDetail',order).then( res => {
@@ -508,6 +523,7 @@
             }
           // }
         }else{
+          this.resetSearch('1');
           this.setRate();
         }
         getCategory().then( res => {
@@ -569,9 +585,9 @@
         },
 
         //上传商品主图
-        handleGoodsSuccess(res, file) {
-          this.form.mainImageUrl = URL.createObjectURL(file.raw);
-        },
+        // handleGoodsSuccess(res, file) {
+        //   this.form.mainImageUrl = URL.createObjectURL(file.raw);
+        // },
 
         beforeMainUpload(file) {
           let reader = new FileReader();
@@ -603,7 +619,7 @@
                   console.log(err) ;
                 })
               }
-            }
+            };
 
             image.src = e.target.result ;
           };
@@ -667,7 +683,12 @@
                   if (data['ret'][0] === 'SUCCESS::接口调用成功') {
                     _this.form.productDetail = JSON.stringify(data['data']['images']);
                   } else {
-                    alert(data['ret'][0]);
+                    _this.$message({
+                      message : data['ret'][0] ,
+                      center : true ,
+                      type : 'error'
+                    })
+
                   }
                 }
               });
@@ -687,11 +708,14 @@
                 dataType: 'jsonp',
                 success: function (data) {
                   if (data['ret'][0] == 'SUCCESS::调用成功') {
-                    var _data = data.data;
-                    _this.form.productName = data.data.item.title ;
+                    let _data = data.data;
+                    _this.form.productName = _data.item.title ;
                   }else{
-                    alert(data['ret'][0]);
-                  }
+                    _this.$message({
+                      message : data['ret'][0] ,
+                      center : true ,
+                      type : 'error'
+                    })                  }
                 }
               })
             }
@@ -748,6 +772,7 @@
             date = new Date();
           }else{
             date = new Date(Date.parse(value.replace(/-/g,'/'))) ;
+            date = new Date(date.getTime() -24 * 3600 * 1000);
           }
           this.year = date.getFullYear() ;
           this.month = date.getMonth()+1;
@@ -806,83 +831,94 @@
           if(value === undefined){
             value = 0 ;
           }
-          // this.form.activityCalendar[index].activityDate = date;
 
           if(type === 1){
               if(value > 1 ){
                 this.goodsAmount[index] = --value ;
-              }else{
-
+              }else if(value == 1){
+                this.goodsAmount = this.goodsAmount.slice(0,index);
+                this.form.activityCalendar = this.form.activityCalendar.slice(0,index);
               }
-          }else{
-              this.goodsAmount[index] = ++value ;
+          }else {
+            this.goodsAmount[index] = ++value;
+
+            console.log(this.goodsAmount, this.form.activityCalendar, date);
+
           }
-
-          console.log(this.goodsAmount,this.form.activityCalendar,date);
-
-          this.getProgress(index,date);
+          this.getProgress(index, date);
 
         },
 
         //输入框修改投放数量
         numIpt(value,index,date){
-          if(value === '') {
-            console.log(2,index,this.goodsAmount.length);
+          if(value === ''|| value< 1 || isNaN(value)) {
+            this.goodsAmount = this.goodsAmount.slice(0, index);
+            this.form.activityCalendar = this.form.activityCalendar.slice(0, index);
 
-            if(this.goodsAmount.length-1 < index){
-              this.warn = false ;
-              console.log(3);
+          }
+          // else{
+          //
+          //
+          // }
+          this.getProgress(index,date);
 
-            }else{
-              this.warn = true ;
 
-              this.getProgress(index,date);
-              console.log(4);
+        },
+
+
+        oneEditor(index,date){
+          if( index > this.goodsAmount.length -1 ){
+
+          }else{
+            if(this.form.activityCalendar[index] === undefined ){
+              this.form.activityCalendar.splice(index ,0,{ activityDate : date , tryoutQuantity :this.goodsAmount[index] });
+            }
+            else{
+              this.form.activityCalendar.splice(index ,1,{ activityDate : date , tryoutQuantity :this.goodsAmount[index] });
+            }
+          }
+
+        },
+
+        allEditor(index){
+          let time ;
+          if(this.form.activityStartTime){
+            time = this.form.activityStartTime ;
+          }else{
+            time = new Date().getTime()+ 24*3600*1000 ;
+          }
+          for(let j = 0 ; j < index ; j++){
+            if(this.goodsAmount[j] === undefined  ){
+              this.goodsAmount[j] = 1 ;
+
+              this.form.activityCalendar.splice(j ,0,{ activityDate : (parseTime(new Date(time).getTime()+j*24*3600*1000)) , tryoutQuantity :1 });
+            }else if( this.goodsAmount[j] === '' ){
+              this.goodsAmount[j] = 1 ;
+              this.form.activityCalendar.splice(j ,1,{ activityDate : (parseTime(new Date(time).getTime()+j*24*3600*1000)) , tryoutQuantity :1 });
 
             }
-
-
-          }else if(value< 1 || isNaN(value)){
-            this.warn = true ;
-          } else {
-            this.getProgress(index,date);
           }
         },
 
         getProgress(index,date){
-          if(this.form.activityCalendar[index] === undefined){
-            this.form.activityCalendar.splice(index ,0,{ activityDate : date , tryoutQuantity :this.goodsAmount[index] });
-          }else{
-            this.form.activityCalendar.splice(index ,1,{ activityDate : date , tryoutQuantity :this.goodsAmount[index] });
+          this.allEditor(index);
+          this.oneEditor(index,date);
 
-          }
+
+
           if(this.form.activityStartTime === ''){
             this.form.activityStartTime = new Date().toString();
-            // console.log(this.form.activityStartTime,2);
-          }
-          if(index !== 0 ){
-            for(let j = 0 ; j < index ; j++){
-              if(this.goodsAmount[j] === undefined  ){
-                this.goodsAmount[j] = 1 ;
-                this.form.activityCalendar.splice(j ,0,{ activityDate : (parseTime(new Date(this.form.activityStartTime).getTime()+(j+1)*24*3600*1000)) , tryoutQuantity :1 });
 
-                console.log(date);
-              }else if( this.goodsAmount[j] === '' ){
-                console.log(j,this.goodsAmount.length);
-                  this.goodsAmount[j] = 1 ;
-                  this.form.activityCalendar.splice(j ,1,{ activityDate : (parseTime(new Date(this.form.activityStartTime).getTime()+(j+1)*24*3600*1000)) , tryoutQuantity :1 });
+          }else{
+            this.form.activityStartTime = this.form.activityCalendar[0].activityDate ;
 
-
-
-              }
-            }
           }
 
-          if(this.goodsAmount[this.goodsAmount.length-1].length === 0 ){
-            this.goodsAmount.splice(this.goodsAmount.length-1,1);
-            this.form.activityCalendar.splice( this.goodsAmount.length,1);
-            console.log(this.form.activityCalendar);
-          }
+
+          // if(this.goodsAmount[this.goodsAmount.length-1].length === 0 ){
+          //   this.goodsAmount.splice(this.goodsAmount.length-1,1);
+          //   this.form.activityCalendar.splice( this.goodsAmount.length,1);
+          // }
           this.hasWarn();
 
         },
@@ -890,7 +926,6 @@
         hasWarn(){
           let dayAmount = 0 ;
           let arr = [] ;
-          console.log(this.goodsAmount);
           this.goodsAmount.forEach((i)=> {
             if( i !== ''){
               dayAmount = dayAmount + i ;
@@ -915,12 +950,13 @@
         //提交试用信息
         onSubmit(formName,index){
           this.hasWarn();
+          console.log(this.form);
+
           this.$refs[formName].validate((valid) => {
             if (valid  && !this.warn && !this.daysWarn) {
                 if(index === 1){
-                  this.$store.dispatch('savePublishInfo',this.form).then( res => {
+                  publishActivity(this.form).then( res => {
                     if(res.data.status === '000000000'){
-
                       this.$message({
                         type: 'success',
                         message: '提交成功',
@@ -941,8 +977,7 @@
                 }else{
                   if( index === 2){
 
-                    this.$store.dispatch('changePublishInfo', this.form).then( res => {
-                      console.log(res);
+                    changeDetail(this.form).then( res => {
                       if (res.data.status === '000000000') {
                         this.$message({
                           type: 'success',

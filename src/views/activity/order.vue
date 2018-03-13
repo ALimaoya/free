@@ -253,7 +253,7 @@
 
       //查看订单详情
       goDetail(index,order){
-        this.$router.push('/Activity/detail/'+ order) ;
+        this.$router.push('/activity/detail/'+ order) ;
       },
 
       //修改订单状态

@@ -8,14 +8,14 @@
       <el-form ref="sizeForm" :model="sizeForm" label-width="1.4rem" size="mini" :rules="rules">
         <el-form-item label="平台类型：" prop="platformType">
           <el-radio-group v-model="sizeForm.platformType">
-            <el-radio v-for="item in platform" :disabled="sizeForm.platformType!==item.value" :key="item.value"
-                      :label="item.name"></el-radio>
-            <!--<el-radio label="2">天猫</el-radio>-->
-            <!--<el-radio label="3">京东</el-radio>-->
-            <!--<el-radio label="4">拼多多</el-radio>-->
+            <el-radio v-for="item in platform" :disabled="type!=''?type!==item.value:false" :key="item.value"
+                      :label="item.value">{{ item.name }}</el-radio>
+            <!--<el-radio :disabled="sizeForm.platformType!=''?sizeForm.platformType!==label:false" label="1">淘宝</el-radio>-->
+            <!--<el-radio :disabled="sizeForm.platformType!==label" label="2">天猫</el-radio>-->
+            <!--<el-radio :disabled="sizeForm.platformType!==label" label="3">京东</el-radio>-->
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="店铺首页网址：" prop="shopAddress">
+        <el-form-item label="店铺首页网址：" prop="shopUrl">
           <el-input v-model.trim="sizeForm.shopUrl" class="big"></el-input>
         </el-form-item>
         <el-form-item label="店铺名称：" prop="shopName">
@@ -24,7 +24,7 @@
         <el-form-item label="店铺旺旺/咚咚ID："  prop="messageId">
           <el-input v-model.trim="sizeForm.messageId" class="big"></el-input>
         </el-form-item>
-        <el-form-item label="验证码：">
+        <el-form-item label="验证码：" prop="captcha">
           <span  class="small">{{ sizeForm.captcha }}</span>
           <el-button class="copyBtn" type="primary" plain  @click="copy(sizeForm.captcha,$event)">复制</el-button>
         </el-form-item>
@@ -79,6 +79,9 @@
           if(!validateURL(value) ){
             callback(new Error('请输入正确的网址链接'))
 
+          }else if(value.length > 512){
+            callback(new Error('网址链接过长，请重新选择后进行输入'))
+
           }
           callback();
         }
@@ -105,6 +108,9 @@
         }else{
           if(!validateURL(value)){
             callback(new Error('请输入正确格式的链接'))
+          }else if(value.length > 512){
+            callback(new Error('网址链接过长，请重新选择后进行输入'))
+
           }
           callback();
 
@@ -147,7 +153,7 @@
         editor : '',
         sizeForm : {
           platformType : '',
-          shopAddress : '',
+          shopUrl : '',
           shopName: '',
           messageId : '',
           captcha : '',
@@ -157,8 +163,8 @@
           managerMobile : ''
         },
         rules : {
-          platformType : [{ required : true , message : '请选择平台类型'}],
-          shopAddress : [
+          platformType : [{ required : true , message : '请选择平台类型' , trigger : 'change'}],
+          shopUrl : [
             {
               validator : validateAddr , trigger : 'blur' , required: true
             }
@@ -203,14 +209,14 @@
           },
           {
             value : '2',
-            name : '京东'
+            name : '天猫'
           },
           {
             value : '3',
             name : '京东'
           }
-        ]
-        // shopUrl : ''
+        ] ,
+        type : ''
       }
     },
 
@@ -218,11 +224,11 @@
       if(this.$route.query.editor !== undefined){
         this.editor = this.$route.query.editor ;
         this.shopId = this.$route.query.id ;
-        console.log(this.shopId,this.$route);
         shopDetail(this.shopId).then( res => {
           console.log(res);
           if( res.data.status === '000000000'){
             this.sizeForm = res.data.data ;
+            this.type = this.sizeForm.shopUrl ;
           }else{
             this.$message({
               message : res.data.message ,
@@ -275,14 +281,19 @@
                   })
                   console.log(this.sizeForm,res)
                   this.$router.push('/shop')
+                }else{
+                  this.$message({
+                    type : 'error' ,
+                    message : res.data.message,
+                    center : true
+                  })
                 }
               }).catch( err => {
                 alert('服务器开小差啦，请稍等~')
               })
             }else{
               formData.append('platformType',this.sizeForm.platformType);
-              formData.append('captcha' ,this.sizeForm.messageId);
-
+              formData.append('captcha' ,this.sizeForm.captcha);
               shopInfo(formData).then( res => {
                 if(res.data.status === '000000000'){
                   this.$message({
@@ -290,8 +301,13 @@
                     message : '提交成功',
                     center : true
                   })
-                  console.log(this.sizeForm,res)
                   this.$router.push('/shop')
+                }else{
+                  this.$message({
+                    type : 'error' ,
+                    message : res.data.message,
+                    center : true
+                  })
                 }
               }).catch( err => {
                 alert('服务器开小差啦，请稍等~')

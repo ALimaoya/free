@@ -9,11 +9,26 @@ export function publishActivity(data){
   })
 }
 
+//修改发布活动
+export function changeDetail(data){
+  return request({
+    url: '/tryout/activity/update',
+    method: 'post',
+    data: data ,
+    // headers : {
+    //   'Content-Type' : 'multipart/form-data'
+    // }
+  })
+}
+
 //取消发布活动
 export function cancelActivity(data){
   return request({
-    url : `/tryout/activity/cacel/${data}` ,
-    method : 'post'
+    url : `/tryout/activity/cancel/${data}` ,
+    method : 'post',
+    headers : {
+      'Content-Type' : 'application/json'
+    }
   })
 }
 
@@ -95,18 +110,8 @@ export function getDetail(data) {
   })
 }
 
-//修改活动详情
-export function changeDetail(data){
-  return request({
-    url: '/tryout/activity/update',
-    method: 'post',
-    data: data ,
-    // headers : {
-    //   'Content-Type' : 'multipart/form-data'
-    // }
-  })
-}
 
+//获取订单列表
 export function getOrderList(data) {
   return request({
     url: '/tryout/order/list',
@@ -139,6 +144,14 @@ export function changeStatus(data) {
 export function applyPay(id){
   return request({
     url : '/tryout/settlement/apply/'+ id ,
+    method : 'post'
+  })
+}
+
+//取消结算
+export function cancelPay(id){
+  return request({
+    url : '/tryout/settlement/cancel/' + id ,
     method : 'post'
   })
 }
