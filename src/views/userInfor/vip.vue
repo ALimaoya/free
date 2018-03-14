@@ -8,7 +8,7 @@
         <el-table-column prop="vipLevel" label="会员类型">
           <template slot-scope="scope">
             <span v-if="scope.row.vipLevel==0||!scope.row.vipLevel">非会员</span>
-            <span>
+            <span v-else>
               <span style="color:red">vip:{{scope.row.vipLevel}}</span> 会员</span>
           </template>
         </el-table-column>
