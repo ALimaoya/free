@@ -1,6 +1,6 @@
 <template>
   <div class="checkbonus">
-    <h1>领取审核</h1>
+    <h1>领奖审核</h1>
     <div class="search">
       <el-select size="small"  v-model="order.platformType" filterable placeholder="请选择试用平台">
         <el-option
@@ -16,7 +16,7 @@
     </div>
     <el-table :data="tableData" border>
       <el-table-column prop="activityCode" label="试客任务编号" width="180"></el-table-column>
-      <el-table-column prop="orderCode" label="试客子订单编号" width="180"></el-table-column>
+      <el-table-column prop="orderCode" label="试客订单编号" width="180"></el-table-column>
       <el-table-column prop="activityTitle" label="商品名称"></el-table-column>
       <el-table-column prop="platform" label="平台类型">
         <template slot-scope="scope">
@@ -27,8 +27,8 @@
       <el-table-column prop="thirdOrderCode" label="第三方订单编号"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button  type="text" @click="goDetail(scope.$index,scope.row.orderId)">审核</el-button>
-          <el-button  type="text" @click="handleOrder(scope.$index,scope.row.orderId)">查看详情</el-button>
+          <el-button  type="text" @click="goDetail(scope.$index,scope.row.orderId)">查看详情</el-button>
+          <el-button  type="text" @click="handleOrder(scope.$index,scope.row.orderId)">审核</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -44,14 +44,46 @@
       </el-pagination>
       <span class="totalItems">共{{ totalPages }}页，{{totalElements}}条记录</span>
     </div>
+    <el-dialog width="80%" :visible.sync="detailInfo" center top="5%" title="领奖审核">
+      <ul>
+        <li v-for="(item,index) in imgList" :key="index">
+          <dl>
+            <dt>{{ item.type }}</dt>
+            <dd>
+              <img :src=" item.imageUrl" alt="" />
+            </dd>
+          </dl>
+        </li>
+        <li v-for="(item ,index) in goodsShare">
+          <span>宝贝分享{{(index + 1)*1 }}：</span>
+          <span>{{ item.shareUrl }}</span>
+        </li>
+        <li><img :src=" orderImg" alt="" /></li>
+      </ul>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="check('1')">审核成功</el-button>
+        <el-button type="error" @click="check('2')">审核失败</el-button>
+        <el-button type="info" @click="detailInfo = false">取 消</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="拒绝原因" :visible.sync="reasonBox" center top="15%"  width="50%" >
+      <span>备注：</span>
+      <el-input :rows="4" type="textarea" v-model.trim="reason" placeholder="审核拒绝时不能为空，可输入字符最大长度为100"></el-input>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitReason">提 交</el-button>
+        <el-button type="info" @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-  import { getOrderList ,checkBonus  } from "@/api/activity"
+  import { getOrderList , orderDetail , checkOrder   } from "@/api/activity"
+  import ElDialog from "element-ui/packages/dialog/src/component";
 
   export default {
-        name: "checkbonus" ,
+    components: {ElDialog},
+    name: "checkbonus" ,
       data(){
           return {
             platformOptions : [
@@ -90,6 +122,17 @@
             pageSize : 10 ,
             totalPages : '',
             totalElements : 0 ,
+            detailInfo : false ,
+            reasonBox : false ,
+            imgList : [] ,
+            goodsShare : [] ,
+            orderImg : '' ,
+            orderId : '' ,
+            reason : '' ,
+            refuseReason : '' ,
+            status : ''
+            // imgUrl : 'http://lgf8953.oss-cn-beijing.aliyuncs.com'
+
           }
       },
       mounted(){
@@ -121,13 +164,97 @@
 
         //查看订单详情
         goDetail(index,order){
-          this.$router.push('/Activity/detail/'+ order) ;
+
+          this.$router.push('/activity/detail/'+ order) ;
 
         },
 
-        //进行审核操作
+        //订单详情审核
         handleOrder(index ,order){
+          this.orderId = order+ '' ;
+          console.log(order);
+          orderDetail(order).then( res => {
+            console.log(res);
+            if( res.data.status === '000000000'){
+              this.detailInfo = true ;
+              this.imgList = res.data.orderImageList.slice(0,2) ;
+              this.orderImg = res.data.orderImageList.slice(2,3) ;
+              this.goodsShare = res.data.shareList ;
+            }else{
+              this.$message({
+                message : res.data.message ,
+                center : true ,
+                type : 'error'
+              })
+            }
+          }).catch( err => {
+            alert('服务器开小差啦，请稍等~')
+          })
+        },
 
+        //审核操作
+        check(type){
+          if(type === '1'){
+            this.status = '5' ;
+            this.handelRefuse();
+          }else{
+            this.status = '8' ;
+            this.reasonBox = true ;
+
+          }
+
+        },
+
+        //提交审核
+        handelRefuse(){
+          checkOrder({ orderId : this.orderId , status : this.status ,reason : this.refuseReason }).then( res => {
+             if(res.data.status === '000000000'){
+               this.$message({
+                 message : '审核提交成功，请稍后确认' ,
+                 center : true ,
+                 type : 'success'
+               });
+              window.location.reload();
+             }else{
+               this.$message({
+                 message : res.data.message ,
+                 center : true ,
+                 type : 'error'
+               })
+             }
+
+          }).catch( err => {
+            alert('服务器开小差啦，请稍等~')
+          });
+          this.detailInfo = false ;
+
+        },
+
+        //提交拒绝原因
+        submitReason(){
+
+          this.refuseReason = this.reason ;
+          console.log(this.orderId ,  this.status , this.refuseReason ,2);
+
+          if(this.refuseReason === ''){
+            this.$message({
+              message : '请填写拒绝原因',
+              type : 'error' ,
+              center : 'true'
+            });
+            return false ;
+          }else{
+            this.handelRefuse();
+            this.reasonBox = false ;
+            this.reason = '' ;
+
+          }
+        },
+
+        //关闭窗口
+        cancel(){
+          this.reasonBox = false ;
+          this.reason = '' ;
         },
 
         handleSizeChange(val) {
@@ -150,5 +277,22 @@
     .search{
       border-bottom : 1px solid #aaa ;
     }
+
+      .el-dialog{
+        span{
+          display: inline-block;
+          margin-bottom : 0.1rem ;
+        }
+        .dialog-footer{
+          .el-button {
+            width : 0.9rem ;
+            padding : 0;
+            text-align : center ;
+            line-height : 0.35rem ;
+          }
+        }
+
+      }
+
   }
 </style>

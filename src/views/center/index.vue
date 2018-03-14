@@ -43,7 +43,7 @@
         <ul class="gold">
           <li class="useful"><span>可用金币</span><i></i></li>
           <li class="cash">{{ wallet.gold }}元</li>
-          <li><el-button size="small" class="btn" @click="recharge(3)">充值</el-button></li>
+          <!--<li><el-button size="small" class="btn" @click="recharge(3)">充值</el-button></li>-->
         </ul>
         <!--<ul class="detail">-->
           <!--<span>资金明细：</span>-->
@@ -432,7 +432,7 @@
           text-indent : 0.38rem ;
         }
         li:nth-last-child(1){
-          color : #666;
+          /*color : #666;*/
           line-height : 0.3rem ;
           strong{
             float : left ;

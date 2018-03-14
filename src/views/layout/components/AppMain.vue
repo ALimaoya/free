@@ -1,21 +1,26 @@
 <template>
   <section class="app-main">
     <top></top>
-    <transition name="fade" mode="out-in">
-       <router-view :key="key"></router-view>
+    <transition  name="fade" mode="out-in">
+       <router-view class="content" :key="key"></router-view>
 
       <!--<router-view></router-view>-->
     </transition>
+    <back-top :visibilityHeight="300" :backPosition="50"></back-top>
+
   </section>
 </template>
 
 <script>
   import  Top  from '@/components/Top'
+  import  BackTop  from "@/components/BackTop"
 
   export default {
   name: 'AppMain',
     components : {
-      Top
+      Top ,
+      BackTop
+
     },
   computed: {
     key() {
@@ -31,6 +36,9 @@
     padding : 0.3rem 0.2rem ;
     box-sizing: border-box;
     font-size : 0.15rem ;
+    .content{
+      margin-bottom : 0.5rem ;
+    }
   }
 </style>
 

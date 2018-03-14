@@ -260,6 +260,7 @@
                   title: '信息错误',
                   message: res.data.message,
                   type: 'error',
+                  center : true
                 });
               }
 

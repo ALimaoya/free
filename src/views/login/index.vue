@@ -152,25 +152,15 @@
                 this.$router.push({
                   path: '/'
                 });
-                // this.$router.push('/activity/approval')
                 setMobile( this.loginForm.mobile)
               } else {
                 this.examine = true;
-                if (res.data.status === '001003006') {
-                  this.$message({
-                    message: '登录密码输入错误，请确认后重新输入',
-                    type: 'error',
-                    center: 'true'
-                  })
-                } else if (res.data.status === '001003003') {
                   this.$message({
                     message: res.data.message,
                     type: 'error',
                     center: 'true'
                   })
                 }
-              }
-
             }).catch(err => {
 
               this.loading = false

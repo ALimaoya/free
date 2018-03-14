@@ -53,9 +53,9 @@
       <el-table-column prop="tryoutQuantity" label="试用品份数"></el-table-column>
       <el-table-column prop="deposit" label="担保金（元）"></el-table-column>
       <el-table-column prop="service" label="服务费（元）"></el-table-column>
-      <el-table-column prop="date" label="活动时间" width="300">
+      <el-table-column prop="date" label="活动时间" width="150">
         <template slot-scope="scope">
-          <span class="time">{{ scope.row.startTime}} ~ {{ scope.row.endTime}}</span>
+          <span class="time">{{ scope.row.startTime}}<br/> ~<br/>{{ scope.row.endTime}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="progress" label="活动进度"></el-table-column>
@@ -67,16 +67,16 @@
       </el-table-column>
       <el-table-column  label="操作">
         <template slot-scope="scope">
-          <el-button class="check" type="text"  v-if="scope.row.status!=='4'" @click="detail(scope.$index,scope.row.activityId)">查看详情</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='4'" @click="editor(scope.$index,scope.row.activityId)">修改</el-button>
+          <el-button class="check" type="text"  @click="detail(scope.$index,scope.row.activityId)">查看详情</el-button>
+          <el-button class="check" type="text" v-if="scope.row.status==='4'||scope.row.status==='2' " @click="editor(scope.$index,scope.row.activityId)">修改</el-button>
           <el-button class="check" type="text" v-if="scope.row.status==='4'" @click="reason(scope.$index,scope.row.reason)">查看原因</el-button>
           <el-button class="check" type="text" v-if="scope.row.status==='5'" @click="handleShelves(scope.row.activityId,scope.row.status)">下架</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='6'&& scope.row.endTime< time" @click="handleShelves(scope.row.activityId,scope.row.status)">重新上架</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='6'|| (scope.row.status==='3'&&scope.row.payStatus === '1')" @click="applyAccounts(scope.$index,scope.row.activityId)">申请结算</el-button>
+          <el-button class="check" type="text" v-if="scope.row.status==='6'&& scope.row.endTime > time" @click="handleShelves(scope.row.activityId,scope.row.status)">重新上架</el-button>
+          <el-button class="check" type="text" v-if="(scope.row.status==='6'|| (scope.row.status==='5'&& scope.row.endTime < time )) && scope.row.payStatus==='1'" @click="applyAccounts(scope.$index,scope.row.activityId)">申请结算</el-button>
           <el-button class="check" type="text" v-if="scope.row.status==='7'" @click="cancelAccounts(scope.$index,scope.row.activityId)">取消结算</el-button>
           <el-button class="check" type="text" @click="publish(scope.$index,scope.row.activityId)">重新发布</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status !=='10'" @click="handleCancel(scope.$index,scope.row.activityId)">取消发布</el-button>
-          <el-button class="check" type="text" v-if="scope.row.payStatus==='0'&&scope.row.status !=='10'" @click="toPay(scope.$index,scope.row.activityId)">去支付</el-button>
+          <el-button class="check" type="text" v-if="scope.row.status ==='2' || scope.row.status==='4'" @click="handleCancel(scope.$index,scope.row.activityId)">取消发布</el-button>
+          <el-button class="check" type="text" v-if="scope.row.payStatus==='0'" @click="toPay(scope.$index,scope.row.activityId)">去支付</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -269,7 +269,7 @@
               type : 'success',
               center : true
             });
-            window.reload();
+            window.location.reload();
           }else{
             this.$message({
               message : res.data.message ,
@@ -307,9 +307,7 @@
 
       //取消结算
       cancelAccounts(index ,id){
-        console.log(index);
         cancelPay(id).then( res => {
-          console.log(res);
           if( res.data.status === '000000000'){
             this.$message({
               message : '取消结算成功，请稍后确认',

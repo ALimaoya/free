@@ -24,32 +24,20 @@
         <li><span>中奖时间：</span><span>{{ detailInfo.winTime }}</span></li>
         <li><span>开奖时间：</span><span>{{ detailInfo.receiveTime }}</span></li>
         <li><span>订单价格：</span><span>{{ detailInfo.amount }} 元</span></li>
-        <li class="detailPic"><p>图片详情：</p>
+        <li class="detailPic">
+          <p>图片详情：</p>
+          <div>
             <dl v-for="item in detailInfo.orderImageList">
-                <dt>{{ imgType[item.type-1]}}</dt>
-                <dd>
-                  <img @click="getImg(item.imageUrl)" :src="item.imageUrl" alt="" />
-                </dd>
+              <dt>{{ imgType[item.type-1] }}</dt>
+              <dd>
+                <img @click="getImg(item.imageUrl)" :src="imgUrl + item.imageUrl" alt="" />
+              </dd>
             </dl>
+          </div>
         </li>
       </ul>
-      <!--<div class="detailPic">-->
-        <!--<dl>-->
-          <!--<dt>试用品图例</dt>-->
-          <!--<dd><img src="../../assets/imgs/default0.png" alt="" /></dd>-->
-        <!--</dl>-->
-        <!--<dl>-->
-          <!--<dt>商品主图</dt>-->
-          <!--<dd><img src="../../assets/imgs/default0.png" alt="" /></dd>-->
-        <!--</dl>-->
-        <!--<ul>-->
-          <!--<li>试用品份数：{{detailInfo.piece }}</li>-->
-          <!--<li>每日最多申请人数：{{detailInfo.peaple}}</li>-->
-          <!--<li>日均投放量{{ detailInfo.amount}}单</li>-->
-        <!--</ul>-->
-      <!--</div>-->
     </div>
-    <div v-if="showImg" @click="close">
+    <div v-if="showImg" @click="close" class="mask">
       <img :src="bigImg" alt="" />
     </div>
   </div>
@@ -65,8 +53,8 @@
             platForm : ['','淘宝','天猫', '京东'],
             imgType : ['商品收藏截图','店铺收藏截图','订单截图','评价截图'] ,
             showImg : false ,
-            bigImg : ''
-
+            bigImg : '' ,
+            imgUrl : 'http://lgf8953.oss-cn-beijing.aliyuncs.com'
           }
       },
       mounted(){
@@ -87,9 +75,7 @@
           this.bigImg = url ;
         },
         close(){
-
           this.showImg = false ;
-
         }
       }
 
@@ -146,8 +132,11 @@
     }
     .detailPic{
       float : left;
-      padding-top : 0.2rem ;
+      /*padding-top : 0.2rem ;*/
       width : 100% ;
+      display : flex ;
+      flex-direction: row;
+
       p{
         width : 40% ;
         height : 0.3rem ;
@@ -155,29 +144,57 @@
         text-align: right ;
 
       }
-      dl{
-        float : left;
-        width : 46% ;
-        &:nth-child(1){
-          margin-right : 0.25rem ;
+      div{
+        flex : 1 ;
+        display : flex ;
+        margin-top : 0.3rem ;
+        flex-wrap: wrap;
+        height : auto ;
+        dl{
+          width : 46% ;
+          font-weight : 100 ;
+          &:nth-child(1){
+            margin-right : 0.25rem ;
 
-        }
-        dt{
-          width : 100% ;
-          text-align : center;
-          font-size : 0.18rem ;
-          line-height : 0.4rem ;
-          height : 0.4rem ;
-        }
-        dd{
-          margin : 0.2rem auto;
-          width : 100% ;
-          img{
+          }
+          dt{
             width : 100% ;
-            border : 1px solid #D3D3D3;
-            border-radius : 0.05rem ;
+            text-align : center;
+            font-size : 0.16rem ;
+            line-height : 0.4rem ;
+            height : 0.4rem ;
+          }
+          dd{
+            margin : 0.2rem auto;
+            width : 100% ;
+            height : 1.5rem ;
+
+            img{
+              width : 100% ;
+              height : 100% ;
+              border : 1px solid #D3D3D3;
+              /*border-radius : 0.05rem ;*/
+            }
           }
         }
+      }
+    }
+    .mask{
+      position : fixed ;
+      top : 0;
+      left : 0 ;
+      width : 100% ;
+      height : 100% ;
+      background : #f1f1f1 ;
+      opacity: 0.3;
+      display : flex ;
+      align-items: center;
+      justify-content: center;
+      z-index : 10000;
+      img{
+
+         max-height : 100% ;
+
       }
     }
   }

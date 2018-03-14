@@ -2,7 +2,7 @@
   <div class="order">
     <h1>订单查询</h1>
       <div class="search">
-        <el-select size="small"  v-model="order.platformType" filterable placeholder="请选择试用平台">
+        <el-select size="small" clearable v-model="order.platformType" filterable placeholder="请选择试用平台">
           <el-option
             v-for="item in platformOptions"
             :key="item.value"
@@ -12,7 +12,7 @@
         </el-select>
         <el-input size="small" v-model.trim="order.activityCode" placeholder="请输入试客试用活动编号"></el-input>
         <el-input size="small" v-model.trim="order.thirdOrderCode" placeholder="请输入第三方订单编号"></el-input>
-        <el-select size="small"  v-model="order.EQ_status" filterable placeholder="请选择订单状态">
+        <el-select clearable size="small"  v-model="order.EQ_status" filterable placeholder="请选择订单状态">
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -138,7 +138,7 @@
             value : '3'
           },
           {
-            name : '领取审核中',
+            name : '领奖审核中',
             value : '4'
           },
           {
@@ -153,7 +153,7 @@
             value : '7'
           },
           {
-            name : '领取审核拒绝',
+            name : '领奖审核拒绝',
             value : '8'
           },
           {

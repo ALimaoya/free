@@ -16,7 +16,7 @@
     </div>
     <el-table :data="tableData" border>
       <el-table-column prop="activityCode" label="试客任务编号" width="180"></el-table-column>
-      <el-table-column prop="orderCode" label="试客子订单编号" width="180"></el-table-column>
+      <el-table-column prop="orderCode" label="试客订单编号" width="180"></el-table-column>
       <el-table-column prop="activityTitle" label="商品名称"></el-table-column>
       <el-table-column prop="platform" label="平台类型">
         <template slot-scope="scope">
@@ -28,7 +28,7 @@
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button  type="text" @click="goDetail(scope.$index,scope.row.orderId)">查看详情</el-button>
-          <el-button  type="text" @click="handleOrder(scope.$index)">审核</el-button>
+          <el-button  type="text" @click="handleOrder(scope.$index, scope.row.orderId)">审核</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -44,11 +44,33 @@
       </el-pagination>
       <span class="totalItems">共{{ totalPages }}页，{{totalElements}}条记录</span>
     </div>
+
+    <el-dialog width="80%" :visible.sync="detailInfo" center top="3%" title="评价审核">
+      <dl>
+        <dt>评价截图</dt>
+        <dd>
+          <img :src=" viewImg" alt="" />
+        </dd>
+      </dl>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="check('1')">审核成功</el-button>
+        <el-button type="error" @click="check('2')">审核失败</el-button>
+        <el-button type="info" @click="detailInfo = false">取 消</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="拒绝原因" :visible.sync="reasonBox" center top="15%"  width="50%" >
+      <span>备注：</span>
+      <el-input :rows="4" type="textarea" v-model.trim="reason" placeholder="审核拒绝时不能为空，可输入字符最大长度为100"></el-input>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitReason">提 交</el-button>
+        <el-button type="info" @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-  import { getOrderList , checkView  } from "@/api/activity"
+  import { getOrderList , orderDetail , checkOrder  } from "@/api/activity"
 
   export default {
     name: "checkview" ,
@@ -90,6 +112,15 @@
         pageSize : 10 ,
         totalPages : '',
         totalElements : 0 ,
+        viewImg : '' ,
+        detailInfo : false ,
+        imgUrl : 'http://lgf8953.oss-cn-beijing.aliyuncs.com' ,
+        orderId : '' ,
+        reason : '' ,
+        refuseReason : '' ,
+        status : '' ,
+        reasonBox : false
+
       }
     },
     mounted(){
@@ -121,13 +152,99 @@
 
       //查看订单详情
       goDetail(){
-        this.$router.push('/Activity/detail/'+ order) ;
+        this.$router.push('/activity/detail/'+ order) ;
 
       },
 
-      //进行审核操作
-      handleOrder(index ,order){
 
+      // 评价审核详情
+      handleOrder(index ,order){
+        this.orderId = order ;
+        this.detailInfo = true ;
+
+        orderDetail(order).then( res => {
+          console.log(res);
+          if( res.data.status === '000000000'){
+            this.viewImg = res.data.orderImageList.slice(3,4).imageUrl ;
+
+          }else{
+            this.$message({
+              message : res.data.message ,
+              center : true ,
+              type : 'error'
+            })
+          }
+        }).catch( err => {
+           alert('服务器开小差啦，请稍等~')
+        })
+      },
+
+      //审核操作
+      check(type){
+
+        if(type === '1'){
+          this.status = '12' ;
+          this.handelRefuse();
+        }else{
+          this.status = '9' ;
+          this.reasonBox = true ;
+
+        }
+        console.log(this.orderId ,  this.status , this.refuseReason);
+
+
+      },
+
+      handelRefuse(){
+        checkOrder({ orderId : this.orderId , status : this.status ,reason : this.refuseReason }).then( res => {
+          if(res.data.status === '000000000'){
+            this.$message({
+              message : '审核提交成功，请稍后确认' ,
+              center : true ,
+              type : 'success'
+            });
+            window.location.reload();
+          }else{
+            this.$message({
+              message : res.data.message ,
+              center : true ,
+              type : 'error'
+            })
+          }
+
+        }).catch( err => {
+          alert('服务器开小差啦，请稍等~')
+        });
+        this.detailInfo = false ;
+
+      },
+
+      //提交拒绝原因
+      submitReason(){
+
+        this.refuseReason = this.reason ;
+        console.log(this.orderId ,  this.status , this.refuseReason ,2);
+
+        if(this.refuseReason === ''){
+          this.$message({
+            message : '请填写拒绝原因',
+            type : 'error' ,
+            center : 'true'
+          });
+          return false ;
+        }else{
+          this.handelRefuse();
+          this.reasonBox = false ;
+          // this.reason = '' ;
+
+        }
+
+      },
+
+      //关闭窗口
+      cancel(){
+        this.reasonBox = false ;
+        this.reason = '' ;
       },
 
       handleSizeChange(val) {
@@ -149,6 +266,37 @@
   .checkbonus{
     .search{
       border-bottom : 1px solid #aaa ;
+
+    }
+
+    .el-dialog {
+
+      dl{
+        width : 100% ;
+        dt{
+          width : 100% ;
+          height : 0.5rem ;
+          line-height : 0.5rem ;
+          color : #456 ;
+          text-align : center ;
+
+        }
+        dd{
+          max-height : 5rem ;
+          width : 80% ;
+          margin : 0.3rem auto ;
+          img{
+            max-width : 100% ;
+            height : 100% ;
+            margin : 0 auto ;
+
+          }
+        }
+      }
+      span {
+        display: inline-block;
+        margin-bottom: 0.1rem;
+      }
     }
   }
 </style>

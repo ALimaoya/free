@@ -94,7 +94,7 @@ export const constantRouterMap = [
         path: 'bonus',
         name: 'Bonus',
         component: () => import('@/views/activity/checkbonus'),
-        meta: { title: '领取审核', icon: 'bonus' }
+        meta: { title: '领奖审核', icon: 'bonus' }
       },
       {
         path: 'view',

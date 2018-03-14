@@ -110,27 +110,6 @@ export function getDetail(data) {
   })
 }
 
-
-//获取订单列表
-export function getOrderList(data) {
-  return request({
-    url: '/tryout/order/list',
-    method: 'post',
-    data : data
-  })
-}
-
-//订单详情
-export function orderDetail(data) {
-  return request({
-    url: `/tryout/order/detail/${ data }`,
-    method: 'get',
-    headers : {
-      'Content-Type' : 'application/json'
-    }
-  })
-}
-
 //修改试用活动状态
 export function changeStatus(data) {
   return request({
@@ -156,21 +135,51 @@ export function cancelPay(id){
   })
 }
 
-//领取审核
-export function checkBonus(){
+//获取订单列表
+export function getOrderList(data) {
   return request({
-    url : '',
-    method : ''
+    url: '/tryout/order/list',
+    method: 'post',
+    data : data
   })
 }
 
-//评价审核
-export function checkView(){
+//订单详情
+export function orderDetail(data) {
   return request({
-    url : '',
-    method : ''
+    url: `/tryout/order/detail/${ data }`,
+    method: 'get',
+    headers : {
+      'Content-Type' : 'application/json'
+    }
   })
 }
+
+//订单审核
+export function checkOrder(data){
+  return request({
+    url : '/tryout/order/updateStatus',
+    method : 'post' ,
+    data ,
+
+  })
+}
+
+//领取审核
+// export function checkBonus(id){
+//   return request({
+//     url : '',
+//     method : ''
+//   })
+// }
+//
+// //评价审核
+// export function checkView(id){
+//   return request({
+//     url : '',
+//     method : ''
+//   })
+// }
 
 //上传图片
 export function uploadImage(file){

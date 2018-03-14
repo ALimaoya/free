@@ -50,8 +50,7 @@
       },
 
       mounted(){
-            let order = this.$route.params.id ;
-        console.log(this.$route);
+        let order = this.$route.params.id ;
         getPayDetail(order).then( res => {
           console.log(res);
           if (res.data.status === '000000000') {

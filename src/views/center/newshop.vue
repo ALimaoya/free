@@ -277,9 +277,9 @@
                   this.$message({
                     type : 'success',
                     message : '提交成功',
-                    center : true
+                    center : true ,
+                    duration : 500
                   })
-                  console.log(this.sizeForm,res)
                   this.$router.push('/shop')
                 }else{
                   this.$message({
@@ -299,7 +299,9 @@
                   this.$message({
                     type : 'success',
                     message : '提交成功',
-                    center : true
+                    center : true ,
+                    duration : 500
+
                   })
                   this.$router.push('/shop')
                 }else{

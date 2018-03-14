@@ -35,9 +35,9 @@
         </el-select>
       </el-form-item>
       <el-form-item label="试用品展示图：" labelWidth="1.3rem" prop="showImageUrl">
-        <el-upload class="upload"  :action="imgUrl" :show-file-list="false"
+        <el-upload class="upload"  :action="imgUrl" :show-file-list="false" v-model.trim="form.showImageUrl"
            :before-upload="beforeShowUpload" :headers="{ 'Content-Type': 'multipart/form-data'}">
-          <img v-if="showImg" v-model.trim="form.showImageUrl" :src="showImg" class="avatar">
+          <img v-if="showImg"  :src="showImg" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
         <ul class="require">
@@ -57,8 +57,8 @@
         <el-input size="small" v-model.trim="form.productUrl" placeholder="请输入内容" @blur="getGoodsDetail(form.platformType ,form.productUrl)"></el-input>
         <span class="tips"><img src="../../assets/imgs/tips3.png" alt=""/>平台会根据您填写的商品链接抓取宝贝信息，试客无法看到此链接</span>
       </el-form-item>
-      <el-form-item label="宝贝主图：" labelWidth="1.3rem" prop="mainImageUrl" v-model.trim="form.mainImageUrl">
-        <el-upload  class="upload"  :action="imgUrl"
+      <el-form-item label="宝贝主图：" labelWidth="1.3rem" prop="mainImageUrl" >
+        <el-upload  class="upload"  :action="imgUrl" v-model.trim="form.mainImageUrl"
                     :show-file-list="false"  :before-upload="beforeMainUpload" >
           <img v-if="mainImg"  :src="mainImg" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -140,10 +140,10 @@
             <!--<li>当日18点前提交担保金的活动，当日审核上架次日10点开奖；18点后提交的活动次日10点上架，隔天10点系统自动开奖</li>-->
           <!--</ul>-->
         <!--</el-form-item>-->
-        <el-form-item label="选择活动时间：" labelWidth="1.3rem" prop="activityStartTime">
+        <el-form-item label="选择活动时间：" labelWidth="1.3rem" prop="startTime">
           <div class="block">
-            <el-date-picker v-model="form.activityStartTime"  format="yyyy-MM-dd" value-format="yyyy-MM-dd" size="small" :picker-options="pickerOptions"
-              type="date" clearable placeholder="开始日期" @blur="setRate(form.activityStartTime)" >
+            <el-date-picker v-model="form.startTime"  format="yyyy-MM-dd" value-format="yyyy-MM-dd" size="small" :picker-options="pickerOptions"
+              type="date" clearable placeholder="开始日期" @blur="setRate(form.startTime)" >
             </el-date-picker>
           </div>
         </el-form-item>
@@ -287,7 +287,8 @@
             activityStartTime : '',
             activityCalendar : [],
             productName : '',
-            productDetail : ''
+            productDetail : '',
+            startTime : ''
           },
           platForm : [
             {
@@ -434,7 +435,7 @@
                 required : true , validator : validMoney ,trigger : 'blur'
               }
             ],
-            activityStartTime : [
+            startTime : [
               {
                 required : true ,message : '请选择活动时间'
               }
@@ -469,11 +470,11 @@
           editor : '',
           order : '',
           pickTime : '' ,
-          pickerOptions: {
-            disabledDate(time) {
-              return time.getTime() < Date.now();
-            }
-          },
+          // pickerOptions: {
+          //   disabledDate(time) {
+          //     return time.getTime() < Date.now();
+          //   }
+          // },
         }
       },
 
@@ -504,7 +505,8 @@
                     }
                     this.tryoutAmount = num ;
                     this.dayNum = this.goodsAmount.length ;
-                    this.setRate(this.form.activityStartTime,this.tryoutAmount,this.goodsAmount);
+                    this.form['startTime'] = parseTime(new Date(this.form.activityStartTime).getTime() - 24*3600*1000) ;
+                    this.setRate(this.form.startTime ,this.tryoutAmount,this.goodsAmount);
 
                   }else{
                     this.setRate();
@@ -772,7 +774,7 @@
             date = new Date();
           }else{
             date = new Date(Date.parse(value.replace(/-/g,'/'))) ;
-            date = new Date(date.getTime() -24 * 3600 * 1000);
+            // date = new Date(date.getTime() -24 * 3600 * 1000);
           }
           this.year = date.getFullYear() ;
           this.month = date.getMonth()+1;
@@ -882,19 +884,19 @@
 
         allEditor(index){
           let time ;
-          if(this.form.activityStartTime){
-            time = this.form.activityStartTime ;
+          if(this.form.startTime){
+            time = this.form.startTime ;
           }else{
-            time = new Date().getTime()+ 24*3600*1000 ;
+            time = new Date().getTime() ;
           }
           for(let j = 0 ; j < index ; j++){
             if(this.goodsAmount[j] === undefined  ){
               this.goodsAmount[j] = 1 ;
 
-              this.form.activityCalendar.splice(j ,0,{ activityDate : (parseTime(new Date(time).getTime()+j*24*3600*1000)) , tryoutQuantity :1 });
+              this.form.activityCalendar.splice(j ,0,{ activityDate : (parseTime(new Date(time).getTime()+(j+1)*24*3600*1000)) , tryoutQuantity :1 });
             }else if( this.goodsAmount[j] === '' ){
               this.goodsAmount[j] = 1 ;
-              this.form.activityCalendar.splice(j ,1,{ activityDate : (parseTime(new Date(time).getTime()+j*24*3600*1000)) , tryoutQuantity :1 });
+              this.form.activityCalendar.splice(j ,1,{ activityDate : (parseTime(new Date(time).getTime()+(j+1)*24*3600*1000)) , tryoutQuantity :1 });
 
             }
           }
@@ -950,11 +952,12 @@
         //提交试用信息
         onSubmit(formName,index){
           this.hasWarn();
-          console.log(this.form);
-
           this.$refs[formName].validate((valid) => {
             if (valid  && !this.warn && !this.daysWarn) {
-                if(index === 1){
+              delete this.form.startTime ;
+              console.log(this.form);
+
+              if(index === 1){
                   publishActivity(this.form).then( res => {
                     if(res.data.status === '000000000'){
                       this.$message({
