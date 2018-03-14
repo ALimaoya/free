@@ -221,7 +221,6 @@
             formdata.append('captcha', this.payForm.pswVerify);
             formdata.append('thirdAccount', this.payForm.account);
             setApilyAccount(formdata).then(res => {
-              console.log(res)
               if (res.data.status === '000000000') {
                 this.$message({
                   type: 'success',
@@ -229,6 +228,9 @@
                   center: true
                 });
                 this.userInfo = true;
+                this.accountBox=false;
+                this.getApilyAccount();
+                this.$refs[formName].resetFields();
               } else {
                 this.$message({
                   message: res.data.message,

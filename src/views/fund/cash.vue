@@ -3,40 +3,52 @@
     <div class="title">押金提现</div>
     <p class="subTitle">填写提现金额</p>
     <ul class="deposit">
-      <li><p class="tag">可用押金：</p><span class="money_color">￥{{deposit.deposit}}</span></li>
+      <li>
+        <p class="tag">可用押金：</p>
+        <span class="money_color">￥{{deposit.deposit}}</span>
+      </li>
       <el-form :model="payForm" ref="payForm" :rules="payRule">
-          <li>
-              <p class="tag">可用支付宝：</p>
-              <div v-if="userInfo" class="payInfo">
-                  <div class="detail">
-                    <span>{{ apilyInfo.thirdAccount}}</span>
-                  </div>
-              </div>
-              <router-link v-else  class="noAli" to="/userInfor/account">绑定支付宝</router-link>
-          </li>
-          <li>
-            <el-form-item prop="money">
-              <p class="tag">提现金额：</p><el-input placeholder="请输入提现金额" type="number" v-model.number="payForm.money" size="small"></el-input>&nbsp;&nbsp;元
-            </el-form-item>
-            <span class="note">单次最少提现100元，提现操作平台将收取{{deposit.rate*100}}%的手续费</span>
-            <span class="note">预计3-5个工作日内（国家法定节假日和双休日顺延）平台完成提现操作,到账时间以各大银行为准。</span>
-          </li>
-          <li>
-          <p class="tag">实际到账金额：</p><span v-if="payForm.money!=0">{{payForm.money*0.99}}元</span><span class="explain">（实际提现金额*{{100-deposit.rate*100}}%，例如最低取现100元，实际到账{{100-100*deposit.rate}}元）</span>
+        <li>
+          <p class="tag">可用支付宝：</p>
+          <div v-if="userInfo" class="payInfo">
+            <div class="detail">
+              <span>{{ apilyInfo.thirdAccount}}</span>
+            </div>
+          </div>
+          <router-link v-else class="noAli" to="/userInfor/account">绑定支付宝</router-link>
         </li>
-          <li>
-            <el-form-item prop="payPsw">
-              <p class="tag">支付密码：</p>
-              <el-input :type="pwdType" class="pswIpt" v-model.trim="payForm.payPsw" placeholder="请输入支付密码" size="small"></el-input>
-              <span class="show-pwd" @click="showPwd"><svg-icon icon-class="eyeopen" v-if="pwdType===''" /><svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon></span>
-            </el-form-item>
-          </li>
-          <li>
-            <el-form-item>
-              <el-button type="primary" size="small" @click="submit('payForm')">确认提现</el-button>
-              <el-button size="small" @click="cancel('payForm')">取消</el-button>
-            </el-form-item>
-          </li>
+        <li>
+          <el-form-item prop="money">
+            <p class="tag">提现金额：</p>
+            <el-input placeholder="请输入提现金额" type="number" v-model.number="payForm.money" size="small"></el-input>&nbsp;&nbsp;元
+          </el-form-item>
+          <span class="note">单次最少提现100元，提现操作平台将收取{{deposit.rate*100}}%的手续费</span>
+          <span class="note">预计3-5个工作日内（国家法定节假日和双休日顺延）平台完成提现操作,到账时间以各大银行为准。</span>
+        </li>
+        <li>
+          <p class="tag">实际到账金额：</p>
+          <span v-if="payForm.money!=0">{{payForm.money-(payForm.money*deposit.rate)}}元</span>
+          <span class="explain">（实际提现金额*{{100-deposit.rate*100}}%，例如最低取现100元，实际到账{{100-100*deposit.rate}}元）</span>
+        </li>
+        <li>
+          <el-form-item prop="payPsw">
+            <p class="tag">支付密码：</p>
+            <el-input :type="pwdType" class="pswIpt" v-model.trim="payForm.payPsw" placeholder="请输入支付密码" size="small"></el-input>
+            <span class="show-pwd" @click="showPwd">
+              <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
+              <svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>
+            </span>
+            <router-link to="/userInfor/settings" v-if="!settingPsw">
+              <span style="color:#409EFF">设置支付密码</span>
+            </router-link>
+          </el-form-item>
+        </li>
+        <li>
+          <el-form-item>
+            <el-button type="primary" size="small" @click="submit('payForm')">确认提现</el-button>
+            <el-button size="small" @click="cancel('payForm')">取消</el-button>
+          </el-form-item>
+        </li>
       </el-form>
 
     </ul>
@@ -51,90 +63,95 @@
 </template>
 
 <script>
-    import ElForm from "element-ui/packages/form/src/form";
-    import ElFormItem from "element-ui/packages/form/src/form-item";
-    import { handleCash,getDeposit} from "@/api/fund"
-    import { getThirdInfo } from "@/api/userInfor"
-    
-    export default {
-      components: {
-        ElFormItem,
-        ElForm
-      },
-      name: "cash",
-      data(){
-        // const validAlipay = (rule ,value ,callback) => {
-        //   if(value === ''){
-        //     callback(new Error('请选择支付宝账号'))
-        //   }else{
-        //     callback();
-        //   }
-        // };
-        const validMoney = (rule ,value ,callback) => {
-          if(value === ''){
-            callback(new Error('请输入提现金额'))
-          }else{
-            // if(!isNaN(value)){
-              if( value < 100 ){
-                callback(new Error('单次最少提现100元，请重新输入提现金额'))
-              }else{
-                callback()
-              }
-          }
-        };
-        const validPsw = (rule , value ,callback)=> {
-          if(value === ''){
-            callback(new Error('请输入支付密码'))
-          }else{
-            let rule=/^[0-9]{6}$/
-            if (!rule.test(value)){
-              callback(new Error('请输入6位数字组合的支付密码'))
-            }
-            callback();
+  import ElForm from "element-ui/packages/form/src/form";
+  import ElFormItem from "element-ui/packages/form/src/form-item";
+  import {
+    handleCash,
+    getDeposit
+  } from "@/api/fund"
+  import {
+    getThirdInfo
+  } from "@/api/userInfor"
+
+  export default {
+    components: {
+      ElFormItem,
+      ElForm
+    },
+    name: "cash",
+    data() {
+      // const validAlipay = (rule ,value ,callback) => {
+      //   if(value === ''){
+      //     callback(new Error('请选择支付宝账号'))
+      //   }else{
+      //     callback();
+      //   }
+      // };
+      const validMoney = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入提现金额'))
+        } else {
+          // if(!isNaN(value)){
+          if (value < 100) {
+            callback(new Error('单次最少提现100元，请重新输入提现金额'))
+          } else {
+            callback()
           }
         }
-          return{
-            userInfo : false ,
-            payPassword : '111',
-            payForm : {
-              name : '111',
-              account : '11111',
-              money : '',
-              payPsw : ''
-            },
-            deposit:"",
-            apilyInfo:{},
-            payRule:{
-              // account : [
-              //   {
-              //     required : true , validator : validAlipay
-              //   }
-              // ],
-              money : [
-                {
-                  required : true ,validator : validMoney , trigger : 'blur'
-                }
-              ],
-              payPsw : [
-                {
-                  required : true ,validator : validPsw , trigger : 'blur'
-                }
-              ]
-            },
-            pwdType : 'password'
+      };
+      const validPsw = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入支付密码'))
+        } else {
+          let rule = /^[0-9]{6}$/
+          if (!rule.test(value)) {
+            callback(new Error('请输入6位数字组合的支付密码'))
           }
-      },
-      mounted(){
-        this.getApilyAccount();
-        this.getDepositMoney();
-      },
-      methods : {
-        getDepositMoney() {
+          callback();
+        }
+      }
+      return {
+        userInfo: false,
+        payPassword: '111',
+        payForm: {
+          name: '111',
+          account: '11111',
+          money: '',
+          payPsw: ''
+        },
+        deposit: "",
+        apilyInfo: {},
+        payRule: {
+          // account : [
+          //   {
+          //     required : true , validator : validAlipay
+          //   }
+          // ],
+          money: [{
+            required: true,
+            validator: validMoney,
+            trigger: 'blur'
+          }],
+          payPsw: [{
+            required: true,
+            validator: validPsw,
+            trigger: 'blur'
+          }]
+        },
+        settingPsw: true,
+        pwdType: 'password',
+      }
+    },
+    mounted() {
+      this.getApilyAccount();
+      this.getDepositMoney();
+    },
+    methods: {
+      getDepositMoney() {
         getDeposit().then(res => {
           if (res.data.status == '000000000') {
             this.deposit = res.data.data;
-            console.log( this.deposit)
-          }else{
+          } else {
             this.$message({
               message: res.data.message,
               type: 'error',
@@ -145,7 +162,7 @@
           alert('服务器开小差啦，请稍等~')
         })
       },
-        getApilyAccount() {
+      getApilyAccount() {
         getThirdInfo('1').then(res => {
           if (res.data.status == '000000000') {
             if (res.data.data.length > 0) {
@@ -163,123 +180,138 @@
           alert('服务器开小差啦，请稍等~')
         })
       },
-        //  确认提现
-        submit(formName){
-          this.$refs[formName].validate((valid) => {
-            if(valid){
-              if(!this.userInfo){
-                this.$message({
-                  message : '提现前应先绑定您的支付宝账号',
-                  center : true ,
-                  type : 'error'
-                });
-                return
+      //  确认提现
+      submit(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            if (!this.userInfo) {
+              this.$message({
+                message: '提现前应先绑定您的支付宝账号',
+                center: true,
+                type: 'error'
+              });
+              return
+            } else if (this.deposit.deposit < this.payForm.money) {
+              this.$message({
+                message: '账户押金不足',
+                center: true,
+                type: 'error'
+              });
+              return
+            } else {
+              let _data = {
+                amount: this.payForm.money,
+                thirdId: this.apilyInfo.thirdId,
+                payPassword: this.payForm.payPsw
               }
-             else if(this.deposit<this.payForm.money){
-                this.$message({
-                  message : '提现金额大于账户的押金',
-                  center : true ,
-                  type : 'error'
-                });
-                return
-              }else{
-                this.$message({
-                  message : '信息提交成功，将为您进行提现操作',
-                  center : true ,
-                  type : 'success'
-                });
-                // handleCash({ data : this.payForm}).then( res => {
-                //     if(  res.data.code === '000000000'){
-                //       console.log(res)
-                //     }
-                //   }).catch( err => {
-                //     alert('服务器开小差啦，请稍等~')
-                //   })
+              handleCash(_data).then(res => {
 
-                // setTimeout(()=>{
-                //
-                // },3000)
-              }
-
-            }else{
-              return false ;
+                if (res.data.status == '000000000') {
+                  this.$message({
+                    message: '提现成功',
+                    center: true,
+                    type: 'success'
+                  });
+                  this.$router.push('/fund/history/cash')
+                } else {
+                  console.log(res.data.status =='013001002')
+                  if (res.data.status =='013001002') {
+                    this.settingPsw = false
+                  } else {
+                    this.settingPsw= true
+                  }
+                  this.$message({
+                    message: res.data.message,
+                    type: 'error',
+                    center: true
+                  });
+                }
+              }).catch(err => {
+                alert('服务器开小差啦，请稍等~')
+              })
             }
 
-          })
-        },
-
-        //  取消选择
-        cancel(formName){
-          this.$refs[formName].resetFields();
-
-        } ,
-
-        showPwd() {
-          if (this.pwdType === 'password') {
-            this.pwdType = ''
           } else {
-            this.pwdType = 'password'
+            return false;
           }
-        },
 
-      }
+        })
+      },
+
+      //  取消选择
+      cancel(formName) {
+        this.$refs[formName].resetFields();
+
+      },
+
+      showPwd() {
+        if (this.pwdType === 'password') {
+          this.pwdType = ''
+        } else {
+          this.pwdType = 'password'
+        }
+      },
+
     }
+  }
+
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  .cash{
-    width : 90% ;
-    margin : 0 auto ;
-    .title{
-      width : 100% ;
-      height : 0.5rem ;
-      line-height : 0.5rem ;
-      font-size : 0.25rem ;
-      font-weight : bold ;
-      color : #333 ;
-      text-indent : 0.3rem ;
-      border-bottom : 1px solid #aaa ;
-      margin-bottom : 0.3rem ;
+  .cash {
+    width: 90%;
+    margin: 0 auto;
+    .title {
+      width: 100%;
+      height: 0.5rem;
+      line-height: 0.5rem;
+      font-size: 0.25rem;
+      font-weight: bold;
+      color: #333;
+      text-indent: 0.3rem;
+      border-bottom: 1px solid #aaa;
+      margin-bottom: 0.3rem;
 
     }
-    .subTitle{
-      width : 90% ;
-      height : 0.5rem ;
-      line-height : 0.5rem ;
-      padding-left : 0.3rem ;
-      font-size : 0.18rem ;
-      margin : 0 auto ;
+    .subTitle {
+      width: 90%;
+      height: 0.5rem;
+      line-height: 0.5rem;
+      padding-left: 0.3rem;
+      font-size: 0.18rem;
+      margin: 0 auto;
 
     }
-    .deposit{
-      width : 90% ;
-      height : auto ;
-      padding : 0 0.3rem 0.2rem ;
+    .deposit {
+      width: 90%;
+      height: auto;
+      padding: 0 0.3rem 0.2rem;
       box-sizing: border-box;
-      display : flex ;
+      display: flex;
       flex-direction: column;
-      margin : 0 auto ;
-      li{
-        width : 100% ;
-        float : left ;
-        .el-form-item{
-          margin-bottom : 0;
+      margin: 0 auto;
+      li {
+        width: 100%;
+        float: left;
+        .el-form-item {
+          margin-bottom: 0;
         }
-        .tag{
-          width : 1.3rem ;
-          height : 0.4rem ;
-          line-height : 0.4rem ;
-          text-align : right ;
-          float : left ;
+        .tag {
+          width: 1.3rem;
+          height: 0.4rem;
+          line-height: 0.4rem;
+          text-align: right;
+          float: left;
         }
-        span,.noAli{
-          line-height : 0.4rem ;
-          display : inline-block;
-          margin-left : 0.3rem ;
+        span,
+        .noAli {
+          line-height: 0.4rem;
+          display: inline-block;
+          margin-left: 0.3rem;
 
         }
-        .pswIpt{
-          position : relative ;
+        .pswIpt {
+          position: relative;
         }
         .show-pwd {
           position: absolute;
@@ -288,121 +320,120 @@
           font-size: 0.16rem;
           color: #889aa4;
           cursor: pointer;
-          user-select:none;
+          user-select: none;
         }
 
-        .noAli{
-          color : #409EFF;
-          font-size : 0.13rem ;
+        .noAli {
+          color: #409EFF;
+          font-size: 0.13rem;
           /*display : block;*/
         }
-        .payInfo{
-          width : 2.5rem ;
-          .alipayImg{
-            width : 100% ;
-            height : 0.5rem ;
-            position : relative ;
-            margin-bottom : 0.1rem ;
-            img{
-              width : 100% ;
-              height : 100% ;
+        .payInfo {
+          width: 2.5rem;
+          .alipayImg {
+            width: 100%;
+            height: 0.5rem;
+            position: relative;
+            margin-bottom: 0.1rem;
+            img {
+              width: 100%;
+              height: 100%;
             }
-            span{
-              position : absolute ;
-              top : 0;
-              right : 0;
-              width : 0.6rem ;
-              height : 0.2rem ;
-              line-height : 0.2rem ;
-              font-size : 0.1rem ;
-              text-align : center;
-              display : block ;
-              color : #138CDD;
-              border : 1px solid #aaa ;
-              border-radius : 0.06rem ;
+            span {
+              position: absolute;
+              top: 0;
+              right: 0;
+              width: 0.6rem;
+              height: 0.2rem;
+              line-height: 0.2rem;
+              font-size: 0.1rem;
+              text-align: center;
+              display: block;
+              color: #138CDD;
+              border: 1px solid #aaa;
+              border-radius: 0.06rem;
             }
           }
-          .detail{
-            border-radius : 0.05rem ;
-            width : 100% ;
+          .detail {
+            border-radius: 0.05rem;
+            width: 100%;
             /* height : 0.8rem ; */
-            padding : 0 0.1rem ;
-            span{
-              width : 100% ;
-              line-height : 0.4rem ;
-              height : 0.4rem ;
-              font-size : 0.14rem ;
-              color : #333 ;
-              display : block ;
+            padding: 0 0.1rem;
+            span {
+              width: 100%;
+              line-height: 0.4rem;
+              height: 0.4rem;
+              font-size: 0.14rem;
+              color: #333;
+              display: block;
               margin-left: 1.5rem;
             }
           }
         }
 
-        .el-input{
-          width : 2.5rem ;
-          margin-left : 0.28rem ;
+        .el-input {
+          width: 2.5rem;
+          margin-left: 0.28rem;
         }
-        .note{
-          margin-left : 1.6rem ;
-          font-size : 0.13rem ;
-          width : 100% ;
-          &:nth-of-type(1){
-            margin-top : 0.3rem ;
+        .note {
+          margin-left: 1.6rem;
+          font-size: 0.13rem;
+          width: 100%;
+          &:nth-of-type(1) {
+            margin-top: 0.3rem;
 
           }
-          &:nth-of-type(2){
-            margin-bottom : 0.3rem ;
+          &:nth-of-type(2) {
+            margin-bottom: 0.3rem;
           }
         }
-        .explain{
-          color : #ff0000 ;
-          font-size : 0.13rem ;
+        .explain {
+          color: #ff0000;
+          font-size: 0.13rem;
         }
-        &:nth-last-child(1){
-          margin-top : 0.4rem ;
-          padding-left : 1.6rem ;
-          .el-button{
-            width : 0.8rem ;
+        &:nth-last-child(1) {
+          margin-top: 0.4rem;
+          padding-left: 1.6rem;
+          .el-button {
+            width: 0.8rem;
             &:nth-last-child(1) {
-              margin-left : 0.5rem ;
+              margin-left: 0.5rem;
             }
           }
         }
       }
     }
-    .tips{
-      width : 90% ;
-      padding : 0.2rem 0.3rem ;
+    .tips {
+      width: 90%;
+      padding: 0.2rem 0.3rem;
       box-sizing: border-box;
-      font-size : 0.14rem ;
-      color : #606266 ;
+      font-size: 0.14rem;
+      color: #606266;
       /*float : left ;*/
-      display : flex;
+      display: flex;
       flex-direction: column;
-      border-radius  : 0.05rem ;
-      margin : 0 auto 0.4rem ;
+      border-radius: 0.05rem;
+      margin: 0 auto 0.4rem;
       /*margin-bottom : 0.4rem ;*/
-      p{
-        width : 100% ;
-        height : 0.4rem ;
-        line-height : 0.4rem ;
-        float : left ;
+      p {
+        width: 100%;
+        height: 0.4rem;
+        line-height: 0.4rem;
+        float: left;
 
       }
-      li{
-        font-size : 0.13rem ;
-        height : 0.3rem ;
-        line-height : 0.3rem ;
-        padding-left : 0.2rem ;
-        width : 100% ;
+      li {
+        font-size: 0.13rem;
+        height: 0.3rem;
+        line-height: 0.3rem;
+        padding-left: 0.2rem;
+        width: 100%;
         box-sizing: border-box;
-        float : left ;
+        float: left;
 
       }
     }
 
   }
-
 
 </style>

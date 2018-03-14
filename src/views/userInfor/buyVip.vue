@@ -31,7 +31,7 @@
                 </span>
               </div>
               <div class="text-center">赠送：
-                <span class="money_color">{{item.giveMonth}}</span>个月的会员时长</div>
+                <span class="money_color">{{item.giveMonth}}</span>个月的会员时长<span class="money_color" v-if="item.buyTime">，每个账号只允许购买{{item.buyTime}}次</span> </div>
             </li>
           </ul>
           <div class="choose">
@@ -101,6 +101,7 @@
             <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
             <svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>
           </span>
+          <router-link to="/userInfor/settings" v-if="!settingPsw"><span style="color:#409EFF;position:absolute;display:inline-block;width:1rem">设置支付密码</span></router-link> 
         </el-form-item>
         <el-form-item class="paynum" style="margin-top:10px;">
           <el-button type="primary" @click="onSubmitPsw('pswForm')" style="margin-right:60px">确 认</el-button>
@@ -181,6 +182,7 @@
         isVip: {
 
         },
+        settingPsw:true,
         deposit: '',
         pwdType: 'password',
         pswForm: {
@@ -265,7 +267,7 @@
           returnUrl: window.location.href
         }
         if (this.chooseWay == '3') {
-          if (this.choose.price > this.deposit) {
+          if (this.choose.price > this.deposit.deposit) {
             this.$message({
               message: '押金不足，请更换支付方式',
               type: 'error',
@@ -316,6 +318,11 @@
             }
 
           } else {
+            if(res.data.status=='013001002'&&this.chooseWay!= '1'){
+                    this.settingPsw=false
+                }else{
+                  this.settingPsw=true
+                }
             this.$message({
               message: res.data.message,
               type: 'error',

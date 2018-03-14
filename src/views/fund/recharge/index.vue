@@ -190,7 +190,7 @@
       },
       finishPay(){
         this.dialogVisible = false;
-        this.$router.push("/fund/money")
+        this.$router.push("/fund/history/money")
       },
       hasQuestion(){
         this.dialogVisible = false;

@@ -12,7 +12,7 @@ export function handleRecharge(data){
 //提现押金
 export function handleCash(data){
   return request({
-    url: '/tryout/recharge/deposit',
+    url: '/tryout/cash/add',
     method: 'post',
     data
   })
@@ -43,9 +43,10 @@ export function getDeposit(){
   })
 }
 //获取取现列表
-export function getCashList(){
+export function getCashList(data){
   return request({
     url: '/tryout/cash/list',
     method: 'post',
+    data:data
   })
 }

@@ -26,7 +26,7 @@
         <td>{{item.type}}</td>
         <td>{{item.value}}</td>
         <td>
-          <span class="set rightnow" @click="setting(item.type)" v-if="item.value==''">立即设置</span>
+          <span class="set rightnow" @click="setting(item.type)" v-if="item.value==''||!item.value">立即设置</span>
           <span class="set" v-else @click="changeSetting(item.type)">修改</span>
         </td>
       </tr>
