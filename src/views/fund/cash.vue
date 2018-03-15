@@ -5,9 +5,9 @@
     <ul class="deposit">
       <li>
         <p class="tag">可用押金：</p>
-        <span class="money_color">￥{{deposit.deposit}}</span>
+        <span class="money_color" >￥{{deposit.deposit}}</span>
       </li>
-      <el-form :model="payForm" ref="payForm" :rules="payRule">
+      <el-form :model="payCash" ref="payCash" :rules="payRule">
         <li>
           <p class="tag">可用支付宝：</p>
           <div v-if="userInfo" class="payInfo">
@@ -20,20 +20,20 @@
         <li>
           <el-form-item prop="money">
             <p class="tag">提现金额：</p>
-            <el-input placeholder="请输入提现金额" type="number" v-model.number="payForm.money" size="small"></el-input>&nbsp;&nbsp;元
+            <el-input placeholder="请输入提现金额" type ="number" auto-complete="off" v-model.number="payCash.money" size="small"></el-input>&nbsp;&nbsp;元
           </el-form-item>
           <span class="note">单次最少提现100元，提现操作平台将收取{{deposit.rate*100}}%的手续费</span>
           <span class="note">预计3-5个工作日内（国家法定节假日和双休日顺延）平台完成提现操作,到账时间以各大银行为准。</span>
         </li>
         <li>
           <p class="tag">实际到账金额：</p>
-          <span v-if="payForm.money!=0">{{payForm.money-(payForm.money*deposit.rate)}}元</span>
+          <span v-if="payCash.money!=0">{{payCash.money-(payCash.money*deposit.rate)}}元</span>
           <span class="explain">（实际提现金额*{{100-deposit.rate*100}}%，例如最低取现100元，实际到账{{100-100*deposit.rate}}元）</span>
         </li>
         <li>
           <el-form-item prop="payPsw">
             <p class="tag">支付密码：</p>
-            <el-input :type="pwdType" class="pswIpt" v-model.trim="payForm.payPsw" placeholder="请输入支付密码" size="small"></el-input>
+            <el-input :type="pwdType" class="pswIpt" v-model.trim="payCash.payPsw" placeholder="请输入支付密码" size="small"></el-input>
             <span class="show-pwd" @click="showPwd">
               <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
               <svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>
@@ -45,8 +45,8 @@
         </li>
         <li>
           <el-form-item>
-            <el-button type="primary" size="small" @click="submit('payForm')">确认提现</el-button>
-            <el-button size="small" @click="cancel('payForm')">取消</el-button>
+            <el-button type="primary" size="small" @click="submit('payCash')">确认提现</el-button>
+            <el-button size="small" @click="cancel('payCash')">取消</el-button>
           </el-form-item>
         </li>
       </el-form>
@@ -103,23 +103,26 @@
         if (value === '') {
           callback(new Error('请输入支付密码'))
         } else {
-          let rule = /^[0-9]{6}$/
+          let rule = /^[0-9]{6}$/ ;
           if (!rule.test(value)) {
             callback(new Error('请输入6位数字组合的支付密码'))
           }
           callback();
         }
-      }
+      };
       return {
         userInfo: false,
-        payPassword: '111',
-        payForm: {
-          name: '111',
-          account: '11111',
-          money: '',
+        payPassword: '',
+        payCash: {
+          // name: '',
+          // account: '',
+          money: 0,
           payPsw: ''
         },
-        deposit: "",
+        deposit: {
+          rate : '',
+          deposit : 0
+        },
         apilyInfo: {},
         payRule: {
           // account : [
@@ -149,7 +152,8 @@
     methods: {
       getDepositMoney() {
         getDeposit().then(res => {
-          if (res.data.status == '000000000') {
+          console.log(res);
+          if (res.data.status === '000000000') {
             this.deposit = res.data.data;
           } else {
             this.$message({
@@ -164,7 +168,7 @@
       },
       getApilyAccount() {
         getThirdInfo('1').then(res => {
-          if (res.data.status == '000000000') {
+          if (res.data.status === '000000000') {
             if (res.data.data.length > 0) {
               this.userInfo = true;
               this.apilyInfo = res.data.data[0];
@@ -190,32 +194,33 @@
                 center: true,
                 type: 'error'
               });
-              return
-            } else if (this.deposit.deposit < this.payForm.money) {
+              return false ;
+            } else if (this.deposit.deposit < this.payCash.money) {
               this.$message({
                 message: '账户押金不足',
                 center: true,
                 type: 'error'
               });
-              return
+              return false ;
             } else {
               let _data = {
-                amount: this.payForm.money,
+                amount: this.payCash.money,
                 thirdId: this.apilyInfo.thirdId,
-                payPassword: this.payForm.payPsw
-              }
+                payPassword: this.payCash.payPsw
+              };
               handleCash(_data).then(res => {
 
-                if (res.data.status == '000000000') {
+                if (res.data.status === '000000000') {
                   this.$message({
                     message: '提现成功',
                     center: true,
-                    type: 'success'
+                    type: 'success',
+                    duration : 1000
                   });
                   this.$router.push('/fund/history/cash')
                 } else {
-                  console.log(res.data.status =='013001002')
-                  if (res.data.status =='013001002') {
+                  console.log(res.data.status ==='013001002');
+                  if(res.data.status === '013001002'){
                     this.settingPsw = false
                   } else {
                     this.settingPsw= true

@@ -9,15 +9,15 @@
         <el-input type="text" v-model="RegForm.mobile" autoComplete="on" placeholder="请输入手机号" />
       </el-form-item>
       <el-form-item prop="imgNum" class="validateCode">
-        <span class="svg-container svg-container_login">
-          <svg-icon icon-class="user" />
+        <span class="svg-container">
+          <img src="../../assets/imgs/verify2.png" alt="" />
         </span>
         <el-input type="text" v-model="RegForm.imgNum" autoComplete="on" placeholder="请输入图形验证码" />
         <img class="show-captcha" :src="'data:image/png;base64,'+imgCode" alt="" @click="changeCaptcha" />
       </el-form-item>
       <el-form-item prop="message" class="validateCode">
-        <span class="svg-container svg-container_login">
-          <svg-icon icon-class="user" />
+        <span class="svg-container">
+          <img src="../../assets/imgs/verify2.png" alt="" />
         </span>
         <el-input type="text" v-model.trim="RegForm.message" autoComplete="on" placeholder="请输入短信验证码" />
         <el-button class="show-captcha codeBtn" size="mini" plain @click="getMessage" :disabled="disabled">{{ btntext }}</el-button>

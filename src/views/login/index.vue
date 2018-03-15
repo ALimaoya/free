@@ -16,7 +16,8 @@
         <el-input :type="pwdType" @keyup.enter.native="handleLogin('loginForm')" v-model.trim="loginForm.password" autoComplete="on"
           placeholder="请输入密码"></el-input>
         <span class="show-pwd" @click="showPwd">
-          <svg-icon icon-class="eye" />
+          <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
+          <svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>
         </span>
       </el-form-item>
       <el-form-item prop="captcha" v-if="examine">

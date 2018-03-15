@@ -37,8 +37,11 @@
       <div class="money">
         <ul class="gold">
           <li class="useful"><span>可用押金</span><i></i></li>
-          <li class="cash">{{ wallet.deposit }}元</li>
-          <li><strong>冻结押金<i></i>:</strong><span>{{ wallet.freeze_deposit}}元</span><el-button size="small" class="btn" @click="recharge(1)">充值</el-button><el-button size="small" class="btn" @click="recharge(2)">提现</el-button></li>
+          <li class="cash">{{ wallet.deposit }}元
+            <el-button size="small" class="btn" @click="recharge(2)">提现</el-button>
+            <el-button size="small" class="btn" @click="recharge(1)">充值</el-button>
+          </li>
+          <li><strong>冻结押金<i></i>:</strong><span>{{ wallet.freeze_deposit}}元</span></li>
         </ul>
         <ul class="gold">
           <li class="useful"><span>可用金币</span><i></i></li>
@@ -430,6 +433,10 @@
           color : #ff0122 ;
           line-height : 0.5rem ;
           text-indent : 0.38rem ;
+          .el-button{
+            float : right ;
+            margin : 0.08rem 0.2rem ;
+          }
         }
         li:nth-last-child(1){
           /*color : #666;*/

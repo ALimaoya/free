@@ -113,9 +113,13 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 .tags-view-container {
+
   .tags-view-wrapper {
+    position : fixed ;
+    top : 0.5rem;
     background: #fff;
     height: 0.34rem;
+    z-index : 10000 ;
     border-bottom: 0.01rem solid #d8dce5;
     box-shadow: 0 0.01rem 0.03rem 0 rgba(0, 0, 0, .12), 0 0 0.03rem 0 rgba(0, 0, 0, .04);
     .tags-view-item {

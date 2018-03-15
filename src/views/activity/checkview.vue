@@ -45,11 +45,11 @@
       <span class="totalItems">共{{ totalPages }}页，{{totalElements}}条记录</span>
     </div>
 
-    <el-dialog width="80%" :visible.sync="detailInfo" center top="3%" title="评价审核">
+    <el-dialog width="60%" :visible.sync="detailInfo" center top="3%" title="评价审核">
       <dl>
         <dt>评价截图</dt>
         <dd>
-          <img :src=" viewImg" alt="" />
+          <img :src=" imgUrl + viewImg" alt="" />
         </dd>
       </dl>
       <div slot="footer" class="dialog-footer">
@@ -114,7 +114,7 @@
         totalElements : 0 ,
         viewImg : '' ,
         detailInfo : false ,
-        imgUrl : 'http://lgf8953.oss-cn-beijing.aliyuncs.com' ,
+        imgUrl : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/' ,
         orderId : '' ,
         reason : '' ,
         refuseReason : '' ,
@@ -151,7 +151,7 @@
       },
 
       //查看订单详情
-      goDetail(){
+      goDetail(index,order){
         this.$router.push('/activity/detail/'+ order) ;
 
       },
@@ -165,7 +165,7 @@
         orderDetail(order).then( res => {
           console.log(res);
           if( res.data.status === '000000000'){
-            this.viewImg = res.data.orderImageList.slice(3,4).imageUrl ;
+            this.viewImg = res.data.data.orderImageList.slice(3,4)[0].imageUrl ;
 
           }else{
             this.$message({
@@ -272,7 +272,8 @@
     .el-dialog {
 
       dl{
-        width : 100% ;
+        width : 50% ;
+        margin : 0 auto ;
         dt{
           width : 100% ;
           height : 0.5rem ;
@@ -284,19 +285,30 @@
         dd{
           max-height : 5rem ;
           width : 80% ;
+          height : 5rem ;
           margin : 0.3rem auto ;
           img{
             max-width : 100% ;
-            height : 100% ;
+            max-height : 100% ;
+
             margin : 0 auto ;
 
           }
         }
       }
-      span {
+      p {
         display: inline-block;
         margin-bottom: 0.1rem;
       }
+      .dialog-footer{
+        .el-button {
+          width : 0.9rem ;
+          padding : 0;
+          text-align : center ;
+          line-height : 0.35rem ;
+        }
+      }
+
     }
   }
 </style>

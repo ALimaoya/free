@@ -32,7 +32,7 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use(
   response=>response,
   response => {
-    if(response.status=='401'){
+    if(response.data.status=='401'){
       this.$message({
         message : '登录已失效，请重新登录',
         center : true ,

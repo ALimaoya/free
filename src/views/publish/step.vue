@@ -963,8 +963,10 @@
                       this.$message({
                         type: 'success',
                         message: '提交成功',
-                        center: true
-                      }, 500);
+                        center: true ,
+                        duration : 500
+
+                      });
                       this.$router.push({ name: 'Pay', params :{ id : res.data.data.activityId  }  });
 
                     } else {
@@ -985,8 +987,9 @@
                         this.$message({
                           type: 'success',
                           message: '提交成功',
-                          center: true
-                        }, 500);
+                          center: true ,
+                          duration : 500
+                        });
                         this.$router.push({name: 'Pay' , params : { id : this.order } });
 
                       }else{

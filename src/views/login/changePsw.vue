@@ -9,15 +9,15 @@
           <el-input type="text" v-model="RegForm.mobile" autoComplete="on" placeholder="请输入手机号" />
         </el-form-item>
         <el-form-item prop="imgNum" class="validateCode">
-          <span class="svg-container svg-container_login">
-            <svg-icon icon-class="user" />
+          <span class="svg-container">
+            <img src="../../assets/imgs/verify2.png" alt="" />
           </span>
           <el-input type="text" v-model="RegForm.imgNum" autoComplete="on" placeholder="请输入图形验证码" />
           <img class="show-captcha" :src="'data:image/png;base64,'+imgCode" alt="" @click="changeCaptcha" />
         </el-form-item>
         <el-form-item prop="message" class="validateCode">
-          <span class="svg-container svg-container_login">
-            <svg-icon icon-class="user" />
+          <span class="svg-container">
+            <img src="../../assets/imgs/verify2.png" alt="" />
           </span>
           <el-input type="text" v-model.trim="RegForm.message" autoComplete="on" placeholder="请输入短信验证码" />
           <el-button class="show-captcha codeBtn" size="mini" plain @click="getMessage" :disabled="disabled">{{ btntext }}</el-button>
@@ -52,7 +52,7 @@
       </el-form>
     </div>
   </template>
-  
+
   <script>
     import {
       validatePhone,
@@ -152,7 +152,7 @@
               trigger: 'blur',
               validator: validateCheck
             }]
-  
+
           },
           loading: false,
           pwdType: 'password',
@@ -198,8 +198,8 @@
               center: true
             })
           }
-  
-  
+
+
         },
         getPhoneCode(value) {
           let form = new FormData();
@@ -217,9 +217,9 @@
                   this.btntext = "获取验证码";
                   clearInterval(timer);
                   this.disabled = false;
-  
+
                 }
-  
+
               }, 1000);
             } else {
               this.$message({
@@ -227,13 +227,13 @@
                 center: true,
                 type: 'error'
               });
-  
+
             }
           }).catch(err => {
             alert('服务器开小差啦，请稍等~')
           });
         },
-  
+
         handleLogin() {
           this.$refs.RegForm.validate(valid => {
             if (valid) {
@@ -255,7 +255,7 @@
                   this.$router.push({
                     path: '/login'
                   })
-  
+
                 } else {
                   this.loading = false;
                   this.$message({
@@ -264,7 +264,7 @@
                     center: 'true'
                   });
                 }
-  
+
               }).catch(() => {
                 this.loading = false
               })
@@ -276,21 +276,21 @@
         }
       }
     }
-  
+
   </script>
-  
+
   <style rel="stylesheet/scss" lang="scss">
     @import "src/styles/login.scss";
     .pop {
       width: 10%;
       height: 10%;
     }
-  
+
     .el-message__content {
       text-align: center;
       width: 100%;
     }
-  
+
     .login-container {
       .validateCode {
         .el-input {
@@ -298,13 +298,12 @@
         }
       }
     }
-  
+
     .messageWarn {
       font-size: 0.12rem;
       color: #f56c6c;
       line-height: 1;
       padding-top: 0.04rem;
     }
-  
+
   </style>
-  

@@ -58,7 +58,7 @@
           <span class="time">{{ scope.row.startTime}}<br/> ~<br/>{{ scope.row.endTime}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="progress" label="活动进度"></el-table-column>
+      <!--<el-table-column prop="progress" label="活动进度"></el-table-column>-->
       <el-table-column prop="payStatus" label="支付状态">
         <template slot-scope="scope">
           <span v-if="scope.row.payStatus === '0'">未支付</span>
@@ -267,7 +267,8 @@
             this.$message({
               message : '操作成功',
               type : 'success',
-              center : true
+              center : true ,
+              duration : 1000
             });
             window.location.reload();
           }else{
@@ -289,7 +290,9 @@
             this.$message({
               message : '申请结算成功，请稍后确认',
               center : true ,
-              type : 'success'
+              type : 'success',
+              duration : 1000
+
             });
             window.location.reload() ;
           }else{
@@ -312,7 +315,9 @@
             this.$message({
               message : '取消结算成功，请稍后确认',
               type : 'success' ,
-              center : true
+              center : true ,
+              duration : 1000
+
             });
             window.location.reload();
           }else{
@@ -342,7 +347,9 @@
             this.$message({
               message : '已成功取消该活动发布，请稍后确认',
               type : 'success' ,
-              center : true
+              center : true ,
+              duration : 1000
+
             });
             window.location.reload();
           }else{

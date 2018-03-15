@@ -38,9 +38,9 @@
           <li>
             <p>3、填写充值金额</p>
             <span class="rest">可用押金：
-              <b>{{deposit.deposit}}</b>元</span>
+              <b v-if="deposit.deposit">{{deposit.deposit}}元</b></span>
             <el-form-item label="充值金额：" prop="money">
-              <el-input v-model="form.money" placeholder="请输入内容" size="small"></el-input>
+              <el-input v-model.trim="form.money" placeholder="请输入内容" size="small"></el-input>
               <span>每次充值不得少于1元</span>
             </el-form-item>
             <el-form-item class="check">
@@ -278,18 +278,21 @@
 
             &:nth-child(3) {
               .rest {
-                font-size: 0.12rem;
-                padding-left: 0.25rem;
+                font-size: 0.14rem;
+                padding-left: 0.55rem;
                 height: 0.4rem;
                 line-height: 0.4rem;
+                color : #606266 ;
                 b {
                   color: #ff0000;
                   font-weight: 500;
-                  font-size: 18px
+                  font-size: 18px ;
+                  padding-left: 0.2rem;
+
                 }
               }
               .el-form-item {
-                padding: 0 0.25rem;
+                padding: 0 0.45rem;
                 .el-input {
                   width: 2rem;
                 }
@@ -298,11 +301,12 @@
                   color: #606266;
                   font-size: 0.13rem;
                 }
-                .check {
-                  /*display : flex ;*/
-                  /*justify-content: center;*/
-                  margin-left: 0.83rem;
-                }
+
+              }
+              .check {
+                /*display : flex ;*/
+                /*justify-content: center;*/
+                margin-left: 0.92rem;
               }
               .attention {
                 font-size: 0.13rem;

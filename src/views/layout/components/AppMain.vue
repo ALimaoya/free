@@ -32,7 +32,7 @@
 <style lang="scss" rel="stylesheet/scss">
   .app-main{
     width : 100% ;
-    margin : 0 auto ;
+    margin : 0.85rem auto ;
     padding : 0.3rem 0.2rem ;
     box-sizing: border-box;
     font-size : 0.15rem ;

@@ -9,7 +9,7 @@
           <template slot-scope="scope">
             <span v-if="scope.row.vipLevel==0||!scope.row.vipLevel">非会员</span>
             <span v-else>
-              <span style="color:red">vip:{{scope.row.vipLevel}}</span> 会员</span>
+              <span style="color:#ff0015">vip{{scope.row.vipLevel}}</span> </span>
           </template>
         </el-table-column>
         <el-table-column prop="vipTime" label="到期时间"></el-table-column>
@@ -22,8 +22,8 @@
       </el-table>
       <p>会员充值记录：</p>
       <el-table border :data="historyData.data" stripe style="width: 100%">
-        <el-table-column prop="creatTime" label="时间"></el-table-column>
-        <el-table-column prop="usefulMonth" label="开通时间长(月)"></el-table-column>
+        <el-table-column prop="creatTime" label="充值时间"></el-table-column>
+        <el-table-column prop="usefulMonth" label="开通时长(月)"></el-table-column>
         <el-table-column prop="amount" label="充值金额"></el-table-column>
         <el-table-column prop="type" label="充值类型">
           <template slot-scope="scope">

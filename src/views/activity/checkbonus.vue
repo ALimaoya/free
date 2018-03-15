@@ -44,22 +44,35 @@
       </el-pagination>
       <span class="totalItems">共{{ totalPages }}页，{{totalElements}}条记录</span>
     </div>
-    <el-dialog width="80%" :visible.sync="detailInfo" center top="5%" title="领奖审核">
-      <ul>
-        <li v-for="(item,index) in imgList" :key="index">
-          <dl>
-            <dt>{{ item.type }}</dt>
-            <dd>
-              <img :src=" item.imageUrl" alt="" />
-            </dd>
-          </dl>
-        </li>
-        <li v-for="(item ,index) in goodsShare">
-          <span>宝贝分享{{(index + 1)*1 }}：</span>
-          <span>{{ item.shareUrl }}</span>
-        </li>
-        <li><img :src=" orderImg" alt="" /></li>
-      </ul>
+    <el-dialog class="detailContent" width="80%" :visible.sync="detailInfo" center top="5%" title="领奖审核">
+      <div>
+        <ul>
+          <p>领奖第一步：</p>
+          <li class="imageShow">
+            <dl v-for="(item,index) in imgList" :key="index">
+              <dt>{{ imageType[item.type] }}</dt>
+              <dd><img :src=" imgUrl + item.imageUrl" alt="" /></dd>
+            </dl>
+          </li>
+        </ul>
+        <ul>
+          <p>领奖第二步：</p>
+          <li v-for="(item ,index) in goodsShare">
+            <span>宝贝分享{{(index + 1)*1}}：</span>
+            <span>{{ item.shareUrl }}</span>
+          </li>
+        </ul>
+        <ul>
+          <p>领奖第三步：</p>
+          <li class="imageShow">
+            <dl>
+              <dt>订单截图</dt>
+              <dd><img :src=" imgUrl + orderImg" alt="" /></dd>
+            </dl>
+          </li>
+        </ul>
+      </div>
+
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="check('1')">审核成功</el-button>
         <el-button type="error" @click="check('2')">审核失败</el-button>
@@ -67,7 +80,7 @@
       </div>
     </el-dialog>
     <el-dialog title="拒绝原因" :visible.sync="reasonBox" center top="15%"  width="50%" >
-      <span>备注：</span>
+      <p>备注：</p>
       <el-input :rows="4" type="textarea" v-model.trim="reason" placeholder="审核拒绝时不能为空，可输入字符最大长度为100"></el-input>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitReason">提 交</el-button>
@@ -82,7 +95,7 @@
   import ElDialog from "element-ui/packages/dialog/src/component";
 
   export default {
-    components: {ElDialog},
+    components: { ElDialog },
     name: "checkbonus" ,
       data(){
           return {
@@ -125,13 +138,14 @@
             detailInfo : false ,
             reasonBox : false ,
             imgList : [] ,
+            imageType : [ '' , '商品收藏截图' , '店铺收藏截图'] ,
             goodsShare : [] ,
             orderImg : '' ,
             orderId : '' ,
             reason : '' ,
             refuseReason : '' ,
-            status : ''
-            // imgUrl : 'http://lgf8953.oss-cn-beijing.aliyuncs.com'
+            status : '' ,
+            imgUrl : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/'
 
           }
       },
@@ -171,15 +185,15 @@
 
         //订单详情审核
         handleOrder(index ,order){
-          this.orderId = order+ '' ;
-          console.log(order);
+          this.orderId = order ;
+          this.detailInfo = true ;
           orderDetail(order).then( res => {
             console.log(res);
+
             if( res.data.status === '000000000'){
-              this.detailInfo = true ;
-              this.imgList = res.data.orderImageList.slice(0,2) ;
-              this.orderImg = res.data.orderImageList.slice(2,3) ;
-              this.goodsShare = res.data.shareList ;
+              this.imgList = res.data.data.orderImageList.slice(0,2) ;
+              this.orderImg = res.data.data.orderImageList.slice(2,3)[0].imageUrl ;
+              this.goodsShare = res.data.data.shareList ;
             }else{
               this.$message({
                 message : res.data.message ,
@@ -188,6 +202,7 @@
               })
             }
           }).catch( err => {
+            console.log(err);
             alert('服务器开小差啦，请稍等~')
           })
         },
@@ -277,12 +292,68 @@
     .search{
       border-bottom : 1px solid #aaa ;
     }
+    .detailContent{
+      height : 80% ;
+      overflow : hidden ;
+      div{
+        height : 5rem ;
+        overflow-y:  auto ;
+        overflow-x : hidden ;
+        ul{
+          width : 85% ;
+          margin : 0.1rem auto ;
 
-      .el-dialog{
-        span{
-          display: inline-block;
-          margin-bottom : 0.1rem ;
+          li{
+            margin-left : 0.3rem ;
+
+          }
+          .imageShow{
+            display: flex ;
+            flex-direction: row;
+            justify-content: space-between;
+            dl{
+              width : 40% ;
+              dt{
+                text-align : center ;
+                height : 0.5rem ;
+                line-height : 0.5rem ;
+              }
+              dd{
+                flex : 1 ;
+                height : 3rem ;
+                display : flex ;
+                align-items: center;
+                justify-content: center;
+                img{
+                  max-height : 100% ;
+                  max-width : 100% ;
+                  margin : 0 auto ;
+                }
+              }
+            }
+          }
         }
+
+      }
+      .dialog-footer{
+        .el-button {
+          width : 0.9rem ;
+          padding : 0;
+          text-align : center ;
+          line-height : 0.35rem ;
+        }
+      }
+
+    }
+      .el-dialog{
+
+        p{
+          margin-bottom : 0.1rem ;
+          font-size : 0.15rem ;
+          font-weight : bold ;
+          color : #8f949a;
+        }
+
         .dialog-footer{
           .el-button {
             width : 0.9rem ;

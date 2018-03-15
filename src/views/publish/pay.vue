@@ -21,7 +21,7 @@
     <div class="result">您当前的押金余额为：<span>{{ activity.totalDeposit }}</span> 元，本次总共要支付的金额为：<span>{{ activity.activityTotalAmount }}</span> 元。</div>
     <div class="payPsw">
       <span>支付密码：</span>
-      <el-input :type="pwdType"  v-model.trim="password" placeholder="请输入支付密码" ></el-input>
+      <el-input :type="pwdType"  v-model.trim="password" auto-complete="off" placeholder="请输入支付密码" ></el-input>
       <span class="show-pwd" @click="showPwd">
           <svg-icon icon-class="eyeopen" v-if="pwdType===''" /><svg-icon v-else="pwdType==='password'" icon-class="eyeclose" />
       </span>
@@ -55,6 +55,9 @@
           console.log(res);
           if (res.data.status === '000000000') {
             this.activity = res.data.data ;
+            if(res.data.data.payStatus === '1'){
+              this.$router.push('/publish/step3')
+            }
             console.log(this.activity);
           } else {
             this.$message({
@@ -79,7 +82,8 @@
               type : 'error'
             })
           }else{
-            if( password.length === 6){
+            let reg = /^[0-9]{6}$/ ;
+            if( reg.test(password)){
 
               activityPay({ activityId : id+'' ,payPassword : password }).then( res => {
                 if(res.data.status === '000000000'){

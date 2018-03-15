@@ -23,7 +23,7 @@ export const constantRouterMap = [
         name : 'Step',
         // hidden : true ,
         component: () => import('@/views/publish/step'),
-        meta: { title: '发布试用', icon: 'pay' ,noCache: true },
+        meta: { title: '发布试用',noCache: true },
 
       },
       {

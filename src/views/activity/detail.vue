@@ -24,9 +24,9 @@
         <li><span>中奖时间：</span><span>{{ detailInfo.winTime }}</span></li>
         <li><span>开奖时间：</span><span>{{ detailInfo.receiveTime }}</span></li>
         <li><span>订单价格：</span><span>{{ detailInfo.amount }} 元</span></li>
+        <li><span>图片详情：</span><span v-if="detailInfo.orderImageList == 0" class="noImg">暂无图片</span></li>
         <li class="detailPic">
-          <p>图片详情：</p>
-          <div>
+          <div v-if="detailInfo.orderImageList != 0">
             <dl v-for="item in detailInfo.orderImageList">
               <dt>{{ imgType[item.type-1] }}</dt>
               <dd>
@@ -34,11 +34,12 @@
               </dd>
             </dl>
           </div>
+
         </li>
       </ul>
     </div>
     <div v-if="showImg" @click="close" class="mask">
-      <img :src="bigImg" alt="" />
+      <img :src=" imgUrl + bigImg" alt="" />
     </div>
   </div>
 </template>
@@ -54,7 +55,7 @@
             imgType : ['商品收藏截图','店铺收藏截图','订单截图','评价截图'] ,
             showImg : false ,
             bigImg : '' ,
-            imgUrl : 'http://lgf8953.oss-cn-beijing.aliyuncs.com'
+            imgUrl : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/'
           }
       },
       mounted(){
@@ -88,6 +89,7 @@
     margin : 0.3rem  auto;
     padding : 0.3rem ;
     font-weight : bold ;
+    color : #456;
 
     .title{
       width : 100% ;
@@ -95,6 +97,7 @@
       font-size : 0.24rem ;
       line-height : 0.8rem ;
       text-align : center ;
+      color : #333 ;
     }
     .content{
       width : 100%;
@@ -103,7 +106,7 @@
       justify-content: space-between;
     }
     .detailInfor{
-      width : 80% ;
+      width : 100% ;
       float : left;
 
       .keys{
@@ -112,7 +115,7 @@
       }
     }
     li{
-      width : 100% ;
+      width : 50% ;
       line-height : 0.4rem ;
       height : 0.4rem ;
       font-size : 0.16rem ;
@@ -130,33 +133,30 @@
         }
       }
     }
+
+
     .detailPic{
-      float : left;
       /*padding-top : 0.2rem ;*/
       width : 100% ;
       display : flex ;
       flex-direction: row;
 
-      p{
-        width : 40% ;
-        height : 0.3rem ;
-        line-height : 0.3rem ;
-        text-align: right ;
-
-      }
       div{
         flex : 1 ;
         display : flex ;
-        margin-top : 0.3rem ;
-        flex-wrap: wrap;
-        height : auto ;
+        margin : 0.3rem 0 1rem ;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        height : 4rem ;
         dl{
-          width : 46% ;
+          width : 24% ;
           font-weight : 100 ;
-          &:nth-child(1){
-            margin-right : 0.25rem ;
+          margin-left : 0.25rem ;
+          height : 3.5rem ;
+          /*&:nth-child(1){*/
+            /*margin-left : 0.6rem ;*/
+          /*}*/
 
-          }
           dt{
             width : 100% ;
             text-align : center;
@@ -167,7 +167,7 @@
           dd{
             margin : 0.2rem auto;
             width : 100% ;
-            height : 1.5rem ;
+            height : 2.5rem ;
 
             img{
               width : 100% ;
@@ -178,6 +178,13 @@
           }
         }
       }
+      .noImg{
+        margin : 0 ;
+        /*font-size : 0.18rem ;*/
+        height : 0.3rem ;
+        line-height : 0.3rem ;
+        padding-left : 2rem ;
+      }
     }
     .mask{
       position : fixed ;
@@ -185,14 +192,12 @@
       left : 0 ;
       width : 100% ;
       height : 100% ;
-      background : #f1f1f1 ;
-      opacity: 0.3;
+      background : rgba(250,250,250,0.3) ;
       display : flex ;
       align-items: center;
       justify-content: center;
       z-index : 10000;
       img{
-
          max-height : 100% ;
 
       }

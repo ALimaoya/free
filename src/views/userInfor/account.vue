@@ -11,10 +11,10 @@
     <div v-if="accountBox" class="form">
       <p>{{title}}</p>
       <el-form ref="payForm" :model="payForm" :rules="payRule" center>
-        <el-form-item label="绑定手机号：">
-          <el-input v-model.trim="payForm.mobile" readonly style="border:none;outline:none"></el-input>
+        <el-form-item label="绑定手机号：" prop="mobile">
+          <el-input v-model.trim="payForm.mobile" readonly ></el-input>
         </el-form-item>
-        <el-form-item label="验证码：" prop="pswVerify" style="margin-left:1.6rem">
+        <el-form-item label="验证码：" prop="pswVerify" style="margin-left:1.73rem">
           <el-input placeholder="请输入验证码" v-model.trim="payForm.pswVerify"></el-input>
           <el-button class="getNum" @click="getNum" :disabled="disabled">{{ btntext }}</el-button>
         </el-form-item>
@@ -31,7 +31,7 @@
         </el-form-item>
       </el-form>
     </div>
-    <div v-if="!userInfo" class="accountImg">
+    <div v-if="!userInfo&&!accountBox" class="accountImg">
       <img src="../../assets/imgs/u860.png" alt="" />
     </div>
     <div v-if="userInfo&&!accountBox" class="payInfo detail">
@@ -125,6 +125,7 @@
         btntext: ' 获取验证码',
         title: '绑定支付宝',
         payRule: {
+          mobile : [{ required : true }],
           name: [{
             validator: validateName,
             required: true,
@@ -305,7 +306,7 @@
 
     }
     .form {
-      width: 60%;
+      width: 70%;
       margin: 0.3rem auto;
       padding: 0.2rem;
       border: 1px solid #aaa;
