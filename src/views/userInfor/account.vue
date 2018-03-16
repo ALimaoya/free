@@ -10,19 +10,22 @@
     </div>
     <div v-if="accountBox" class="form">
       <p>{{title}}</p>
-      <el-form ref="payForm" :model="payForm" :rules="payRule" center>
+      <el-form ref="payForm" :model="payForm" :rules="payRule" center label-position="right">
         <el-form-item label="绑定手机号：" prop="mobile">
           <el-input v-model.trim="payForm.mobile" readonly ></el-input>
+          <b class="blank" ></b>
         </el-form-item>
-        <el-form-item label="验证码：" prop="pswVerify" style="margin-left:1.73rem">
-          <el-input placeholder="请输入验证码" v-model.trim="payForm.pswVerify"></el-input>
+        <el-form-item label="验证码：" prop="pswVerify" >
+          <el-input placeholder="请输入验证码" v-model.trim="payForm.pswVerify" ></el-input>
           <el-button class="getNum" @click="getNum" :disabled="disabled">{{ btntext }}</el-button>
         </el-form-item>
         <el-form-item label="支付宝姓名：" prop="name">
           <el-input v-model.trim="payForm.name"></el-input>
+          <b class="blank" ></b>
         </el-form-item>
-        <el-form-item label="支付宝账号：" label-windth="1.2rem" prop="account">
+        <el-form-item label="支付宝账号："  prop="account">
           <el-input v-model.trim="payForm.account"></el-input>
+          <b class="blank" ></b>
         </el-form-item>
         <span>温馨提示：如果您填写的支付宝账号不正确，可能无法成功返款，平台不承担由此产生的一切费用。</span>
         <el-form-item class="btn">
@@ -311,6 +314,7 @@
       padding: 0.2rem;
       border: 1px solid #aaa;
       border-radius: 0.06rem;
+
       p {
         width: 70%;
         height: 0.4rem;
@@ -328,8 +332,12 @@
         .el-form-item {
           flex-direction: row;
           display: flex;
+          flex : 1 ;
+          width : 70% ;
+          justify-content: flex-end;
         }
         .btn {
+          justify-content: center;
           .el-button:nth-child(1) {
             margin-right: 0.3rem;
           }
@@ -346,6 +354,11 @@
           display: block;
           text-align: center;
 
+        }
+        .blank{
+          width : 1.1rem ;
+          margin-right: 0.3rem;
+          display : inline-block;
         }
       }
 

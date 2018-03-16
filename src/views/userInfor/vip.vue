@@ -77,8 +77,8 @@
       },
       getVipInfo() {
         getMember().then(res => {
-          if (res.data.status == '000000000') {
-            this.statusData.push(res.data.data)
+          if (res.data.status === '000000000') {
+            this.statusData.push(res.data.data);
             console.log(this.statusData)
           } else {
             this.$message({
@@ -93,10 +93,10 @@
       },
       getOrderList() {
         let formdata = new FormData();
-        formdata.append('currentPage', this.currentPage)
-        formdata.append('pageSize', this.pageSize)
+        formdata.append('currentPage', this.currentPage);
+        formdata.append('pageSize', this.pageSize);
         getMemberOrder(formdata).then(res => {
-          if (res.data.status == '000000000') {
+          if (res.data.status === '000000000') {
             this.historyData = res.data
           } else {
             this.$message({
@@ -110,7 +110,7 @@
         })
       },
       handleSizeChange(val) {
-        this.pageSize = val
+        this.pageSize = val;
         this.getOrderList();
       },
       handleCurrentChange(val) {

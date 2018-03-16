@@ -50,7 +50,7 @@ const user = {
     Register({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         register(userInfo).then(response => {
-            const token = response.data.token;
+            const token = response.data.data;
             setToken(token);
             commit('SET_TOKEN', token);
             resolve(response);

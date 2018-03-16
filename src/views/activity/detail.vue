@@ -30,7 +30,7 @@
             <dl v-for="item in detailInfo.orderImageList">
               <dt>{{ imgType[item.type-1] }}</dt>
               <dd>
-                <img @click="getImg(item.imageUrl)" :src="imgUrl + item.imageUrl" alt="" />
+                <img @click="getImg(item.imageUrl)" :src="imageDomain + item.imageUrl" alt="" />
               </dd>
             </dl>
           </div>
@@ -39,7 +39,7 @@
       </ul>
     </div>
     <div v-if="showImg" @click="close" class="mask">
-      <img :src=" imgUrl + bigImg" alt="" />
+      <img :src=" imageDomain + bigImg" alt="" />
     </div>
   </div>
 </template>
@@ -55,7 +55,8 @@
             imgType : ['商品收藏截图','店铺收藏截图','订单截图','评价截图'] ,
             showImg : false ,
             bigImg : '' ,
-            imgUrl : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/'
+            imageDomain : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/' ,
+            // imageDomain : 'http://yabei.oss-cn-beijing.aliyuncs.com/'
           }
       },
       mounted(){

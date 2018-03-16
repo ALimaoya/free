@@ -145,8 +145,8 @@
             reason : '' ,
             refuseReason : '' ,
             status : '' ,
-            imgUrl : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/'
-
+            imgUrl : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/',
+            // imageDomain : 'http://yabei.oss-cn-beijing.aliyuncs.com/'
           }
       },
       mounted(){

@@ -187,9 +187,9 @@ export function uploadImage(file){
     url : "/tryout/file/upload" ,
     method : 'post' ,
     data : file ,
-    // headers : {
-    //   'Content-Type' : 'multipart/form-data'
-    // }
+    headers : {
+      'Content-Type' : 'multipart/form-data'
+    }
   })
 }
 

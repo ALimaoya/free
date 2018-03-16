@@ -49,7 +49,7 @@
       <dl>
         <dt>评价截图</dt>
         <dd>
-          <img :src=" imgUrl + viewImg" alt="" />
+          <img :src=" imageDomain + viewImg" alt="" />
         </dd>
       </dl>
       <div slot="footer" class="dialog-footer">
@@ -114,7 +114,8 @@
         totalElements : 0 ,
         viewImg : '' ,
         detailInfo : false ,
-        imgUrl : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/' ,
+        imageDomain : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/' ,
+        // imageDomain : 'http://yabei.oss-cn-beijing.aliyuncs.com/',
         orderId : '' ,
         reason : '' ,
         refuseReason : '' ,

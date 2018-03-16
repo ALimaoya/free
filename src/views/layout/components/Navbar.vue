@@ -62,7 +62,7 @@ export default {
   top : 0;
   width : 100% ;
   background : #fff ;
-  z-index : 10000 ;
+  z-index : 1500 ;
 
   .hamburger-container {
     line-height: 0.02rem;
@@ -80,7 +80,8 @@ export default {
     height: 0.50rem;
     display: inline-block;
     position: absolute;
-    right: 0.35rem;
+    right: 2.5rem;
+    z-index : 10000 ;
     .avatar-wrapper {
       cursor: pointer;
       margin-top: 0.05rem;
@@ -98,7 +99,9 @@ export default {
       }
 
     }
+
   }
+
 }
 </style>
 

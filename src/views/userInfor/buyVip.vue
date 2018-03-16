@@ -9,8 +9,8 @@
         <b>{{ userTel }}</b>
         <span v-if="statusData.vipLevel>0">
           <span>，当前为</span>
-          <b>vip:{{ statusData.vipLevel }}商家会员</b>
-          <span v-if="statusData.isOverdue=='0'">，会员到期时间：{{ statusData.vipTime }}</span>
+          <b>vip{{ statusData.vipLevel }}商家会员</b>
+          <span v-if="statusData.isOverdue=='0'"><span>，会员到期时间：</span><b >{{ statusData.vipTime }}</b></span>
           <span v-else>，会员有效期已过,请续费</span>
         </span>
         <span v-else>,您当前不是vip会员，快购买vip会员享受活动优惠。</span>
@@ -24,14 +24,16 @@
             <li class="timeImg " :class="{active:item.vipId==choose.vipId}" v-for="item in vipInfo" @click="chooseVip(item)">
               <div class="type">{{item.name}}</div>
               <div>
-                <span class="money_color f18 ml40">{{item.usefulMonth}}个月</span>vip会员
-                <span class="money_color f18">￥{{item.price}}</span>
-                <span class="c666 ml40 f14">原价:
+                <span class="money_color f18 ml40" >{{item.usefulMonth}}个月</span>
+                <span style="color : #666 ;">vip会员</span>
+                <span class="money_color f18" >￥{{item.price}}</span>
+                <span class="c666 ml40 f14 oldPrice" > 原价:
                   <span class="line_through ">{{item.originalPrice}}</span>
                 </span>
               </div>
-              <div class="text-center">赠送：
-                <span class="money_color">{{item.giveMonth}}</span>个月的会员时长<span class="money_color" v-if="item.buyTime">，每个账号只允许购买{{item.buyTime}}次</span> </div>
+              <div class="text-center" v-if="item.giveMonth">赠送：
+                <span class="money_color">{{item.giveMonth}}</span>个月的会员时长。<span class="money_color" v-if="item.buyTime">每个账号只允许购买{{item.buyTime}}次</span> </div>
+                <div :class="{target:item.vipId==choose.vipId}"></div>
             </li>
           </ul>
           <div class="choose">
@@ -101,7 +103,7 @@
             <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
             <svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>
           </span>
-          <router-link to="/userInfor/settings" v-if="!settingPsw"><span style="color:#409EFF;position:absolute;display:inline-block;width:1rem">设置支付密码</span></router-link> 
+          <router-link to="/userInfor/settings" v-if="!settingPsw"><span style="color:#409EFF;position:absolute;display:inline-block;width:1rem">设置支付密码</span></router-link>
         </el-form-item>
         <el-form-item class="paynum" style="margin-top:10px;">
           <el-button type="primary" @click="onSubmitPsw('pswForm')" style="margin-right:60px">确 认</el-button>
@@ -163,25 +165,25 @@
         dialogVisible: false,
         dialogVisibleQuestion: false,
         dialogPswVisible: false,
-        vipTime: [{
-            time: '12',
-            date: '',
-            money: '3988'
-          },
-          {
-            time: '24',
-            date: '',
-            money: '7199'
-          },
-          {
-            time: '36',
-            date: '',
-            money: '9572'
-          }
-        ],
-        isVip: {
-
-        },
+        // vipTime: [{
+        //     time: '12',
+        //     date: '',
+        //     money: '3988'
+        //   },
+        //   {
+        //     time: '24',
+        //     date: '',
+        //     money: '7199'
+        //   },
+        //   {
+        //     time: '36',
+        //     date: '',
+        //     money: '9572'
+        //   }
+        // ],
+        // isVip: {
+        //
+        // },
         settingPsw:true,
         deposit: '',
         pwdType: 'password',
@@ -199,15 +201,15 @@
       }
     },
     mounted() {
-      this.isVip = this.$route.params
-      this.getDepositMoney()
+      // this.isVip = this.$route.params
+      this.getDepositMoney();
       this.getVipList();
       this.getVipInfo();
     },
     methods: {
       getVipInfo() {
         getMember().then(res => {
-          if (res.data.status == '000000000') {
+          if (res.data.status === '000000000') {
             this.statusData = res.data.data;
             console.log(this.statusData)
           } else {
@@ -230,7 +232,7 @@
       },
       getDepositMoney() {
         getDeposit().then(res => {
-          if (res.data.status == '000000000') {
+          if (res.data.status === '000000000') {
             this.deposit = res.data.data
           }
         }).catch(err => {
@@ -239,7 +241,7 @@
       },
       getVipList() {
         getVipType().then(res => {
-          if (res.data.status == '000000000') {
+          if (res.data.status === '000000000') {
             this.vipInfo = res.data.data;
             this.choose = this.vipInfo[0];
             console.log(this.vipInfo)
@@ -260,12 +262,12 @@
 
       //  支付提交
       submit() {
-        console.log(window.location.href)
+        console.log(window.location.href);
         let _data = {
           payType: this.chooseWay - 0,
           vipId: this.choose.vipId,
           returnUrl: window.location.href
-        }
+        };
         if (this.chooseWay == '3') {
           if (this.choose.price > this.deposit.deposit) {
             this.$message({
@@ -289,24 +291,23 @@
               payType: this.chooseWay - 0,
               vipId: this.choose.vipId,
               payPassword: this.pswForm.payPsw
-            }
+            };
             this.goPay(_data);
           }
         })
       },
       goPay(_data) {
         buyVip(_data).then(res => {
-          if (res.data.status == '000000000') {
+          if (res.data.status === '000000000') {
             if (this.chooseWay == '1') {
               const _div = document.createElement('div');
-              _div.setAttribute('id', 'myForm')
+              _div.setAttribute('id', 'myForm');
               _div.innerHTML = res.data.data;
               document.body.appendChild(_div);
-              document.getElementById('myForm').getElementsByTagName("form")[0].setAttribute('target',
-                "_blank")
-              document.getElementById('myForm').getElementsByTagName("form")[0].submit()
-              const __div = document.getElementById('myForm')
-              document.body.removeChild(__div)
+              document.getElementById('myForm').getElementsByTagName("form")[0].setAttribute('target', "_blank");
+              document.getElementById('myForm').getElementsByTagName("form")[0].submit();
+              const __div = document.getElementById('myForm');
+              document.body.removeChild(__div);
               this.dialogVisible = true;
             } else {
               this.$message({
@@ -362,8 +363,9 @@
     padding: 0.4rem 0.5rem;
     .title {
       width: 95%;
-      padding: 0.15rem 0;
-      height: 0.6rem;
+      padding: 0.15rem 0 0;
+      height : 0.9rem ;
+      line-height: 0.3rem;
       margin: 0 auto;
       box-sizing: border-box;
       border-bottom: 1px solid #d3d3d3;
@@ -419,28 +421,48 @@
     .payTime {
       width: 100%;
       overflow: hidden;
-
       margin: 0.2rem auto;
-      .active {
-        border: 1px solid #f18531;
-      }
+      display : flex ;
+      justify-content: space-between;
       li {
         margin-top: 20px;
-        width: 30%;
-        height: 1.4rem;
+        width: 32%;
+        height: 1.7rem;
         border: 1px solid #D3D3D3;
         position: relative;
         padding: 0.1rem;
-        margin-right: .2rem;
+        /*margin-right: .2rem;*/
         box-sizing: border-box;
-        float: left;
+        /*flex : 1 ;*/
+        /*float: left;*/
+
+        .oldPrice{
+          width  : 100% ;
+          display: block ;
+          margin : 0;
+          padding-left : 0.4rem ;
+          box-sizing: border-box;
+        }
+        .text-center  {
+          line-height : 0.2rem ;
+          font-size : 0.12rem ;
+          text-align : left ;
+          /*text-indent : 0.2rem ;*/
+          color : #666;
+        }
         img {
           width: 100%;
           height: 100%;
 
         }
         .type {
-          font-size: .18rem
+          font-size: .2rem ;
+          text-indent : 0.4rem ;
+          color : #666 ;
+          /*font-family: '方正兰亭超细黑简体' ;*/
+          font-family: '幼圆' ;
+          font-weight : bold ;
+          /*text-align : center ;*/
         }
         .king {
           width: 9%;
@@ -477,11 +499,16 @@
           bottom: 0;
           right: 0;
           background: url('../../assets/imgs/right.png') no-repeat right bottom;
-          display: block;
+          /*display: none;*/
           background-size: 95%;
 
         }
       }
+      .active {
+        border: 1px solid #f18531;
+
+      }
+
     }
     .choiceDate,
     .payType {

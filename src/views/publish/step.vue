@@ -375,8 +375,9 @@
           dialogVisible: false ,
           isUploadShow: false,  // 是否显示upload组件
           supportWebp: false,   // 是否支持webp
-          imgUrl: 'http://192.168.0.210:8087',   // 上传图片的域名
-          getImage : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/', //获取图片的外链域名
+          imgUrl: 'http://192.168.0.210:8087/tryout/file/upload',   // 上传图片的域名
+          imageDomain : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/', //获取图片的外链域名
+          // imageDomain : '"http://yabei.oss-cn-beijing.aliyuncs.com/',
           showImg : '',
           mainImg : '',
           formRule : {
@@ -435,11 +436,11 @@
                 required : true , validator : validMoney ,trigger : 'blur'
               }
             ],
-            startTime : [
-              {
-                required : true ,message : '请选择活动时间'
-              }
-            ]
+            // startTime : [
+            //   {
+            //     required : true ,message : '请选择活动时间'
+            //   }
+            // ]
           },
           choosePlat : '',
           week : [
@@ -488,15 +489,15 @@
             if( order !== undefined){
               this.order = order ;
               this.$store.dispatch('getPublishDetail',order).then( res => {
-                console.log(res);
+                // console.log(res);
                 if (res.data.status === '000000000') {
                   this.form = res.data.data;
                   if(this.form.productId !== '' ){
                     let num = 0 ;
                     this.resetSearch(this.form.platformType);
                     this.getType(this.form.platformType);
-                    this.mainImg = this.getImage + this.form.mainImageUrl ;
-                    this.showImg = this.getImage + this.form.showImageUrl ;
+                    this.mainImg = this.imageDomain + this.form.mainImageUrl ;
+                    this.showImg = this.imageDomain + this.form.showImageUrl ;
                     if(this.form.activityCalendar.length !== 0){
                       this.form.activityCalendar.forEach((i) => {
                         num = num + i.tryoutQuantity ;
@@ -632,7 +633,6 @@
         resetSearch(value){
           this.choosePlat = this.platForm[value-1].name ;
           getShopList(value).then( res => {
-            console.log(res);
             if( res.data.status === '000000000'){
 
               this.shopOptions = res.data.data ;
@@ -647,9 +647,8 @@
         getType(value){
           searchTypeList(value).then( res => {
             if(res.data.status === '000000000'){
-              console.log(res,2);
               this.searchOptions = res.data.data ;
-              console.log(this.searchOptions);
+              // console.log(this.searchOptions);
             }
           }).catch( err => {
             console.log(err);
@@ -738,7 +737,6 @@
 
         //添加app端关键词
         addKey(){
-          console.log(this.form.keyword);
           this.form.keyword.push({
             'searchId' : '',
             'sortType' : '',
@@ -955,7 +953,6 @@
           this.$refs[formName].validate((valid) => {
             if (valid  && !this.warn && !this.daysWarn) {
               delete this.form.startTime ;
-              console.log(this.form);
 
               if(index === 1){
                   publishActivity(this.form).then( res => {
@@ -977,6 +974,7 @@
                       })
                     }
                   }).catch( err => {
+                    console.log(err);
                     alert('服务器开小差啦，请稍等~')
                   });
                 }else{
