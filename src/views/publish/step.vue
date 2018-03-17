@@ -71,12 +71,12 @@
         </ul>
       </el-form-item>
       <el-form-item label="下单规格：" labelWidth="1.3rem" prop="buyProductQuantity">
-        <el-input placeholder="任意拍" size="small" class="any" v-model.trim="form.buyProductSpec"></el-input>
+        <el-input :maxlength="200" placeholder="任意拍" size="small" class="any"  v-model.trim="form.buyProductSpec"></el-input>
         <span>拍：</span><el-input type="number" v-model.number="form.buyProductQuantity"  size="small" class="any anyNum"></el-input><span>件</span>
         <span class="tips"><img src="../../assets/imgs/tips3.png" alt=""/>如需拍下指定规格，请务必填写此信息，如不填写默认任意拍一件；</span>
       </el-form-item>
       <el-form-item label="下单价格：" labelWidth="1.3rem" prop="buyProductAmount">
-        <el-input class="any" size="small" type="number" v-model.number="form.buyProductAmount"  placeholder="请输入内容"></el-input>元
+        <el-input class="any" size="small" type="number" v-model.number="form.buyProductAmount" placeholder="请输入内容" ></el-input>元
       </el-form-item>
       <el-form-item label="商品运费：" labelWidth="1.3rem" prop="post">
         <div class="post">
@@ -95,7 +95,7 @@
       <!--<el-form-item label="商品淘口令：" labelWidth="1.3rem" v-if="form.platformType==='1'||form.platformType==='2'">-->
         <!--<el-input type="textarea" :rows="4" class="textarea" placeholder="请输入内容" @blur="cancelWarn(form.productShareUrl,appKey)" v-model.trim="form.productShareUrl"></el-input>-->
       <!--</el-form-item>-->
-      <el-form-item v-for="(keyItem,index) in form.keyword" :label="'APP端关键词'+(index+1)*1+'：'"
+      <el-form-item class="size" v-for="(keyItem,index) in form.keyword" :label="'APP端关键词'+(index+1)*1+'：'"
             :key="index" :prop="'keyword.'+ index + '.searchKeyword'" labelWidth="1.3rem">
         <el-select class="search" @focus="getType(form.platformType)" v-model="keyItem.searchId" placeholder="搜索平台" size="small">
           <el-option
@@ -108,14 +108,16 @@
         <el-select class="search" v-model="keyItem.sortType" placeholder="综合排序" size="small">
           <el-option v-for="item in topOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
-        <el-input class="key" placeholder="填写搜索关键词" :rule="{ message : true , trigger : 'blur' , required : true }"
-                  v-model.trim="keyItem.searchKeyword" size="small"></el-input>
+        <el-input class="key" placeholder="填写搜索关键词" :rule="{ message : '关键词不能为空', trigger : 'blur' , required : true }"
+                  :maxlength="100"     v-model.trim="keyItem.searchKeyword" size="small" ></el-input>
         <span>筛选条件：</span>
-        <el-input class="key" placeholder="如价格区间、销量区间等" size="small" v-model.trim="keyItem.searchCondition"></el-input>
+        <el-input :maxlength="100" class="key" placeholder="如价格区间、销量区间等" size="small" v-model.trim="keyItem.searchCondition" ></el-input>
         <el-button slot size="small" @click="deleteKey(keyItem)">删除</el-button>
+
       </el-form-item>
-      <el-form-item labelWidth="1.3rem">
+      <el-form-item labelWidth="1.3rem" >
         <el-button type="primary" @click="addKey">添加一个APP关键词</el-button>
+
       </el-form-item>
       <!--<span v-if="appKey==='1'" class="keyWarn">请选择淘口令或者APP端关键词中至少一项进行填写</span>-->
       <!--<div v-if="form.productShareUrl!=''&&appKey">-->
@@ -181,7 +183,7 @@
             </li>
           </ul>
         </div>
-        <span v-if="warn" class="daysWarn">投放数量请填写不小于1的整数！</span>
+        <span v-if="warn" class="daysWarn">投放数量请填写不小于1且不大于999的整数！</span>
         <span class="daysWarn" v-if="daysWarn">投放天数不得小于3！</span>
         <div class="situation">投放情况：</div>
         <el-form-item>
@@ -227,6 +229,16 @@
       name: "step",
 
       data(){
+        const validTitle = (rule , value ,callback) => {
+          if(value === ''){
+            callback(new Error('请填写活动标题'))
+          }else{
+            if(value.length > 40 ){
+              callback(new Error('活动标题不得超过40个字符'))
+            }
+            callback();
+          }
+        };
         const validLink = (rule,value,callback) => {
           if(value === ''){
             callback(new Error('请填写商品链接'))
@@ -244,7 +256,11 @@
           }else{
             if(value<1){
               callback(new Error('商品件数最少为1，请重新填写下单件数'))
-            }else{
+            }
+            if(value > 10000) {
+              callback(new Error('商品件数不得超过10000'))
+
+            }else {
               value = Math.floor(value);
               callback();
             }
@@ -256,9 +272,11 @@
           }else{
             if(value<0){
               callback(new Error('下单价格不能小于0，请重新填写下单价格'))
-            }else{
-              callback();
             }
+            if(value > 9999999){
+              callback(new Error('下单价格不能超过9999999'))
+            }
+              callback();
 
           }
         };
@@ -398,7 +416,7 @@
             ],
             activityTitle : [
               {
-                required : true ,message : '请填写活动标题' ,trigger : 'blur'
+                required : true ,trigger : 'blur' , validator : validTitle
               }
             ],
             categoryId : [
@@ -471,6 +489,7 @@
           editor : '',
           order : '',
           pickTime : '' ,
+
           // pickerOptions: {
           //   disabledDate(time) {
           //     return time.getTime() < Date.now();
@@ -629,6 +648,8 @@
           reader.readAsDataURL(file);
           },
 
+
+
         //获取对应平台店铺列表
         resetSearch(value){
           this.choosePlat = this.platForm[value-1].name ;
@@ -737,12 +758,21 @@
 
         //添加app端关键词
         addKey(){
-          this.form.keyword.push({
-            'searchId' : '',
-            'sortType' : '',
-            'searchKeyword' : '',
-            'searchCondition': '',
-          })
+          if(this.form.keyword.length <10){
+            this.form.keyword.push({
+              'searchId' : '',
+              'sortType' : '',
+              'searchKeyword' : '',
+              'searchCondition': '',
+            })
+
+          }else{
+            this.$message({
+              message : '您添加的关键词太多啦，不能再加啦~',
+              center : true ,
+              type : 'error'
+            })
+          }
         },
 
         // cancelWarn(value,key){
@@ -828,38 +858,59 @@
 
         //按钮修改投放数量
         setNum(type,value,index,date){
+
           if(value === undefined){
             value = 0 ;
           }
 
           if(type === 1){
               if(value > 1 ){
+                if(value > 999 ){
+                  this.warn = true ;
+                  return false ;
+                }else{
+                  this.warn = false ;
+
+                }
                 this.goodsAmount[index] = --value ;
               }else if(value == 1){
                 this.goodsAmount = this.goodsAmount.slice(0,index);
                 this.form.activityCalendar = this.form.activityCalendar.slice(0,index);
               }
           }else {
+            if(value >= 999){
+              this.warn = true ;
+              return false ;
+            }else{
+              this.warn = false ;
+
+            }
             this.goodsAmount[index] = ++value;
 
             // console.log(this.goodsAmount, this.form.activityCalendar, date);
 
           }
+
           this.getProgress(index, date);
 
         },
 
         //输入框修改投放数量
         numIpt(value,index,date){
+          if(value > 999 ){
+            this.warn = true ;
+            return false ;
+          } else{
+
+            this.warn = false ;
+
+          }
           if(value === ''|| value< 1 || isNaN(value)) {
             this.goodsAmount = this.goodsAmount.slice(0, index);
             this.form.activityCalendar = this.form.activityCalendar.slice(0, index);
 
           }
-          // else{
-          //
-          //
-          // }
+
           this.getProgress(index,date);
 
 
@@ -949,9 +1000,11 @@
 
         //提交试用信息
         onSubmit(formName,index){
+          console.log(this.form);
+
           this.hasWarn();
           this.$refs[formName].validate((valid) => {
-            if (valid  && !this.warn && !this.daysWarn) {
+            if (valid  && !this.warn && !this.daysWarn  ) {
               delete this.form.startTime ;
 
               if(index === 1){
@@ -1096,6 +1149,15 @@
         margin-right : 0.1rem ;
 
       }
+
+
+      .keyTip{
+        left: 30% ;
+      }
+      .conditions{
+        left : 50%;
+      }
+
       .anyNum{
         width : 1rem ;
       }

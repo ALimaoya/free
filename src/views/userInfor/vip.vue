@@ -1,7 +1,7 @@
 <template>
   <div class="vip">
     <!--<top></top>-->
-    <div class="title">会员管理</div>
+    <h1 class="title">会员管理</h1>
     <div class="content">
       <p>会员状态：</p>
       <el-table :data="statusData" border style="width: 100%">
@@ -126,14 +126,19 @@
   .vip {
     color: #333;
     .title {
-      width: 100%;
-      height: 0.4rem;
-      line-height: 0.4rem;
-      font-size: 0.22rem;
-      margin: 0.4rem 0;
-      border-bottom: 1px solid #aaa;
-      text-indent: 0.3rem;
-      font-weight : bold ;
+      margin : 0 ;
+      padding : 0.2rem  0.4rem ;
+      border-bottom : 1px solid #666 ;
+      font-size : 0.22rem ;
+      line-height : 0.4rem ;
+      /*width: 100%;*/
+      /*height: 0.4rem;*/
+      /*line-height: 0.4rem;*/
+      /*font-size: 0.22rem;*/
+      /*margin: 0.4rem 0;*/
+      /*border-bottom: 1px solid #aaa;*/
+      /*text-indent: 0.3rem;*/
+      /*font-weight : bold ;*/
     }
 
     .content {

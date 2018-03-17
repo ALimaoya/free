@@ -15,7 +15,7 @@ const service = axios.create({
 
 // request拦截器
 service.interceptors.request.use(config => {
-  let status = config.url.indexOf('/tryout/captcha/') > 0 || config.url.indexOf('/tryout/account/register') > 0 || config.url.indexOf('/tryout/account/login') > 0||config.url.indexOf('/tryout/account/findpassword')>0
+  let status = config.url.indexOf('/tryout/captcha/') > 0 || config.url.indexOf('/tryout/account/register') > 0 || config.url.indexOf('/tryout/account/login') > 0||config.url.indexOf('/tryout/account/findpassword')>0 ||config.url.indexOf('/tryout/file/upload') >0
   if (!status) {
     if (store.getters.token) {
       config.headers['yb-tryout-merchant-token'] = getToken() // 让每个请求携带自定义token 请根据实际情况自行修改

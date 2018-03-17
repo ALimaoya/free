@@ -1,6 +1,6 @@
 <template>
   <div class="cash">
-    <div class="title">押金提现</div>
+    <h1 class="title">押金提现</h1>
     <p class="subTitle">填写提现金额</p>
     <ul class="deposit">
       <li>
@@ -94,9 +94,11 @@
           // if(!isNaN(value)){
           if (value < 100) {
             callback(new Error('单次最少提现100元，请重新输入提现金额'))
-          } else {
-            callback()
           }
+          if(value > 9999999){
+            callback(new Error('输入的金额数值不得超过9999999'))
+          }
+            callback()
         }
       };
       const validPsw = (rule, value, callback) => {
@@ -263,18 +265,23 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
   .cash {
-    width: 90%;
-    margin: 0 auto;
+    width: 100%;
+    /*margin: 0 auto;*/
     .title {
-      width: 100%;
-      height: 0.5rem;
-      line-height: 0.5rem;
-      font-size: 0.25rem;
-      font-weight: bold;
-      color: #333;
-      text-indent: 0.3rem;
-      border-bottom: 1px solid #aaa;
-      margin-bottom: 0.3rem;
+      margin : 0 ;
+      padding : 0.2rem  0.4rem ;
+      border-bottom : 1px solid #666 ;
+      font-size : 0.22rem ;
+      line-height : 0.4rem ;
+      /*width: 100%;*/
+      /*height: 0.5rem;*/
+      /*line-height: 0.5rem;*/
+      /*font-size: 0.25rem;*/
+      /*font-weight: bold;*/
+      /*color: #333;*/
+      /*text-indent: 0.3rem;*/
+      /*border-bottom: 1px solid #aaa;*/
+      /*margin-bottom: 0.3rem;*/
 
     }
     .subTitle {

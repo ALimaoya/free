@@ -116,7 +116,7 @@ export default {
 
   .tags-view-wrapper {
     position : fixed ;
-    top : 0.5rem;
+    top : 1.1rem;
     background: #fff;
     height: 0.34rem;
     z-index : 2000 ;

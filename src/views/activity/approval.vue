@@ -10,7 +10,7 @@
           :value="item.value">
         </el-option>
       </el-select>
-      <el-input size="small" v-model.trim="activity.EQ_activityCode" placeholder="请输入试用活动编号"></el-input>
+      <el-input size="small" :maxlength="20"  v-model.trim="activity.EQ_activityCode" placeholder="请输入试用活动编号"></el-input>
       <el-select size="small" clearable v-model="activity.EQ_activityStatus" filterable placeholder="请选择活动状态">
         <el-option
           v-for="item in options"
@@ -197,7 +197,7 @@
         reasonBox : false ,
         reasonDetail : '',
         activityDetail : {} ,
-        time : ''
+        time : '' ,
 
       }
 
@@ -212,7 +212,7 @@
       //请求数据
       getData() {
         // console.log(form);
-        let formData = new FormData();
+          let formData = new FormData();
           formData.append('EQ_platformType', this.activity.EQ_platformType);
           formData.append('EQ_activityCode', this.activity.EQ_activityCode);
           formData.append('EQ_activityStatus',this.activity.EQ_activityStatus);
@@ -220,16 +220,18 @@
           formData.append('GT_activityStartTime',this.activity.GT_activityStartTime);
           formData.append('currentPage',this.currentPage);
           formData.append('pageSize',this.pageSize);
-        getActivity(formData).then(res => {
-          // console.log(res);
-          if (res.data.status === '000000000') {
-            this.tableData = res.data.data;
-            this.totalPages = res.data.totalPages ;
-            this.totalElements = res.data.totalElements ;
-          }
-        }).catch(err => {
-          alert('服务开小差啦，请稍等~')
-        });
+          getActivity(formData).then(res => {
+            // console.log(res);
+            if (res.data.status === '000000000') {
+              this.tableData = res.data.data;
+              this.totalPages = res.data.totalPages ;
+              this.totalElements = res.data.totalElements ;
+            }
+          }).catch(err => {
+            alert('服务开小差啦，请稍等~')
+          });
+
+
       },
       //获取活动详情数据
       detail( index,order ){
@@ -375,7 +377,9 @@
 
         this.currentPage = val ;
         this.getData();
-      }
+      },
+
+
     }
     }
 </script>
@@ -383,7 +387,7 @@
 <style scoped lang="scss" rel="stylesheet/scss">
   .approval{
     h1{
-      margin : 0.3rem 0 ;
+      margin : 0 ;
       padding : 0.2rem  0.4rem ;
       border-bottom : 1px solid #666 ;
       font-size : 0.22rem ;
@@ -399,8 +403,9 @@
         width : 18% ;
         margin :0 0.25rem 0.2rem ;
         float : left;
-
       }
+
+
       .el-select{
         width : 1.6rem ;
         float : left;

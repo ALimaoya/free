@@ -1,6 +1,6 @@
 <template>
   <div class="settings">
-    <p class="title">基本设置</p>
+    <h1 class="title">基本设置</h1>
     <table border="1" bordercolor="#aaa">
       <tr>
         <td>登录密码</td>
@@ -765,7 +765,7 @@
   .settings {
     width: 100%;
     margin: 0 auto;
-    padding: 0.3rem 0.2rem;
+    /*padding: 0.3rem 0.2rem;*/
     box-sizing: border-box;
     font-size: 0.15rem;
     color: #333;
@@ -773,14 +773,21 @@
       display: none
     }
     .title {
-      width: 100%;
-      height: 0.5rem;
-      line-height: 0.5rem;
-      text-indent: 0.3rem;
-      font-size: 0.22rem;
-      color: #333;
-      font-weight: bold;
-      border-bottom: 1px solid #aaa;
+
+      margin : 0 ;
+      padding : 0.2rem  0.4rem ;
+      border-bottom : 1px solid #666 ;
+      font-size : 0.22rem ;
+      line-height : 0.4rem ;
+
+      /*width: 100%;*/
+      /*height: 0.5rem;*/
+      /*line-height: 0.5rem;*/
+      /*text-indent: 0.3rem;*/
+      /*font-size: 0.22rem;*/
+      /*color: #333;*/
+      /*font-weight: bold;*/
+      /*border-bottom: 1px solid #aaa;*/
 
     }
     table {

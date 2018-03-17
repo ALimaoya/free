@@ -2,22 +2,6 @@
   <el-menu class="navbar" mode="horizontal">
     <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
     <breadcrumb></breadcrumb>
-    <el-dropdown class="avatar-container" trigger="click">
-      <div class="avatar-wrapper">
-        <img  class="user-avatar" src="../../../assets/imgs/logo.png">
-        <i class="el-icon-caret-bottom"></i>
-      </div>
-      <el-dropdown-menu class="user-dropdown" slot="dropdown">
-        <router-link class="inlineBlock" to="/">
-          <el-dropdown-item>
-            首页
-          </el-dropdown-item>
-        </router-link>
-        <el-dropdown-item divided>
-          <span @click="logout" style="display:block;">退出登录</span>
-        </el-dropdown-item>
-      </el-dropdown-menu>
-    </el-dropdown>
   </el-menu>
 </template>
 
@@ -34,21 +18,13 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar'
     ])
   },
   methods: {
     toggleSideBar() {
       this.$store.dispatch('ToggleSideBar')
     },
-    logout() {
-      this.$store.dispatch('LogOut').then(() => {
-          location.reload()
-      })
-      //   .catch( err => {
-      //   console.log(err) ;
-      // })
-    }
+
   }
 }
 </script>
@@ -59,7 +35,7 @@ export default {
   line-height: 0.50rem;
   border-radius: 0 !important;
   position: fixed ;
-  top : 0;
+  top : 0.6rem;
   width : 100% ;
   background : #fff ;
   z-index : 1500 ;
@@ -75,31 +51,6 @@ export default {
     right: 0.90rem;
     top: 0.16rem;
     color: red;
-  }
-  .avatar-container {
-    height: 0.50rem;
-    display: inline-block;
-    position: absolute;
-    right: 2.5rem;
-    z-index : 10000 ;
-    .avatar-wrapper {
-      cursor: pointer;
-      margin-top: 0.05rem;
-      position: relative;
-      .user-avatar {
-        width: 0.40rem;
-        height: 0.40rem;
-        border-radius: 0.10rem;
-      }
-      .el-icon-caret-bottom {
-        position: absolute;
-        right: -0.20rem;
-        top: 0.25rem;
-        font-size: 0.12rem;
-      }
-
-    }
-
   }
 
 }

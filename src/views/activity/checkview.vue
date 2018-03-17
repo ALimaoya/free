@@ -10,8 +10,8 @@
           :value="item.value">
         </el-option>
       </el-select>
-      <el-input size="small" v-model.trim="order.activityCode" placeholder="请输入试客试用活动编号"></el-input>
-      <el-input size="small" v-model.trim="order.thirdOrderCode" placeholder="请输入第三方订单编号"></el-input>
+      <el-input size="small" :maxlength="20" v-model.trim="order.activityCode" placeholder="请输入试客试用活动编号"></el-input>
+      <el-input size="small" :maxlength="20" v-model.trim="order.thirdOrderCode" placeholder="请输入第三方订单编号"></el-input>
       <el-button size="small"  @click="getList()" class="searchOrder">查询</el-button>
     </div>
     <el-table :data="tableData" border>
@@ -234,10 +234,17 @@
           });
           return false ;
         }else{
-          this.handelRefuse();
-          this.reasonBox = false ;
-          // this.reason = '' ;
-
+          if(this.refuseReason.length > 100){
+            this.$message({
+              message : '拒绝原因不得超过100个字符',
+              type : 'error' ,
+              center : 'true'
+            });
+          }else {
+            this.handelRefuse();
+            this.reasonBox = false;
+            // this.reason = '' ;
+          }
         }
 
       },
@@ -291,7 +298,6 @@
           img{
             max-width : 100% ;
             max-height : 100% ;
-
             margin : 0 auto ;
 
           }
@@ -302,6 +308,7 @@
         margin-bottom: 0.1rem;
       }
       .dialog-footer{
+        height : 1rem ;
         .el-button {
           width : 0.9rem ;
           padding : 0;

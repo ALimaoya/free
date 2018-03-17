@@ -59,7 +59,6 @@ export function activityPay(data){
 export function getCategory(){
   return request({
     url : '/tryout/category/select/list',
-    // url : '/tryout/category/select/list',
     method : 'get',
     headers : {
       'Content-Type' : 'multipart/form-data'

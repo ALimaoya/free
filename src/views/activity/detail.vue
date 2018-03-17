@@ -146,11 +146,11 @@
         flex : 1 ;
         display : flex ;
         margin : 0.3rem 0 1rem ;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
         justify-content: space-between;
         height : 4rem ;
         dl{
-          width : 24% ;
+          width : 30% ;
           font-weight : 100 ;
           margin-left : 0.25rem ;
           height : 3.5rem ;
@@ -172,7 +172,7 @@
 
             img{
               width : 100% ;
-              height : 100% ;
+              max-height : 100% ;
               border : 1px solid #D3D3D3;
               /*border-radius : 0.05rem ;*/
             }

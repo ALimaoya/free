@@ -10,8 +10,8 @@
           :value="item.value">
         </el-option>
       </el-select>
-      <el-input size="small" v-model.trim="order.activityCode" placeholder="请输入试客试用活动编号"></el-input>
-      <el-input size="small" v-model.trim="order.thirdOrderCode" placeholder="请输入第三方订单编号"></el-input>
+      <el-input size="small" :maxlength="20" v-model.trim="order.activityCode" placeholder="请输入试客试用活动编号"></el-input>
+      <el-input size="small" :maxlength="20" v-model.trim="order.thirdOrderCode" placeholder="请输入第三方订单编号"></el-input>
       <el-button size="small"  @click="getList()" class="searchOrder">查询</el-button>
     </div>
     <el-table :data="tableData" border>
@@ -259,9 +259,18 @@
             });
             return false ;
           }else{
-            this.handelRefuse();
-            this.reasonBox = false ;
-            this.reason = '' ;
+            if(this.refuseReason.length > 100){
+              this.$message({
+                message : '拒绝原因不得超过100个字符',
+                type : 'error' ,
+                center : 'true'
+              });
+            }else{
+              this.handelRefuse();
+              this.reasonBox = false ;
+              this.reason = '' ;
+            }
+
 
           }
         },
@@ -292,7 +301,7 @@
       border-bottom : 1px solid #aaa ;
     }
     .detailContent{
-      height : 80% ;
+      height : 8rem ;
       overflow : hidden ;
       div{
         height : 5rem ;
@@ -300,7 +309,7 @@
         overflow-x : hidden ;
         ul{
           width : 85% ;
-          margin : 0.1rem auto ;
+          margin : 0.1rem auto 0.2rem ;
 
           li{
             margin-left : 0.3rem ;
@@ -309,7 +318,7 @@
           .imageShow{
             display: flex ;
             flex-direction: row;
-            justify-content: space-between;
+            justify-content: center;
             dl{
               width : 40% ;
               dt{
@@ -335,6 +344,7 @@
 
       }
       .dialog-footer{
+        height : 1rem ;
         .el-button {
           width : 0.9rem ;
           padding : 0;

@@ -18,5 +18,5 @@ const getters = {
   // gold : state => state.user.wallet.gold ,
   // freeze_deposit : state => state.user.wallet.freeze_deposit ,
   pub_plans : state => state.user.pub_plans
-}
+};
 export default getters

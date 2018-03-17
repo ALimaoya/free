@@ -1,5 +1,6 @@
 <template>
   <div class="app-wrapper" :class="{hideSidebar:!sidebar.opened}">
+    <top></top>
     <sidebar class="sidebar-container"></sidebar>
     <div class="main-container">
       <navbar></navbar>
@@ -10,6 +11,7 @@
 </template>
 
 <script>
+  import Top from "@/components/top"
 import { Navbar, Sidebar, AppMain , TagsView  } from '@/views/layout/components'
 export default {
   name: 'layout',
@@ -18,6 +20,7 @@ export default {
     Sidebar,
     AppMain ,
     TagsView ,
+    Top
   },
   computed: {
     sidebar() {
@@ -34,5 +37,6 @@ export default {
   position: relative;
   height: 100%;
   width: 100%;
+
 }
 </style>

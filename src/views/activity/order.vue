@@ -10,8 +10,8 @@
             :value="item.value">
           </el-option>
         </el-select>
-        <el-input size="small" v-model.trim="order.activityCode" placeholder="请输入试客试用活动编号"></el-input>
-        <el-input size="small" v-model.trim="order.thirdOrderCode" placeholder="请输入第三方订单编号"></el-input>
+        <el-input size="small" :maxlength="20" v-model.trim="order.activityCode" placeholder="请输入试客试用活动编号"></el-input>
+        <el-input size="small" :maxlength="20" v-model.trim="order.thirdOrderCode" placeholder="请输入第三方订单编号"></el-input>
         <el-select clearable size="small"  v-model="order.EQ_status" filterable placeholder="请选择订单状态">
           <el-option
             v-for="item in options"
@@ -126,13 +126,14 @@
             value : ''
           },
           {
-            name : '未中奖',
+            name : '待抽奖',
             value : '1'
           },
           {
-            name : '待抽奖',
+            name : '未中奖',
             value : '2'
           },
+
           {
             name : '中奖待领取',
             value : '3'

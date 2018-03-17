@@ -113,6 +113,9 @@
           if (value.indexOf('.') >= 0) {
             callback(new Error('输入的金额数值应该为正整数'))
           }
+          if(value > 9999999){
+            callback(new Error('输入的金额数值不得超过9999999'))
+          }
           callback();
         }
       };

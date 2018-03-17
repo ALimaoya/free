@@ -96,6 +96,10 @@
           if (!validName(value)) {
             callback(new Error('请输入正确的支付宝姓名'))
           }
+          if(value.length > 20 ){
+            callback(new Error('支付宝姓名不得超过20个字符'))
+
+          }
         }
         callback();
       };
@@ -103,9 +107,12 @@
         if (value === '') {
           callback(new Error('请输入支付宝账号'))
         } else {
-          let status = validatePhone(value) || validateEmail(value)
+          let status = validatePhone(value) || validateEmail(value);
           if (!status) {
             callback(new Error('请输入正确的支付宝账号'))
+          }
+          if(value.length > 100 ){
+            callback(new Error('支付宝账号不得超过100个字符'))
           }
         }
         callback();

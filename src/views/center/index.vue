@@ -146,7 +146,9 @@
           return {
             userInfo : {},
             wallet : {
-              // deposit : '',
+              deposit : '0',
+              freeze_deposit : '0' ,
+              gold : '0'
             },
             tableData : [] ,
             attendant : {},
@@ -180,7 +182,7 @@
           // const token = getToken() ;
           // console.log(token) ;
           this.$store.dispatch('GetInfo').then(res => {
-            // console.log(res);
+            console.log(res);
 
             if( res.data.status === '000000000'){
               this.attendant = this.$store.state.user.attendant ;

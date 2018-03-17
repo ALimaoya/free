@@ -89,17 +89,26 @@
       var validateName = (rule,value,callback) => {
         if(value === ''){
           callback(new Error('请输入店铺名称'))
-        }
-        // else{
+        }else{
+          if(value.length > 100){
+            callback(new Error('店铺名称不得超过100个字符'))
+          }
           callback();
-        // }
+
+        }
+
       }
       var validateID = (rule,value,callback) => {
         if(value === ''){
           callback(new Error('请输入旺旺/咚咚ID'))
 
+        }else{
+          if(value.length > 40){
+            callback(new Error('旺旺/咚咚ID不得超过40个字符'))
+          }
+          callback();
+
         }
-        callback();
 
       }
       var validGoodsAddr = (rule,value,callback) => {
