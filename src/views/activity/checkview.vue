@@ -143,7 +143,7 @@
             this.tableData = res.data.data ;
             this.totalPages = res.data.totalPages ;
             this.totalElements = res.data.totalElements ;
-            console.log( this.totalElements)
+            // console.log( this.totalElements)
           }
         }).catch( err => {
           alert('服务开小差啦，请稍等~');
@@ -164,7 +164,7 @@
         this.detailInfo = true ;
 
         orderDetail(order).then( res => {
-          console.log(res);
+          // console.log(res);
           if( res.data.status === '000000000'){
             this.viewImg = res.data.data.orderImageList.slice(3,4)[0].imageUrl ;
 
@@ -191,7 +191,7 @@
           this.reasonBox = true ;
 
         }
-        console.log(this.orderId ,  this.status , this.refuseReason);
+        // console.log(this.orderId ,  this.status , this.refuseReason);
 
 
       },
@@ -224,7 +224,7 @@
       submitReason(){
 
         this.refuseReason = this.reason ;
-        console.log(this.orderId ,  this.status , this.refuseReason ,2);
+        // console.log(this.orderId ,  this.status , this.refuseReason ,2);
 
         if(this.refuseReason === ''){
           this.$message({
@@ -253,7 +253,7 @@
         this.getList();
       },
       handleCurrentChange(val) {
-        console.log(val);
+        // console.log(val);
         this.currentPage = val ;
         this.getList();
       }

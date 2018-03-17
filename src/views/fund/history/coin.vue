@@ -96,7 +96,7 @@
       search(form){
         // this.getList(form);
 
-        console.log(form)
+        // console.log(form)
       },
 
       getList(){
@@ -112,11 +112,9 @@
       handleSizeChange(val) {
         this.pageSize = val
         // this.tableData.slice(this.currentPage-1,val);
-        console.log(`每页 ${val} 条`);
       },
       handleCurrentChange(val) {
         this.currentPage = val ;
-        console.log(`当前页: ${val}`);
       }
     }
 

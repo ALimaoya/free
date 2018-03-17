@@ -65,13 +65,7 @@ export function validName(str){
 }
 /*获取url参数*/
 export function getQueryString(url,name) {
-  // let reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
-  // let r = reg.test(url);
-  // // let context = '' ;
-  // if (reg.test(url)){
-  //   return decodeURI(RegExp.$2.replace(/\+/g, " "));
-  //
-  // }
+
   let obj = new Object();
   let url0 = url.split('?')[1];
   let urlArr = url0.split('&');

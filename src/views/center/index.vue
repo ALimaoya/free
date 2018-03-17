@@ -5,11 +5,14 @@
           <img class="photo" src="../../assets/imgs/logo.png" alt=""/>
           <p>
             <span>您好，{{userInfo.name}}</span>
-            <span>会员等级：{{ userInfo.vipLevel }}
+            <span v-if="userInfo.vipLevel">会员等级：{{ userInfo.vipLevel }}
               <img src="../../assets/imgs/VIP.png" alt="" />
             </span>
-            <span>会员到期时间：{{ userInfo.vip_time}}</span>
-            <el-button @click="vipPlus" type="primary" size="small" style="width:1rem">续费会员</el-button>
+            <span v-else>您还不是会员</span>
+            <span v-if="userInfo.vipLevel">会员到期时间：{{ userInfo.vip_time}}</span>
+            <el-button v-if="userInfo.vipLevel" @click="vipPlus" type="primary" size="small" style="width:1rem">续费会员</el-button>
+            <el-button v-else @click="vipPlus" type="primary" size="small" style="width:1rem">购买会员</el-button>
+
           </p>
         </li>
         <li>
@@ -177,7 +180,7 @@
           // const token = getToken() ;
           // console.log(token) ;
           this.$store.dispatch('GetInfo').then(res => {
-            console.log(res);
+            // console.log(res);
 
             if( res.data.status === '000000000'){
               this.attendant = this.$store.state.user.attendant ;
@@ -217,7 +220,6 @@
           //方案链接
           plan(url){
             window.open(url);
-            console.log(url)
           }
           // look(index){
           //   if(index!='2'){

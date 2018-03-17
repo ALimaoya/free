@@ -221,7 +221,7 @@
           formData.append('currentPage',this.currentPage);
           formData.append('pageSize',this.pageSize);
         getActivity(formData).then(res => {
-          console.log(res);
+          // console.log(res);
           if (res.data.status === '000000000') {
             this.tableData = res.data.data;
             this.totalPages = res.data.totalPages ;
@@ -248,17 +248,15 @@
       //修改指定试用发布内容
       editor(index ,order){
             this.$router.push({ path : '/publish/step1' ,query : { editor : '1', order : order }});
-        console.log(order) ;
+        // console.log(order) ;
 
       },
       reason(index ,word){
         this.reasonBox = true ;
         this.reasonDetail = word ;
-          console.log(index,word)
       },
       //上架/下架操作
       handleShelves(id , status  ){
-        console.log(id,status,);
         let formData = new FormData();
         formData.append('activityId',id);
         formData.append('activityStatus',status);
@@ -305,7 +303,6 @@
         }).catch( err =>{
           alert('服务器开小差啦，请稍等~')
         });
-        console.log(index)
       },
 
       //取消结算
@@ -336,13 +333,11 @@
       publish(index ,id){
         this.$router.push({ path : '/publish/step1' , query : { order : id } });
 
-        console.log(index)
       },
 
       //取消发布
       handleCancel(index, id){
         cancelActivity(id).then( res => {
-          console.log(res);
           if( res.data.status === '000000000'){
             this.$message({
               message : '已成功取消该活动发布，请稍后确认',

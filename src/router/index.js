@@ -12,6 +12,34 @@ export const constantRouterMap = [
   { path: '/login', component: () => import('@/views/login/index'), hidden: true },
   { path: '/changePsw', component: () => import('@/views/login/changePsw'), hidden: true },
   { path: '/register', component: () => import('@/views/register/index'), hidden: true },
+
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/index',
+    name: 'Center',
+    meta: { title: '商家中心', icon: 'center' },
+    children: [
+      {
+        path: 'index',
+        name: 'Home',
+        component: () => import('@/views/center/index'),
+        meta: { title: '商家首页', icon: 'index' }
+      },
+      {
+        path: 'shop',
+        name: 'Shop',
+        component: () => import('@/views/center/shop'),
+        meta: { title: '店铺管理', icon: 'shop' },
+
+      },
+      {
+        path: 'newshop',
+        name: 'Newshop',
+        component: () => import('@/views/center/newshop'),
+        meta: { title: '绑定店铺', icon: 'newshop' }
+      }]
+  },
   {
     path: '/publish',
     name: 'Publish',
@@ -42,35 +70,6 @@ export const constantRouterMap = [
       },
     ]
   },
-
-  {
-    path: '/',
-    component: Layout,
-    redirect: '/index',
-    name: 'Center',
-    meta: { title: '商家中心', icon: 'center' },
-    children: [
-      {
-        path: 'index',
-        name: 'Home',
-        component: () => import('@/views/center/index'),
-        meta: { title: '商家首页', icon: 'index' }
-      },
-      {
-        path: 'shop',
-        name: 'Shop',
-        component: () => import('@/views/center/shop'),
-        meta: { title: '店铺管理', icon: 'shop' },
-
-      },
-      {
-        path: 'newshop',
-        name: 'Newshop',
-        component: () => import('@/views/center/newshop'),
-        meta: { title: '绑定店铺', icon: 'newshop' }
-      }]
-  },
-
   {
     path: '/activity',
     component: Layout,

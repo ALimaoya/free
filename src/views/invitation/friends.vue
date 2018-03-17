@@ -58,7 +58,7 @@
             duration: 1500 ,
             center : true
           });
-          console.log(text);
+          // console.log(text);
         },
       }
     }

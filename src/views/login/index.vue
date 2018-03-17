@@ -147,7 +147,7 @@
             formData.append('captcha', this.loginForm.captcha);
             formData.append('token', this.userToken);
             this.$store.dispatch('Login', formData).then((res) => {
-              console.log(res);
+              // console.log(res);
               this.loading = false;
               if (res.data.status === '000000000') {
                 this.$router.push({
@@ -167,7 +167,7 @@
               this.loading = false
             })
           } else {
-            console.log('登录失败，请重试');
+            // console.log('登录失败，请重试');
             return false
           }
         })
@@ -176,7 +176,7 @@
       //更换验证码
       changeCaptcha() {
         getCaptcha().then(res => {
-          console.log(res);
+          // console.log(res);
           if (res.data.status === '000000000') {
             this.imgCode = res.data.data.image;
             this.userToken = res.data.data.token;

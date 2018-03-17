@@ -178,7 +178,7 @@
         //图片验证码
         changeCaptcha() {
           getCaptcha().then(res => {
-            console.log(res);
+            // console.log(res);
             if (res.data.status === '000000000') {
               this.imgCode = res.data.data.image;
               this.userToken = res.data.data.token;
@@ -206,7 +206,7 @@
           form.append('captcha', value);
           form.append('token', this.userToken);
           getMessageCode(this.RegForm.mobile, form).then(res => {
-            console.log(res);
+            // console.log(res);
             if (res.data.status === "000000000") {
               let num = 60;
               let timer = setInterval(() => {
@@ -243,8 +243,7 @@
               formData.append('password', this.RegForm.password);
               formData.append('captcha', this.RegForm.message);
               this.$store.dispatch('ChangePsw', formData).then(res => {
-                console.log(123)
-                console.log(res)
+                // console.log(res)
                 if (res.data.status === '000000000') {
                   this.loading = false;
                   this.$message({

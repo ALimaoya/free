@@ -225,7 +225,7 @@
         this.editor = this.$route.query.editor ;
         this.shopId = this.$route.query.id ;
         shopDetail(this.shopId).then( res => {
-          console.log(res);
+          // console.log(res);
           if( res.data.status === '000000000'){
             this.sizeForm = res.data.data ;
             this.type = this.sizeForm.shopUrl ;

@@ -108,11 +108,11 @@
         formdata.append('GT_createTime', this.searchForm.startDate)
         formdata.append('LT_createTime', this.searchForm.endDate)
         getCashList(formdata).then(res => {
-          console.log(res)
+          // console.log(res)
           if (res.data.status === '000000000') {
             this.tableData = res.data.data;
             this.moneyRecord = res.data
-            console.log(this.tableData)
+            // console.log(this.tableData)
           } else {
             this.$message({
               message: res.data.message,

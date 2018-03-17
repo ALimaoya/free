@@ -375,7 +375,7 @@
           dialogVisible: false ,
           isUploadShow: false,  // 是否显示upload组件
           supportWebp: false,   // 是否支持webp
-          imgUrl: 'http://192.168.0.210:8087/tryout/file/upload',   // 上传图片的域名
+          imgUrl: 'http://120.27.12.205:8005/tryout/file/upload',   // 上传图片的域名
           imageDomain : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/', //获取图片的外链域名
           // imageDomain : '"http://yabei.oss-cn-beijing.aliyuncs.com/',
           showImg : '',
@@ -465,7 +465,7 @@
           pickerOptions : {
             disabledDate(time){
               let curDate = (new Date()).getTime() ;
-              return time.getTime() < Date.now()  - 8.64e7 ;
+              return time.getTime() < Date.now()  - 2*24*3600*1000 ;
             }
           } ,
           editor : '',
@@ -575,7 +575,7 @@
                       })
                     }
                   }).catch( err => {
-                    console.log(err) ;
+                    // console.log(err) ;
                   })
                 }
             };
@@ -619,7 +619,7 @@
                     })
                   }
                 }).catch( err => {
-                  console.log(err) ;
+                  // console.log(err) ;
                 })
               }
             };
@@ -651,7 +651,7 @@
               // console.log(this.searchOptions);
             }
           }).catch( err => {
-            console.log(err);
+            // console.log(err);
           })
         },
 
@@ -842,7 +842,7 @@
           }else {
             this.goodsAmount[index] = ++value;
 
-            console.log(this.goodsAmount, this.form.activityCalendar, date);
+            // console.log(this.goodsAmount, this.form.activityCalendar, date);
 
           }
           this.getProgress(index, date);
@@ -974,7 +974,7 @@
                       })
                     }
                   }).catch( err => {
-                    console.log(err);
+                    // console.log(err);
                     alert('服务器开小差啦，请稍等~')
                   });
                 }else{

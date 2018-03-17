@@ -178,7 +178,7 @@
       //图片验证码
       changeCaptcha() {
         getCaptcha().then(res => {
-          console.log(res);
+          // console.log(res);
           if (res.data.status === '000000000') {
             this.imgCode = res.data.data.image;
             this.userToken = res.data.data.token;
@@ -206,7 +206,7 @@
         form.append('captcha', value);
         form.append('token', this.userToken);
         getMessageCode(this.RegForm.mobile, form).then(res => {
-          console.log(res);
+          // console.log(res);
           if (res.data.status === "000000000") {
             let num = 60;
             let timer = setInterval(() => {
@@ -297,6 +297,9 @@
       }
     }
   }
+  .codeBtn{
+    margin : 0.1rem 0 ;
+  }
 
   .messageWarn {
     font-size: 0.12rem;
@@ -304,5 +307,6 @@
     line-height: 1;
     padding-top: 0.04rem;
   }
+
 
 </style>

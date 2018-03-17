@@ -152,7 +152,7 @@
     methods: {
       getDepositMoney() {
         getDeposit().then(res => {
-          console.log(res);
+          // console.log(res);
           if (res.data.status === '000000000') {
             this.deposit = res.data.data;
           } else {
@@ -219,7 +219,6 @@
                   });
                   this.$router.push('/fund/history/cash')
                 } else {
-                  console.log(res.data.status ==='013001002');
                   if(res.data.status === '013001002'){
                     this.settingPsw = false
                   } else {
