@@ -61,9 +61,9 @@
       },
       mounted(){
         let order = this.$route.params.order ;
-        console.log(order);
+        // console.log(order);
         orderDetail(order).then( res => {
-          console.log(res);
+          // console.log(res);
           if(res.data.status === '000000000'){
             this.detailInfo = res.data.data
           }

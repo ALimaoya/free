@@ -24,7 +24,7 @@
       <el-table border :data="historyData.data" stripe style="width: 100%">
         <el-table-column prop="creatTime" label="充值时间"></el-table-column>
         <el-table-column prop="usefulMonth" label="开通时长(月)"></el-table-column>
-        <el-table-column prop="amount" label="充值金额"></el-table-column>
+        <el-table-column prop="amount" label="充值金额（元）"></el-table-column>
         <el-table-column prop="type" label="充值类型">
           <template slot-scope="scope">
             <span v-if="scope.row.type==1"  size="small">支付宝</span>
@@ -79,7 +79,7 @@
         getMember().then(res => {
           if (res.data.status === '000000000') {
             this.statusData.push(res.data.data);
-            console.log(this.statusData)
+            // console.log(this.statusData)
           } else {
             this.$message({
               message: res.data.message,

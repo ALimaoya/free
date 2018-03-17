@@ -14,7 +14,7 @@
         <td>设置密码后开启提现功能，可将平台资产转出</td>
         <td>
           <span class="set rightnow" @click="setting" v-if="!user.bindPayPassword">立即设置</span>
-          <span class="set " v-else @click="changeSetting('2')" style="width:1rem">修改支付密码</span>
+          <span class="set " v-else @click="changeSetting('2')" >修改</span>
         </td>
       </tr>
       <tr class="warn">
@@ -265,8 +265,8 @@
             }
             callback();
           } else if (rule.field === 'newPsw') {
-            console.log(this.changePsw)
-            console.log(validPassWord(this.changePsw.checkPsw))
+            // console.log(this.changePsw)
+            // console.log(validPassWord(this.changePsw.checkPsw))
             if (!validPassWord(this.changePsw.newPsw)) {
               callback(new Error('密码应为为8-16位的数字、字母组合'))
             } else {
@@ -455,7 +455,7 @@
       getThirdInfo() {
         getThirdAccount().then(res => {
           if (res.data.status === '000000000') {
-            console.log(res.data.data)
+            // console.log(res.data.data)
             this.user = res.data.data;
             this.contactType[0].value = this.user.qq;
             this.contactType[1].value = this.user.wechat;
@@ -529,7 +529,7 @@
 
       //设置支付密码提交
       onSubmitPsw(formName) {
-        console.log(formName)
+        // console.log(formName)
         this.$refs[formName].validate((valid) => {
           if (valid) {
             let formdata = new FormData();
@@ -568,7 +568,6 @@
         this.getNew = true;
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            console.log(1)
             let formdata = new FormData();
             formdata.append('password', this.changePsw.newPsw)
             formdata.append('captcha', this.changePsw.pswVerify)
@@ -651,7 +650,7 @@
             this.phoneVisible = false;
             this.newNumber = false;
             this.user.mobile = this.phoneForm.newnumber;
-            console.log(this.phoneForm);
+            // console.log(this.phoneForm);
             this.$refs[formName].resetFields();
 
           } else {
@@ -718,7 +717,7 @@
               this.oldNumber = false;
               this.newNumber = true;
               this.phonetitle = '设置新手机号码';
-              console.log(this.newNumber)
+              // console.log(this.newNumber)
             }, 500);
             this.$refs[formName].resetFields()
 

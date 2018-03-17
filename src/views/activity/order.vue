@@ -243,7 +243,7 @@
             this.tableData = res.data.data ;
             this.totalPages = res.data.totalPages ;
             this.totalElements = res.data.totalElements ;
-            console.log( this.totalElements)
+            // console.log( this.totalElements)
           }
         }).catch( err => {
           alert('服务开小差啦，请稍等~');
@@ -310,7 +310,6 @@
         this.getList();
       },
       handleCurrentChange(val) {
-        console.log(val)
         this.currentPage = val ;
         this.getList();
       }

@@ -140,7 +140,7 @@
             shopList(formData).then( res => {
 
               if(res.data.status === '000000000'){
-                console.log(res.data);
+                // console.log(res.data);
                 this.tableData = res.data.data ;
                 this.totalPages = res.data.totalPages ;
                 this.totalElements=res.data.totalElements;
@@ -150,7 +150,6 @@
             })
           },
           reason(index){
-            console.log(index);
             this.reasonBox = true ;
             this.reasonWord = this.tableData[index].reason;
           },
@@ -158,7 +157,6 @@
           //修改店铺信息
           change(index,id){
             this.$router.push({ path : '/newshop' , query : { editor : '1' ,id : id }}) ;
-            console.log(index);
           },
 
           handleSizeChange(val) {

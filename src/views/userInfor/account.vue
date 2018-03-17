@@ -56,7 +56,6 @@
   import ElForm from "element-ui/packages/form/src/form";
   import ElFormItem from "element-ui/packages/form/src/form-item";
   // import {getMobile} from '@/utils/auth'
-  // import {validatePhone,validateEmail,validateCode,validName} from '@/utils/validate'
   // import { setApilyAccount,getApilyInfo,getCaptcha } from "@/api/userInfor"
   import {
     getMobile
@@ -80,6 +79,16 @@
       ElForm,
     },
     data() {
+      const validateMobile = (rule, value ,callback) => {
+        if (value === '') {
+          callback(new Error('请输入手机号'))
+        } else {
+          if (!validatePhone(value)) {
+            callback(new Error('请输入正确的手机号'))
+          }
+        }
+        callback();
+      };
       const validateName = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入支付宝姓名'))
@@ -89,7 +98,7 @@
           }
         }
         callback();
-      }
+      };
       const validateAccount = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入支付宝账号'))
@@ -100,7 +109,7 @@
           }
         }
         callback();
-      }
+      };
       const validateYZM = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入验证码'))
@@ -128,7 +137,7 @@
         btntext: ' 获取验证码',
         title: '绑定支付宝',
         payRule: {
-          mobile : [{ required : true }],
+          mobile : [{ required : true , trigger : 'blur', validator : validateMobile }],
           name: [{
             validator: validateName,
             required: true,

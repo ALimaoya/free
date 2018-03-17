@@ -41,7 +41,7 @@ const user = {
             resolve(response);
           // }
         }).catch(error => {
-          console.log(error);
+          // console.log(error);
           reject(error)
         })
       })
@@ -55,7 +55,7 @@ const user = {
             commit('SET_TOKEN', token);
             resolve(response);
         }).catch(error => {
-          console.log(error);
+          // console.log(error);
           reject(error)
         })
       })
@@ -66,7 +66,7 @@ const user = {
         changePsw(form).then( response => {
           resolve(response);
         }).catch( error => {
-          console.log(error);
+          // console.log(error);
           reject(error);
         })
       })

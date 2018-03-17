@@ -143,7 +143,6 @@
     name: "buy-vip",
     data() {
       const validPsw = (rule, value, callback) => {
-        console.log(1)
         if (value === '') {
           callback(new Error('请输入支付密码'))
         } else {
@@ -211,7 +210,7 @@
         getMember().then(res => {
           if (res.data.status === '000000000') {
             this.statusData = res.data.data;
-            console.log(this.statusData)
+            // console.log(this.statusData)
           } else {
             this.$message({
               message: res.data.message,
@@ -241,10 +240,14 @@
       },
       getVipList() {
         getVipType().then(res => {
+          // console.log(res);
           if (res.data.status === '000000000') {
-            this.vipInfo = res.data.data;
-            this.choose = this.vipInfo[0];
-            console.log(this.vipInfo)
+            if( res.data.data.length){
+              this.vipInfo = res.data.data;
+              this.choose = this.vipInfo[0];
+              // console.log(this.vipInfo)
+            }
+
           } else {
             this.$message({
               message: res.data.message,
@@ -262,7 +265,7 @@
 
       //  支付提交
       submit() {
-        console.log(window.location.href);
+        // console.log(window.location.href);
         let _data = {
           payType: this.chooseWay - 0,
           vipId: this.choose.vipId,
@@ -423,9 +426,9 @@
       overflow: hidden;
       margin: 0.2rem auto;
       display : flex ;
-      justify-content: space-between;
+      /*justify-content: space-between;*/
       li {
-        margin-top: 20px;
+        margin : 0.2rem 0.6% 0 ;
         width: 32%;
         height: 1.7rem;
         border: 1px solid #D3D3D3;
@@ -459,7 +462,6 @@
           font-size: .2rem ;
           text-indent : 0.4rem ;
           color : #666 ;
-          /*font-family: '方正兰亭超细黑简体' ;*/
           font-family: '幼圆' ;
           font-weight : bold ;
           /*text-align : center ;*/
