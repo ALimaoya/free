@@ -38,7 +38,7 @@
           <li>
             <p>3、填写充值金额</p>
             <span class="rest">可用押金：
-              <b v-if="deposit.deposit">{{deposit.deposit}}元</b></span>
+              <b>{{deposit.deposit}}元</b></span>
             <el-form-item label="充值金额：" prop="money">
               <el-input v-model.trim="form.money" placeholder="请输入内容" size="small"></el-input>
               <span>每次充值不得少于1元</span>
@@ -124,7 +124,7 @@
           type: '1',
           money: ''
         },
-        deposit: '',
+        deposit: {},
         rule: {
           method: [{
             required: true,

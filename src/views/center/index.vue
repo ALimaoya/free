@@ -193,7 +193,7 @@
                 type : 'error'
               })
             }
-          }).catch(() => {
+          }).catch(error => {
             // this.$store.dispatch('LogOut').then(() => {
 
             //   this.$message.error('获取用户信息失败,请重新登录');
