@@ -36,7 +36,7 @@
       </el-form-item>
       <el-form-item label="试用品展示图：" labelWidth="1.3rem" prop="showImageUrl">
         <el-upload class="upload"  :action="imgUrl" :show-file-list="false" v-model.trim="form.showImageUrl"
-           :before-upload="beforeShowUpload" :headers="{ 'Content-Type': 'multipart/form-data'}">
+          :on-success="handleShowSuccess" :before-upload="beforeShowUpload" :headers="{ 'Content-Type': 'multipart/form-data'}">
           <img v-if="showImg"  :src="showImg" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
@@ -59,7 +59,8 @@
       </el-form-item>
       <el-form-item label="宝贝主图：" labelWidth="1.3rem" prop="mainImageUrl" >
         <el-upload  class="upload"  :action="imgUrl" v-model.trim="form.mainImageUrl"
-                    :show-file-list="false"  :before-upload="beforeMainUpload" >
+          :on-success="handleGoodsSuccess"   :show-file-list="false"  :before-upload="beforeMainUpload"
+          :headers="{ 'Content-Type': 'multipart/form-data'}">
           <img v-if="mainImg"  :src="mainImg" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
@@ -72,11 +73,11 @@
       </el-form-item>
       <el-form-item label="下单规格：" labelWidth="1.3rem" prop="buyProductQuantity">
         <el-input :maxlength="200" placeholder="任意拍" size="small" class="any"  v-model.trim="form.buyProductSpec"></el-input>
-        <span>拍：</span><el-input type="number" v-model.number="form.buyProductQuantity"  size="small" class="any anyNum"></el-input><span>件</span>
+        <span>拍：</span><el-input :readonly="readonly" type="number" v-model.number="form.buyProductQuantity"  size="small" class="any anyNum"></el-input><span>件</span>
         <span class="tips"><img src="../../assets/imgs/tips3.png" alt=""/>如需拍下指定规格，请务必填写此信息，如不填写默认任意拍一件；</span>
       </el-form-item>
       <el-form-item label="下单价格：" labelWidth="1.3rem" prop="buyProductAmount">
-        <el-input class="any" size="small" type="number" v-model.number="form.buyProductAmount" placeholder="请输入内容" ></el-input>元
+        <el-input class="any" size="small" type="number" :readonly="readonly" v-model.number="form.buyProductAmount" placeholder="请输入内容" ></el-input>元
       </el-form-item>
       <el-form-item label="商品运费：" labelWidth="1.3rem" prop="post">
         <div class="post">
@@ -109,7 +110,7 @@
           <el-option v-for="item in topOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
         <el-input class="key" placeholder="填写搜索关键词" :rule="{ message : '关键词不能为空', trigger : 'blur' , required : true }"
-                  :maxlength="100"     v-model.trim="keyItem.searchKeyword" size="small" ></el-input>
+                  :maxlength="100"  v-model.trim="keyItem.searchKeyword" size="small" ></el-input>
         <span>筛选条件：</span>
         <el-input :maxlength="100" class="key" placeholder="如价格区间、销量区间等" size="small" v-model.trim="keyItem.searchCondition" ></el-input>
         <el-button slot size="small" @click="deleteKey(keyItem)">删除</el-button>
@@ -170,7 +171,7 @@
                     <span class="dateNum">{{ item.num }}</span>
                     <div>
                       <input type="button" class="miniBtn" @click="setNum(1,goodsAmount[item.index],item.index,item.date)" value="-"/>
-                      <input v-model.number="goodsAmount[item.index]"  @blur="numIpt(goodsAmount[item.index],item.index,item.date)" placeholder="投放数量" />
+                      <input v-model.number="goodsAmount[item.index]" :disabled="readonlyKey"  @blur="numIpt(goodsAmount[item.index],item.index,item.date)" placeholder="投放数量" />
                       <input type="button" class="miniBtn" @click="setNum(2,goodsAmount[item.index],item.index,item.date)" value="+">
                     </div>
                   </div>
@@ -185,6 +186,8 @@
         </div>
         <span v-if="warn" class="daysWarn">投放数量请填写不小于1且不大于999的整数！</span>
         <span class="daysWarn" v-if="daysWarn">投放天数不得小于3！</span>
+        <span class="daysWarn" v-if="changeNum&& $route.query.payStatus === '1'">投放总量不得更改！</span>
+
         <div class="situation">投放情况：</div>
         <el-form-item>
           <table border="1" bordercolor="#dcdfe6" >
@@ -214,7 +217,8 @@
 <script>
     import ElFormItem from "element-ui/packages/form/src/form-item";
     import { validateURL ,getQueryString } from '@/utils/validate'
-    import { parseTime } from '@/utils'
+    import { parseTime} from '@/utils'
+    import { getToken } from '@/utils/auth'
     import ElRadioGroup from "element-ui/packages/radio/src/radio-group";
     import ElButtonGroup from "element-ui/packages/button/src/button-group";
     import { getCategory ,getShopList ,searchTypeList , uploadImage , publishActivity  , changeDetail , getJDetail} from "@/api/activity"
@@ -260,10 +264,14 @@
             if(value > 10000) {
               callback(new Error('商品件数不得超过10000'))
 
-            }else {
-              value = Math.floor(value);
-              callback();
             }
+            let reg = /^[0-9]*$/;
+            if(!reg.test(value)) {
+              callback(new Error('商品件数必须为整数'));
+
+            }
+            callback();
+
           }
         };
         const validMoney = (rule , value, callback ) => {
@@ -279,6 +287,12 @@
               callback();
 
           }
+        };
+        const validImg = (rule, value ,callback) =>{
+          if(this.form.showImageUrl === ''){
+            callback(new Error('请上传试用品展示图'))
+          }
+          callback();
         };
         return{
           type : '1',
@@ -391,8 +405,7 @@
             }
           ],
           dialogVisible: false ,
-          isUploadShow: false,  // 是否显示upload组件
-          supportWebp: false,   // 是否支持webp
+          // token : getToken() ,
           imgUrl: 'http://120.27.12.205:8005/tryout/file/upload',   // 上传图片的域名
           imageDomain : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/', //获取图片的外链域名
           // imageDomain : '"http://yabei.oss-cn-beijing.aliyuncs.com/',
@@ -426,7 +439,7 @@
             ],
             showImageUrl : [
               {
-                required : true ,message : '请上传试用品展示图',trigger : 'change'
+                required : true ,message : '请上传试用品展示图'
               }
             ],
             shopId : [
@@ -489,7 +502,10 @@
           editor : '',
           order : '',
           pickTime : '' ,
-
+          readonly : false ,
+          readonlyKey : false ,
+          totalNum : '',
+          changeNum : false
           // pickerOptions: {
           //   disabledDate(time) {
           //     return time.getTime() < Date.now();
@@ -504,6 +520,7 @@
 
         if(this.$route.query.order !== undefined ) {
           this.editor = this.$route.query.editor;
+
           let order = this.$route.query.order ;
             if( order !== undefined){
               this.order = order ;
@@ -511,6 +528,9 @@
                 // console.log(res);
                 if (res.data.status === '000000000') {
                   this.form = res.data.data;
+                  if(this.$route.query.payStatus === '1'){
+                    this.readonly = true ;
+                  }
                   if(this.form.productId !== '' ){
                     let num = 0 ;
                     this.resetSearch(this.form.platformType);
@@ -524,6 +544,7 @@
                       });
                     }
                     this.tryoutAmount = num ;
+                    this.totalNum = num ;
                     this.dayNum = this.goodsAmount.length ;
                     this.form['startTime'] = parseTime(new Date(this.form.activityStartTime).getTime() - 24*3600*1000) ;
                     this.setRate(this.form.startTime ,this.tryoutAmount,this.goodsAmount);
@@ -561,10 +582,12 @@
       methods: {
 
         //上传商品展示图
-        // handleShowSuccess(res, file) {
-        //   console.log(res,file)
-        //   this.form.showImageUrl = URL.createObjectURL(file.raw);
-        // },
+        handleShowSuccess(res, file) {
+          // console.log(res,file);
+          // this.form.showImageUrl = URL.createObjectURL(file.raw);
+          // this.$refs.showImageUrl.resetFields();
+          // console.log('sss')
+        },
 
         //判断需要上传的图片的尺寸
         beforeShowUpload(file) {
@@ -586,6 +609,12 @@
                     if(res.data.status === '000000000'){
                       _this.showImg = res.data.data.filePath ;
                       _this.form.showImageUrl = res.data.data.fileName ;
+                      _this.$refs['showImageUrl'].validate((valid) => {
+                        if (valid) {
+                          _this.$refs.showImageUrl.clearValidate();
+
+                        }
+                      });
                     }else{
                       _this.$message({
                         message : res.data.message ,
@@ -607,9 +636,11 @@
         },
 
         //上传商品主图
-        // handleGoodsSuccess(res, file) {
-        //   this.form.mainImageUrl = URL.createObjectURL(file.raw);
-        // },
+        handleGoodsSuccess(res, file) {
+          // this.form.mainImageUrl = URL.createObjectURL(file.raw);
+          // this.$refs.mainImageUrl.resetFields();
+
+        },
 
         beforeMainUpload(file) {
           let reader = new FileReader();
@@ -626,20 +657,42 @@
               }else{
                 let formData = new FormData();
                 formData.append('image',file);
-                uploadImage(formData).then( res => {
-                  if(res.data.status === '000000000'){
-                    _this.mainImg = res.data.data.filePath ;
-                    _this.form.mainImageUrl = res.data.data.fileName ;
-                  }else{
-                    _this.$message({
-                      message : res.data.message ,
-                      center : true ,
-                      type : 'error'
-                    })
-                  }
-                }).catch( err => {
-                  // console.log(err) ;
+                return new Promise((resolve, reject) => {
+                  uploadImage(formData).then(response => {
+                    _this.mainImg = response.data.data.filePath ;
+                    _this.form.mainImageUrl = response.data.data.fileName ;
+
+                    resolve(true)
+                  }).catch(err => {
+                    console.log(err);
+                    reject(false)
+                  })
                 })
+                // uploadImage(formData).then( res => {
+                //   if(res.data.status === '000000000'){
+                //     _this.mainImg = res.data.data.filePath ;
+                //     _this.form.mainImageUrl = res.data.data.fileName ;
+                //
+                //     _this.$refs.mainImageUrl.validateField((valid) => {
+                //       console.log('rew1');
+                //
+                //       if (valid) {
+                //         _this.$refs.mainImageUrl.resetFields();
+                //         console.log('rew')
+                //       }
+                //     });
+                //     // _this.$refs.mainImageUrl.clearValidate();
+                //
+                //   }else{
+                //     _this.$message({
+                //       message : res.data.message ,
+                //       center : true ,
+                //       type : 'error'
+                //     })
+                //   }
+                // }).catch( err => {
+                //   // console.log(err) ;
+                // })
               }
             };
 
@@ -706,7 +759,7 @@
                     _this.form.productDetail = JSON.stringify(data['data']['images']);
                   } else {
                     _this.$message({
-                      message : data['ret'][0] ,
+                      message : '请输入正确的商品链接' ,
                       center : true ,
                       type : 'error'
                     })
@@ -734,7 +787,7 @@
                     _this.form.productName = _data.item.title ;
                   }else{
                     _this.$message({
-                      message : data['ret'][0] ,
+                      message : '请输入正确的商品链接' ,
                       center : true ,
                       type : 'error'
                     })                  }
@@ -858,64 +911,82 @@
 
         //按钮修改投放数量
         setNum(type,value,index,date){
+          this.editorNum();
 
-          if(value === undefined){
-            value = 0 ;
-          }
+            if(value === undefined){
+              value = 0 ;
+            }
 
-          if(type === 1){
+            if(type === 1){
+
               if(value > 1 ){
-                if(value > 999 ){
-                  this.warn = true ;
-                  return false ;
-                }else{
-                  this.warn = false ;
-
-                }
+                // if(value > 999 ||!reg.test(value)){
+                //   this.warn = true ;
+                //   return false ;
+                // }else{
+                //   this.warn = false ;
+                //
+                // }
                 this.goodsAmount[index] = --value ;
               }else if(value == 1){
                 this.goodsAmount = this.goodsAmount.slice(0,index);
                 this.form.activityCalendar = this.form.activityCalendar.slice(0,index);
               }
-          }else {
-            if(value >= 999){
-              this.warn = true ;
-              return false ;
-            }else{
-              this.warn = false ;
+            }
+            else {
+              this.goodsAmount[index] = ++value;
+              //   // console.log(this.goodsAmount, this.form.activityCalendar, date);
 
             }
-            this.goodsAmount[index] = ++value;
 
-            // console.log(this.goodsAmount, this.form.activityCalendar, date);
+            this.getProgress(index, date, value);
 
-          }
-
-          this.getProgress(index, date);
 
         },
 
         //输入框修改投放数量
         numIpt(value,index,date){
-          if(value > 999 ){
-            this.warn = true ;
-            return false ;
-          } else{
+          this.editorNum();
 
-            this.warn = false ;
-
-          }
           if(value === ''|| value< 1 || isNaN(value)) {
-            this.goodsAmount = this.goodsAmount.slice(0, index);
-            this.form.activityCalendar = this.form.activityCalendar.slice(0, index);
+              this.goodsAmount = this.goodsAmount.slice(0, index);
+              this.form.activityCalendar = this.form.activityCalendar.slice(0, index);
 
-          }
+            }
 
-          this.getProgress(index,date);
+          this.getProgress(index, date , value);
+
 
 
         },
 
+        //判断投放总量设置投放数量是否可改
+        editorNum(){
+          if(this.$route.query.payStatus === '1'){
+            this.$nextTick(()=> {
+              let total = 0 ;
+
+              this.goodsAmount.forEach((i)=> {
+                if( i !== ''){
+                  total = total + i ;
+                }
+
+              });
+              if(this.totalNum !== total ){
+                this.readonlyKey = 'disabled' ;
+                this.changeNum = true ;
+              }else{
+                this.readonlyKey = false ;
+                this.changeNum = false ;
+
+              }
+
+            });
+
+
+
+              }
+        },
 
         oneEditor(index,date){
           if( index > this.goodsAmount.length -1 ){
@@ -958,11 +1029,10 @@
 
 
           if(this.form.activityStartTime === ''){
-            this.form.activityStartTime = new Date().toString();
+            this.form.activityStartTime = parseTime(new Date().getTime());
 
           }else{
             this.form.activityStartTime = this.form.activityCalendar[0].activityDate ;
-
           }
 
 
@@ -982,9 +1052,19 @@
               dayAmount = dayAmount + i ;
               arr.push(i);
             }
+
           });
-           if(this.goodsAmount.indexOf('') === -1){
-             this.warn = false ;
+
+          if(this.goodsAmount.indexOf('') === -1  ){
+            this.form.activityCalendar.forEach( i => {
+              let reg = /^[0-9]*$/ ;
+              if(i.tryoutQuantity <= 999 && reg.test(i.tryoutQuantity)){
+                this.warn = false ;
+              }else{
+                this.warn = true ;
+
+              }
+            })
            } else{
              this.warn = true ;
            }
@@ -1004,9 +1084,9 @@
 
           this.hasWarn();
           this.$refs[formName].validate((valid) => {
-            if (valid  && !this.warn && !this.daysWarn  ) {
-              delete this.form.startTime ;
+            if (valid  && !this.warn && !this.daysWarn && !this.changeNum  ) {
 
+              delete this.form.startTime ;
               if(index === 1){
                   publishActivity(this.form).then( res => {
                     if(res.data.status === '000000000'){

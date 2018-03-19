@@ -1,6 +1,6 @@
 <template>
   <div class="auditing">
-    <div class="title">支付成功，等待审核成功即可上线</div>
+    <div class="title">活动提交成功，等待审批通过即可上线</div>
     <img src="" alt="" />
     <div class="btn"><el-button type="primary" @click="goCenter">返回商家中心首页</el-button></div>
   </div>

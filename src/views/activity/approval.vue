@@ -68,7 +68,7 @@
       <el-table-column  label="操作">
         <template slot-scope="scope">
           <el-button class="check" type="text"  @click="detail(scope.$index,scope.row.activityId)">查看详情</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='4'||scope.row.status==='2' " @click="editor(scope.$index,scope.row.activityId)">修改</el-button>
+          <el-button class="check" type="text" v-if="scope.row.status==='4'||scope.row.status==='2' " @click="editor(scope.$index,scope.row.activityId, scope.row.payStatus)">修改</el-button>
           <el-button class="check" type="text" v-if="scope.row.status==='4'" @click="reason(scope.$index,scope.row.reason)">查看原因</el-button>
           <el-button class="check" type="text" v-if="scope.row.status==='5'" @click="handleShelves(scope.row.activityId,scope.row.status)">下架</el-button>
           <el-button class="check" type="text" v-if="scope.row.status==='6'&& scope.row.endTime > time" @click="handleShelves(scope.row.activityId,scope.row.status)">重新上架</el-button>
@@ -248,8 +248,8 @@
       },
 
       //修改指定试用发布内容
-      editor(index ,order){
-            this.$router.push({ path : '/publish/step1' ,query : { editor : '1', order : order }});
+      editor(index ,order ,payStatus){
+            this.$router.push({ path : '/publish/step1' ,query : { editor : '1', order : order ,payStatus : payStatus }});
         // console.log(order) ;
 
       },
@@ -257,6 +257,7 @@
         this.reasonBox = true ;
         this.reasonDetail = word ;
       },
+
       //上架/下架操作
       handleShelves(id , status  ){
         let formData = new FormData();

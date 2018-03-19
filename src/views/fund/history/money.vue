@@ -2,7 +2,7 @@
   <div class="money">
     <div class="title">
         <p>类型：</p>
-        <el-select v-model="searchForm.detail" placeholder="全部明细" size="small">
+        <el-select clearable v-model="searchForm.detail" placeholder="全部明细" size="small">
         <el-option
           v-for="item in options"
           :key="item.value"
@@ -101,8 +101,7 @@
                 value : '5'
               },
             ],
-            tableData : [
-            ],
+            tableData : [],
             currentPage : 1 ,
             pageSize : 10,
             type:"",

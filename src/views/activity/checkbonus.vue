@@ -44,14 +44,14 @@
       </el-pagination>
       <span class="totalItems">共{{ totalPages }}页，{{totalElements}}条记录</span>
     </div>
-    <el-dialog class="detailContent" width="80%" :visible.sync="detailInfo" center top="5%" title="领奖审核">
+    <el-dialog class="detailContent" width="50%" :visible.sync="detailInfo" center top="5%" title="领奖审核">
       <div>
         <ul>
           <p>领奖第一步：</p>
           <li class="imageShow">
             <dl v-for="(item,index) in imgList" :key="index">
               <dt>{{ imageType[item.type] }}</dt>
-              <dd><img :src=" imgUrl + item.imageUrl" alt="" /></dd>
+              <dd><img @click="getImg(item.imageUrl)" :src=" imageDomain + item.imageUrl" alt="" /></dd>
             </dl>
           </li>
         </ul>
@@ -67,7 +67,7 @@
           <li class="imageShow">
             <dl>
               <dt>订单截图</dt>
-              <dd><img :src=" imgUrl + orderImg" alt="" /></dd>
+              <dd><img @click="getImg(orderImg)" :src=" imageDomain + orderImg" alt="" /></dd>
             </dl>
           </li>
         </ul>
@@ -87,6 +87,9 @@
         <el-button type="info" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+    <div v-if="showImg" @click="close" class="mask">
+      <img :src=" imageDomain + bigImg" alt="" />
+    </div>
   </div>
 </template>
 
@@ -145,7 +148,8 @@
             reason : '' ,
             refuseReason : '' ,
             status : '' ,
-            imgUrl : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/',
+            imageDomain : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/',
+            showImg : false
             // imageDomain : 'http://yabei.oss-cn-beijing.aliyuncs.com/'
           }
       },
@@ -281,6 +285,15 @@
           this.reason = '' ;
         },
 
+        //查看图片详情
+        getImg(url){
+          this.showImg = true ;
+          this.bigImg = url ;
+        },
+        close(){
+          this.showImg = false ;
+        },
+
         handleSizeChange(val) {
           this.pageSize = val ;
           this.getList();
@@ -304,7 +317,7 @@
       height : 8rem ;
       overflow : hidden ;
       div{
-        height : 5rem ;
+        height : 4rem ;
         overflow-y:  auto ;
         overflow-x : hidden ;
         ul{
@@ -320,7 +333,7 @@
             flex-direction: row;
             justify-content: center;
             dl{
-              width : 40% ;
+              width : 30% ;
               dt{
                 text-align : center ;
                 height : 0.5rem ;
@@ -328,7 +341,7 @@
               }
               dd{
                 flex : 1 ;
-                height : 3rem ;
+                height : 1.5rem ;
                 display : flex ;
                 align-items: center;
                 justify-content: center;
@@ -345,6 +358,9 @@
       }
       .dialog-footer{
         height : 1rem ;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         .el-button {
           width : 0.9rem ;
           padding : 0;
@@ -373,6 +389,22 @@
         }
 
       }
+    .mask{
+      position : fixed ;
+      top : 0;
+      left : 0 ;
+      width : 100% ;
+      height : 100% ;
+      background : rgba(250,250,250,0.3) ;
+      display : flex ;
+      align-items: center;
+      justify-content: center;
+      z-index : 10000;
+      img{
+        max-height : 100% ;
+
+      }
+    }
 
   }
 </style>

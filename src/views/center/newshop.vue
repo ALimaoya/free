@@ -278,7 +278,8 @@
             formData.append('managerWechat' , this.sizeForm.managerWechat) ;
             formData.append('managerMobile' ,this.sizeForm.managerMobile) ;
             formData.append('shopUrl',this.sizeForm.shopUrl);
-
+            formData.append('platformType',this.sizeForm.platformType);
+            formData.append('captcha' ,this.sizeForm.captcha);
             if(type === '1'){
               formData.append('shopId',this.shopId);
               changeInfo(formData).then( res => {
@@ -301,8 +302,7 @@
                 alert('服务器开小差啦，请稍等~')
               })
             }else{
-              formData.append('platformType',this.sizeForm.platformType);
-              formData.append('captcha' ,this.sizeForm.captcha);
+
               shopInfo(formData).then( res => {
                 if(res.data.status === '000000000'){
                   this.$message({

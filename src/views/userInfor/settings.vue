@@ -44,8 +44,8 @@
         <!-- <td><span class="set" @click="changeSetting('手机')">修改</span></td> -->
       </tr>
     </table>
-    <!--设置密码-->
-    <el-dialog title="设置支付密码" :visible.sync="pswVisible" center :before-close="close">
+    <!--设置/修改支付密码-->
+    <el-dialog :title="pswType" :visible.sync="pswVisible" center :before-close="close">
       <el-form ref="pswForm" :model="pswForm" :rules="pswRule">
         <div class="phoneNum">
           <p class="tel">绑定手机号：</p>
@@ -64,7 +64,7 @@
           </span>
         </el-form-item>
         <el-form-item label="确认支付密码：" :label-width="pswWidth" prop="payPsw2">
-          <el-input class="pswIpt" :type="pwdType" placeholder="请再次支付输入密码" v-model.trim="pswForm.payPsw2"></el-input>
+          <el-input class="pswIpt" :type="pwdType" placeholder="请再次输入支付密码" v-model.trim="pswForm.payPsw2"></el-input>
           <div class="getNum" style="width : 1.5rem ;float : right ;"></div>
           <span class="show-pwd" @click="showPwd">
             <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
@@ -79,8 +79,8 @@
       </el-form>
     </el-dialog>
 
-    <!--修改登录/支付密码-->
-    <el-dialog :title="pswType" :visible.sync="dialogFormVisible" center :before-close="close">
+    <!--修改登录密码-->
+    <el-dialog title="修改登录密码" :visible.sync="dialogFormVisible" center :before-close="close">
       <el-form :model="changePsw" ref="changePsw" :rules="changePswRules">
         <div class="phoneNum">
           <p class="tel">绑定手机号：</p>
@@ -90,7 +90,6 @@
           <el-input placeholder="请输入验证码" v-model.trim="changePsw.pswVerify"></el-input>
           <el-button class="getNum" @click="getNum" :disabled="disabled">{{ btntext }}</el-button>
         </el-form-item>
-        <!--<div v-if="pswType==='修改登录密码'">-->
         <el-form-item label="新密码：" :label-width="formLabelWidth" prop="newPsw">
           <el-input class="pswIpt" :type="pwdType" placeholder="请输入新密码" v-model.trim="changePsw.newPsw"></el-input>
           <div class="getNum" style="width : 1.1rem ;float : right ;"></div>
@@ -109,7 +108,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="onSubmit('changePsw',pswType)">确 定</el-button>
+        <el-button type="primary" @click="onSubmit('changePsw')">确 定</el-button>
         <el-button @click="cancel('changePsw')">取 消</el-button>
       </div>
       <!--</div>-->
@@ -326,7 +325,7 @@
             required: true
           }],
         },
-        pswType: '',
+        pswType: '设置登录密码',
         changePsw: {
           pswVerify: '',
           newPsw: '',
@@ -493,13 +492,12 @@
 
       //修改密码/绑定手机号/联系方式
       changeSetting(index) {
-        if (index === '1' || index === '2') {
+        if (index === '1' ) {
           this.dialogFormVisible = true;
-          if (index === '1') {
-            this.pswType = '修改登录密码'
-          } else if (index === '2') {
-            this.pswType = '修改支付密码'
-          }
+
+        }else if (index === '2') {
+          this.pswVisible = true ;
+          this.pswType = '修改支付密码'
         } else if (index === '手机') {
           this.oldNumber = true;
           this.phoneVisible = true;
@@ -527,7 +525,7 @@
         // this.changeBox =true ;
       },
 
-      //设置支付密码提交
+      //设置/修改支付密码提交
       onSubmitPsw(formName) {
         // console.log(formName)
         this.$refs[formName].validate((valid) => {
@@ -545,6 +543,7 @@
                 this.$refs[formName].resetFields();
                 this.getThirdInfo();
                 this.pswVisible = false;
+                this.getNew = true ;
               } else {
                 this.$message({
                   message: res.data.message,
@@ -564,28 +563,29 @@
       },
 
       //提交密码修改
-      onSubmit(formName, type) {
+      onSubmit(formName) {
         this.getNew = true;
         this.$refs[formName].validate((valid) => {
           if (valid) {
             let formdata = new FormData();
-            formdata.append('password', this.changePsw.newPsw)
-            formdata.append('captcha', this.changePsw.pswVerify)
-            editLoginPsw(formdata).then(res => {
-              if (res.data.status == "000000000") {
-                this.$store.dispatch('LogOut').then(() => {
-                  location.reload()
-                })
-              } else {
-                this.$message({
-                  message: res.data.message,
-                  type: 'error',
-                  center: true
-                });
-              }
-            }).catch(err => {
-              alert('服务器开小差啦，请稍等~')
-            })
+            formdata.append('password', this.changePsw.newPsw);
+            formdata.append('captcha', this.changePsw.pswVerify);
+              editLoginPsw(formdata).then(res => {
+                if (res.data.status == "000000000") {
+                  this.$store.dispatch('LogOut').then(() => {
+                    location.reload()
+                  })
+                } else {
+                  this.$message({
+                    message: res.data.message,
+                    type: 'error',
+                    center: true
+                  });
+                }
+              }).catch(err => {
+                alert('服务器开小差啦，请稍等~')
+              })
+
           }
 
         });

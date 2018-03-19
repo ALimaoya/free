@@ -76,17 +76,22 @@ const user = {
       // console.log(token)
       return new Promise((resolve, reject) => {
         getInfo().then(response => {
-          const data = response.data.data ;
-          // console.log(response.data);
-          const userInfo = data.userinfo ;
-          const attendant = data.attendant;
-          const wallet = data.wallet;
-          const pub_plans = data.pub_plans;
-          commit('SET_UserInfo', userInfo);
-          commit('SET_Attendant', attendant);
-          commit('SET_Wallet',wallet);
-          commit('SET_Pub_plans',pub_plans);
-          resolve(response)
+          if(response.data.status === '000000000'){
+            const data = response.data.data ;
+            const userInfo = data.userinfo ;
+            const attendant = data.attendant;
+            const wallet = data.wallet;
+            const pub_plans = data.pub_plans;
+            commit('SET_UserInfo', userInfo);
+            commit('SET_Attendant', attendant);
+            commit('SET_Wallet',wallet);
+            commit('SET_Pub_plans',pub_plans);
+            resolve(response)
+
+          }else{
+            resolve(response)
+          }
+
         }).catch(error => {
 
           reject(error)

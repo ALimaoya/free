@@ -45,11 +45,11 @@
       <span class="totalItems">共{{ totalPages }}页，{{totalElements}}条记录</span>
     </div>
 
-    <el-dialog width="60%" :visible.sync="detailInfo" center top="3%" title="评价审核">
+    <el-dialog width="50%" :visible.sync="detailInfo" center top="3%" title="评价审核">
       <dl>
         <dt>评价截图</dt>
         <dd>
-          <img :src=" imageDomain + viewImg" alt="" />
+          <img @click="getImg(viewImg)" :src=" imageDomain + viewImg" alt="" />
         </dd>
       </dl>
       <div slot="footer" class="dialog-footer">
@@ -66,6 +66,9 @@
         <el-button type="info" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+    <div v-if="showImg" @click="close" class="mask">
+      <img :src=" imageDomain + bigImg" alt="" />
+    </div>
   </div>
 </template>
 
@@ -114,6 +117,7 @@
         totalElements : 0 ,
         viewImg : '' ,
         detailInfo : false ,
+        showImg : false ,
         imageDomain : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/' ,
         // imageDomain : 'http://yabei.oss-cn-beijing.aliyuncs.com/',
         orderId : '' ,
@@ -249,6 +253,15 @@
 
       },
 
+      //查看图片详情
+      getImg(url){
+        this.showImg = true ;
+        this.bigImg = url ;
+      },
+      close(){
+        this.showImg = false ;
+      },
+
       //关闭窗口
       cancel(){
         this.reasonBox = false ;
@@ -280,7 +293,7 @@
     .el-dialog {
 
       dl{
-        width : 50% ;
+        width : 40% ;
         margin : 0 auto ;
         dt{
           width : 100% ;
@@ -318,5 +331,22 @@
       }
 
     }
+    .mask{
+      position : fixed ;
+      top : 0;
+      left : 0 ;
+      width : 100% ;
+      height : 100% ;
+      background : rgba(250,250,250,0.3) ;
+      display : flex ;
+      align-items: center;
+      justify-content: center;
+      z-index : 10000;
+      img{
+        max-height : 100% ;
+
+      }
+    }
+
   }
 </style>
