@@ -37,7 +37,8 @@
       </el-table-column>
       <el-table-column prop="changeType" label="交易类型">
           <template slot-scope="scope">
-              {{options[scope.row.changeType].label}}
+            <span v-if="scope.row.changeType=== '7'">支付试用店铺</span>
+            <span v-else>{{options[scope.row.changeType].label}} </span>
           </template>
       </el-table-column>
       <el-table-column prop="amount" label="金额(元)"></el-table-column>
@@ -100,6 +101,10 @@
                 label : '购买会员',
                 value : '5'
               },
+              {
+                label: '支付试用店铺',
+                value : '7'
+              }
             ],
             tableData : [],
             currentPage : 1 ,

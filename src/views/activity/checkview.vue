@@ -2,7 +2,7 @@
   <div class="checkbonus">
     <h1>评价审核</h1>
     <div class="search">
-      <el-select size="small"  v-model="order.platformType" filterable placeholder="请选择试用平台">
+      <el-select size="small" clearable v-model="order.platformType" filterable placeholder="请选择试用平台">
         <el-option
           v-for="item in platformOptions"
           :key="item.value"

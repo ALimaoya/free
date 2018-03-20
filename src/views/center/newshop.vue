@@ -161,7 +161,7 @@
         tips : true ,
         editor : '',
         sizeForm : {
-          platformType : '',
+          platformType : '1',
           shopUrl : '',
           shopName: '',
           messageId : '',
@@ -249,14 +249,16 @@
           alert('服务器开小差啦，请稍等~')
         })
 
+      }else{
+        shopCaptcha().then( res => {
+          if(res.data.status === '000000000'){
+            this.sizeForm.captcha = res.data.data ;
+          }
+        }).catch( err => {
+          alert('服务器开小差啦，请稍等~')
+        })
       }
-      shopCaptcha().then( res => {
-        if(res.data.status === '000000000'){
-          this.sizeForm.captcha = res.data.data ;
-        }
-      }).catch( err => {
-        alert('服务器开小差啦，请稍等~')
-      })
+
     },
     methods : {
       copy(text,event){

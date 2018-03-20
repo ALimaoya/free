@@ -55,6 +55,6 @@ service.interceptors.response.use(
     // }
     // // return response
   }
-)
+);
 
 export default service

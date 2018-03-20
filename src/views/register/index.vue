@@ -49,7 +49,13 @@
           注册
         </el-button>
       </el-form-item>
+      <div class="goOther">
+        <router-link class="toRes" to="/login">去登录</router-link>
+        <router-link class="toPsw" to="/changePsw">忘记密码？</router-link>
+      </div>
     </el-form>
+
+
   </div>
 </template>
 

@@ -158,7 +158,7 @@
       },
       getDepositMoney() {
         getDeposit().then(res => {
-          if (res.data.status == '000000000') {
+          if (res.data.status === '000000000') {
             this.deposit = res.data.data
           }
         }).catch(err => {
@@ -169,17 +169,17 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             let form = new FormData();
-            form.append("amount", this.form.money)
-            form.append("returnUrl", window.location.href)
+            form.append("amount", this.form.money);
+            form.append("returnUrl", window.location.href);
             handleRecharge(form).then(res => {
-              if (res.data.status == '000000000') {
+              if (res.data.status === '000000000') {
                 this.dialogVisible=true;
                 const _div = document.createElement('div');
-                _div.setAttribute('id', 'myForm')
+                _div.setAttribute('id', 'myForm');
                 _div.innerHTML = res.data.data;
                 document.body.appendChild(_div);
                 document.getElementById('myForm').getElementsByTagName("form")[0].setAttribute('target',
-                  "_blank")
+                  "_blank");
                 document.getElementById('myForm').getElementsByTagName("form")[0].submit()
               }
               this.form.money = "";

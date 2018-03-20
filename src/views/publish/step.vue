@@ -39,6 +39,7 @@
           :on-success="handleShowSuccess" :before-upload="beforeShowUpload" :headers="{ 'Content-Type': 'multipart/form-data'}">
           <img v-if="showImg"  :src="showImg" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          <span class="imgWarn" v-if="showImgWarn">请上传试用品展示图</span>
         </el-upload>
         <ul class="require">
           <span>展示图要求：</span>
@@ -63,6 +64,7 @@
           :headers="{ 'Content-Type': 'multipart/form-data'}">
           <img v-if="mainImg"  :src="mainImg" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          <span class="imgWarn" v-if="goodsImgWarn">请上传宝贝主图</span>
         </el-upload>
         <ul class="require">
           <span>展示图要求：</span>
@@ -211,6 +213,13 @@
       </el-form-item>
     <!--</el-form-item>-->
     </el-form>
+    <el-dialog  title="提示" top="20%" :visible.sync="activityVisible" width="30%" center
+      :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+      <p>您还没有绑定店铺，请先前往绑定店铺</p>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="goNewShop">绑定新店铺</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -222,6 +231,7 @@
     import ElRadioGroup from "element-ui/packages/radio/src/radio-group";
     import ElButtonGroup from "element-ui/packages/button/src/button-group";
     import { getCategory ,getShopList ,searchTypeList , uploadImage , publishActivity  , changeDetail , getJDetail} from "@/api/activity"
+    import { shopList } from "@/api/shop"
     import $ from '../../../static/js/jquery-3.3.1.min.js'
 
     export default {
@@ -288,12 +298,7 @@
 
           }
         };
-        const validImg = (rule, value ,callback) =>{
-          if(this.form.showImageUrl === ''){
-            callback(new Error('请上传试用品展示图'))
-          }
-          callback();
-        };
+
         return{
           type : '1',
           form : {
@@ -411,6 +416,8 @@
           // imageDomain : '"http://yabei.oss-cn-beijing.aliyuncs.com/',
           showImg : '',
           mainImg : '',
+          showImgWarn : false ,
+          goodsImgWarn : false ,
           formRule : {
             // type : [
             //   {
@@ -437,14 +444,14 @@
                 required : true ,message : '请选择试用品类型'
               }
             ],
-            showImageUrl : [
-              {
-                required : true ,message : '请上传试用品展示图'
-              }
-            ],
+            // showImageUrl : [
+            //   {
+            //     required : true ,message : '请上传试用品展示图'
+            //   }
+            // ],
             shopId : [
               {
-                required : true ,message : '请选择店铺'
+                required : true ,message : '请选择店铺' , trigger : 'change'
               }
             ],
             productUrl : [
@@ -452,11 +459,11 @@
                 required : true ,validator : validLink ,trigger : 'blur'
               }
             ],
-            mainImageUrl : [
-              {
-                required : true ,message : '请上传宝贝主图' ,trigger : 'change'
-              }
-            ],
+            // mainImageUrl : [
+            //   {
+            //     required : true ,message : '请上传宝贝主图' ,trigger : 'change'
+            //   }
+            // ],
             buyProductQuantity : [
               {
                 required : true ,validator : validNum ,trigger : 'blur'
@@ -467,11 +474,7 @@
                 required : true , validator : validMoney ,trigger : 'blur'
               }
             ],
-            // startTime : [
-            //   {
-            //     required : true ,message : '请选择活动时间'
-            //   }
-            // ]
+
           },
           choosePlat : '',
           week : [
@@ -505,7 +508,8 @@
           readonly : false ,
           readonlyKey : false ,
           totalNum : '',
-          changeNum : false
+          changeNum : false ,
+          activityVisible : false
           // pickerOptions: {
           //   disabledDate(time) {
           //     return time.getTime() < Date.now();
@@ -517,65 +521,82 @@
 
       mounted(){
         // this.form = this.$store.state.publishInfo.publishForm ;
+        shopList().then( res => {
+          if(res.data.status === '000000000'){
+            if(res.data.data.length){
+              if(this.$route.query.order !== undefined ) {
+                this.editor = this.$route.query.editor;
 
-        if(this.$route.query.order !== undefined ) {
-          this.editor = this.$route.query.editor;
+                let order = this.$route.query.order ;
+                if( order !== undefined){
+                  this.order = order ;
+                  this.$store.dispatch('getPublishDetail',order).then( res => {
+                    // console.log(res);
+                    if (res.data.status === '000000000') {
+                      this.form = res.data.data;
+                      if(this.$route.query.payStatus === '1'){
+                        this.readonly = true ;
+                      }
+                      if(this.form.productId !== '' ){
+                        let num = 0 ;
+                        this.resetSearch(this.form.platformType);
+                        this.getType(this.form.platformType);
+                        this.mainImg = this.imageDomain + this.form.mainImageUrl ;
+                        this.showImg = this.imageDomain + this.form.showImageUrl ;
+                        if(this.form.activityCalendar.length !== 0){
+                          this.form.activityCalendar.forEach((i) => {
+                            num = num + i.tryoutQuantity ;
+                            this.goodsAmount.push(i.tryoutQuantity);
+                          });
+                        }
+                        this.tryoutAmount = num ;
+                        this.totalNum = num ;
+                        this.dayNum = this.goodsAmount.length ;
+                        this.form['startTime'] = parseTime(new Date(this.form.activityStartTime).getTime() - 24*3600*1000) ;
+                        this.setRate(this.form.startTime ,this.tryoutAmount,this.goodsAmount);
 
-          let order = this.$route.query.order ;
-            if( order !== undefined){
-              this.order = order ;
-              this.$store.dispatch('getPublishDetail',order).then( res => {
-                // console.log(res);
-                if (res.data.status === '000000000') {
-                  this.form = res.data.data;
-                  if(this.$route.query.payStatus === '1'){
-                    this.readonly = true ;
-                  }
-                  if(this.form.productId !== '' ){
-                    let num = 0 ;
-                    this.resetSearch(this.form.platformType);
-                    this.getType(this.form.platformType);
-                    this.mainImg = this.imageDomain + this.form.mainImageUrl ;
-                    this.showImg = this.imageDomain + this.form.showImageUrl ;
-                    if(this.form.activityCalendar.length !== 0){
-                      this.form.activityCalendar.forEach((i) => {
-                        num = num + i.tryoutQuantity ;
-                        this.goodsAmount.push(i.tryoutQuantity);
-                      });
+                      }else{
+                        this.setRate();
+                      }
+
+                    } else {
+                      this.$message({
+                        message: res.data.message,
+                        center: true,
+                        type: 'error'
+                      })
                     }
-                    this.tryoutAmount = num ;
-                    this.totalNum = num ;
-                    this.dayNum = this.goodsAmount.length ;
-                    this.form['startTime'] = parseTime(new Date(this.form.activityStartTime).getTime() - 24*3600*1000) ;
-                    this.setRate(this.form.startTime ,this.tryoutAmount,this.goodsAmount);
-
-                  }else{
-                    this.setRate();
-                  }
-
-                } else {
-                  this.$message({
-                    message: res.data.message,
-                    center: true,
-                    type: 'error'
+                  }).catch( err => {
+                    alert('服务器开小差啦，请稍等~')
                   })
                 }
+                // }
+              }else{
+                this.resetSearch('1');
+                this.setRate();
+              }
+              getCategory().then( res => {
+                if(res.data.status === '000000000'){
+                  this.options = res.data.data ;
+                }
               }).catch( err => {
-                  alert('服务器开小差啦，请稍等~')
-              })
+                alert('服务器开小差啦，请稍等~')
+              });
+            }else{
+              this.activityVisible = true ;
             }
-          // }
-        }else{
-          this.resetSearch('1');
-          this.setRate();
-        }
-        getCategory().then( res => {
-          if(res.data.status === '000000000'){
-            this.options = res.data.data ;
+          }else{
+            this.$message({
+              message : res.data.message ,
+              center : true ,
+              type : 'error'
+
+            })
           }
         }).catch( err => {
           alert('服务器开小差啦，请稍等~')
         });
+
 
       },
 
@@ -609,20 +630,27 @@
                     if(res.data.status === '000000000'){
                       _this.showImg = res.data.data.filePath ;
                       _this.form.showImageUrl = res.data.data.fileName ;
-                      _this.$refs['showImageUrl'].validate((valid) => {
-                        if (valid) {
-                          _this.$refs.showImageUrl.clearValidate();
-
-                        }
-                      });
+                      _this.showImgWarn = false ;
+                      // _this.$refs['showImageUrl'].validate((valid) => {
+                      //   if (valid) {
+                      //     _this.$refs.showImageUrl.clearValidate();
+                      //
+                      //   }
+                      // });
                     }else{
                       _this.$message({
                         message : res.data.message ,
                         center : true ,
                         type : 'error'
-                      })
+                      });
+
+                    _this.showImgWarn = false ;
+
                     }
                   }).catch( err => {
+
+                    _this.showImgWarn = false ;
+
                     // console.log(err) ;
                   })
                 }
@@ -657,42 +685,25 @@
               }else{
                 let formData = new FormData();
                 formData.append('image',file);
-                return new Promise((resolve, reject) => {
-                  uploadImage(formData).then(response => {
-                    _this.mainImg = response.data.data.filePath ;
-                    _this.form.mainImageUrl = response.data.data.fileName ;
+                uploadImage(formData).then( res => {
+                  if(res.data.status === '000000000'){
+                    _this.mainImg = res.data.data.filePath ;
+                    _this.form.mainImageUrl = res.data.data.fileName ;
+                    _this.goodsImgWarn = false ;
+                  }else{
+                    _this.$message({
+                      message : res.data.message ,
+                      center : true ,
+                      type : 'error'
+                    }) ;
+                    _this.goodsImgWarn = true ;
 
-                    resolve(true)
-                  }).catch(err => {
-                    console.log(err);
-                    reject(false)
-                  })
+                  }
+                }).catch( err => {
+                  // console.log(err) ;
+                  _this.goodsImgWarn = true ;
+
                 })
-                // uploadImage(formData).then( res => {
-                //   if(res.data.status === '000000000'){
-                //     _this.mainImg = res.data.data.filePath ;
-                //     _this.form.mainImageUrl = res.data.data.fileName ;
-                //
-                //     _this.$refs.mainImageUrl.validateField((valid) => {
-                //       console.log('rew1');
-                //
-                //       if (valid) {
-                //         _this.$refs.mainImageUrl.resetFields();
-                //         console.log('rew')
-                //       }
-                //     });
-                //     // _this.$refs.mainImageUrl.clearValidate();
-                //
-                //   }else{
-                //     _this.$message({
-                //       message : res.data.message ,
-                //       center : true ,
-                //       type : 'error'
-                //     })
-                //   }
-                // }).catch( err => {
-                //   // console.log(err) ;
-                // })
               }
             };
 
@@ -701,11 +712,10 @@
           reader.readAsDataURL(file);
           },
 
-
-
         //获取对应平台店铺列表
         resetSearch(value){
           this.choosePlat = this.platForm[value-1].name ;
+          this.form.shopId = '';
           getShopList(value).then( res => {
             if( res.data.status === '000000000'){
 
@@ -827,14 +837,6 @@
             })
           }
         },
-
-        // cancelWarn(value,key){
-        //   if(value !==''){
-        //     this.appKey = '' ;
-        //   }else{
-        //     this.appKey = key ;
-        //   }
-        // },
 
         //转化率日历
         setRate(value,total,dayItem ){
@@ -1025,11 +1027,8 @@
         getProgress(index,date){
           this.allEditor(index);
           this.oneEditor(index,date);
-
-
-
           if(this.form.activityStartTime === ''){
-            this.form.activityStartTime = parseTime(new Date().getTime());
+            this.form.activityStartTime = parseTime(new Date().getTime() + 24*3600*1000);
 
           }else{
             this.form.activityStartTime = this.form.activityCalendar[0].activityDate ;
@@ -1080,11 +1079,21 @@
 
         //提交试用信息
         onSubmit(formName,index){
-          console.log(this.form);
+          console.log(this.form ,this.form.activityCalendar[0]);
+          if(this.form.showImageUrl === ''){
+            this.showImgWarn = true ;
+          }else{
+            this.showImgWarn = false ;
+          }
+          if(this.form.mainImageUrl === ''){
+            this.goodsImgWarn = true ;
+          }else{
+            this.goodsImgWarn = false ;
 
+          }
           this.hasWarn();
           this.$refs[formName].validate((valid) => {
-            if (valid  && !this.warn && !this.daysWarn && !this.changeNum  ) {
+            if (valid  && !this.warn && !this.daysWarn && !this.changeNum && !this.showImgWarn && !this.goodsImgWarn) {
 
               delete this.form.startTime ;
               if(index === 1){
@@ -1147,7 +1156,10 @@
           })
         },
 
-
+      //绑定店铺
+        goNewShop(){
+          this.$router.push('/newshop')
+        },
 
       // 跳转到试用管理
         goTryout(){
@@ -1181,10 +1193,21 @@
         width : 1.6rem ;
         float : left ;
         margin-top : 0.2rem ;
+        position : relative ;
+
         .avatar {
           width: 1.46rem;
           height: 1.46rem;
           display: block;
+        }
+        .imgWarn{
+          color: #f56c6c;
+          font-size: 12px;
+          line-height: 1;
+          padding-top: 4px;
+          position: absolute;
+          top: 100%;
+          left: 0;
         }
       }
       .require{
@@ -1466,6 +1489,17 @@
       display : flex ;
       justify-content: center;
       margin-top : 0.5rem ;
+    }
+    .el-dialog{
+      p{
+        text-align : center ;
+        line-height : 0.4rem ;
+        font-size : 0.16rem ;
+      }
+      .el-button{
+        margin : 0.1rem  auto;
+
+      }
     }
   }
 </style>

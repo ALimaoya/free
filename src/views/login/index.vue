@@ -156,17 +156,20 @@
                 setMobile( this.loginForm.mobile)
               } else {
                 this.examine = true;
-                  this.$message({
+                this.changeCaptcha();
+                this.$message({
                     message: res.data.message,
                     type: 'error',
                     center: 'true'
                   })
                 }
             }).catch(err => {
-
+              this.changeCaptcha();
               this.loading = false
             })
           } else {
+            this.changeCaptcha();
+
             // console.log('登录失败，请重试');
             return false
           }
@@ -192,17 +195,6 @@
 
 <style rel="stylesheet/scss" lang="scss">
   @import "src/styles/login.scss";
-  .goOther {
-    margin-top: 7px;
-    font-size: 12px;
-    color: #fefefe;
-    .toRes {
-      float: left;
-    }
-    .toPsw {
-      float: right;
-    }
-  }
 
   .svg-container {
     img {

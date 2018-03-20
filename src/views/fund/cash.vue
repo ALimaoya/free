@@ -20,14 +20,14 @@
         <li>
           <el-form-item prop="money">
             <p class="tag">提现金额：</p>
-            <el-input placeholder="请输入提现金额" type ="number" auto-complete="off" v-model.number="payCash.money" size="small"></el-input>&nbsp;&nbsp;元
+            <el-input placeholder="请输入提现金额" type ="number" auto-complete="off" v-model.number="payCash.money" size="small" ></el-input>&nbsp;&nbsp;元
           </el-form-item>
           <span class="note">单次最少提现100元，提现操作平台将收取{{deposit.rate*100}}%的手续费</span>
           <span class="note">预计3-5个工作日内（国家法定节假日和双休日顺延）平台完成提现操作,到账时间以各大银行为准。</span>
         </li>
         <li>
           <p class="tag">实际到账金额：</p>
-          <span v-if="payCash.money!=0">{{payCash.money-(payCash.money*deposit.rate)}}元</span>
+          <span v-if="payCash.money!=0">{{ realityMoney }}元</span>
           <span class="explain">（实际提现金额*{{100-deposit.rate*100}}%，例如最低取现100元，实际到账{{100-100*deposit.rate}}元）</span>
         </li>
         <li>
@@ -145,6 +145,14 @@
         },
         settingPsw: true,
         pwdType: 'password',
+        // realityMoney : ''
+      }
+    },
+    computed : {
+      realityMoney: function(){
+        let money = this.payCash.money-(this.payCash.money * this.deposit.rate) ;
+        // money = money.toFixed(2) ;
+        return money.toFixed(2) ;
       }
     },
     mounted() {

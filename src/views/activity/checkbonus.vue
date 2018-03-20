@@ -2,7 +2,7 @@
   <div class="checkbonus">
     <h1>领奖审核</h1>
     <div class="search">
-      <el-select size="small"  v-model="order.platformType" filterable placeholder="请选择试用平台">
+      <el-select size="small"  v-model="order.platformType" clearable filterable placeholder="请选择试用平台">
         <el-option
           v-for="item in platformOptions"
           :key="item.value"
@@ -55,15 +55,15 @@
             </dl>
           </li>
         </ul>
+        <!--<ul>-->
+          <!--<p>领奖第二步：</p>-->
+          <!--<li v-for="(item ,index) in goodsShare">-->
+            <!--<span>宝贝分享{{(index + 1)*1}}：</span>-->
+            <!--<span>{{ item.shareUrl }}</span>-->
+          <!--</li>-->
+        <!--</ul>-->
         <ul>
           <p>领奖第二步：</p>
-          <li v-for="(item ,index) in goodsShare">
-            <span>宝贝分享{{(index + 1)*1}}：</span>
-            <span>{{ item.shareUrl }}</span>
-          </li>
-        </ul>
-        <ul>
-          <p>领奖第三步：</p>
           <li class="imageShow">
             <dl>
               <dt>订单截图</dt>
@@ -142,7 +142,7 @@
             reasonBox : false ,
             imgList : [] ,
             imageType : [ '' , '商品收藏截图' , '店铺收藏截图'] ,
-            goodsShare : [] ,
+            // goodsShare : [] ,
             orderImg : '' ,
             orderId : '' ,
             reason : '' ,
@@ -197,7 +197,7 @@
             if( res.data.status === '000000000'){
               this.imgList = res.data.data.orderImageList.slice(0,2) ;
               this.orderImg = res.data.data.orderImageList.slice(2,3)[0].imageUrl ;
-              this.goodsShare = res.data.data.shareList ;
+              // this.goodsShare = res.data.data.shareList ;
             }else{
               this.$message({
                 message : res.data.message ,

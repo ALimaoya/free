@@ -35,31 +35,37 @@
 
     </div>
     <el-table :data="tableData"  border>
-      <el-table-column prop="activityId" label="序号" width="70"></el-table-column>
-      <el-table-column prop="shopName" label="试用活动店铺" width="140"></el-table-column>
+      <el-table-column prop="activityId" label="序号" width="55"></el-table-column>
       <el-table-column prop="code" label="试用活动编号" width="140"></el-table-column>
-      <el-table-column prop="platform" label="平台类型">
+      <el-table-column prop="platform" label="平台类型" width="85">
         <template slot-scope="scope">
           {{ platformOptions[scope.row.platform].name}}
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="活动状态">
+      <el-table-column prop="shopName" label="试用活动店铺" width="140"></el-table-column>
+      <el-table-column prop="activityTitle" label="试用活动标题" width="140"></el-table-column>
+      <el-table-column prop="showImageUrl" label="试用品展示图" width="115">
+        <template slot-scope="scope">
+          <img v-if="scope.row.showImageUrl" class="showImg" @click="showImg(scope.row.showImageUrl)" :src="imageDomain + scope.row.showImageUrl" alt="" />
+        </template>
+      </el-table-column>
+      <el-table-column prop="status" label="活动状态" width="105">
         <template slot-scope="scope">
           <span v-if="scope.row.status==='9'">已完成</span>
           <span v-else-if="scope.row.status==='10'">已取消</span>
           <span v-else>{{ options[scope.row.status-1].name}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="tryoutQuantity" label="试用品份数"></el-table-column>
-      <el-table-column prop="deposit" label="担保金（元）"></el-table-column>
-      <el-table-column prop="service" label="服务费（元）"></el-table-column>
+      <el-table-column prop="tryoutQuantity" label="试用品份数" width="65"></el-table-column>
+      <el-table-column prop="deposit" label="担保金（元）" width="70"></el-table-column>
+      <el-table-column prop="service" label="服务费（元）" width="70"></el-table-column>
       <el-table-column prop="date" label="活动时间" width="150">
         <template slot-scope="scope">
           <span class="time">{{ scope.row.startTime}}<br/> ~<br/>{{ scope.row.endTime}}</span>
         </template>
       </el-table-column>
       <!--<el-table-column prop="progress" label="活动进度"></el-table-column>-->
-      <el-table-column prop="payStatus" label="支付状态">
+      <el-table-column prop="payStatus" label="支付状态" width="85">
         <template slot-scope="scope">
           <span v-if="scope.row.payStatus === '0'">未支付</span>
           <span v-else>支付完成</span>
@@ -99,7 +105,9 @@
         </div>
 
     </el-dialog>
-
+    <div v-if="mask" @click="close" class="mask">
+      <img :src=" imageDomain + bigImg" alt="" />
+    </div>
   </div>
 </template>
 
@@ -198,6 +206,9 @@
         reasonDetail : '',
         activityDetail : {} ,
         time : '' ,
+        imageDomain : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/', //获取图片的外链域名
+        mask : false ,
+        bigImg : ''
 
       }
 
@@ -368,6 +379,15 @@
         this.$router.push({ name : 'Pay',params : { id : order} })
       },
 
+      //查看大图
+      showImg(url){
+        this.mask = true ;
+        this.bigImg = url ;
+      },
+      close(){
+        this.showImg = false ;
+      },
+
       handleSizeChange(val) {
 
         this.pageSize = val ;
@@ -461,6 +481,11 @@
       .time{
         font-size : 0.13rem ;
       }
+      .showImg{
+        width : 0.6rem ;
+        margin : 0 auto ;
+        max-height : 100% ;
+      }
     }
     .block2{
       padding : 0.3rem ;
@@ -474,5 +499,22 @@
         margin-top : 0.3rem ;
       }
     }
+    .mask{
+      position : fixed ;
+      top : 0;
+      left : 0 ;
+      width : 100% ;
+      height : 100% ;
+      background : rgba(250,250,250,0.3) ;
+      display : flex ;
+      align-items: center;
+      justify-content: center;
+      z-index : 10000;
+      img{
+        max-height : 100% ;
+
+      }
+    }
+
   }
 </style>

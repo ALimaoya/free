@@ -16,14 +16,14 @@
         <!--<li class="keys">关键词：{{detailInfo.key}}</li>-->
         <!--<li class="keys">淘口令：{{ detailInfo.tao }}</li>-->
         <!--<li>8、上架时间：{{detailInfo.date }}</li>-->
-        <li><span>试客活动编号：</span><span>{{ detailInfo.activityCode }}</span></li>
-        <li><span>试客订单编号：</span><span>{{ detailInfo.orderCode}}</span></li>
-        <li><span>商铺名称：</span><span>{{ detailInfo.shopName }}</span></li>
-        <li><span>平台类型：</span><span>{{ platForm[detailInfo.platform] }}</span></li>
-        <li><span>第三方单号：</span><span>{{ detailInfo.thirdOrderCode }}</span></li>
-        <li><span>中奖时间：</span><span>{{ detailInfo.winTime }}</span></li>
-        <li><span>开奖时间：</span><span>{{ detailInfo.receiveTime }}</span></li>
-        <li><span>订单价格：</span><span>{{ detailInfo.amount }} 元</span></li>
+        <li v-if="detailInfo.activityCode"><span>试客活动编号：</span><span>{{ detailInfo.activityCode }}</span></li>
+        <li v-if="detailInfo.orderCode"><span>试客订单编号：</span><span>{{ detailInfo.orderCode}}</span></li>
+        <li v-if="detailInfo.shopName"><span>商铺名称：</span><span>{{ detailInfo.shopName }}</span></li>
+        <li v-if="detailInfo.platform"><span>平台类型：</span><span>{{ platForm[detailInfo.platform] }}</span></li>
+        <li v-if="detailInfo.thirdOrderCode"><span>第三方单号：</span><span>{{ detailInfo.thirdOrderCode }}</span></li>
+        <li v-if="detailInfo.winTime"><span>中奖时间：</span><span>{{ detailInfo.winTime }}</span></li>
+        <li v-if="detailInfo.receiveTime"><span>开奖时间：</span><span>{{ detailInfo.receiveTime }}</span></li>
+        <li v-if="detailInfo.amount"><span>订单价格：</span><span>{{ detailInfo.amount }} 元</span></li>
         <li><span>图片详情：</span><span v-if="detailInfo.orderImageList == 0" class="noImg">暂无图片</span></li>
         <li class="detailPic">
           <div v-if="detailInfo.orderImageList != 0">
@@ -167,9 +167,11 @@
           }
           dd{
             margin : 0.2rem auto;
-            width : 100% ;
+            width : 1.5rem ;
             height : 2.5rem ;
-
+            display : flex ;
+            /*justify-content: center;*/
+            align-items: center;
             img{
               width : 100% ;
               max-height : 100% ;

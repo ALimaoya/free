@@ -20,6 +20,14 @@
           :value="item.value">
         </el-option>
       </el-select>
+      <el-select size="small" v-model="shop.EQ_payStatus"  filterable placeholder="请选择支付状态" clearable>
+        <el-option
+          v-for="item in payStatus"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id">
+        </el-option>
+      </el-select>
       <el-button size="small" round type="primary" @click="getShopList()">搜索店铺</el-button>
     </div>
 
@@ -31,19 +39,24 @@
           </template>
         </el-table-column>
         <el-table-column prop="messageId" label="旺旺ID/咚咚ID"></el-table-column>
-        <el-table-column prop="status" label="状态">
+        <el-table-column prop="status" label="店铺状态">
           <template slot-scope="scope">
             <span>{{ activityOptions[scope.row.status -1].name}}</span>
           </template>
         </el-table-column>
+      <el-table-column prop="payStatus" label="支付状态">
+        <template slot-scope="scope">
+          <span v-if="scope.row.payStatus === '1'">已支付</span>
+          <span v-else-if="scope.row.payStatus === '0'">未支付</span>
+        </template>
+      </el-table-column>
         <el-table-column prop="updateTime" label="绑定时间"></el-table-column>
       <el-table-column prop="action" label="操作">
         <template slot-scope="scope" >
-          <div v-if="scope.row.status === '3' || scope.row.status === '4'">
-            <el-button size="mini"   @click="reason(scope.$index,scope.row.reason)"  style="width : 0.6rem ;padding : 0.07rem 0.06rem;">查看原因</el-button>
-            <el-button size="mini" @click="change(scope.$index ,scope.row.shopId)"  style="width: 0.6rem ;">修改</el-button>
-          </div>
-          <span v-else>--</span>
+            <el-button size="mini" v-if="scope.row.status === '3' || scope.row.status === '4'"  @click="reason(scope.$index,scope.row.reason)"  style="width : 0.6rem ;padding : 0.07rem 0.06rem;">查看原因</el-button>
+            <el-button size="mini" v-if="scope.row.status !== '2'" @click="change(scope.$index ,scope.row.shopId)"  style="width: 0.6rem ;">修改</el-button>
+            <el-button v-if="scope.row.payStatus === '0'"  class="patBtn" size="mini" @click="goPay(scope.$index ,scope.row.shopId)"  style="width: 0.6rem ;">去支付</el-button>
+            <span  v-if="scope.row.status === '2'&& scope.row.payStatus === '1'">--</span>
         </template>
       </el-table-column>
     </el-table>
@@ -108,11 +121,26 @@
               {
                 name : '需更新资料',
                 value : '4'
+              },
+              // {
+              //   name : '待支付',
+              //   value : '5'
+              // }
+            ],
+            payStatus : [
+              {
+                name : '未支付',
+                id : '0'
+              },
+              {
+                name : '已支付',
+                id : '1'
               }
             ],
             shop : {
               EQ_platformType :'',
-              EQ_status : ''
+              EQ_status : '',
+              EQ_payStatus : ''
             },
             tableData : [],
             reasonBox : false ,
@@ -137,6 +165,7 @@
               formData.append('EQ_status',this.shop.EQ_status);
               formData.append('currentPage' ,this.currentPage);
               formData.append('pageSize' , this.pageSize);
+              formData.append('EQ_payStatus',this.shop.EQ_payStatus);
             shopList(formData).then( res => {
 
               if(res.data.status === '000000000'){
@@ -149,6 +178,8 @@
               alert('服务器开小差啦，请稍等~')
             })
           },
+
+          //拒绝原因
           reason(index){
             this.reasonBox = true ;
             this.reasonWord = this.tableData[index].reason;
@@ -156,7 +187,13 @@
 
           //修改店铺信息
           change(index,id){
+
             this.$router.push({ path : '/newshop' , query : { editor : '1' ,id : id }}) ;
+          },
+
+          //支付店铺
+          goPay(index,id){
+            this.$router.push({ name: 'buyShop', params :{ id : id  }  });
           },
 
           handleSizeChange(val) {
@@ -217,6 +254,11 @@
       border-radius : 0.05rem ;
       .el-button{
         margin : 0 0.05rem ;
+      }
+      .patBtn{
+        padding : 0 ;
+        text-align : center ;
+        line-height : 0.28rem ;
       }
     }
     .detail{

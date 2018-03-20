@@ -32,16 +32,20 @@
                 </span>
               </div>
               <div class="text-center" v-if="item.giveMonth">赠送：
-                <span class="money_color">{{item.giveMonth}}</span>个月的会员时长。<span class="money_color" v-if="item.buyTime">每个账号只允许购买{{item.buyTime}}次</span> </div>
+                <span class="money_color">{{item.giveMonth}}</span>个月的会员时长。
+              </div>
+              <div class="text-center" v-if="item.buyTime">
+                <span class="money_color" >每个账号只允许购买{{item.buyTime}}次</span>
+              </div>
                 <div :class="{target:item.vipId==choose.vipId}"></div>
             </li>
           </ul>
           <div class="choose">
             <p>您已选择购买会员
-              <span>{{ choose.usefulMonth }}</span>个月，赠送：
-              <span>{{ choose.giveMonth }}</span>个月</p>
+              <span><b>{{ choose.usefulMonth }}</b>个月</span>
+              <span v-if="choose.giveMonth">，赠送：<b>{{ choose.giveMonth }}</b>个月</span></p>
             <p>支付金额：
-              <span>{{ choose.price }}</span>元</p>
+              <span><b>{{ choose.price }}</b></span>元</p>
           </div>
         </el-form-item>
 
@@ -445,12 +449,14 @@
           margin : 0;
           padding-left : 0.4rem ;
           box-sizing: border-box;
+          height : 0.3rem ;
+          line-height : 0.3rem ;
         }
         .text-center  {
           line-height : 0.2rem ;
           font-size : 0.12rem ;
           text-align : left ;
-          /*text-indent : 0.2rem ;*/
+          text-indent : 0.4rem ;
           color : #666;
         }
         img {
@@ -539,8 +545,11 @@
         margin-right: 0.2rem;
       }
       span {
-        color: #ea5a4c;
         font-size: 0.18rem;
+        b{
+          color: #ea5a4c;
+
+        }
       }
     }
     .step2 {

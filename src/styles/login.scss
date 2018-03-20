@@ -7,6 +7,20 @@ $light_gray:#eee;
   height: 100%;
   width:100%;
   background-color: $bg;
+  .el-form{
+    .goOther {
+      margin-top: 7px;
+      font-size: 12px;
+      color: #fefefe;
+      .toRes {
+        float: left;
+      }
+      .toPsw {
+        float: right;
+      }
+    }
+
+  }
   input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0rem 1000rem #293444 inset !important;
     -webkit-text-fill-color: #fff !important;
@@ -54,6 +68,7 @@ $light_gray:#eee;
     width: 4rem;
     padding: 0.35rem 0.35rem 0.15rem 0.35rem;
     margin: 1.20rem auto;
+
   }
   .el-form-item {
     border: 0.01rem solid rgba(255, 255, 255, 0.1);
@@ -91,4 +106,5 @@ $light_gray:#eee;
     line-height : 0.35rem ;
     text-align : center;
   }
+
 }

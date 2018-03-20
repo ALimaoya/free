@@ -36,6 +36,27 @@ export function changeInfo(data){
   })
 }
 
+//获取店铺支付信息
+export function shopPayDetail(id){
+  return request({
+    url : '/tryout/shop/payParams',
+    method : 'get',
+    params : {
+      shopId : id
+    }
+  })
+}
+
+//支付店铺
+export function buyShop(data){
+  return request({
+    url : '/tryout/shop/pay',
+    method : 'post' ,
+    data
+  })
+}
+
+
 //获取店铺详情
 export function shopDetail(data){
   return request({

@@ -37,6 +37,8 @@
           <el-table-column prop="status" label="状态">
             <template slot-scope="scope">
               <span v-if="scope.row.status==99">已完成</span>
+              <span v-else-if="scope.row.status==11">订单失败</span>
+              <span v-else-if="scope.row.status==12">结算中</span>
               <span v-else>{{ options[scope.row.status].name}}</span>
             </template>
           </el-table-column>
@@ -161,10 +163,10 @@
             name : '评价审核拒绝',
             value : '9'
           },
-          {
-            name : '投诉处理中',
-            value : '10'
-          },
+          // {
+          //   name : '投诉处理中',
+          //   value : '10'
+          // },
           {
             name : '订单失败',
             value : '11'
