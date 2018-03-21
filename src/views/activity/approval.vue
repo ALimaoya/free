@@ -227,8 +227,16 @@
           formData.append('EQ_platformType', this.activity.EQ_platformType);
           formData.append('EQ_activityCode', this.activity.EQ_activityCode);
           formData.append('EQ_activityStatus',this.activity.EQ_activityStatus);
-          formData.append('LT_activityEndTime',this.activity.LT_activityEndTime);
-          formData.append('GT_activityStartTime',this.activity.GT_activityStartTime);
+          let start = '' ;
+          let end = '' ;
+          if(this.activity.LT_activityEndTime !== null){
+            end = this.activity.LT_activityEndTime ;
+          }
+          if(this.activity.GT_activityStartTime !== null){
+            start = this.activity.GT_activityStartTime ;
+          }
+          formData.append('GT_activityStartTime',start);
+          formData.append('LT_activityEndTime',end);
           formData.append('currentPage',this.currentPage);
           formData.append('pageSize',this.pageSize);
           getActivity(formData).then(res => {

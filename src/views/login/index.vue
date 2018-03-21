@@ -44,7 +44,8 @@
 <script>
   import {
     validatePhone,
-    validPassWord
+    validPassWord,
+    validateCaptcha
   } from '@/utils/validate'
   import {
     getCaptcha
@@ -77,6 +78,9 @@
         if (value === '') {
           callback(new Error('请输入验证码'))
         } else {
+          if( !validateCaptcha(value)){
+            callback(new Error('请输入正确格式的图片验证码'))
+          }
           callback();
 
         }
@@ -156,18 +160,23 @@
                 setMobile( this.loginForm.mobile)
               } else {
                 this.examine = true;
-                this.changeCaptcha();
+
                 this.$message({
                     message: res.data.message,
                     type: 'error',
                     center: 'true'
                   })
                 }
+              this.loginForm.captcha = '' ;
+              this.changeCaptcha();
             }).catch(err => {
+              this.loginForm.captcha = '' ;
               this.changeCaptcha();
               this.loading = false
             })
           } else {
+
+            this.loginForm.captcha = '' ;
             this.changeCaptcha();
 
             // console.log('登录失败，请重试');

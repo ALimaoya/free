@@ -36,7 +36,10 @@
       </el-form-item>
       <el-form-item label="试用品展示图：" labelWidth="1.3rem" prop="showImageUrl">
         <el-upload class="upload"  :action="imgUrl" :show-file-list="false" v-model.trim="form.showImageUrl"
-          :on-success="handleShowSuccess" :before-upload="beforeShowUpload" :headers="{ 'Content-Type': 'multipart/form-data'}">
+          :on-success="handleShowSuccess" :before-upload="beforeShowUpload"
+          :headers="{ 'Content-Type': 'multipart/form-data','yb-tryout-merchant-token':token}">
+          <!--:auto-upload="false" :http-request="beforeShowUpload"-->
+
           <img v-if="showImg"  :src="showImg" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           <span class="imgWarn" v-if="showImgWarn">请上传试用品展示图</span>
@@ -58,16 +61,16 @@
         <el-input size="small" v-model.trim="form.productUrl" placeholder="请输入内容" @blur="getGoodsDetail(form.platformType ,form.productUrl)"></el-input>
         <span class="tips"><img src="../../assets/imgs/tips3.png" alt=""/>平台会根据您填写的商品链接抓取宝贝信息，试客无法看到此链接</span>
       </el-form-item>
-      <el-form-item label="宝贝主图：" labelWidth="1.3rem" prop="mainImageUrl" >
-        <el-upload  class="upload"  :action="imgUrl" v-model.trim="form.mainImageUrl"
+      <el-form-item label="宝贝主图：" labelWidth="1.3rem">
+        <el-upload  class="upload"  :action="imgUrl" :multiple="false" v-model.trim="form.mainImageUrl"
           :on-success="handleGoodsSuccess"   :show-file-list="false"  :before-upload="beforeMainUpload"
-          :headers="{ 'Content-Type': 'multipart/form-data'}">
+          :headers="{ 'Content-Type': 'multipart/form-data','yb-tryout-merchant-token':token}">
           <img v-if="mainImg"  :src="mainImg" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           <span class="imgWarn" v-if="goodsImgWarn">请上传宝贝主图</span>
         </el-upload>
         <ul class="require">
-          <span>展示图要求：</span>
+          <span>宝贝主图要求：</span>
           <li>目标商品搜索结果页展示的主图</li>
           <li>(淘宝展示主图)</li>
           <li>尺寸要求<span>（800*800）</span></li>
@@ -410,8 +413,8 @@
             }
           ],
           dialogVisible: false ,
-          // token : getToken() ,
-          imgUrl: 'http://120.27.12.205:8005/tryout/file/upload',   // 上传图片的域名
+          token : getToken() ,
+          imgUrl: process.env.BASE_API+'/tryout/file/upload',   // 上传图片的域名
           imageDomain : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/', //获取图片的外链域名
           // imageDomain : '"http://yabei.oss-cn-beijing.aliyuncs.com/',
           showImg : '',
@@ -509,7 +512,7 @@
           readonlyKey : false ,
           totalNum : '',
           changeNum : false ,
-          activityVisible : false
+          activityVisible : false ,
           // pickerOptions: {
           //   disabledDate(time) {
           //     return time.getTime() < Date.now();
@@ -536,7 +539,7 @@
                       if(this.$route.query.payStatus === '1'){
                         this.readonly = true ;
                       }
-                      if(this.form.productId !== '' ){
+                      if(this.form.activityId !== '' ){
                         let num = 0 ;
                         this.resetSearch(this.form.platformType);
                         this.getType(this.form.platformType);
@@ -681,6 +684,7 @@
               if (isWidth > 800 || isHeight > 800) {
                 _this.$message.error('图片尺寸过大，请重新选择后上传');
                 return false;
+
               }else{
                 let formData = new FormData();
                 formData.append('image',file);
@@ -716,6 +720,7 @@
           this.choosePlat = this.platForm[value-1].name ;
           if(change === 'change'){
             this.form.shopId = '';
+            this.form.productUrl = '' ;
             this.form.keyword = [{
               'searchId' : '',
               'sortType' : '',
@@ -725,6 +730,7 @@
             this.getType();
           }
           getShopList(value).then( res => {
+            console.log(value,res);
             if( res.data.status === '000000000'){
 
               this.shopOptions = res.data.data ;

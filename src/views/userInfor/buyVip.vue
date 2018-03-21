@@ -28,7 +28,7 @@
                 <span style="color : #666 ;">vip会员</span>
                 <span class="money_color f18" >￥{{item.price}}</span>
                 <span class="c666 ml40 f14 oldPrice" > 原价:
-                  <span class="line_through ">{{item.originalPrice}}</span>
+                  <span class="line_through ">￥{{item.originalPrice}}</span>
                 </span>
               </div>
               <div class="text-center" v-if="item.giveMonth">赠送：

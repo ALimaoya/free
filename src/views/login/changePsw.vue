@@ -49,14 +49,20 @@
            确认提交
           </el-button>
         </el-form-item>
+        <div class="goOther">
+          <router-link class="toRes" to="/login">去登录</router-link>
+          <router-link class="toPsw" to="/register">去注册</router-link>
+        </div>
       </el-form>
+
     </div>
   </template>
 
   <script>
     import {
       validatePhone,
-      validPassWord
+      validPassWord,
+      validateCaptcha
     } from '@/utils/validate'
     import {
       getCaptcha,
@@ -83,7 +89,9 @@
           if (value === '') {
             callback(new Error('请输入图片验证码'))
           } else {
-            this.phoneMessaage = true;
+            if( !validateCaptcha(value)){
+              callback(new Error('请输入正确格式的图片验证码'))
+            }
             callback();
           }
         };
@@ -227,9 +235,12 @@
                 center: true,
                 type: 'error'
               });
-
+              this.RegForm.imgNum = '' ;
+              this.changeCaptcha() ;
             }
           }).catch(err => {
+            this.RegForm.imgNum = '' ;
+            this.changeCaptcha() ;
             alert('服务器开小差啦，请稍等~')
           });
         },
@@ -262,13 +273,19 @@
                     type: 'error',
                     center: 'true'
                   });
+                  this.RegForm.imgNum = '' ;
+                  this.changeCaptcha() ;
                 }
 
               }).catch(() => {
-                this.loading = false
+                this.loading = false ;
+                this.RegForm.imgNum = '' ;
+                this.changeCaptcha() ;
               })
             } else {
               this.loading = false;
+              this.RegForm.imgNum = '' ;
+              this.changeCaptcha() ;
               return false
             }
           })

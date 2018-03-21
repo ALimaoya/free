@@ -192,12 +192,9 @@
           this.orderId = order ;
           this.detailInfo = true ;
           orderDetail(order).then( res => {
-            // console.log(res);
-
             if( res.data.status === '000000000'){
               this.imgList = res.data.data.orderImageList.slice(0,2) ;
               this.orderImg = res.data.data.orderImageList.slice(2,3)[0].imageUrl ;
-              // this.goodsShare = res.data.data.shareList ;
             }else{
               this.$message({
                 message : res.data.message ,

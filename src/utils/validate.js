@@ -48,10 +48,16 @@ export function validatAlphabets(str) {
   const reg = /^[A-Za-z]+$/
   return reg.test(str)
 }
-/*验证码*/
+/*短信验证码*/
 export function validateCode(textval) {
   const urlregex = /^[0-9]{6}$/
   return urlregex.test(textval)
+}
+
+/*图片验证码*/
+export function validateCaptcha(str){
+    const reg =  /^[0-9A-Za-z]{4}$/;
+    return reg.test(str)
 }
 /*登录注册密码*/
 export function validPassWord(str){

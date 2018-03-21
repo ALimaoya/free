@@ -62,6 +62,7 @@
 <script>
   import {
     validatePhone,
+    validateCaptcha ,
     validPassWord
   } from '@/utils/validate'
   import {
@@ -89,7 +90,9 @@
         if (value === '') {
           callback(new Error('请输入图片验证码'))
         } else {
-          this.phoneMessaage = true;
+          if( !validateCaptcha(value)){
+            callback(new Error('请输入正确格式的验证码'))
+          }
           callback();
         }
       };
@@ -233,10 +236,13 @@
               center: true,
               type: 'error'
             });
-
+            this.RegForm.imgNum = '' ;
+            this.changeCaptcha();
           }
         }).catch(err => {
-          alert('服务器开小差啦，请稍等~')
+          alert('服务器开小差啦，请稍等~');
+          this.RegForm.imgNum = '' ;
+          this.changeCaptcha();
         });
       },
 
@@ -268,13 +274,19 @@
                   type: 'error',
                   center : true
                 });
+                this.RegForm.imgNum = '' ;
+                this.changeCaptcha();
               }
 
             }).catch(() => {
-              this.loading = false
+              this.loading = false ;
+              this.RegForm.imgNum = '' ;
+              this.changeCaptcha();
             })
           } else {
             this.loading = false;
+            this.RegForm.imgNum = '' ;
+            this.changeCaptcha();
             return false
           }
         })
@@ -303,9 +315,7 @@
       }
     }
   }
-  .codeBtn{
-    margin : 0.1rem 0 ;
-  }
+
 
   .messageWarn {
     font-size: 0.12rem;
