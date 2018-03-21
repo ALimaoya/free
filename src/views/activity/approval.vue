@@ -49,7 +49,7 @@
           <img v-if="scope.row.showImageUrl" class="showImg" @click="showImg(scope.row.showImageUrl)" :src="imageDomain + scope.row.showImageUrl" alt="" />
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="活动状态" width="105">
+      <el-table-column prop="status" label="活动状态" width="92">
         <template slot-scope="scope">
           <span v-if="scope.row.status==='9'">已完成</span>
           <span v-else-if="scope.row.status==='10'">已取消</span>
@@ -385,7 +385,7 @@
         this.bigImg = url ;
       },
       close(){
-        this.showImg = false ;
+        this.mask = false ;
       },
 
       handleSizeChange(val) {

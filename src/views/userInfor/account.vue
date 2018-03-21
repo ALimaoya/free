@@ -1,13 +1,13 @@
 <template>
   <div class="account">
-    <div class="title">
+    <h1 class="title">
       <p>绑定支付宝</p>
       <div>
         <el-button type="primary" @click="binding">{{title}}</el-button>
         <span>支付宝关系到您的资金提现，请认真填写。</span>
       </div>
 
-    </div>
+    </h1>
     <div v-if="accountBox" class="form">
       <p>{{title}}</p>
       <el-form ref="payForm" :model="payForm" :rules="payRule" center label-position="right">
@@ -286,6 +286,12 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
   .account {
+    width: 100%;
+    margin: 0 auto;
+    /*padding: 0.3rem 0.2rem;*/
+    box-sizing: border-box;
+    font-size: 0.15rem;
+    color: #333;
     .getNum {
       width: 1.1rem;
       margin-left: 0.3rem;
@@ -294,14 +300,16 @@
     }
     .title {
       width: 100%;
-      height: 0.8rem;
-      padding: 0.15rem 0.3rem;
+      margin : 0 ;
+      padding : 0.2rem  0.4rem ;
+      border-bottom : 1px solid #666 ;
+      font-size : 0.22rem ;
       box-sizing: border-box;
-      border-bottom: 1px solid #aaa;
+      line-height : 0.4rem ;
       display: flex;
       p {
         /*width : 55% ;*/
-        height: 0.5rem;
+        height: 0.4rem;
         font-size: 0.22rem;
         font-weight: bold;
         line-height: 2em;
@@ -316,8 +324,8 @@
       span {
         float: left;
         margin-left: 0.2rem;
-        height: 0.5rem;
-        line-height: 0.5rem;
+        height: 0.4rem;
+        line-height: 0.4rem;
         /*display : block ;*/
         flex: 0 1 43%;
         font-size: 0.13rem;
