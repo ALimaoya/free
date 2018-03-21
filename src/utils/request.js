@@ -32,16 +32,13 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use(
   response=>response,
   error => {
-    // if(response.data.status=='401'){
-    //   this.$message({
-    //     message : '登录已失效，请重新登录',
-    //     center : true ,
-    //     type : 'error'
-    //   });
-    //   store.dispatch('LogOut').then(() => {
-    //     location.reload() // 为了重新实例化vue-router对象 避免bug
-    //   })
-    // }
+    console.log(error.response.data.status)
+    if(error.response.data.status==401){
+      alert("登录已失效，请重新登录")
+      store.dispatch('LogOut').then(() => {
+        location.reload() // 为了重新实例化vue-router对象 避免bug
+      })
+    }
     // if (!getToken()) {
     //   MessageBox.confirm('你已被登出，可以取消继续留在该页面，或者重新登录', '确定登出', {
     //     confirmButtonText: '重新登录',
@@ -53,7 +50,7 @@ service.interceptors.response.use(
     //     })
     //   })
     // }
-    // // return response
+    return response
   }
 );
 
