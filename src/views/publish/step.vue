@@ -9,7 +9,7 @@
          </el-radio-group>
        </el-form-item>
       <el-form-item label="商品来源：" labelWidth="1.3rem" prop="platformType" >
-        <el-radio-group v-model="form.platformType"  @change="resetSearch(form.platformType)">
+        <el-radio-group v-model="form.platformType"  @change="resetSearch(form.platformType,'change')">
           <el-radio  v-for="(item,index) in platForm"   :key="index" :label="item.id" >{{ item.name }}</el-radio>
           <!--<el-radio  label="2">天猫</el-radio>-->
           <!--<el-radio  label="3">京东</el-radio>-->
@@ -43,7 +43,7 @@
         </el-upload>
         <ul class="require">
           <span>展示图要求：</span>
-          <li>商品清晰图片即可，无需商品主图</li>
+          <li>商品清晰图片即可</li>
           <li>不能出现图片留白、拼接、水印、logo、及其他文字</li>
           <li>800*800以内的正方形</li>
         </ul>
@@ -526,7 +526,6 @@
             if(res.data.data.length){
               if(this.$route.query.order !== undefined ) {
                 this.editor = this.$route.query.editor;
-
                 let order = this.$route.query.order ;
                 if( order !== undefined){
                   this.order = order ;
@@ -713,9 +712,18 @@
           },
 
         //获取对应平台店铺列表
-        resetSearch(value){
+        resetSearch(value,change){
           this.choosePlat = this.platForm[value-1].name ;
-          this.form.shopId = '';
+          if(change === 'change'){
+            this.form.shopId = '';
+            this.form.keyword = [{
+              'searchId' : '',
+              'sortType' : '',
+              'searchKeyword' : '',
+              'searchCondition': '',
+            }];
+            this.getType();
+          }
           getShopList(value).then( res => {
             if( res.data.status === '000000000'){
 
