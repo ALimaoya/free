@@ -269,7 +269,7 @@
 <style rel="stylesheet/scss" lang="scss" scoped>
   .container{
     width : 70% ;
-    margin : 0 auto ;
+    margin : 0.3rem auto ;
     .user{
       width : 100% ;
       height : 2rem ;

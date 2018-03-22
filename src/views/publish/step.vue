@@ -78,11 +78,11 @@
       </el-form-item>
       <el-form-item label="下单规格：" labelWidth="1.3rem" prop="buyProductQuantity">
         <el-input :maxlength="200" placeholder="任意拍" size="small" class="any"  v-model.trim="form.buyProductSpec"></el-input>
-        <span>拍：</span><el-input :readonly="readonly" type="number" v-model.number="form.buyProductQuantity"  size="small" class="any anyNum"></el-input><span>件</span>
+        <span>拍：</span><el-input :readonly="readonly" type="number" :maxlength="5" v-model.number="form.buyProductQuantity"  size="small" class="any anyNum"></el-input><span>件</span>
         <span class="tips"><img src="../../assets/imgs/tips3.png" alt=""/>如需拍下指定规格，请务必填写此信息，如不填写默认任意拍一件；</span>
       </el-form-item>
       <el-form-item label="下单价格：" labelWidth="1.3rem" prop="buyProductAmount">
-        <el-input class="any" size="small" type="number" :readonly="readonly" v-model.number="form.buyProductAmount" placeholder="请输入内容" ></el-input>元
+        <el-input class="any" size="small" :maxlength="10" type="number" :readonly="readonly" v-model.number="form.buyProductAmount" placeholder="请输入内容" ></el-input>元
       </el-form-item>
       <el-form-item label="商品运费：" labelWidth="1.3rem" prop="post">
         <div class="post">
@@ -228,7 +228,7 @@
 
 <script>
     import ElFormItem from "element-ui/packages/form/src/form-item";
-    import { validateURL ,getQueryString } from '@/utils/validate'
+    import { validateURL ,getQueryString , checkFloat } from '@/utils/validate'
     import { parseTime} from '@/utils'
     import { getToken } from '@/utils/auth'
     import ElRadioGroup from "element-ui/packages/radio/src/radio-group";
@@ -296,6 +296,9 @@
             }
             if(value > 9999999){
               callback(new Error('下单价格不能超过9999999'))
+            }
+            if( !checkFloat(value)){
+              callback( new Error('输入的小数不能超过两位，请重新输入'))
             }
               callback();
 
@@ -422,11 +425,7 @@
           showImgWarn : false ,
           goodsImgWarn : false ,
           formRule : {
-            // type : [
-            //   {
-            //     required : true ,message : '请选择活动类型' ,
-            //   }
-            // ],
+
             platformType: [
               {
                 required : true ,message : '请选择商品来源' , trigger : 'click'
@@ -447,11 +446,6 @@
                 required : true ,message : '请选择试用品类型'
               }
             ],
-            // showImageUrl : [
-            //   {
-            //     required : true ,message : '请上传试用品展示图'
-            //   }
-            // ],
             shopId : [
               {
                 required : true ,message : '请选择店铺' , trigger : 'change'
@@ -462,11 +456,7 @@
                 required : true ,validator : validLink ,trigger : 'blur'
               }
             ],
-            // mainImageUrl : [
-            //   {
-            //     required : true ,message : '请上传宝贝主图' ,trigger : 'change'
-            //   }
-            // ],
+
             buyProductQuantity : [
               {
                 required : true ,validator : validNum ,trigger : 'blur'
@@ -523,7 +513,6 @@
 
 
       mounted(){
-        // this.form = this.$store.state.publishInfo.publishForm ;
         shopList().then( res => {
           if(res.data.status === '000000000'){
             if(res.data.data.length){
@@ -554,7 +543,7 @@
                         this.tryoutAmount = num ;
                         this.totalNum = num ;
                         this.dayNum = this.goodsAmount.length ;
-                        this.form['startTime'] = parseTime(new Date(this.form.activityStartTime).getTime() - 24*3600*1000) ;
+                        this.form['startTime'] = parseTime(new Date(this.form.activityStartTime.replace(/-/g,"/")).getTime() - 24*3600*1000) ;
                         this.setRate(this.form.startTime ,this.tryoutAmount,this.goodsAmount);
 
                       }else{
@@ -572,7 +561,6 @@
                     alert('服务器开小差啦，请稍等~')
                   })
                 }
-                // }
               }else{
                 this.resetSearch('1');
                 this.setRate();
@@ -580,6 +568,18 @@
               getCategory().then( res => {
                 if(res.data.status === '000000000'){
                   this.options = res.data.data ;
+                  if(this.form.categoryId !== ''){
+                      let arr = [] ;
+                      this.options.forEach( i => {
+                        arr.push(i.id) ;
+
+                      });
+                      if(arr.indexOf(this.form.categoryId) === -1){
+                        this.form.categoryId = '' ;
+
+                      }
+
+                  }
                 }
               }).catch( err => {
                 alert('服务器开小差啦，请稍等~')
@@ -633,12 +633,7 @@
                       _this.showImg = res.data.data.filePath ;
                       _this.form.showImageUrl = res.data.data.fileName ;
                       _this.showImgWarn = false ;
-                      // _this.$refs['showImageUrl'].validate((valid) => {
-                      //   if (valid) {
-                      //     _this.$refs.showImageUrl.clearValidate();
-                      //
-                      //   }
-                      // });
+
                     }else{
                       _this.$message({
                         message : res.data.message ,
@@ -734,6 +729,17 @@
             if( res.data.status === '000000000'){
 
               this.shopOptions = res.data.data ;
+              if(this.form.shopId !== ''){
+                let arr = [] ;
+                this.shopOptions.forEach( i => {
+                  arr.push(i.id) ;
+
+                });
+                if(arr.indexOf(this.form.shopId) === -1){
+                  this.form.shopId = '' ;
+
+                }
+              }
             }
           }).catch( err => {
             alert('服务器开小差啦，请稍等~')
@@ -766,7 +772,8 @@
                   message : res.data.message ,
                   type : 'error',
                   center : true
-                })
+                });
+                this.form.productUrl = '' ;
               }
             })
           }else{
@@ -786,8 +793,8 @@
                       message : '请输入正确的商品链接' ,
                       center : true ,
                       type : 'error'
-                    })
-
+                    });
+                    _this.form.productUrl = '' ;
                   }
                 }
               });
@@ -814,7 +821,10 @@
                       message : '请输入正确的商品链接' ,
                       center : true ,
                       type : 'error'
-                    })                  }
+                    });
+                    _this.form.productUrl = '' ;
+
+                  }
                 }
               })
             }
@@ -871,7 +881,7 @@
             date = new Date();
           }else{
             date = new Date(Date.parse(value.replace(/-/g,'/'))) ;
-            // date = new Date(date.getTime() -24 * 3600 * 1000);
+            console.log(date,value,value.replace(/-/g,'/'));
           }
           this.year = date.getFullYear() ;
           this.month = date.getMonth()+1;

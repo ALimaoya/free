@@ -82,3 +82,16 @@ export function getQueryString(url,name) {
 
   // return null;
 }
+
+/*验证数字、字母及汉字，符号只能为@ 及小数点*/
+export function checkInput(value){
+  // const reg = /^[\u4E00-\u9FA5A-Za-z0-9]+$/ ;
+  const reg = new RegExp("[`~!@#$^*()=|{}':;',\\[\\].<>/?~！@#￥……*（）——|{}【】‘；：”“'。，、？]");
+  return reg.test(value)
+}
+
+/*验证输入数值有小数点时不能超过两位小数*/
+export function checkFloat(value){
+  const reg = /^(0|[1-9][0-9]*)+(\.\d{1,2})?$/ ;
+  return reg.test(value) ;
+}

@@ -236,8 +236,18 @@
       getList(){
         let formData = new FormData();
           formData.append('EQ_tryoutActivity.platformType',this.order.platformType);
-          formData.append('EQ_tryoutActivity.activityCode', this.order.activityCode);
-          formData.append('EQ_tryoutOrderWin.thirdOrderCode',this.order.thirdOrderCode);
+          let reg = /^[0-9]*$/;
+          if( reg.test(this.order.activityCode)){
+            formData.append('EQ_tryoutActivity.activityCode', this.order.activityCode);
+          }else{
+            formData.append('EQ_tryoutActivity.activityCode', '');
+          }
+          if( reg.test(this.order.thirdOrderCode)){
+            formData.append('EQ_tryoutOrderWin.thirdOrderCode', this.order.thirdOrderCode);
+          }else{
+            formData.append('EQ_tryoutOrderWin.thirdOrderCode', '');
+          }
+
           formData.append('EQ_status',this.order.EQ_status);
           formData.append('currentPage', this.currentPage);
           formData.append('pageSize', this.pageSize);

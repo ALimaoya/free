@@ -40,7 +40,7 @@
             <span class="rest">可用押金：
               <b>{{deposit.deposit}}元</b></span>
             <el-form-item label="充值金额：" prop="money">
-              <el-input v-model.trim="form.money" placeholder="请输入内容" size="small"></el-input>
+              <el-input type="number" v-model.number="form.money" placeholder="请输入内容" size="small"></el-input>
               <span>每次充值不得少于1元</span>
             </el-form-item>
             <el-form-item class="check">
@@ -110,7 +110,8 @@
           if (value < 1) {
             callback(new Error('请输入不少于1元的充值金额数值'))
           }
-          if (value.indexOf('.') >= 0) {
+          let reg = /^[0-9]*$/ ;
+          if (!reg.test(value)) {
             callback(new Error('输入的金额数值应该为正整数'))
           }
           if(value > 9999999){

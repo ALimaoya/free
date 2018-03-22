@@ -72,7 +72,7 @@
   import {
     getThirdInfo
   } from "@/api/userInfor"
-
+  import { checkFloat } from "@/utils/validate"
   export default {
     components: {
       ElFormItem,
@@ -91,13 +91,16 @@
         if (value === '') {
           callback(new Error('请输入提现金额'))
         } else {
-          // if(!isNaN(value)){
           if (value < 100) {
             callback(new Error('单次最少提现100元，请重新输入提现金额'))
           }
           if(value > 9999999){
             callback(new Error('输入的金额数值不得超过9999999'))
           }
+          if( !checkFloat(value)){
+            callback( new Error('输入的小数不能超过两位，请重新输入'))
+          }
+
             callback()
         }
       };
@@ -151,7 +154,6 @@
     computed : {
       realityMoney: function(){
         let money = this.payCash.money-(this.payCash.money * this.deposit.rate) ;
-        // money = money.toFixed(2) ;
         return money.toFixed(2) ;
       }
     },

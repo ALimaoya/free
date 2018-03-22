@@ -98,23 +98,25 @@
         <el-button style="background:#3a8ee6;;color:white;" @click="dialogVisibleQuestion = false">确定</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="请输入支付密码" :visible.sync="dialogPswVisible" width="28%" :before-close="handleClose" style="margin-top:20vh;text-align:center">
-      <el-form ref="pswForm" :model="pswForm" :rules="pswRule">
-        <el-form-item label="支付密码：" class="payPsw" prop="payPsw">
-          <el-input class="pswIpt" :type="pwdType" placeholder="请输入支付密码" v-model.trim="pswForm.payPsw"></el-input>
-          <div class="getNum" style="width : 1.5rem ;float : right ;"></div>
-          <span class="show-pwd" @click="showPwd">
+    <el-dialog title="请输入支付密码" :visible.sync="dialogPswVisible" width="28%" :before-close="handleClose" top="20vh" center >
+      <el-form ref="pswForm" :model="pswForm" :rules="pswRule" >
+        <el-form-item label="支付密码：" class="payPsw" prop="payPsw" label-width="1rem">
+          <el-input size="small" class="pswIpt" :type="pwdType" placeholder="请输入支付密码" v-model.trim="pswForm.payPsw">
+            <span slot="suffix" class="show-pwd" @click="showPwd">
             <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
             <svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>
           </span>
+          </el-input>
+          <!--<div class="getNum" style="width : 1.5rem ;float : right ;"></div>-->
+
           <router-link to="/userInfor/settings" v-if="!settingPsw"><span style="color:#409EFF;position:absolute;display:inline-block;width:1rem">设置支付密码</span></router-link>
         </el-form-item>
-        <el-form-item class="paynum" style="margin-top:10px;">
-          <el-button type="primary" @click="onSubmitPsw('pswForm')" style="margin-right:60px">确 认</el-button>
-          <el-button @click="handleClose()">取 消</el-button>
-          <div class="getNum" style="width : 1.2rem ;float : right ;"></div>
-        </el-form-item>
+
       </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="onSubmitPsw('pswForm')" >确 认</el-button>
+        <el-button @click="handleClose()">取 消</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -385,12 +387,12 @@
         line-height: 0.3rem;
         font-weight: bold;
       }
-      .payPsw {
-        .el-form-item__label {
-          width: 1.5rem;
-          text-align: right;
-        }
-      }
+      /*.payPsw {*/
+        /*!*.el-form-item__label {*!*/
+          /*!*width: 1.5rem;*!*/
+          /*!*text-align: right;*!*/
+        /*!*}*!*/
+      /*}*/
       .tips,
       .vipInfo {
         font-size: 0.14rem;
@@ -620,18 +622,18 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        .el-form-item__label {
-          width: 1.5rem;
-          text-align: right;
-        }
+        width : 80% ;
+        margin : 0.4rem auto 0;
+        justify-content: center;
+
       }
-      .pswIpt {
-        position: relative;
-      }
+      /*.pswIpt {*/
+        /*position: relative;*/
+      /*}*/
       .show-pwd {
-        position: absolute;
-        right: .2rem;
-        top: 0.03rem;
+        /*position: absolute;*/
+        /*right: .2rem;*/
+        /*top: 0.03rem;*/
         font-size: 0.16rem;
         color: #889aa4;
         cursor: pointer;

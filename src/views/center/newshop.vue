@@ -7,7 +7,7 @@
       <!--</p>-->
       <el-form ref="sizeForm" :model="sizeForm" label-width="1.4rem" size="mini" :rules="rules">
         <el-form-item label="平台类型：" prop="platformType">
-          <el-radio-group v-model="sizeForm.platformType">
+          <el-radio-group v-model="sizeForm.platformType" @change="resetShop">
             <el-radio v-for="item in platform" :disabled="type!=''?type!==item.value:false" :key="item.value"
                       :label="item.value">{{ item.name }}</el-radio>
             <!--<el-radio :disabled="sizeForm.platformType!=''?sizeForm.platformType!==label:false" label="1">淘宝</el-radio>-->
@@ -60,7 +60,7 @@
   import clip from '@/utils/clipboard' // use clipboard directly
   import { shopDetail , shopInfo ,changeInfo ,shopCaptcha } from "@/api/shop"
   import ElButton from "element-ui/packages/button/src/button";
-  import { validateURL ,validateWX ,validatePhone ,validQQ } from '@/utils/validate'
+  import { validateURL ,validateWX ,validatePhone ,validQQ , checkInput } from '@/utils/validate'
   import ElFormItem from "element-ui/packages/form/src/form-item";
   import ElRadioGroup from "element-ui/packages/radio/src/radio-group";
   export default {
@@ -93,6 +93,9 @@
           if(value.length > 100){
             callback(new Error('店铺名称不得超过100个字符'))
           }
+          if(checkInput(value)){
+            callback(new Error('请输入正确格式的店铺名称'))
+          }
           callback();
 
         }
@@ -105,6 +108,9 @@
         }else{
           if(value.length > 40){
             callback(new Error('旺旺/咚咚ID不得超过40个字符'))
+          }
+          if(checkInput(value)){
+            callback(new Error('请输入正确格式的旺旺/咚咚ID'))
           }
           callback();
 
@@ -339,6 +345,13 @@
           //   return false ;
           // }
         })
+      },
+
+      //切换平台相关信息重置
+      resetShop(){
+        this.sizeForm.shopUrl = '' ;
+        this.sizeForm.productUrl = '' ;
+
       },
 
       close(){

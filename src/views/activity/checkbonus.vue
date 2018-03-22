@@ -48,12 +48,13 @@
       <div>
         <ul>
           <p>领奖第一步：</p>
-          <li class="imageShow">
-            <dl v-for="(item,index) in imgList" :key="index">
+          <li class="imageShow" v-if="imgList.length" >
+            <dl v-for="(item,index) in imgList"  :key="index">
               <dt>{{ imageType[item.type] }}</dt>
               <dd><img @click="getImg(item.imageUrl)" :src=" imageDomain + item.imageUrl" alt="" /></dd>
             </dl>
           </li>
+          <p v-else class="tips">暂无图片</p>
         </ul>
         <!--<ul>-->
           <!--<p>领奖第二步：</p>-->
@@ -65,9 +66,10 @@
         <ul>
           <p>领奖第二步：</p>
           <li class="imageShow">
-            <dl>
+            <dl >
               <dt>订单截图</dt>
-              <dd><img @click="getImg(orderImg)" :src=" imageDomain + orderImg" alt="" /></dd>
+              <dd v-if="orderImg"><img @click="getImg(orderImg)" :src=" imageDomain + orderImg" alt="" /></dd>
+              <p class="tips" v-else>暂无</p>
             </dl>
           </li>
         </ul>
@@ -162,8 +164,18 @@
         getList(){
           let formData = new FormData();
           formData.append('EQ_tryoutActivity.platformType',this.order.platformType);
-          formData.append('EQ_tryoutActivity.activityCode', this.order.activityCode);
-          formData.append('EQ_tryoutOrderWin.thirdOrderCode',this.order.thirdOrderCode);
+          let reg = /^[0-9]*$/;
+          if( reg.test(this.order.activityCode)){
+            formData.append('EQ_tryoutActivity.activityCode', this.order.activityCode);
+          }else{
+            formData.append('EQ_tryoutActivity.activityCode', '');
+          }
+          if( reg.test(this.order.thirdOrderCode)){
+            formData.append('EQ_tryoutOrderWin.thirdOrderCode', this.order.thirdOrderCode);
+          }else{
+            formData.append('EQ_tryoutOrderWin.thirdOrderCode', '');
+          }
+
           formData.append('currentPage', this.currentPage);
           formData.append('EQ_status','4');
           formData.append('pageSize', this.pageSize);
@@ -193,8 +205,18 @@
           this.detailInfo = true ;
           orderDetail(order).then( res => {
             if( res.data.status === '000000000'){
-              this.imgList = res.data.data.orderImageList.slice(0,2) ;
-              this.orderImg = res.data.data.orderImageList.slice(2,3)[0].imageUrl ;
+              if(res.data.data.orderImageList.length){
+                res.data.data.orderImageList.forEach( i => {
+                  if(i.type=== '1'|| i.type=== '2'){
+                    this.imgList.push(i) ;
+                  }
+                  if(i.type === '3'){
+                    this.orderImg = i.imageUrl ;
+
+                  }
+                })
+              }
+
             }else{
               this.$message({
                 message : res.data.message ,
@@ -321,10 +343,7 @@
           width : 85% ;
           margin : 0.1rem auto 0.2rem ;
 
-          li{
-            margin-left : 0.3rem ;
 
-          }
           .imageShow{
             display: flex ;
             flex-direction: row;
@@ -349,7 +368,17 @@
                 }
               }
             }
+
           }
+          .tips{
+            font-size : 0.16rem ;
+            font-weight : bold ;
+            color : #666 ;
+            line-height : 0.3rem ;
+            height : 0.3rem ;
+            text-align : center ;
+          }
+
         }
 
       }

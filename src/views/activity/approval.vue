@@ -225,7 +225,13 @@
         // console.log(form);
           let formData = new FormData();
           formData.append('EQ_platformType', this.activity.EQ_platformType);
-          formData.append('EQ_activityCode', this.activity.EQ_activityCode);
+          let reg = /^[0-9]*$/;
+          if( reg.test(this.activity.EQ_activityCode)){
+            formData.append('EQ_activityCode', this.activity.EQ_activityCode);
+          }else{
+            formData.append('EQ_activityCode', '');
+
+          }
           formData.append('EQ_activityStatus',this.activity.EQ_activityStatus);
           let start = '' ;
           let end = '' ;

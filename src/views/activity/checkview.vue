@@ -45,10 +45,10 @@
       <span class="totalItems">共{{ totalPages }}页，{{totalElements}}条记录</span>
     </div>
 
-    <el-dialog width="50%" :visible.sync="detailInfo" center top="3%" title="评价审核">
+    <el-dialog width="50%" :visible.sync="detailInfo" center top="10vh" title="评价审核">
       <dl>
         <dt>评价截图</dt>
-        <dd>
+        <dd v-if="viewImg">
           <img @click="getImg(viewImg)" :src=" imageDomain + viewImg" alt="" />
         </dd>
       </dl>
@@ -58,7 +58,7 @@
         <el-button type="info" @click="detailInfo = false">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="拒绝原因" :visible.sync="reasonBox" center top="15%"  width="50%" >
+    <el-dialog title="拒绝原因" :visible.sync="reasonBox" center top="20vh"  width="50%" >
       <span>备注：</span>
       <el-input :rows="4" type="textarea" v-model.trim="reason" placeholder="审核拒绝时不能为空，可输入字符最大长度为100"></el-input>
       <div slot="footer" class="dialog-footer">
@@ -137,8 +137,17 @@
       getList(){
         let formData = new FormData();
         formData.append('EQ_tryoutActivity.platformType',this.order.platformType);
-        formData.append('EQ_tryoutActivity.activityCode', this.order.activityCode);
-        formData.append('EQ_tryoutOrderWin.thirdOrderCode',this.order.thirdOrderCode);
+        let reg = /^[0-9]*$/;
+        if( reg.test(this.order.activityCode)){
+          formData.append('EQ_tryoutActivity.activityCode', this.order.activityCode);
+        }else{
+          formData.append('EQ_tryoutActivity.activityCode', '');
+        }
+        if( reg.test(this.order.thirdOrderCode)){
+          formData.append('EQ_tryoutOrderWin.thirdOrderCode', this.order.thirdOrderCode);
+        }else{
+          formData.append('EQ_tryoutOrderWin.thirdOrderCode', '');
+        }
         formData.append('currentPage', this.currentPage);
         formData.append('EQ_status','6');
         formData.append('pageSize', this.pageSize);
@@ -170,7 +179,14 @@
         orderDetail(order).then( res => {
           // console.log(res);
           if( res.data.status === '000000000'){
-            this.viewImg = res.data.data.orderImageList.slice(3,4)[0].imageUrl ;
+            if(res.data.data.orderImageList.length){
+              res.data.data.orderImageList.forEach( i => {
+                if(i.type === '4'){
+                  this.viewImg = i.imageUrl ;
+
+                }
+              } )
+            }
 
           }else{
             this.$message({
@@ -304,15 +320,16 @@
 
         }
         dd{
-          max-height : 5rem ;
-          width : 80% ;
-          height : 5rem ;
-          margin : 0.3rem auto ;
+          max-height : 3rem ;
+          width : 100% ;
+          /*height : 5rem ;*/
+          margin : 0 auto  ;
+          display : flex;
+          justify-content: center;
+          align-items: center;
           img{
             max-width : 100% ;
-            max-height : 100% ;
-            margin : 0 auto ;
-
+            max-height : 2.5rem  ;
           }
         }
       }
