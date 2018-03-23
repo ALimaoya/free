@@ -162,7 +162,7 @@
           <li>2、 老品权重提升建议不低于3期活动，每期活动3~5天的单量，配合人气任务模式做收藏加购人气，单量和人气都需要螺旋，加购率做到30%，收藏率20%以上，PC核心词+手淘核心词+猜你喜欢+直通车。</li>
         </ul>
         <div class="datePicker">
-          <p>{{ year}} 年{{ month }}月</p>
+          <p>{{ year}} 年 {{ month }} 月</p>
           <ul class="dayTitle">
             <li v-for="item in week">{{ item.value }}</li>
           </ul>
@@ -522,7 +522,6 @@
                 if( order !== undefined){
                   this.order = order ;
                   this.$store.dispatch('getPublishDetail',order).then( res => {
-                    // console.log(res);
                     if (res.data.status === '000000000') {
                       this.form = res.data.data;
                       if(this.$route.query.payStatus === '1'){
@@ -534,17 +533,23 @@
                         this.getType(this.form.platformType);
                         this.mainImg = this.imageDomain + this.form.mainImageUrl ;
                         this.showImg = this.imageDomain + this.form.showImageUrl ;
-                        if(this.form.activityCalendar.length !== 0){
-                          this.form.activityCalendar.forEach((i) => {
-                            num = num + i.tryoutQuantity ;
-                            this.goodsAmount.push(i.tryoutQuantity);
-                          });
+                        if(this.editor !== undefined){
+                          if(this.form.activityCalendar.length !== 0){
+                            this.form.activityCalendar.forEach((i) => {
+                              num = num + i.tryoutQuantity ;
+                              this.goodsAmount.push(i.tryoutQuantity);
+                            });
+                          }
+                          this.tryoutAmount = num ;
+                          this.totalNum = num ;
+                          this.dayNum = this.goodsAmount.length ;
+                          this.form['startTime'] = parseTime(new Date(this.form.activityStartTime.replace(/-/g,"/")).getTime() - 24*3600*1000) ;
+                          this.setRate(this.form.startTime ,this.tryoutAmount,this.goodsAmount);
                         }
-                        this.tryoutAmount = num ;
-                        this.totalNum = num ;
-                        this.dayNum = this.goodsAmount.length ;
-                        this.form['startTime'] = parseTime(new Date(this.form.activityStartTime.replace(/-/g,"/")).getTime() - 24*3600*1000) ;
-                        this.setRate(this.form.startTime ,this.tryoutAmount,this.goodsAmount);
+                        else{
+                          this.setRate();
+
+                        }
 
                       }else{
                         this.setRate();
@@ -725,9 +730,7 @@
             this.getType();
           }
           getShopList(value).then( res => {
-            console.log(value,res);
             if( res.data.status === '000000000'){
-
               this.shopOptions = res.data.data ;
               if(this.form.shopId !== ''){
                 let arr = [] ;
@@ -881,7 +884,6 @@
             date = new Date();
           }else{
             date = new Date(Date.parse(value.replace(/-/g,'/'))) ;
-            console.log(date,value,value.replace(/-/g,'/'));
           }
           this.year = date.getFullYear() ;
           this.month = date.getMonth()+1;
@@ -946,13 +948,7 @@
             if(type === 1){
 
               if(value > 1 ){
-                // if(value > 999 ||!reg.test(value)){
-                //   this.warn = true ;
-                //   return false ;
-                // }else{
-                //   this.warn = false ;
-                //
-                // }
+
                 this.goodsAmount[index] = --value ;
               }else if(value == 1){
                 this.goodsAmount = this.goodsAmount.slice(0,index);

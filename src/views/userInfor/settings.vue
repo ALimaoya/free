@@ -48,10 +48,10 @@
     <el-dialog :title="pswType" :visible.sync="pswVisible" center :before-close="close">
       <el-form ref="pswForm" :model="pswForm" :rules="pswRule">
         <div class="phoneNum">
-          <p class="tel">绑定手机号：</p>
+          <p class="tel" style="width : 1.5rem">绑定手机号：</p>
           <span>{{ user.mobile}}</span>
         </div>
-        <el-form-item label="验证码：" :label-width="formLabelWidth" prop="pswVerify">
+        <el-form-item label="验证码：" style="width:5.45rem ;"  label-width="1.65rem" prop="pswVerify">
           <el-input placeholder="请输入验证码" v-model.trim="pswForm.pswVerify"></el-input>
           <el-button class="getNum" @click="getNum" :disabled="disabled">{{ btntext }}</el-button>
         </el-form-item>
@@ -138,33 +138,33 @@
       <!--</div>-->
     </el-dialog>
     <!--修改手机号-->
-    <el-dialog :title="phonetitle" :visible.sync="phoneVisible" center top="18%">
-      <el-form v-if="oldNumber" :model="verifyForm" ref="verifyForm" :rules="verifyRules" class="phoneBox">
-        <p class="tel tel2">验证原绑定手机号码：{{user.mobile}}</p>
-        <el-form-item label="验证码：" prop="oldnum">
-          <el-input v-model="verifyForm.oldnum" placeholder="请输入验证码"></el-input>
-          <el-button class="getNum" @click="getNum" :disabled="disabled">{{btntext}}</el-button>
-        </el-form-item>
-        <el-form-item class="nextBtn">
-          <el-button type="primary" @click="next('verifyForm')">下一步</el-button>
-          <el-button @click="cancel('verifyForm')">取&nbsp;&nbsp;&nbsp;&nbsp;消</el-button>
-        </el-form-item>
-      </el-form>
-      <el-form ref="phoneForm" :model="phoneForm" :rules="phoneRule" v-else-if="newNumber" class="phoneBox">
-        <el-form-item label="新手机：" prop="newnumber">
-          <el-input v-model.trim="phoneForm.newnumber" placeholder="请输入手机号"></el-input>
-        </el-form-item>
-        <el-form-item label="验证码：" prop="verify">
-          <el-input v-model="phoneForm.verify" placeholder="请输入验证码"></el-input>
-          <el-button class="getNum" @click="getNum" :disabled="disabled">{{btntext}}</el-button>
-        </el-form-item>
-        <el-form-item class="nextBtn">
-          <el-button type="primary" @click="onsubmitTel('phoneForm')">确&nbsp;&nbsp;&nbsp;&nbsp;定</el-button>
-          <el-button @click="cancel('phoneForm')">取&nbsp;&nbsp;&nbsp;&nbsp;消</el-button>
-        </el-form-item>
-      </el-form>
+    <!--<el-dialog :title="phonetitle" :visible.sync="phoneVisible" center top="18%">-->
+      <!--<el-form v-if="oldNumber" :model="verifyForm" ref="verifyForm" :rules="verifyRules" class="phoneBox">-->
+        <!--<p class="tel tel2">验证原绑定手机号码：{{user.mobile}}</p>-->
+        <!--<el-form-item label="验证码：" prop="oldnum">-->
+          <!--<el-input v-model="verifyForm.oldnum" placeholder="请输入验证码"></el-input>-->
+          <!--<el-button class="getNum" @click="getNum" :disabled="disabled">{{btntext}}</el-button>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item class="nextBtn">-->
+          <!--<el-button type="primary" @click="next('verifyForm')">下一步</el-button>-->
+          <!--<el-button @click="cancel('verifyForm')">取&nbsp;&nbsp;&nbsp;&nbsp;消</el-button>-->
+        <!--</el-form-item>-->
+      <!--</el-form>-->
+      <!--<el-form ref="phoneForm" :model="phoneForm" :rules="phoneRule" v-else-if="newNumber" class="phoneBox">-->
+        <!--<el-form-item label="新手机：" prop="newnumber">-->
+          <!--<el-input v-model.trim="phoneForm.newnumber" placeholder="请输入手机号"></el-input>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item label="验证码：" prop="verify">-->
+          <!--<el-input v-model="phoneForm.verify" placeholder="请输入验证码"></el-input>-->
+          <!--<el-button class="getNum" @click="getNum" :disabled="disabled">{{btntext}}</el-button>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item class="nextBtn">-->
+          <!--<el-button type="primary" @click="onsubmitTel('phoneForm')">确&nbsp;&nbsp;&nbsp;&nbsp;定</el-button>-->
+          <!--<el-button @click="cancel('phoneForm')">取&nbsp;&nbsp;&nbsp;&nbsp;消</el-button>-->
+        <!--</el-form-item>-->
+      <!--</el-form>-->
 
-    </el-dialog>
+    <!--</el-dialog>-->
   </div>
 </template>
 
@@ -300,7 +300,7 @@
         popover: false,
         dialogFormVisible: false,
         contactVisible: false,
-        formLabelWidth: '1.2rem',
+        formLabelWidth: '1.65rem',
         pswWidth: '1.65rem',
         pswVisible: false,
         pswForm: {
@@ -395,7 +395,7 @@
             required: true
           }]
         },
-        phonetitle: '修改已绑定的手机号码',
+        // phonetitle: '修改已绑定的手机号码',
         oldNumber: false,
         newNumber: false,
         phoneVisible: false,
@@ -403,32 +403,32 @@
           newnumber: '',
           verify: ''
         },
-        phoneRule: {
-          newnumber: [{
-            validator: validateTel,
-            trigger: 'blur',
-            required: true
-          }],
-          verify: [{
-            validator: validateYZM,
-            trigger: 'blur',
-            required: true
-          }]
-        },
+        // phoneRule: {
+        //   newnumber: [{
+        //     validator: validateTel,
+        //     trigger: 'blur',
+        //     required: true
+        //   }],
+        //   verify: [{
+        //     validator: validateYZM,
+        //     trigger: 'blur',
+        //     required: true
+        //   }]
+        // },
         btntext: ' 获取验证码',
         isYZM: false,
         isWrong: false,
-        verifyForm: {
-          oldnum: '',
-        },
-        verifyRules: {
-          oldnum: [{
-            validator: validateYZM,
-            trigger: 'blur',
-            required: true
-
-          }]
-        },
+        // verifyForm: {
+        //   oldnum: '',
+        // },
+        // verifyRules: {
+        //   oldnum: [{
+        //     validator: validateYZM,
+        //     trigger: 'blur',
+        //     required: true
+        //
+        //   }]
+        // },
         disabled: false,
         getNew: false,
         user: {
@@ -639,31 +639,31 @@
       },
 
       //校验手机号
-      onsubmitTel(formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            this.$message({
-              message: '修改成功',
-              type: 'success',
-              center: true
-            });
-            this.phoneVisible = false;
-            this.newNumber = false;
-            this.user.mobile = this.phoneForm.newnumber;
-            // console.log(this.phoneForm);
-            this.$refs[formName].resetFields();
-
-          } else {
-            this.$message({
-              message: '提交失败',
-              type: 'error',
-              center: true
-            });
-            return false;
-          }
-        })
-        // console.log(formName)
-      },
+      // onsubmitTel(formName) {
+      //   this.$refs[formName].validate((valid) => {
+      //     if (valid) {
+      //       this.$message({
+      //         message: '修改成功',
+      //         type: 'success',
+      //         center: true
+      //       });
+      //       this.phoneVisible = false;
+      //       this.newNumber = false;
+      //       this.user.mobile = this.phoneForm.newnumber;
+      //       // console.log(this.phoneForm);
+      //       this.$refs[formName].resetFields();
+      //
+      //     } else {
+      //       this.$message({
+      //         message: '提交失败',
+      //         type: 'error',
+      //         center: true
+      //       });
+      //       return false;
+      //     }
+      //   })
+      //   // console.log(formName)
+      // },
 
       //获取验证码
       getNum() {
@@ -709,24 +709,24 @@
       },
 
       //修改绑定手机号第一步：验证输入验证码
-      next(formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            this.getNew = true;
-            setTimeout(() => {
-              this.oldNumber = false;
-              this.newNumber = true;
-              this.phonetitle = '设置新手机号码';
-              // console.log(this.newNumber)
-            }, 500);
-            this.$refs[formName].resetFields()
-
-          } else {
-            return false;
-          }
-        })
-
-      },
+      // next(formName) {
+      //   this.$refs[formName].validate((valid) => {
+      //     if (valid) {
+      //       this.getNew = true;
+      //       setTimeout(() => {
+      //         this.oldNumber = false;
+      //         this.newNumber = true;
+      //         this.phonetitle = '设置新手机号码';
+      //         // console.log(this.newNumber)
+      //       }, 500);
+      //       this.$refs[formName].resetFields()
+      //
+      //     } else {
+      //       return false;
+      //     }
+      //   })
+      //
+      // },
 
       //取消按钮关闭弹窗
       cancel(formName) {
@@ -887,11 +887,13 @@
         padding-left: 1.85rem;
       }
       .phoneNum {
-        width: 4.6rem;
+        width: 5.05rem;
         margin: 0 auto;
         p {
-          width: 1.2rem;
+          width: 1.65rem;
           float: left;
+          text-align : right ;
+          padding-right : 0.15rem ;
         }
         span {
           width: 60%;

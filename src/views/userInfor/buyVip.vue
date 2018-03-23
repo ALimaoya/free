@@ -246,12 +246,10 @@
       },
       getVipList() {
         getVipType().then(res => {
-          // console.log(res);
           if (res.data.status === '000000000') {
             if( res.data.data.length){
               this.vipInfo = res.data.data;
               this.choose = this.vipInfo[0];
-              // console.log(this.vipInfo)
             }
 
           } else {

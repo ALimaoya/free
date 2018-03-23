@@ -54,7 +54,7 @@
               <dd><img @click="getImg(item.imageUrl)" :src=" imageDomain + item.imageUrl" alt="" /></dd>
             </dl>
           </li>
-          <p v-else class="tips">暂无图片</p>
+          <p v-else class="tips">暂无详情</p>
         </ul>
         <!--<ul>-->
           <!--<p>领奖第二步：</p>-->
@@ -66,11 +66,11 @@
         <ul>
           <p>领奖第二步：</p>
           <li class="imageShow">
-            <dl >
+            <dl v-if="orderImg">
               <dt>订单截图</dt>
-              <dd v-if="orderImg"><img @click="getImg(orderImg)" :src=" imageDomain + orderImg" alt="" /></dd>
-              <p class="tips" v-else>暂无</p>
+              <dd ><img @click="getImg(orderImg)" :src=" imageDomain + orderImg" alt="" /></dd>
             </dl>
+            <p class="tips" v-else>暂无详情</p>
           </li>
         </ul>
       </div>
@@ -83,7 +83,7 @@
     </el-dialog>
     <el-dialog title="拒绝原因" :visible.sync="reasonBox" center top="15%"  width="50%" >
       <p>备注：</p>
-      <el-input :rows="4" type="textarea" v-model.trim="reason" placeholder="审核拒绝时不能为空，可输入字符最大长度为100"></el-input>
+      <el-input :rows="4" type="textarea" :maxlength="100" v-model.trim="reason" placeholder="审核拒绝时不能为空，可输入字符最大长度为100"></el-input>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitReason">提 交</el-button>
         <el-button type="info" @click="cancel">取 消</el-button>

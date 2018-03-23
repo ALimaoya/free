@@ -32,7 +32,6 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use(
   response=>response,
   error => {
-    console.log(error.response.data.status)
     if(error.response.data.status==401){
       alert("登录已失效，请重新登录")
       store.dispatch('LogOut').then(() => {

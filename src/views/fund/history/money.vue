@@ -123,11 +123,19 @@
 
         getMoneyList(){
           let formdata=new FormData();
-          formdata.append('currentPage',this.currentPage)
-          formdata.append('pageSize',this.pageSize)
-          formdata.append('EQ_changeType',this.searchForm.detail)
-          formdata.append('GT_createTime',this.searchForm.startDate)
-          formdata.append('LT_createTime',this.searchForm.endDate)
+          formdata.append('currentPage',this.currentPage);
+          formdata.append('pageSize',this.pageSize);
+          formdata.append('EQ_changeType',this.searchForm.detail);
+          if(this.searchForm.startDate){
+            formdata.append('GT_createTime',this.searchForm.startDate);
+          }else{
+            formdata.append('GT_createTime','');
+          }
+          if(this.searchForm.endDate){
+            formdata.append('LT_createTime',this.searchForm.endDate);
+          }else{
+            formdata.append('LT_createTime','');
+          }
           getWalletLog(formdata).then( res => {
             // console.log(res)
             if( res.data.status === '000000000'){

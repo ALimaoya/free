@@ -55,12 +55,12 @@
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="check('1')">审核成功</el-button>
         <el-button type="error" @click="check('2')">审核失败</el-button>
-        <el-button type="info" @click="detailInfo = false">取 消</el-button>
+        <el-button type="info" @click="detailInfo = false; viewImg = ''">取 消</el-button>
       </div>
     </el-dialog>
     <el-dialog title="拒绝原因" :visible.sync="reasonBox" center top="20vh"  width="50%" >
       <span>备注：</span>
-      <el-input :rows="4" type="textarea" v-model.trim="reason" placeholder="审核拒绝时不能为空，可输入字符最大长度为100"></el-input>
+      <el-input :rows="4" type="textarea" :maxlength="100" v-model.trim="reason" placeholder="审核拒绝时不能为空，可输入字符最大长度为100"></el-input>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitReason">提 交</el-button>
         <el-button type="info" @click="cancel">取 消</el-button>
@@ -107,8 +107,7 @@
           platformType : '' ,
           activityCode : '',
           thirdOrderCode: '',
-          // currentPage : 1,
-          // pageSize : 10
+          
         },
         tableData : [],
         currentPage : 1 ,
@@ -237,7 +236,7 @@
           alert('服务器开小差啦，请稍等~')
         });
         this.detailInfo = false ;
-
+        this.viewImg = '' ;
       },
 
       //提交拒绝原因
@@ -322,7 +321,6 @@
         dd{
           max-height : 3rem ;
           width : 100% ;
-          /*height : 5rem ;*/
           margin : 0 auto  ;
           display : flex;
           justify-content: center;
