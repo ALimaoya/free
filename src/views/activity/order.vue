@@ -25,7 +25,7 @@
       <div class="note">备注：以上搜索条件可根据单一条件进行搜索，当单独试客淘宝号搜索不到有用信息时，可尝试输入淘宝订单编号，反之亦然</div>
       <el-table :data="tableData" border>
           <el-table-column prop="activityCode" label="试客任务编号" width="180"></el-table-column>
-          <el-table-column prop="orderCode" label="试客子订单编号" width="180"></el-table-column>
+          <el-table-column prop="orderCode" label="试客订单编号" width="180"></el-table-column>
           <el-table-column prop="activityTitle" label="商品名称"></el-table-column>
           <el-table-column prop="platform" label="平台类型">
             <template slot-scope="scope">

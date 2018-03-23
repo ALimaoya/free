@@ -44,7 +44,7 @@
       </el-pagination>
       <span class="totalItems">共{{ totalPages }}页，{{totalElements}}条记录</span>
     </div>
-    <el-dialog class="detailContent" width="50%" :visible.sync="detailInfo" center top="5%" title="领奖审核">
+    <el-dialog class="detailContent" width="50%" :visible.sync="detailInfo" center top="10vh" title="领奖审核">
       <div>
         <ul>
           <p>领奖第一步：</p>
@@ -203,6 +203,7 @@
         handleOrder(index ,order){
           this.orderId = order ;
           this.detailInfo = true ;
+          this.imgList= [] ;
           orderDetail(order).then( res => {
             if( res.data.status === '000000000'){
               if(res.data.data.orderImageList.length){
@@ -336,7 +337,7 @@
       height : 8rem ;
       overflow : hidden ;
       div{
-        height : 4rem ;
+        max-height : 4rem ;
         overflow-y:  auto ;
         overflow-x : hidden ;
         ul{

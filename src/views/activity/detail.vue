@@ -118,11 +118,13 @@
     li{
       width : 50% ;
       line-height : 0.4rem ;
-      height : 0.4rem ;
+      /*height : 0.4rem ;*/
       font-size : 0.16rem ;
       float : left ;
       span{
-        display : inline-block;
+        display : block;
+        line-height : 0.4rem ;
+        float : left ;
         &:nth-child(1){
           width : 40% ;
           text-align: right ;
@@ -150,7 +152,7 @@
         justify-content: space-between;
         height : 4rem ;
         dl{
-          width : 30% ;
+          width : 45% ;
           font-weight : 100 ;
           margin-left : 0.25rem ;
           height : 3.5rem ;

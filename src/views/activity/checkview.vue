@@ -107,7 +107,7 @@
           platformType : '' ,
           activityCode : '',
           thirdOrderCode: '',
-          
+
         },
         tableData : [],
         currentPage : 1 ,
@@ -174,7 +174,7 @@
       handleOrder(index ,order){
         this.orderId = order ;
         this.detailInfo = true ;
-
+        this.viewImg = '';
         orderDetail(order).then( res => {
           // console.log(res);
           if( res.data.status === '000000000'){
