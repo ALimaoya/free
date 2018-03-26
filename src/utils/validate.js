@@ -87,6 +87,7 @@ export function getQueryString(url,name) {
 export function checkInput(value){
   // const reg = /^[\u4E00-\u9FA5A-Za-z0-9]+$/ ;
   const reg = new RegExp("[`~!@#$^*()=|{}':;',\\[\\].<>/?~！@#￥……*（）——|{}【】‘；：”“'。，、？]");
+
   return reg.test(value)
 }
 

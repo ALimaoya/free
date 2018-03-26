@@ -98,7 +98,7 @@
         <el-button style="background:#3a8ee6;;color:white;" @click="dialogVisibleQuestion = false">确定</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="请输入支付密码" :visible.sync="dialogPswVisible" width="28%" :before-close="handleClose" top="20vh" center >
+    <el-dialog title="请输入支付密码" :visible.sync="dialogPswVisible" width="30%" :before-close="handleClose" top="20vh" center >
       <el-form ref="pswForm" :model="pswForm" :rules="pswRule" >
         <el-form-item label="支付密码：" class="payPsw" prop="payPsw" label-width="1rem">
           <el-input size="small" class="pswIpt" :type="pwdType" placeholder="请输入支付密码" v-model.trim="pswForm.payPsw">
@@ -620,7 +620,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        width : 80% ;
+        width : 90% ;
         margin : 0.4rem auto 0;
         justify-content: center;
 

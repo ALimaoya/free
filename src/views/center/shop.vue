@@ -31,7 +31,7 @@
       <el-button size="small" round type="primary" @click="getShopList()">搜索店铺</el-button>
     </div>
 
-    <el-table class="list" :data="tableData" stripe border style="width: 100%">
+    <el-table class="list" :data="tableData"  border style="width: 100%">
         <el-table-column prop="shopName" label="店铺" width="180"></el-table-column>
         <el-table-column prop="platform" label="平台类型" width="180">
           <template slot-scope="scope">
