@@ -54,13 +54,17 @@
       mounted(){
         let order = this.$route.params.id ;
         getPayDetail(order).then( res => {
-          // console.log(res);
           if (res.data.status === '000000000') {
             this.activity = res.data.data ;
             if(res.data.data.payStatus === '1'){
-              this.$router.push('/publish/step3')
+              for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
+                if (v.path === this.$route.path) {
+                  this.$store.state.tagsView.visitedViews.splice(i, 1);
+                  this.$router.push('/publish/step3');
+
+                }
+              }
             }
-            // console.log(this.activity);
           } else {
             this.$message({
               message: res.data.message,
@@ -89,7 +93,16 @@
 
               activityPay({ activityId : id+'' ,payPassword : password }).then( res => {
                 if(res.data.status === '000000000'){
-                  this.$router.push('/publish/step3')
+
+                  for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
+                    if (v.path === this.$route.path) {
+                      this.$store.state.tagsView.visitedViews.splice(i, 1);
+                      this.$router.push('/publish/step3');
+
+                    }
+                  }
+
+
                 }else{
                   this.$message({
                     message : res.data.message ,

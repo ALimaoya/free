@@ -81,7 +81,7 @@
         <el-button type="info" @click="detailInfo = false">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="拒绝原因" :visible.sync="reasonBox" center top="15%"  width="50%" >
+    <el-dialog title="拒绝原因" :visible.sync="reasonBox" center top="15%"  width="30%" >
       <p>备注：</p>
       <el-input :rows="4" type="textarea" :maxlength="100" v-model.trim="reason" placeholder="审核拒绝时不能为空，可输入字符最大长度为100"></el-input>
       <div slot="footer" class="dialog-footer">
@@ -204,6 +204,7 @@
           this.orderId = order ;
           this.detailInfo = true ;
           this.imgList= [] ;
+          this.orderImg = '' ;
           orderDetail(order).then( res => {
             if( res.data.status === '000000000'){
               if(res.data.data.orderImageList.length){
@@ -251,9 +252,11 @@
                this.$message({
                  message : '审核提交成功，请稍后确认' ,
                  center : true ,
-                 type : 'success'
+                 type : 'success',
                });
-              window.location.reload();
+               setTimeout(()=> {
+                 window.location.reload();
+               }, 3000);
              }else{
                this.$message({
                  message : res.data.message ,

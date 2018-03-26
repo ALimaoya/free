@@ -55,12 +55,16 @@
       mounted(){
         let shopId = this.$route.params.id ;
         shopPayDetail(shopId).then( res => {
-          // console.log(res);
           if (res.data.status === '000000000') {
             this.shop = res.data.data ;
             if(res.data.data.payStatus === '1'){
-              window.close();
-              this.$router.push('/checkshop')
+              for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
+                if (v.path === this.$route.path) {
+                  this.$store.state.tagsView.visitedViews.splice(i, 1);
+                  this.$router.push('/checkshop');
+
+                }
+              }
             }
             // console.log(this.shop);
           } else {
@@ -91,7 +95,13 @@
 
               buyShop({ shopId : id+'' ,payPassword : password }).then( res => {
                 if(res.data.status === '000000000'){
-                  this.$router.push('/checkShop')
+                  for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
+                    if (v.path === this.$route.path) {
+                      this.$store.state.tagsView.visitedViews.splice(i, 1);
+                      this.$router.push('/checkshop');
+
+                    }
+                  }
                 }else{
                   this.$message({
                     message : res.data.message ,

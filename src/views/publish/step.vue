@@ -492,7 +492,7 @@
           pickerOptions : {
             disabledDate(time){
               let curDate = (new Date()).getTime() ;
-              return time.getTime() < Date.now()  - 2*24*3600*1000 ;
+              return time.getTime() < Date.now()  - 3*24*3600*1000 ;
             }
           } ,
           editor : '',

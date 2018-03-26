@@ -56,19 +56,19 @@
           <el-button class="getNum" @click="getNum" :disabled="disabled">{{ btntext }}</el-button>
         </el-form-item>
         <el-form-item label="支付密码：" :label-width="pswWidth" prop="payPsw">
-          <el-input class="pswIpt" :type="pwdType" placeholder="请输入支付密码" v-model.trim="pswForm.payPsw"></el-input>
+          <el-input class="pswIpt" :type="pwdType1" placeholder="请输入支付密码" v-model.trim="pswForm.payPsw"></el-input>
           <div class="getNum" style="width : 1.5rem ;float : right ;"></div>
           <span class="show-pwd" @click="showPwd">
-            <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
-            <svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>
+            <svg-icon icon-class="eyeopen" v-if="pwdType1===''" />
+            <svg-icon v-else="pwdType1==='password'" icon-class="eyeclose"></svg-icon>
           </span>
         </el-form-item>
         <el-form-item label="确认支付密码：" :label-width="pswWidth" prop="payPsw2">
-          <el-input class="pswIpt" :type="pwdType" placeholder="请再次输入支付密码" v-model.trim="pswForm.payPsw2"></el-input>
+          <el-input class="pswIpt" :type="pwdType2" placeholder="请再次输入支付密码" v-model.trim="pswForm.payPsw2"></el-input>
           <div class="getNum" style="width : 1.5rem ;float : right ;"></div>
           <span class="show-pwd" @click="showPwd">
-            <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
-            <svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>
+            <svg-icon icon-class="eyeopen" v-if="pwdType2===''" />
+            <svg-icon v-else="pwdType2==='password'" icon-class="eyeclose"></svg-icon>
           </span>
         </el-form-item>
         <el-form-item class="paynum" style="margin-top:10px">
@@ -91,19 +91,20 @@
           <el-button class="getNum" @click="getNum" :disabled="disabled">{{ btntext }}</el-button>
         </el-form-item>
         <el-form-item label="新密码：" :label-width="formLabelWidth" prop="newPsw">
-          <el-input class="pswIpt" :type="pwdType" placeholder="请输入新密码" v-model.trim="changePsw.newPsw"></el-input>
+          <el-input class="pswIpt" :type="pwdType1" placeholder="请输入新密码" v-model.trim="changePsw.newPsw"></el-input>
           <div class="getNum" style="width : 1.1rem ;float : right ;"></div>
-          <span class="show-pwd" @click="showPwd">
-            <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
-            <svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>
+          <span class="show-pwd" @click="showPwd('1')">
+            <svg-icon icon-class="eyeclose" v-if="pwdType1==='password'" ></svg-icon>
+            <svg-icon v-else="pwdType1===''" icon-class="eyeopen"></svg-icon>
           </span>
         </el-form-item>
         <el-form-item label="确认新密码：" :label-width="formLabelWidth" prop="checkPsw">
-          <el-input class="pswIpt" :type="pwdType" placeholder="请再次输入新密码" v-model.trim="changePsw.checkPsw"></el-input>
+          <el-input class="pswIpt" :type="pwdType2" placeholder="请再次输入新密码" v-model.trim="changePsw.checkPsw"></el-input>
           <div class="getNum" style="width : 1.1rem ;float : right ;"></div>
-          <span class="show-pwd" @click="showPwd">
-            <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
-            <svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>
+          <span class="show-pwd" @click="showPwd('2')">
+            <svg-icon v-if="pwdType2==='password'" icon-class="eyeclose"></svg-icon>
+             <svg-icon icon-class="eyeopen" v-else="pwdType2===''" ></svg-icon>
+
           </span>
         </el-form-item>
       </el-form>
@@ -438,7 +439,9 @@
           isBindPayPassword: false,
         },
         payPassword: '',
-        pwdType: 'password'
+        pwdType1: 'password',
+        pwdType2: 'password',
+
 
 
       }
@@ -737,7 +740,8 @@
         this.pswVisible = false;
         this.dialogFormVisible = false;
         this.getNew = true;
-        this.pwdType = "";
+        this.pwdType1 = "";
+        this.pwdType2 = "";
         this.$refs[formName].resetFields()
 
       },
@@ -749,12 +753,21 @@
         this.getNew = true;
       },
 
-      showPwd() {
-        if (this.pwdType === 'password') {
-          this.pwdType = ''
-        } else {
-          this.pwdType = 'password'
+      showPwd(type) {
+        if(type === '1'){
+          if (this.pwdType1 === 'password') {
+            this.pwdType1 = ''
+          } else {
+            this.pwdType1 = 'password'
+          }
+        }else{
+          if (this.pwdType2 === 'password') {
+            this.pwdType2 = ''
+          } else {
+            this.pwdType2 = 'password'
+          }
         }
+
       },
     }
   }
