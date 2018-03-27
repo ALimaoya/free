@@ -22,11 +22,11 @@
       <div class="block">
         <span class="demonstration">选择日期：</span>
           <el-date-picker format="yyyy - MM - dd " value-format="yyyy-MM-dd" size="small"
-            v-model="activity.GT_activityStartTime" clearable type="date"
+            v-model="activity.GT_activityEndTime" clearable type="date"
             placeholder="开始时间" >
           </el-date-picker>
         <span class="demonstration">~</span>
-        <el-date-picker size="small" v-model="activity.LT_activityEndTime"  clearable
+        <el-date-picker size="small" v-model="activity.LT_activityStartTime"  clearable
           type="date" format="yyyy - MM - dd " value-format="yyyy-MM-dd"
           placeholder="结束日期">
         </el-date-picker>
@@ -127,8 +127,8 @@
             EQ_platformType : '',
             EQ_activityCode : '',
             EQ_activityStatus : '',
-            LT_activityEndTime: '',
-            GT_activityStartTime : '',
+            GT_activityEndTime: '',
+            LT_activityStartTime : '',
             // currentPage : 1,
             // pageSize : 10
           },
@@ -235,14 +235,14 @@
           formData.append('EQ_activityStatus',this.activity.EQ_activityStatus);
           let start = '' ;
           let end = '' ;
-          if(this.activity.LT_activityEndTime !== null){
-            end = this.activity.LT_activityEndTime ;
+          if(this.activity.GT_activityEndTime !== null){
+             start = this.activity.GT_activityEndTime ;
           }
-          if(this.activity.GT_activityStartTime !== null){
-            start = this.activity.GT_activityStartTime ;
+          if(this.activity.LT_activityStartTime !== null){
+            end = this.activity.LT_activityStartTime ;
           }
-          formData.append('GT_activityStartTime',start);
-          formData.append('LT_activityEndTime',end);
+          formData.append('GT_activityEndTime',start);
+          formData.append('LT_activityStartTime',end);
           formData.append('currentPage',this.currentPage);
           formData.append('pageSize',this.pageSize);
           getActivity(formData).then(res => {

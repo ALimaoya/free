@@ -1,7 +1,7 @@
 <template>
   <div class="checkShop">
     <div class="title">店铺支付成功，等待审批通过即可发布试用活动</div>
-    <img src="" alt="" />
+    <!--<img src="" alt="" />-->
     <div class="btn"><el-button type="primary" @click="goShopList">返回店铺管理</el-button></div>
   </div>
 </template>

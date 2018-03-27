@@ -27,21 +27,21 @@
         <span class="svg-container">
           <svg-icon icon-class="password"></svg-icon>
         </span>
-        <el-input name="password" :type="pwdType" v-model.trim="RegForm.password" autoComplete="on" placeholder="请输入密码"></el-input>
-        <span class="show-pwd" @click="showPwd">
-          <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
-          <svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>
+        <el-input name="password" :type="pwdType1" v-model.trim="RegForm.password" autoComplete="on" placeholder="请输入8-16位的数字、字母组合密码"></el-input>
+        <span class="show-pwd" @click="showPwd('1')">
+          <svg-icon icon-class="eyeopen" v-if="pwdType1===''" />
+          <svg-icon v-else="pwdType1==='password'" icon-class="eyeclose"></svg-icon>
         </span>
       </el-form-item>
       <el-form-item prop="checkPsw">
         <span class="svg-container">
           <svg-icon icon-class="password"></svg-icon>
         </span>
-        <el-input name="password" :type="pwdType" @keyup.enter.native="handleLogin" v-model.trim="RegForm.checkPsw" autoComplete="on"
+        <el-input name="password" :type="pwdType2" @keyup.enter.native="handleLogin" v-model.trim="RegForm.checkPsw" autoComplete="on"
           placeholder="请再次确认密码"></el-input>
-        <span class="show-pwd" @click="showPwd">
-          <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
-          <svg-icon v-else="pwdType==='password'" icon-class="eyeclose" />
+        <span class="show-pwd" @click="showPwd('2')">
+          <svg-icon icon-class="eyeopen" v-if="pwdType2===''" />
+          <svg-icon v-else="pwdType2==='password'" icon-class="eyeclose" />
         </span>
       </el-form-item>
       <el-form-item>
@@ -164,7 +164,9 @@
 
         },
         loading: false,
-        pwdType: 'password',
+        pwdType1: 'password',
+        pwdType2: 'password',
+
         // messageWarn : false ,
         // warnText : '',
         imgCode: '',
@@ -177,12 +179,21 @@
       this.changeCaptcha();
     },
     methods: {
-      showPwd() {
-        if (this.pwdType === 'password') {
-          this.pwdType = ''
-        } else {
-          this.pwdType = 'password'
+      showPwd(type) {
+        if( type === '1'){
+          if (this.pwdType1 === 'password') {
+            this.pwdType1 = ''
+          } else {
+            this.pwdType1 = 'password'
+          }
+        }else{
+          if (this.pwdType2 === 'password') {
+            this.pwdType2 = ''
+          } else {
+            this.pwdType2 = 'password'
+          }
         }
+
       },
       //图片验证码
       changeCaptcha() {

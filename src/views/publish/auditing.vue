@@ -1,7 +1,7 @@
 <template>
   <div class="auditing">
     <div class="title">活动提交成功，等待审批通过即可上线</div>
-    <img src="" alt="" />
+    <!--<img src="" alt="" />-->
     <div class="btn"><el-button type="primary" @click="goCenter">返回商家中心首页</el-button></div>
   </div>
 </template>
@@ -20,15 +20,15 @@
 <style scoped lang="scss" rel="stylesheet/scss">
   .auditing{
     width : 70% ;
-    margin : 0 auto;
+    margin : 1rem auto;
     .title{
       width : 100% ;
-      height : 0.5rem ;
-      line-height : 0.5rem ;
+      height : 2rem ;
+      line-height : 2rem ;
       font-size : 0.22rem ;
       font-weight : bold ;
       color : #333 ;
-      margin-top : 0.2rem ;
+      margin : auto;
       text-align: center ;
     }
     img{

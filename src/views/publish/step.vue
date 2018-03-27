@@ -84,16 +84,17 @@
       <el-form-item label="下单价格：" labelWidth="1.3rem" prop="buyProductAmount">
         <el-input class="any" size="small" :maxlength="10" type="number" :readonly="readonly" v-model.number="form.buyProductAmount" placeholder="请输入内容" ></el-input>元
       </el-form-item>
-      <el-form-item label="商品运费：" labelWidth="1.3rem" prop="post">
-        <div class="post">
-          <el-radio-group :disabled="read" v-model="form.post">
+      <div class="post">
+      <el-form-item label="商品运费：" labelWidth="1.3rem" prop="post" style="width : 40% ;float : left ;">
+          <el-radio-group :disabled="read"  v-model="form.post">
             <el-radio label="1" >包邮</el-radio>
             <el-radio label="0" :disabled="form.buyProductAmount<100?true:false" >不包邮</el-radio>
           </el-radio-group>
-        </div>
-        <span class="tips"><img src="../../assets/imgs/tips3.png" alt=""/>试客付邮试用必须同时满足：1、商品价值超过100元；2、拍A发A；
-          3、淘宝销售邮费合理。若试客申诉因邮费不符导致商品无法下单，本平台有权将单品试用担保金返还给已获资格的试客</span>
       </el-form-item>
+      <span class="tips"><img src="../../assets/imgs/tips3.png" alt=""/>试客付邮试用必须同时满足：1、商品价值超过100元；2、拍A发A；
+          3、淘宝销售邮费合理。若试客申诉因邮费不符导致商品无法下单，本平台有权将单品试用担保金返还给已获资格的试客</span>
+      </div>
+
       <p class="title">第四步：设置试客找到商品入口</p>
       <el-form-item label="APP关键词：" labelWidth="1.32rem">
         <span >{{ choosePlat }}</span>
@@ -304,7 +305,15 @@
 
           }
         };
+        const validPost = (rule, value ,callback) =>{
+          if(value === '0'){
+            if(this.form.buyProductAmount<100){
+              callback(new Error('下单价格超过100元才能选择不包邮'))
+            }
+          }
+          callback();
 
+        };
         return{
           type : '1',
           form : {
@@ -467,7 +476,11 @@
                 required : true , validator : validMoney ,trigger : 'blur'
               }
             ],
-
+            post : [
+              {
+                required : true , validator : validPost ,trigger : 'click'
+              }
+            ]
           },
           choosePlat : '',
           week : [
@@ -1110,7 +1123,6 @@
 
         //提交试用信息
         onSubmit(formName,index){
-          console.log(this.form ,this.form.activityCalendar[0]);
           if(this.form.showImageUrl === ''){
             this.showImgWarn = true ;
           }else{
@@ -1123,11 +1135,12 @@
 
           }
           this.hasWarn();
-          this.$refs[formName].validate((valid) => {
-            if (valid  && !this.warn && !this.daysWarn && !this.changeNum && !this.showImgWarn && !this.goodsImgWarn) {
 
+          this.$refs[formName].validate((valid) => {
+
+            if (valid  && !this.warn && !this.daysWarn && !this.changeNum && !this.showImgWarn && !this.goodsImgWarn) {
               delete this.form.startTime ;
-              console.log(this.form)
+              console.log(this.form);
               if(index === 1){
                   publishActivity(this.form).then( res => {
                     if(res.data.status === '000000000'){
@@ -1216,6 +1229,7 @@
       text-indent : 0.1rem ;
       border-bottom : 1px solid #aaa ;
       margin-bottom : 0.2rem ;
+      float : left ;
     }
     .el-form-item{
       /*margin : 0;*/
@@ -1255,22 +1269,6 @@
           }
         }
       }
-      .tips{
-        width : 50% ;
-        height : 0.3rem ;
-        line-height : 0.3rem ;
-        font-size : 0.12rem ;
-        color : #456 ;
-        margin-left : 0.2rem ;
-        display: inline-block;
-        img{
-          width : 0.2rem ;
-          height : 0.2rem ;
-          float : left ;
-          margin-top : 0.03rem ;
-          margin-right : 0.05rem ;
-        }
-      }
       .el-input{
         width : 4rem ;
       }
@@ -1297,9 +1295,16 @@
         width : 1rem ;
       }
       .post{
-        height : 1rem ;
-        float : left ;
-        margin-right : 1.1rem ;
+        /*height : 0.5rem ;*/
+        /*float : left ;*/
+        /*margin-right : 1.1rem ;*/
+        .el-form-item{
+          width : 50% ;
+        }
+        .tip{
+          width : 50% ;
+          float : right ;
+        }
       }
       .textarea{
         width : 40% ;
@@ -1336,6 +1341,23 @@
       }
 
     }
+    .tips{
+      width : 50% ;
+      /*height : 0.3rem ;*/
+      line-height : 0.3rem ;
+      font-size : 0.12rem ;
+      color : #456 ;
+      margin-left : 0.2rem ;
+      display: inline-block;
+      img{
+        width : 0.2rem ;
+        height : 0.2rem ;
+        float : left ;
+        margin-top : 0.03rem ;
+        margin-right : 0.05rem ;
+      }
+    }
+
     .rules{
       width : 90% ;
       padding-left : 0.28rem ;
