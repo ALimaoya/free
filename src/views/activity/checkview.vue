@@ -117,7 +117,7 @@
         viewImg : '' ,
         detailInfo : false ,
         showImg : false ,
-        imageDomain : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/' ,
+        imageDomain : process.env.IMAGE_DOMAIN ,
         // imageDomain : 'http://yabei.oss-cn-beijing.aliyuncs.com/',
         orderId : '' ,
         reason : '' ,

@@ -215,9 +215,9 @@
     }
 
     .payPsw{
-     width : 100% ;
+      width : 50% ;
       height : 1.2rem ;
-
+      margin : 0 auto ;
       span{
         display : block;
         width : 35% ;

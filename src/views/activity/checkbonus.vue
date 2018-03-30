@@ -150,7 +150,7 @@
             reason : '' ,
             refuseReason : '' ,
             status : '' ,
-            imageDomain : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/',
+            imageDomain : process.env.IMAGE_DOMAIN,
             showImg : false
             // imageDomain : 'http://yabei.oss-cn-beijing.aliyuncs.com/'
           }

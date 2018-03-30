@@ -427,7 +427,7 @@
           dialogVisible: false ,
           token : getToken() ,
           imgUrl: process.env.BASE_API+'/tryout/file/upload',   // 上传图片的域名
-          imageDomain : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/', //获取图片的外链域名
+          imageDomain : process.env.IMAGE_DOMAIN , //获取图片的外链域名
           // imageDomain : '"http://yabei.oss-cn-beijing.aliyuncs.com/',
           showImg : '',
           mainImg : '',
@@ -1140,7 +1140,7 @@
 
             if (valid  && !this.warn && !this.daysWarn && !this.changeNum && !this.showImgWarn && !this.goodsImgWarn) {
               delete this.form.startTime ;
-              console.log(this.form);
+              // console.log(this.form);
               if(index === 1){
                   publishActivity(this.form).then( res => {
                     if(res.data.status === '000000000'){

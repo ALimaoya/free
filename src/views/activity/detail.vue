@@ -55,7 +55,7 @@
             imgType : ['商品收藏截图','店铺收藏截图','订单截图','评价截图'] ,
             showImg : false ,
             bigImg : '' ,
-            imageDomain : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/' ,
+            imageDomain : process.env.IMAGE_DOMAIN ,
             // imageDomain : 'http://yabei.oss-cn-beijing.aliyuncs.com/'
           }
       },

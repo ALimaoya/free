@@ -169,10 +169,11 @@
         width : 80% ;
         height : 100% ;
         margin : 0 auto ;
+        display : block ;
       }
     }
     .tips{
-      text-align : left ;
+      text-align : center ;
       color : #333 ;
       line-height : 0.5rem ;
 
@@ -190,32 +191,38 @@
       }
     }
     p{
-      width : 80% ;
+      width : 100% ;
       text-align : center ;
       /*height : 0.4rem ;*/
       line-height : 0.4rem ;
 
     }
     .note{
-      width : 50% ;
-      margin : 0.3rem 0 ;
+      width : 100% ;
+      margin : 0.3rem auto ;
       color : #666 ;
+      text-indent : 1.5rem ;
     }
     table{
       border-collapse: collapse;
       width : 60% ;
-      margin : auto 1.2rem 0.3rem ;
+      margin : auto auto 0.3rem ;
       tr{
         height : 0.4rem ;
         text-align : center ;
 
       }
+      td{
+        width : 50% ;
+      }
     }
     .result{
       /*margin-left : 2rem ;*/
       line-height : 0.5rem;
+      width : 78% ;
+
       text-align : left ;
-      margin-bottom : 0.5rem ;
+      margin : 0 auto 0.5rem ;
     }
     .btn{
       display: flex ;
@@ -229,12 +236,12 @@
       }
     }
     .payPsw{
-     width : 50% ;
+      width : 50% ;
       height : 1.2rem ;
-
+      margin : 0 auto ;
       span{
         display : block;
-        width : 35% ;
+        width : 0.8rem; ;
         height : 0.3rem ;
         line-height : 0.3rem ;
         float : left ;
@@ -242,8 +249,8 @@
         color : #456 ;
       }
       .el-input{
-        float : right ;
-        width : 65% ;
+        float : left ;
+        width : 45% ;
       }
       .show-pwd{
         width : 0.3rem ;

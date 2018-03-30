@@ -58,17 +58,17 @@
         <el-form-item label="支付密码：" :label-width="pswWidth" prop="payPsw">
           <el-input class="pswIpt" :type="pwdType1" placeholder="请输入六位数字支付密码" v-model.trim="pswForm.payPsw"></el-input>
           <div class="getNum" style="width : 1.5rem ;float : right ;"></div>
-          <span class="show-pwd" @click="showPwd">
-            <svg-icon icon-class="eyeopen" v-if="pwdType1===''" />
-            <svg-icon v-else="pwdType1==='password'" icon-class="eyeclose"></svg-icon>
+          <span class="show-pwd" @click="showPwd('1')">
+            <svg-icon v-if="pwdType1==='password'" icon-class="eyeclose"></svg-icon>
+            <svg-icon icon-class="eyeopen" v-else="pwdType1===''" ></svg-icon>
           </span>
         </el-form-item>
         <el-form-item label="确认支付密码：" :label-width="pswWidth" prop="payPsw2">
           <el-input class="pswIpt" :type="pwdType2" placeholder="请再次确认支付密码" v-model.trim="pswForm.payPsw2"></el-input>
           <div class="getNum" style="width : 1.5rem ;float : right ;"></div>
-          <span class="show-pwd" @click="showPwd">
-            <svg-icon icon-class="eyeopen" v-if="pwdType2===''" />
-            <svg-icon v-else="pwdType2==='password'" icon-class="eyeclose"></svg-icon>
+          <span class="show-pwd" @click="showPwd('2')">
+            <svg-icon v-if="pwdType2==='password'" icon-class="eyeclose"></svg-icon>
+            <svg-icon icon-class="eyeopen" v-else="pwdType2===''" ></svg-icon>
           </span>
         </el-form-item>
         <el-form-item class="paynum" style="margin-top:10px">
@@ -91,7 +91,7 @@
           <el-button class="getNum" @click="getNum" :disabled="disabled">{{ btntext }}</el-button>
         </el-form-item>
         <el-form-item label="新密码：" :label-width="formLabelWidth" prop="newPsw">
-          <el-input class="pswIpt" :type="pwdType1" placeholder="请输入8-16位的数字、字母组合的新密码" v-model.trim="changePsw.newPsw"></el-input>
+          <el-input class="pswIpt" :type="pwdType1" placeholder="请输入新密码" v-model.trim="changePsw.newPsw"></el-input>
           <div class="getNum" style="width : 1.1rem ;float : right ;"></div>
           <span class="show-pwd" @click="showPwd('1')">
             <svg-icon icon-class="eyeclose" v-if="pwdType1==='password'" ></svg-icon>
@@ -104,7 +104,6 @@
           <span class="show-pwd" @click="showPwd('2')">
             <svg-icon v-if="pwdType2==='password'" icon-class="eyeclose"></svg-icon>
              <svg-icon icon-class="eyeopen" v-else="pwdType2===''" ></svg-icon>
-
           </span>
         </el-form-item>
       </el-form>
@@ -740,8 +739,8 @@
         this.pswVisible = false;
         this.dialogFormVisible = false;
         this.getNew = true;
-        this.pwdType1 = "";
-        this.pwdType2 = "";
+        this.pwdType1 = "password";
+        this.pwdType2 = "password";
         this.$refs[formName].resetFields()
 
       },

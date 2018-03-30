@@ -206,7 +206,7 @@
         reasonDetail : '',
         activityDetail : {} ,
         time : '' ,
-        imageDomain : 'http://lgf8953.oss-cn-beijing.aliyuncs.com/', //获取图片的外链域名
+        imageDomain : process.env.IMAGE_DOMAIN, //获取图片的外链域名
         mask : false ,
         bigImg : ''
 

@@ -18,7 +18,7 @@
         <li>
           <div class="title">
             <span>您的专属客服：</span>
-            <img :src="attendant.avator" alt="" />
+            <img v-if="attendant.avator" :src=" imageDomain + attendant.avator" alt="" />
           </div>
           <div class="service">
             <dl>
@@ -51,79 +51,13 @@
           <li class="cash">{{ wallet.gold }}元</li>
           <!--<li><el-button size="small" class="btn" @click="recharge(3)">充值</el-button></li>-->
         </ul>
-        <!--<ul class="detail">-->
-          <!--<span>资金明细：</span>-->
-          <!--<li v-for="(item, index) in detail"><b></b>{{item.name}}<b  @click="look(index)"></b>-->
-              <!--<div class="history" @click="first(index)" v-show="item.visible==true">-->
-                  <!--<div class="tablebox">-->
-                    <!--<img class="close" src="../../assets/imgs/close.png" @click="close(index)" alt="" />-->
-                      <!--&lt;!&ndash;<el-col :span="4" v-for="" label="时间" ></el-col>&ndash;&gt;-->
-                      <!--&lt;!&ndash;<el-col span="4" v-for="" label="类型" prop="type"></el-col>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<el-col span="4" v-for="" label="提现金额" prop="type"></el-col>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<el-col span="4" v-for="" label="手续费" prop="type"></el-col>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<el-col span="4" v-for="" label="收入/支出" prop="create_time"></el-col>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<el-col span="4" v-for="" label="结余" prop="create_time"></el-col>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<el-col span="4" v-for="" label="到账金额" prop="type"></el-col>&ndash;&gt;-->
-                    <!--<span  @click="toAll" class="toAll">查看全部记录&lt</span>-->
-                    <!--<span class="tips">请各位商家及时保存资金信息方便后期对账。</span>-->
-                  <!--</div>-->
-                <!--&lt;!&ndash;<el-popover&ndash;&gt;-->
-                <!--&lt;!&ndash;ref="popover${index}"&ndash;&gt;-->
-                <!--&lt;!&ndash;placement="right"&ndash;&gt;-->
-                <!--&lt;!&ndash;width="400"&ndash;&gt;-->
-                <!--&lt;!&ndash;trigger="click">&ndash;&gt;-->
-
-
-                <!--&lt;!&ndash;<el-table  :data="tableData" stripe>&ndash;&gt;-->
-
-                  <!--&lt;!&ndash;&lt;!&ndash;<el-table-column&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;prop="create_time"&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;label="时间"&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;width="180">&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;</el-table-column>&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;<el-table-column&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;prop="change_type" v-if="show1"&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;label="类型"&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;width="180">&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;</el-table-column>&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;<el-table-column v-if="show2"&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;prop="amount"&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;label="提现金额"&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;width="180">&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;</el-table-column>&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;<el-table-column v-if="show1"&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;prop="amount"&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;label="收入/支出">&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;</el-table-column>&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;<el-table-column v-if="show2"&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;prop="charge"&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;label="手续费"&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;width="180">&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;</el-table-column>&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;<el-table-column&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;prop="rest" v-if="show1"&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;label="结余">&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;</el-table-column>&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;<el-table-column v-if="show2"&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;prop="money"&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;label="到账金额"&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;width="180">&ndash;&gt;&ndash;&gt;-->
-                  <!--&lt;!&ndash;&lt;!&ndash;</el-table-column>&ndash;&gt;&ndash;&gt;-->
-                <!--&lt;!&ndash;</el-table>&ndash;&gt;-->
-                <!--&lt;!&ndash;</el-popover>&ndash;&gt;-->
-              <!--</div>-->
-
-          <!--</li>-->
-
-
-        <!--</ul>-->
       </div>
-      <div class="plan">
+      <div class="plan" v-if="pub_plans.length">
         <h2>参考方案</h2>
         <ul>
           <li v-for="item in pub_plans" @click="plan(item.url)">
             <p>{{ item.planTitle }}</p>
-            <img :src="item.planImg" alt=""/>
+            <img :src=" imageDomain + item.planImg" alt=""/>
           </li>
           <!--<li><img src="" /></li>-->
           <!--<li><img src="" /></li>-->
@@ -152,7 +86,8 @@
             },
             tableData : [] ,
             attendant : {},
-            pub_plans : []
+            pub_plans : [],
+            imageDomain : process.env.IMAGE_DOMAIN ,
             // show : false,
             // show0 : false ,
             // show1 : false ,
@@ -341,7 +276,7 @@
             &:nth-child(2){
               dd{
                 width : 0.27rem ;
-                height : 0.25rem ;
+                height : 0.23rem ;
               }
             }
             dd{

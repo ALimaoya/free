@@ -10,14 +10,14 @@
         </el-form-item>
         <el-form-item prop="imgNum" class="validateCode">
           <span class="svg-container">
-            <img src="../../assets/imgs/verify2.png" alt="" />
+            <svg-icon icon-class="verify" />
           </span>
           <el-input type="text" v-model="RegForm.imgNum" autoComplete="on" placeholder="请输入图形验证码" />
           <img class="show-captcha" :src="'data:image/png;base64,'+imgCode" alt="" @click="changeCaptcha" />
         </el-form-item>
         <el-form-item prop="message" class="validateCode">
           <span class="svg-container">
-            <img src="../../assets/imgs/verify2.png" alt="" />
+             <svg-icon icon-class="verify" />
           </span>
           <el-input type="text" v-model.trim="RegForm.message" autoComplete="on" placeholder="请输入短信验证码" />
           <el-button class="show-captcha codeBtn" size="mini" plain @click="getMessage" :disabled="disabled">{{ btntext }}</el-button>

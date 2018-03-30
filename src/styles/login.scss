@@ -12,8 +12,12 @@ $light_gray:#eee;
       margin-top: 7px;
       font-size: 12px;
       color: #fefefe;
-      .toRes {
+
+      span,.toRes,.toLogin {
         float: left;
+      }
+      .toLogin{
+        color : #0a6cd6;
       }
       .toPsw {
         float: right;
@@ -48,11 +52,13 @@ $light_gray:#eee;
     padding: 0.06rem 0.05rem 0.06rem 0.15rem;
     color: $dark_gray;
     vertical-align: middle;
-    width: 0.30rem;
+    width: 0.3rem;
     display: inline-block;
+    box-sizing: border-box;
     &_login {
       font-size: 0.20rem;
     }
+
   }
   .title {
     font-size: 0.26rem;
@@ -105,5 +111,14 @@ $light_gray:#eee;
     line-height : 0.35rem ;
     text-align : center;
   }
+  .el-dialog{
+    .el-dialog__header{
+      height : 0.4rem ;
+      .el-dialog__title{
+        line-height : 0.4rem ;
+        display: block;
+      }
 
+    }
+  }
 }
