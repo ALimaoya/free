@@ -58,7 +58,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="商品链接：" labelWidth="1.3rem" prop="productUrl">
-        <el-input :readonly="readIpt" size="small" v-model.trim="form.productUrl" placeholder="请输入内容" @blur="getGoodsDetail(form.platformType ,form.productUrl)"></el-input>
+        <el-input :readonly="readIpt" size="small" v-model.trim="form.productUrl" placeholder="请输入内容" ></el-input>
         <span class="tips"><img src="../../assets/imgs/tips3.png" alt=""/>平台会根据您填写的商品链接抓取宝贝信息，试客无法看到此链接</span>
       </el-form-item>
       <el-form-item label="宝贝主图：" labelWidth="1.3rem">
@@ -505,7 +505,7 @@
           pickerOptions : {
             disabledDate(time){
               let curDate = (new Date()).getTime() ;
-              return time.getTime() < Date.now()  - 24*3600*1000 ;
+              return time.getTime() < Date.now()  - 3*24*3600*1000 ;
             }
           } ,
           editor : '',
@@ -518,8 +518,10 @@
           activityVisible : false ,
           read : false ,
           readIpt : false ,
-          autoUpload : true
-          // pickerOptions: {
+          autoUpload : true ,
+
+
+        // pickerOptions: {
           //   disabledDate(time) {
           //     return time.getTime() < Date.now();
           //   }
@@ -630,6 +632,7 @@
 
       },
 
+
       methods: {
 
         //上传商品展示图
@@ -637,7 +640,6 @@
           // console.log(res,file);
           // this.form.showImageUrl = URL.createObjectURL(file.raw);
           // this.$refs.showImageUrl.resetFields();
-          // console.log('sss')
         },
 
         //判断需要上传的图片的尺寸
@@ -786,24 +788,28 @@
         },
 
         //获取商品详情
-        getGoodsDetail(type,url){
+        getGoodsDetail(type,url,index,form){
+
           if( type === '3'){
             getJDetail(url).then( res => {
               if( res.data.status === '000000000'){
                 this.form.productName = res.data.data.productName ;
                 this.form.productDetail = res.data.data.productDetail ;
                 this.form.productId = res.data.data.productId ;
+                this.submitDetail(index,form);
+
               }else{
                 this.$message({
                   message : res.data.message ,
                   type : 'error',
                   center : true
                 });
-                this.form.productUrl = '' ;
+                // this.form.productUrl = '' ;
               }
             })
           }else{
             if( url.indexOf('?') !== -1 ){
+
               const num = getQueryString(url,'id');
               this.form.productId = num ;
               let params = {'item_num_id': num };
@@ -814,6 +820,37 @@
                 success: function (data) {
                   if (data['ret'][0] === 'SUCCESS::接口调用成功') {
                     _this.form.productDetail = JSON.stringify(data['data']['images']);
+                    let infoParams = {
+                      jsv: '2.4.8',
+                      t: new Date().getTime(),
+                      api: 'mtop.taobao.detail.getdetail',
+                      v: '6.0',
+                      H5Request: true,
+                      type: 'jsonp',
+                      dataType: 'jsonp',
+                      data: JSON.stringify({exParams: {id: num, itemNumId: num }})
+                    };
+                    $.ajax({
+                      url: 'https://h5api.m.taobao.com/h5/mtop.taobao.detail.getdetail/6.0/' ,
+                      data : infoParams,
+                      dataType: 'jsonp',
+                      success: function (data) {
+                        if (data['ret'][0] == 'SUCCESS::调用成功') {
+                          let _data = data.data;
+                          _this.form.productName = _data.item.title ;
+                          _this.submitDetail(index,form);
+
+                        }else{
+                          _this.$message({
+                            message : '请输入正确的商品链接' ,
+                            center : true ,
+                            type : 'error'
+                          });
+                          _this.form.productUrl = '' ;
+
+                        }
+                      }
+                    });
                   } else {
                     _this.$message({
                       message : '请输入正确的商品链接' ,
@@ -824,38 +861,13 @@
                   }
                 }
               });
-              let infoParams = {
-                jsv: '2.4.8',
-                t: new Date().getTime(),
-                api: 'mtop.taobao.detail.getdetail',
-                v: '6.0',
-                H5Request: true,
-                type: 'jsonp',
-                dataType: 'jsonp',
-                data: JSON.stringify({exParams: {id: num, itemNumId: num }})
-              };
-              $.ajax({
-                url: 'https://h5api.m.taobao.com/h5/mtop.taobao.detail.getdetail/6.0/' ,
-                data : infoParams,
-                dataType: 'jsonp',
-                success: function (data) {
-                  if (data['ret'][0] == 'SUCCESS::调用成功') {
-                    let _data = data.data;
-                    _this.form.productName = _data.item.title ;
-                  }else{
-                    _this.$message({
-                      message : '请输入正确的商品链接' ,
-                      center : true ,
-                      type : 'error'
-                    });
-                    _this.form.productUrl = '' ;
 
-                  }
-                }
-              })
+
+
             }
 
           }
+
 
         } ,
 
@@ -1136,69 +1148,77 @@
           }
           this.hasWarn();
 
-          this.$refs[formName].validate((valid) => {
+            this.$refs[formName].validate((valid) => {
+              if (valid && !this.warn && !this.daysWarn && !this.changeNum && !this.showImgWarn && !this.goodsImgWarn) {
+                delete this.form.startTime;
 
-            if (valid  && !this.warn && !this.daysWarn && !this.changeNum && !this.showImgWarn && !this.goodsImgWarn) {
-              delete this.form.startTime ;
-              // console.log(this.form);
-              if(index === 1){
-                  publishActivity(this.form).then( res => {
-                    if(res.data.status === '000000000'){
-                      this.$message({
-                        type: 'success',
-                        message: '提交成功',
-                        center: true ,
-                        duration : 500
+                this.getGoodsDetail(this.form.platformType ,this.form.productUrl,index,this.form) ;
 
-                      });
-                      this.$router.push({ name: 'Pay', params :{ id : res.data.data.activityId  }  });
 
-                    } else {
-                      this.$message({
-                        message: res.data.message,
-                        center: true,
-                        type: 'error'
-                      })
-                    }
-                  }).catch( err => {
-                    // console.log(err);
-                    alert('服务器开小差啦，请稍等~')
+              } else {
+                this.$message({
+                  type: 'error',
+                  message: '提交失败，请重新确认信息',
+                  center: true
+                });
+                return false;
+              }
+            })
+
+
+        },
+
+      // 提交活动信息
+        submitDetail(index,form){
+          if (index === 1) {
+            publishActivity(form).then(res => {
+              if (res.data.status === '000000000') {
+                this.$message({
+                  type: 'success',
+                  message: '提交成功',
+                  center: true,
+                  duration: 500
+
+                });
+                this.$router.push({name: 'Pay', params: {id: res.data.data.activityId}});
+
+              } else {
+                this.$message({
+                  message: res.data.message,
+                  center: true,
+                  type: 'error'
+                })
+              }
+            }).catch(err => {
+              // console.log(err);
+              alert('服务器开小差啦，请稍等~')
+            });
+          } else {
+            if (index === 2) {
+              changeDetail(form).then(res => {
+                if (res.data.status === '000000000') {
+                  this.$message({
+                    type: 'success',
+                    message: '提交成功',
+                    center: true,
+                    duration: 500
                   });
-                }else{
-                  if( index === 2){
+                  this.$router.push({name: 'Pay', params: {id: this.order}});
 
-                    changeDetail(this.form).then( res => {
-                      if (res.data.status === '000000000') {
-                        this.$message({
-                          type: 'success',
-                          message: '提交成功',
-                          center: true ,
-                          duration : 500
-                        });
-                        this.$router.push({name: 'Pay' , params : { id : this.order } });
-
-                      }else{
-                        this.$message({
-                          type: 'error',
-                          message: res.data.message ,
-                          center: true
-                        }, 500);
-                      }
-
-                    }).catch( err =>{
-                      alert('服务器开小差啦，请稍等~')
-                    })
-                  }
+                } else {
+                  this.$message({
+                    type: 'error',
+                    message: res.data.message,
+                    center: true
+                  }, 500);
                 }
-            }else{
-              this.$message({
-                type : 'error',
-                message : '提交失败，请重新确认信息',
-                center : true
-              });
-              return false ;
+
+              }).catch(err => {
+                alert('服务器开小差啦，请稍等~')
+              })
             }
-          })
+          }
+
         },
 
       //绑定店铺

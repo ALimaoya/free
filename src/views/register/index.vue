@@ -45,7 +45,7 @@
       </el-form-item>
       <el-checkbox class="rule"  v-model="agree">我已认真阅读并同意<a href="#" @click="ruleVisible = true">《用户注册协议》</a></el-checkbox>
       <el-form-item>
-        <el-button type="primary" style="width:100%;" :loading="loading" @click.native.prevent="handleLogin">
+        <el-button type="primary" :disabled="!agree" style="width:100%;" :loading="loading" @click.native.prevent="handleLogin">
           注册
         </el-button>
       </el-form-item>
