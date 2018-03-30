@@ -2,7 +2,7 @@
 module.exports = {
   NODE_ENV: '"production"',
   // BASE_API: '"http://120.27.12.205:8005"',
-  BASE_API: '"https://sksj-api.yabei.shop/"',
+  BASE_API: '"https://sksj-api.yabei.shop"',
   // IMAGE_DOMAIN : '"http://lgf8953.oss-cn-beijing.aliyuncs.com/"',
   IMAGE_DOMAIN : '"https://yabei.oss-cn-beijing.aliyuncs.com/"',
 
