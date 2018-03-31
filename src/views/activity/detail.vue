@@ -24,6 +24,7 @@
         <li><span>中奖时间：</span><span v-if="detailInfo.winTime">{{ detailInfo.winTime }}</span><span v-else>暂无</span></li>
         <li><span>开奖时间：</span><span v-if="detailInfo.receiveTime">{{ detailInfo.receiveTime }}</span><span v-else>暂无</span></li>
         <li><span>订单价格：</span><span v-if="detailInfo.amount">{{ detailInfo.amount }} 元</span><span v-else>暂无</span></li>
+        <li class="faileReason" v-if="detailInfo.remarks"><span>订单失败原因：</span><span>{{ detailInfo.remarks }} </span></li>
         <li><span>图片详情：</span><span v-if="detailInfo.orderImageList == 0" class="noImg">暂无图片</span></li>
         <li class="detailPic">
           <div v-if="detailInfo.orderImageList != 0">
@@ -134,6 +135,21 @@
           width : 60% ;
           text-indent : 0.3rem ;
         }
+      }
+    }
+    .faileReason{
+      width : 100% ;
+      span:nth-child(1){
+        width : 20% ;
+        text-align: right ;
+
+      }
+      span:nth-child(2){
+        width : 80% ;
+        padding-left : 0.3rem ;
+        box-sizing: border-box;
+        text-indent : 0 ;
+
       }
     }
 
