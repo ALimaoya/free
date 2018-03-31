@@ -220,7 +220,7 @@
       margin : 0 auto ;
       span{
         display : block;
-        width : 35% ;
+        width : 27% ;
         height : 0.3rem ;
         line-height : 0.3rem ;
         float : left ;
@@ -229,7 +229,7 @@
       }
       .el-input{
         float : left ;
-        width : 35% ;
+        width : 40% ;
         /*position : relative ;*/
 
       }

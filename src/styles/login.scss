@@ -66,6 +66,11 @@ $light_gray:#eee;
     color: $light_gray;
     margin: 0 auto 0.40rem auto;
     text-align: center;
+    span{
+      font-size: 0.2rem;
+      display: inline-block;
+      text-indent : 0.1rem ;
+    }
   }
   .login-form {
     position: absolute;

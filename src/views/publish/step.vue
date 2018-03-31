@@ -58,7 +58,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="商品链接：" labelWidth="1.3rem" prop="productUrl">
-        <el-input :readonly="readIpt" size="small" v-model.trim="form.productUrl" placeholder="请输入内容" ></el-input>
+        <el-input :readonly="readIpt" size="small" v-model.trim="form.productUrl" placeholder="请输入内容" @change="getGoodsDetail(form.platformType,form.productUrl)"></el-input>
         <span class="tips"><img src="../../assets/imgs/tips3.png" alt=""/>平台会根据您填写的商品链接抓取宝贝信息，试客无法看到此链接</span>
       </el-form-item>
       <el-form-item label="宝贝主图：" labelWidth="1.3rem">
@@ -224,6 +224,13 @@
         <el-button type="primary" @click="goNewShop">绑定新店铺</el-button>
       </span>
     </el-dialog>
+    <el-dialog  title="提示" top="20%" :visible.sync="vipVisible" width="30%" center
+                :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+      <p>您还不是会员，请先前往购买会员</p>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="buyVip">购买会员</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -236,6 +243,7 @@
     import ElButtonGroup from "element-ui/packages/button/src/button-group";
     import { getCategory ,getShopList ,searchTypeList , uploadImage , publishActivity  , changeDetail , getJDetail} from "@/api/activity"
     import { shopList } from "@/api/shop"
+    import { getMember } from '@/api/userInfor'
     import $ from '../../../static/js/jquery-3.3.1.min.js'
 
     export default {
@@ -519,7 +527,7 @@
           read : false ,
           readIpt : false ,
           autoUpload : true ,
-
+          vipVisible : false
 
         // pickerOptions: {
           //   disabledDate(time) {
@@ -534,86 +542,94 @@
         shopList().then( res => {
           if(res.data.status === '000000000'){
             if(res.data.data.length){
-              if(this.$route.query.order !== undefined ) {
-                this.editor = this.$route.query.editor;
-                let order = this.$route.query.order ;
-                if( order !== undefined){
-                  this.order = order ;
-                  this.$store.dispatch('getPublishDetail',order).then( res => {
-                    if (res.data.status === '000000000') {
-                      this.form = res.data.data;
-                      if(this.$route.query.payStatus === '1'){
-                        this.readonly = true ;
-                      }
-                      if(this.form.activityId !== '' ){
-                        let num = 0 ;
-                        this.resetSearch(this.form.platformType);
-                        this.getType(this.form.platformType);
-                        this.mainImg = this.imageDomain + this.form.mainImageUrl ;
-                        this.showImg = this.imageDomain + this.form.showImageUrl ;
-                        if(this.editor !== undefined){
-                          if(this.editor === '2'){
-                            this.read = 'disabled' ;
+              getMember().then( res => {
+                if(res.data.data.vipLevel){
+                  if(this.$route.query.order !== undefined ) {
+                    this.editor = this.$route.query.editor;
+                    let order = this.$route.query.order ;
+                    if( order !== undefined){
+                      this.order = order ;
+                      this.$store.dispatch('getPublishDetail',order).then( res => {
+                        if (res.data.status === '000000000') {
+                          this.form = res.data.data;
+                          if(this.$route.query.payStatus === '1'){
                             this.readonly = true ;
-                            this.readIpt = true ;
-                            this.readonlyKey = 'disabled' ;
-                            this.autoUpload = false ;
                           }
-                          if(this.form.activityCalendar.length !== 0){
-                            this.form.activityCalendar.forEach((i) => {
-                              num = num + i.tryoutQuantity ;
-                              this.goodsAmount.push(i.tryoutQuantity);
-                            });
+                          if(this.form.activityId !== '' ){
+                            let num = 0 ;
+                            this.resetSearch(this.form.platformType);
+                            this.getType(this.form.platformType);
+                            this.mainImg = this.imageDomain + this.form.mainImageUrl ;
+                            this.showImg = this.imageDomain + this.form.showImageUrl ;
+                            if(this.editor !== undefined){
+                              if(this.editor === '2'){
+                                this.read = 'disabled' ;
+                                this.readonly = true ;
+                                this.readIpt = true ;
+                                this.readonlyKey = 'disabled' ;
+                                this.autoUpload = false ;
+                              }
+                              if(this.form.activityCalendar.length !== 0){
+                                this.form.activityCalendar.forEach((i) => {
+                                  num = num + i.tryoutQuantity ;
+                                  this.goodsAmount.push(i.tryoutQuantity);
+                                });
+                              }
+                              this.tryoutAmount = num ;
+                              this.totalNum = num ;
+                              this.dayNum = this.goodsAmount.length ;
+                              this.form['startTime'] = parseTime(new Date(this.form.activityStartTime.replace(/-/g,"/")).getTime() - 2*24*3600*1000) ;
+                              this.setRate(this.form.startTime ,this.tryoutAmount,this.goodsAmount);
+                            }
+                            else{
+                              this.setRate();
+
+                            }
+
+                          }else{
+                            this.setRate();
                           }
-                          this.tryoutAmount = num ;
-                          this.totalNum = num ;
-                          this.dayNum = this.goodsAmount.length ;
-                          this.form['startTime'] = parseTime(new Date(this.form.activityStartTime.replace(/-/g,"/")).getTime() - 2*24*3600*1000) ;
-                          this.setRate(this.form.startTime ,this.tryoutAmount,this.goodsAmount);
+
+                        } else {
+                          this.$message({
+                            message: res.data.message,
+                            center: true,
+                            type: 'error'
+                          })
                         }
-                        else{
-                          this.setRate();
-
-                        }
-
-                      }else{
-                        this.setRate();
-                      }
-
-                    } else {
-                      this.$message({
-                        message: res.data.message,
-                        center: true,
-                        type: 'error'
+                      }).catch( err => {
+                        alert('服务器开小差啦，请稍等~')
                       })
+                    }
+                  }else{
+                    this.resetSearch('1');
+                    this.setRate();
+                  }
+                  getCategory().then( res => {
+                    if(res.data.status === '000000000'){
+                      this.options = res.data.data ;
+                      if(this.form.categoryId !== ''){
+                        let arr = [] ;
+                        this.options.forEach( i => {
+                          arr.push(i.id) ;
+
+                        });
+                        if(arr.indexOf(this.form.categoryId) === -1){
+                          this.form.categoryId = '' ;
+
+                        }
+
+                      }
                     }
                   }).catch( err => {
                     alert('服务器开小差啦，请稍等~')
-                  })
-                }
-              }else{
-                this.resetSearch('1');
-                this.setRate();
-              }
-              getCategory().then( res => {
-                if(res.data.status === '000000000'){
-                  this.options = res.data.data ;
-                  if(this.form.categoryId !== ''){
-                      let arr = [] ;
-                      this.options.forEach( i => {
-                        arr.push(i.id) ;
-
-                      });
-                      if(arr.indexOf(this.form.categoryId) === -1){
-                        this.form.categoryId = '' ;
-
-                      }
-
-                  }
+                  });
+                }else{
+                  this.vipVisible = true ;
                 }
               }).catch( err => {
                 alert('服务器开小差啦，请稍等~')
-              });
+              })
             }else{
               this.activityVisible = true ;
             }
@@ -626,7 +642,9 @@
             })
           }
         }).catch( err => {
-          alert('服务器开小差啦，请稍等~')
+          // console.log(err);
+
+          alert('服务器开小差啦，请稍等~');
         });
 
 
@@ -788,15 +806,15 @@
         },
 
         //获取商品详情
-        getGoodsDetail(type,url,index,form){
-
+        getGoodsDetail(type,url){
+          this.form.productId = '' ;
           if( type === '3'){
             getJDetail(url).then( res => {
               if( res.data.status === '000000000'){
                 this.form.productName = res.data.data.productName ;
                 this.form.productDetail = res.data.data.productDetail ;
                 this.form.productId = res.data.data.productId ;
-                this.submitDetail(index,form);
+                // this.submitDetail(index,form);
 
               }else{
                 this.$message({
@@ -804,10 +822,40 @@
                   type : 'error',
                   center : true
                 });
+                this.form.productUrl = '' ;
+                this.form.productId = '' ;
                 // this.form.productUrl = '' ;
               }
+            }).catch( err => {
+              alert('服务器开小差啦，请稍等~')
             })
           }else{
+            if(type === '1'){
+              if(url.indexOf('item.taobao.com') === -1){
+                this.$message({
+                  message : '请重新输入对应平台的商品链接' ,
+                  center : true ,
+                  type : 'error'
+                });
+                this.form.productUrl = '' ;
+                this.form.productId = '' ;
+                return false;
+              }
+            }else{
+              if(type === '2'){
+                if(url.indexOf('detail.tmall.com') === -1){
+                  this.$message({
+                    message : '请重新输入对应平台的商品链接' ,
+                    center : true ,
+                    type : 'error'
+                  });
+                  this.form.productUrl = '' ;
+                  this.form.productId = '' ;
+                  return false;
+
+                }
+              }
+            }
             if( url.indexOf('?') !== -1 ){
 
               const num = getQueryString(url,'id');
@@ -820,50 +868,62 @@
                 success: function (data) {
                   if (data['ret'][0] === 'SUCCESS::接口调用成功') {
                     _this.form.productDetail = JSON.stringify(data['data']['images']);
-                    let infoParams = {
-                      jsv: '2.4.8',
-                      t: new Date().getTime(),
-                      api: 'mtop.taobao.detail.getdetail',
-                      v: '6.0',
-                      H5Request: true,
-                      type: 'jsonp',
-                      dataType: 'jsonp',
-                      data: JSON.stringify({exParams: {id: num, itemNumId: num }})
-                    };
-                    $.ajax({
-                      url: 'https://h5api.m.taobao.com/h5/mtop.taobao.detail.getdetail/6.0/' ,
-                      data : infoParams,
-                      dataType: 'jsonp',
-                      success: function (data) {
-                        if (data['ret'][0] == 'SUCCESS::调用成功') {
-                          let _data = data.data;
-                          _this.form.productName = _data.item.title ;
-                          _this.submitDetail(index,form);
 
-                        }else{
-                          _this.$message({
-                            message : '请输入正确的商品链接' ,
-                            center : true ,
-                            type : 'error'
-                          });
-                          _this.form.productUrl = '' ;
-
-                        }
-                      }
-                    });
                   } else {
-                    _this.$message({
-                      message : '请输入正确的商品链接' ,
-                      center : true ,
-                      type : 'error'
-                    });
-                    _this.form.productUrl = '' ;
+                    // _this.$message({
+                    //   message : '服务器开小差啦，请稍等' ,
+                    //   center : true ,
+                    //   type : 'error'
+                    // });
+                    alert('服务器开小差啦，请稍等~');
+                    // _this.form.productUrl = '' ;
+                    // _this.form.productId = '' ;
+                  }
+                }
+              });
+              let infoParams = {
+                jsv: '2.4.8',
+                t: new Date().getTime(),
+                api: 'mtop.taobao.detail.getdetail',
+                v: '6.0',
+                H5Request: true,
+                type: 'jsonp',
+                dataType: 'jsonp',
+                data: JSON.stringify({exParams: {id: num, itemNumId: num }})
+              };
+              $.ajax({
+                url: 'https://h5api.m.taobao.com/h5/mtop.taobao.detail.getdetail/6.0/' ,
+                data : infoParams,
+                dataType: 'jsonp',
+                success: function (data) {
+                  if (data['ret'][0] == 'SUCCESS::调用成功') {
+                    let _data = data.data;
+                    _this.form.productName = _data.item.title ;
+                    // _this.submitDetail(index,form);
+
+                  }else{
+                    // _this.$message({
+                    //   message : '服务器开小差啦，请稍等' ,
+                    //   center : true ,
+                    //   type : 'error'
+                    // });
+                    alert('服务器开小差啦，请稍等~')
+                    // _this.form.productUrl = '' ;
+                    // _this.form.productId = '' ;
+
                   }
                 }
               });
 
 
-
+            }else {
+              this.$message({
+                message : '请重新输入对应平台的商品链接' ,
+                center : true ,
+                type : 'error'
+              });
+              this.form.productUrl = '' ;
+              this.form.productId = '' ;
             }
 
           }
@@ -923,19 +983,22 @@
           this.year = date.getFullYear() ;
           this.month = date.getMonth()+1;
           let targetDay = date.getDay() ;
-          let startDay = date.getDate()+2;
+          let startDay = date.getDate();
           let hour = date.getHours() ;
           this.day = startDay ;
-          this.today = startDay -2 ;
-          let afterday =  startDay - 1 ;
+          this.today = new Date(parseTime(date.getTime())).getDate();
+          let afterday =  new Date(parseTime(date.getTime()+ 24*3600*1000)).getDate();
+          // console.log(date.getDate(),startDay,this.today,afterday);
+
           let start = 0 ;
           let dayLength = 20;
           let restDay = 0;
           let daysNum = new Date(this.year, this.month, 0);
           let dayLong =  daysNum.getDate() ;
-          if(dayLong < dayLength + startDay ){
-            restDay = dayLength + startDay - dayLong ;
+          if(dayLong < dayLength + afterday ){
+            restDay =   dayLength + afterday - dayLong  ;
           }
+
           if(targetDay !== 7){
             start = targetDay  ;
             for(let i = 0 ; i< start; i++){
@@ -944,10 +1007,12 @@
           }
           daysArr.push(this.today);
           daysArr.push(afterday);
+          // console.log(restDay);
           if(restDay){
+
             let index = 0 ;
-            for(let i = startDay;i<= dayLong ;i++){
-              daysArr.push({ date : parseTime(date.getTime()+ (index+2)*24*3600*1000) ,num : i, index : index});
+            for(let i = afterday+1;i<= dayLong ;i++){
+              daysArr.push({ date : parseTime(date.getTime()+ (index+2)*24*3600*1000) ,num : new Date(parseTime(date.getTime()+ (index+2)*24*3600*1000)).getDate(), index : index});
               index ++ ;
             }
             for(let j = 1; j <= restDay ;j ++ ){
@@ -956,11 +1021,13 @@
             }
           }else{
             let index = 0 ;
-            for(let i = startDay;i<= startDay +dayLength ;i++){
-              daysArr.push({ date : parseTime(date.getTime()+ (index+2)*24*3600*1000) ,num : i, index : index});
+
+            for(let i = afterday + 1;i<= afterday +dayLength ;i++){
+              daysArr.push({ date : parseTime(date.getTime()+ (index+2)*24*3600*1000) ,num : new Date(parseTime(date.getTime()+ (index+2)*24*3600*1000)).getDate(), index : index});
               index ++ ;
             }
           }
+          // console.log(daysArr);
           let blank = 7+ 6 - start ;
           for(let a= 0 ; a < blank ;a++){
             daysArr.push('') ;
@@ -1151,9 +1218,9 @@
             this.$refs[formName].validate((valid) => {
               if (valid && !this.warn && !this.daysWarn && !this.changeNum && !this.showImgWarn && !this.goodsImgWarn) {
                 delete this.form.startTime;
-
-                this.getGoodsDetail(this.form.platformType ,this.form.productUrl,index,this.form) ;
-
+                // this.form.productId = '' ;
+                // this.getGoodsDetail(this.form.platformType ,this.form.productUrl,index,this.form) ;
+                this.submitDetail(index,this.form)
 
               } else {
                 this.$message({
@@ -1224,6 +1291,12 @@
       //绑定店铺
         goNewShop(){
           this.$router.push('/newshop')
+        },
+
+      //  购买会员
+        buyVip(){
+          this.$router.push('/userInfor/buyVip')
+
         },
 
       // 跳转到试用管理
