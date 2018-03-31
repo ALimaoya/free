@@ -6,6 +6,4 @@ module.exports = {
   // IMAGE_DOMAIN : '"http://lgf8953.oss-cn-beijing.aliyuncs.com/"',测试
   IMAGE_DOMAIN : '"http://yabei.oss-cn-beijing.aliyuncs.com/"',//正式
 
-  // BASE_API:'"http://rap2api.taobao.org/app/mock/3968"'
-
 };
