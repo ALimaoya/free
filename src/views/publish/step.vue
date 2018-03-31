@@ -1150,7 +1150,8 @@
         getProgress(index,date){
           this.allEditor(index);
           this.oneEditor(index,date);
-          if(this.form.activityStartTime === ''){
+          // console.log(this.form.activityStartTime)
+          if(this.form.startTime === ''){
             this.form.activityStartTime = parseTime(new Date().getTime() + 2*24*3600*1000);
 
           }else{
@@ -1202,6 +1203,8 @@
 
         //提交试用信息
         onSubmit(formName,index){
+          // console.log(this.form.activityCalendar,this.form.activityStartTime)
+
           if(this.form.showImageUrl === ''){
             this.showImgWarn = true ;
           }else{
@@ -1237,6 +1240,7 @@
 
       // 提交活动信息
         submitDetail(index,form){
+
           if (index === 1) {
             publishActivity(form).then(res => {
               if (res.data.status === '000000000') {
