@@ -434,7 +434,7 @@
       li {
         margin : 0.2rem 0.6% 0 ;
         width: 32%;
-        height: 1.7rem;
+        min-height: 1.7rem;
         border: 1px solid #D3D3D3;
         position: relative;
         padding: 0.1rem;

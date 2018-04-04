@@ -513,7 +513,7 @@
           pickerOptions : {
             disabledDate(time){
               let curDate = (new Date()).getTime() ;
-              return time.getTime() < Date.now()  - 3*24*3600*1000 ;
+              return time.getTime() < Date.now()  - 24*3600*1000 ;
             }
           } ,
           editor : '',
@@ -543,7 +543,7 @@
           if(res.data.status === '000000000'){
             if(res.data.data.length){
               getMember().then( res => {
-                if(res.data.data.vipLevel){
+                if(res.data.data.vipLevel*1){
                   if(this.$route.query.order !== undefined ) {
                     this.editor = this.$route.query.editor;
                     let order = this.$route.query.order ;
