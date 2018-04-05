@@ -41,7 +41,7 @@
               <b>{{deposit.deposit}}元</b>
             </span>
             <el-form-item label="充值金额：" prop="money">
-              <el-input type="number" v-model.number="form.money" placeholder="请输入内容" size="small" ></el-input>
+              <el-input type="number" v-model.number="form.money" placeholder="请输入内容" size="small"></el-input>
               <span>每次充值不得少于1元</span>
             </el-form-item>
             <el-form-item class="check">
@@ -64,7 +64,6 @@
       <input type="hidden" name="amount" >
     </form> -->
     <el-dialog title="提示" :visible.sync="dialogVisible" width="28%" :before-close="handleClose" style="margin-top:20vh">
-        <span style="text-align:center;width: 70%; display: block; margin: 0 auto;">您将支付到您的商家账户</span>
       <span style="text-align:center;width: 70%; display: block; margin: 0 auto;">请在新窗口完成支付，支付成功后请点击“已完成支付” 若支付遇到问题请点击“支付遇到问题”</span>
       <span slot="footer" class="dialog-footer" style="text-align:center;display:block">
         <el-button style="background:#3a8ee6;;color:white;margin-rigth:20px" @click="finishPay()">已完成支付</el-button>
@@ -89,6 +88,7 @@
   import ElFormItem from "element-ui/packages/form/src/form-item";
   import ElButton from "element-ui/packages/button/src/button";
   import ElRadioGroup from "element-ui/packages/radio/src/radio-group";
+  import $ from '../../../../static/js/jquery-3.3.1.min.js'
   import {
     getToken
   } from '@/utils/auth'
@@ -148,7 +148,8 @@
             validator: validMoney,
             required: true,
             trigger: 'blur'
-          }]
+          }],
+          depositStatus: true,
         }
       }
     },
@@ -172,12 +173,12 @@
           alert('服务器开小差啦，请稍等~')
         })
       },
-      gopay(){
-                let _this=this;
-                window.setTimeout(function () {
-                 
-                 
-                  },500)
+      gopay() {
+        let _this = this;
+        window.setTimeout(function () {
+
+
+        }, 500)
       },
       confirm(formName) {
         this.$refs[formName].validate((valid) => {
@@ -185,23 +186,54 @@
             let form = new FormData();
             form.append("amount", this.form.money);
             form.append("returnUrl", window.location.href);
-                handleRecharge(form).then(res => {
-                  if (res.data.status === '000000000') {
-                    this.form.money = "";
-                    const _div = document.createElement('div');
-                    _div.setAttribute('id', 'myForm');
-                    _div.innerHTML = res.data.data;
-                    document.body.appendChild(_div);
-                    document.getElementById('myForm').getElementsByTagName("form")[0].setAttribute('target',
-                      "_blank");
-                      document.getElementById('myForm').getElementsByTagName("form")[0].submit()
-                  }
-                  const __div = document.getElementById('myForm')
+            let _this=this;
+            $.ajax({
+              url: process.env.BASE_API+"/tryout/recharge/deposit",
+              type: 'POST',
+              data: {
+                amount: this.form.money,
+                returnUrl: window.location.href
+              },
+              async: false,
+              headers: {
+                'yb-tryout-merchant-token':  getToken()
+              },
+              success: function (res) {
+                var __div = document.getElementById('myForm');
+                if(__div){
                   document.body.removeChild(__div);
-                 this.dialogVisible=true;
-                }).catch(err => {
-                  alert('服务器开小差啦，请稍等~')
-                })
+                }
+                if (res.status === '000000000') {
+                var _div = document.createElement('div');
+                _div.setAttribute('id', 'myForm');
+                _div.innerHTML = res.data;
+                document.body.appendChild(_div);
+                document.getElementById('myForm').getElementsByTagName("form")[0].setAttribute('target',
+                  "_blank");
+                _this.depositStatus = true;
+                }else{
+                  _this.depositStatus = false;
+                  _this.$message({
+                  message: res.message,
+                  type: 'error',
+                  center: true
+                });
+                  return
+                }
+              },
+              error(){
+                _this.depositStatus = false;
+                alert('服务器开小差啦，请稍等~');
+                return 
+              }
+            })
+            var __div = document.getElementById('myForm');
+            if ( _this.depositStatus) {
+                _this.form.money = "";
+                document.getElementById('myForm').getElementsByTagName("form")[0].submit()
+                document.body.removeChild(__div);
+                _this.dialogVisible = true;
+              }
           }
         })
       },

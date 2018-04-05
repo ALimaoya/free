@@ -142,6 +142,9 @@
   import {
     getMobile
   } from '@/utils/auth'
+  import {
+    getToken
+  } from '@/utils/auth'
   export default {
     components: {
       ElFormItem
@@ -203,6 +206,7 @@
             required: true
           }],
         },
+        depositStatus:true,
       }
     },
     mounted() {
@@ -269,7 +273,6 @@
 
       //  支付提交
       submit() {
-        // console.log(window.location.href);
         let _data = {
           payType: this.chooseWay - 0,
           vipId: this.choose.vipId,
@@ -286,7 +289,7 @@
           }
           this.dialogPswVisible = true;
         } else {
-          this.goPay(_data)
+          this.goApilyPay(_data)
         }
 
 
@@ -303,10 +306,61 @@
           }
         })
       },
+      goApilyPay(_data){
+        let _this=this;
+        console.log(this.chooseWay )
+        $.ajax({
+              url: process.env.BASE_API+"/tryout/vip/buy",
+              type: 'POST',
+              data: JSON.stringify({
+                payType: this.chooseWay ,
+                vipId: this.choose.vipId,
+                returnUrl: window.location.href
+              }),
+              async: false,
+              headers: {
+                'yb-tryout-merchant-token':  getToken()
+              },
+              contentType: "application/json",
+              success: function (res) {
+                var __div = document.getElementById('myForm');
+                if(__div){
+                  document.body.removeChild(__div);
+                }
+                if (res.status === '000000000') {
+                var _div = document.createElement('div');
+                _div.setAttribute('id', 'myForm');
+                _div.innerHTML = res.data;
+                document.body.appendChild(_div);
+                document.getElementById('myForm').getElementsByTagName("form")[0].setAttribute('target',
+                  "_blank");
+                _this.depositStatus = true;
+                }else{
+                  _this.depositStatus = false;
+                  _this.$message({
+                  message: res.message,
+                  type: 'error',
+                  center: true
+                });
+                  return
+                }
+              },
+              error(){
+                _this.depositStatus = false;
+                alert('服务器开小差啦，请稍等~');
+                return 
+              }
+            })
+            var __div = document.getElementById('myForm');
+            if ( _this.depositStatus) {
+               this.dialogVisible = true;
+                document.getElementById('myForm').getElementsByTagName("form")[0].submit()
+                document.body.removeChild(__div);
+              }
+      },
       goPay(_data) {
         buyVip(_data).then(res => {
           if (res.data.status === '000000000') {
-            if (this.chooseWay == '1') {
               const _div = document.createElement('div');
               _div.setAttribute('id', 'myForm');
               _div.innerHTML = res.data.data;
@@ -316,15 +370,12 @@
               const __div = document.getElementById('myForm');
               document.body.removeChild(__div);
               this.dialogVisible = true;
-            } else {
               this.$message({
                 message: "恭喜您成功购买会员",
                 type: 'success',
                 center: true
               });
               this.$router.push('/userInfor/vip')
-            }
-
           } else {
             if(res.data.status=='013001002'&&this.chooseWay!= '1'){
                     this.settingPsw=false
