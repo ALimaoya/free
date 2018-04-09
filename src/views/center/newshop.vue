@@ -5,7 +5,7 @@
       <!--<p class="tips" v-show="tips">绑定新店铺（请认真填写绑定信息，一经提交无法修改）-->
         <!--<img class="close" src="../../assets/imgs/close.png" @click="close" alt="" />-->
       <!--</p>-->
-      <el-form ref="sizeForm" :model="sizeForm" label-width="1.4rem" size="mini" :rules="rules">
+      <el-form ref="sizeForm" :model="sizeForm" label-width="1.8rem" size="mini" :rules="rules">
         <el-form-item label="平台类型：" prop="platformType">
           <el-radio-group v-model="sizeForm.platformType" @change="resetShop">
             <el-radio v-for="item in platform" :disabled="type!=''?type!==item.value:false" :key="item.value"
@@ -33,7 +33,7 @@
           <img src="../../assets/imgs/u445.png" alt=""/>
           <li>2、再将这个商品的详情页链接，复制到下面输入框中进行验证。</li>
         </ul>
-        <el-form-item label="待验证商品链接：" label-width="1.4rem" prop="productUrl">
+        <el-form-item label="待验证商品链接：" label-width="1.8rem" prop="productUrl">
           <el-input v-model.trim="sizeForm.productUrl" class="big"></el-input>
         </el-form-item>
         <el-form-item label="负责人QQ：" prop="managerQq">
@@ -401,7 +401,7 @@
         margin : 0 auto ;
         width : 70% ;
         .el-radio-group{
-          width : 3.2rem ;
+          /* width : 3.2rem ; */
         }
       }
      label{

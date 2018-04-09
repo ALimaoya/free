@@ -416,7 +416,7 @@
           margin-top: 0.4rem;
           padding-left: 1.6rem;
           .el-button {
-            width: 0.8rem;
+            min-width: 0.8rem;
             &:nth-last-child(1) {
               margin-left: 0.5rem;
             }

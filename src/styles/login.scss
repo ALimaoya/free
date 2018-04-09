@@ -7,10 +7,11 @@ $light_gray:#eee;
   height: 100%;
   width:100%;
   background-color: $bg;
+  overflow-y: auto;
   .el-form{
     .goOther {
-      margin-top: 7px;
-      font-size: 12px;
+      margin-top: .07rem;
+      font-size: .12rem;
       color: #fefefe;
 
       span,.toRes,.toLogin {

@@ -38,7 +38,8 @@
           <li>
             <p>3、填写充值金额</p>
             <span class="rest">可用押金：
-              <b>{{deposit.deposit}}元</b></span>
+              <b>{{deposit.deposit}}元</b>
+            </span>
             <el-form-item label="充值金额：" prop="money">
               <el-input type="number" v-model.number="form.money" placeholder="请输入内容" size="small"></el-input>
               <span>每次充值不得少于1元</span>
@@ -64,17 +65,18 @@
     </form> -->
     <el-dialog title="提示" :visible.sync="dialogVisible" width="28%" :before-close="handleClose" style="margin-top:20vh">
       <span style="text-align:center;width: 70%; display: block; margin: 0 auto;">请在新窗口完成支付，支付成功后请点击“已完成支付” 若支付遇到问题请点击“支付遇到问题”</span>
-      <span slot="footer" class="dialog-footer"  style="text-align:center;display:block">
+      <span slot="footer" class="dialog-footer" style="text-align:center;display:block">
         <el-button style="background:#3a8ee6;;color:white;margin-rigth:20px" @click="finishPay()">已完成支付</el-button>
         <el-button style="background:#3a8ee6;;color:white;" @click="hasQuestion()">支付遇到问题</el-button>
       </span>
     </el-dialog>
     <el-dialog title="支付遇到问题" :visible.sync="dialogVisibleQuestion" width="28%" :before-close="handleClose" style="margin-top:20vh">
-      <span style="width: 80%; display: block; margin: 0 auto;">付款遇到问题支付未成功，付款遇到问题了？先看看是不是由于下面的原因: <br>
-        1、所需支付的金额超过了银行支付限额？建议您登录网上银行提高上限额度，或者先分若干次充值到新试客余额，即能轻松支付。<br>
-        2、支付宝或网银页面显示错误或空白？部分网银对不同浏览器的兼容性有限，导致无法正常支付，建议您使用IE7及以上版本浏览器进行支付操作！<br>
-        3、网上银行已扣款，但仍显示支付未成功？可能由于银行的数据没有即时传输，请不要担心，稍后刷新页面查看。如较长时间仍显示未付款，可联系丫贝试客商家客服为您解决。</span>
-      <span slot="footer" class="dialog-footer"  style="text-align:center;display:block">
+      <span style="width: 80%; display: block; margin: 0 auto;">付款遇到问题支付未成功，付款遇到问题了？先看看是不是由于下面的原因:
+        <br> 1、所需支付的金额超过了银行支付限额？建议您登录网上银行提高上限额度，或者先分若干次充值到新试客余额，即能轻松支付。
+        <br> 2、支付宝或网银页面显示错误或空白？部分网银对不同浏览器的兼容性有限，导致无法正常支付，建议您使用IE7及以上版本浏览器进行支付操作！
+        <br> 3、网上银行已扣款，但仍显示支付未成功？可能由于银行的数据没有即时传输，请不要担心，稍后刷新页面查看。如较长时间仍显示未付款，可联系丫贝试客商家客服为您解决。
+      </span>
+      <span slot="footer" class="dialog-footer" style="text-align:center;display:block">
         <el-button style="background:#3a8ee6;;color:white;" @click="dialogVisibleQuestion = false">确定</el-button>
       </span>
     </el-dialog>
@@ -86,6 +88,10 @@
   import ElFormItem from "element-ui/packages/form/src/form-item";
   import ElButton from "element-ui/packages/button/src/button";
   import ElRadioGroup from "element-ui/packages/radio/src/radio-group";
+  import $ from '../../../../static/js/jquery-3.3.1.min.js'
+  import {
+    getToken
+  } from '@/utils/auth'
   import {
     handleRecharge,
     handleGold,
@@ -110,11 +116,11 @@
           if (value < 1) {
             callback(new Error('请输入不少于1元的充值金额数值'))
           }
-          let reg = /^[0-9]*$/ ;
+          let reg = /^[0-9]*$/;
           if (!reg.test(value)) {
             callback(new Error('输入的金额数值应该为正整数'))
           }
-          if(value > 9999999){
+          if (value > 9999999) {
             callback(new Error('输入的金额数值不得超过9999999'))
           }
           callback();
@@ -122,7 +128,7 @@
       };
       return {
         dialogVisible: false,
-        dialogVisibleQuestion:false,
+        dialogVisibleQuestion: false,
         form: {
           method: '1',
           type: '1',
@@ -142,7 +148,8 @@
             validator: validMoney,
             required: true,
             trigger: 'blur'
-          }]
+          }],
+          depositStatus: true,
         }
       }
     },
@@ -166,39 +173,77 @@
           alert('服务器开小差啦，请稍等~')
         })
       },
+      gopay() {
+        let _this = this;
+        window.setTimeout(function () {
+
+
+        }, 500)
+      },
       confirm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
             let form = new FormData();
             form.append("amount", this.form.money);
             form.append("returnUrl", window.location.href);
-            handleRecharge(form).then(res => {
-              if (res.data.status === '000000000') {
-                this.dialogVisible=true;
-                const _div = document.createElement('div');
+            let _this=this;
+            $.ajax({
+              url: process.env.BASE_API+"/tryout/recharge/deposit",
+              type: 'POST',
+              data: {
+                amount: this.form.money,
+                returnUrl: window.location.href
+              },
+              async: false,
+              headers: {
+                'yb-tryout-merchant-token':  getToken()
+              },
+              success: function (res) {
+                var __div = document.getElementById('myForm');
+                if(__div){
+                  document.body.removeChild(__div);
+                }
+                if (res.status === '000000000') {
+                var _div = document.createElement('div');
                 _div.setAttribute('id', 'myForm');
-                _div.innerHTML = res.data.data;
+                _div.innerHTML = res.data;
                 document.body.appendChild(_div);
                 document.getElementById('myForm').getElementsByTagName("form")[0].setAttribute('target',
                   "_blank");
-                document.getElementById('myForm').getElementsByTagName("form")[0].submit()
+                _this.depositStatus = true;
+                }else{
+                  _this.depositStatus = false;
+                  _this.$message({
+                  message: res.message,
+                  type: 'error',
+                  center: true
+                });
+                  return
+                }
+              },
+              error(){
+                _this.depositStatus = false;
+                alert('服务器开小差啦，请稍等~');
+                return 
               }
-              this.form.money = "";
-              const __div = document.getElementById('myForm')
-              document.body.removeChild(__div)
-            }).catch(err => {
-              alert('服务器开小差啦，请稍等~')
             })
+            var __div = document.getElementById('myForm');
+            if ( _this.depositStatus) {
+                _this.form.money = "";
+                document.getElementById('myForm').getElementsByTagName("form")[0].submit()
+                document.body.removeChild(__div);
+                _this.dialogVisible = true;
+              }
           }
         })
       },
-      finishPay(){
+      finishPay() {
         this.dialogVisible = false;
         this.$router.push("/fund/history/money")
       },
-      hasQuestion(){
+      hasQuestion() {
         this.dialogVisible = false;
-        this.dialogVisibleQuestion=true;
+        this.dialogVisibleQuestion = true;
         this.getDepositMoney();
       }
     }
@@ -286,11 +331,11 @@
                 padding-left: 0.55rem;
                 height: 0.4rem;
                 line-height: 0.4rem;
-                color : #606266 ;
+                color: #606266;
                 b {
                   color: #ff0000;
                   font-weight: 500;
-                  font-size: 18px ;
+                  font-size: 18px;
                   padding-left: 0.2rem;
 
                 }

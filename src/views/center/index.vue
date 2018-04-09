@@ -17,21 +17,17 @@
         </li>
         <li>
           <div class="title">
-            <span>您的专属客服：</span>
+            <span>您的专属运营顾问：</span>
             <img v-if="attendant.avator" :src=" imageDomain + attendant.avator" alt="" />
           </div>
           <div class="service">
-            <dl>
-              <dd>
-                <img  src="../../assets/imgs/qq.png" alt=""/>
-              </dd>
-              <dt>{{ attendant.qq }}</dt>
-            </dl>
-            <dl>
-              <dd>
+              <a :href="'http://wpa.qq.com/msgrd?v=3&uin='+attendant.qq+'&site=qq&menu=yes'" target="_blank">
+                      <img  src="../../assets/imgs/qq.png" alt=""/>
+							</a>
+            <a href="javascript:;">
                 <img  src="../../assets/imgs/weixin.png" alt=""/>
-              </dd>
-              <dt>{{ attendant.wechat}}</dt>
+            </a>
+              <!-- {{ attendant.wechat}} -->
             </dl>
           </div>
 
@@ -257,43 +253,8 @@
           display : flex;
           flex-direction: column;
           justify-content: center;
-          dl{
-            width : 100% ;
-            height : 0.5rem ;
-            display : flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-            /*&:nth-child(1){*/
-              /*margin-bottom : 0.2rem ;*/
-            /*}*/
-            &:nth-child(1){
-              dd{
-                width : 0.24rem ;
-                height : 0.27rem ;
-              }
-            }
-            &:nth-child(2){
-              dd{
-                width : 0.27rem ;
-                height : 0.23rem ;
-              }
-            }
-            dd{
-              img{
-                width : 100% ;
-                height : 100%;
-              }
-            }
-            dt{
-              width : 80% ;
-              height : 100% ;
-              line-height : 0.5rem ;
-              text-indent : 0.3rem ;
-              font-size : 0.17rem ;
-              color : #345;
-
-            }
+          a{
+            img{width:1rem;margin-left:.4rem;margin-bottom:.1rem}
           }
         }
 
