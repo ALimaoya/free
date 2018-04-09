@@ -513,7 +513,7 @@
           pickerOptions : {
             disabledDate(time){
               let curDate = (new Date()).getTime() ;
-              return time.getTime() < Date.now()  - 24*3600*1000 ;
+              return time.getTime() < Date.now()  + 24*3600*1000 ;
             }
           } ,
           editor : '',
@@ -543,7 +543,7 @@
           if(res.data.status === '000000000'){
             if(res.data.data.length){
               getMember().then( res => {
-                if(res.data.data.vipLevel*1){
+                // if(res.data.data.vipLevel*1){
                   if(this.$route.query.order !== undefined ) {
                     this.editor = this.$route.query.editor;
                     let order = this.$route.query.order ;
@@ -578,15 +578,17 @@
                               this.tryoutAmount = num ;
                               this.totalNum = num ;
                               this.dayNum = this.goodsAmount.length ;
-                              this.form['startTime'] = parseTime(new Date(this.form.activityStartTime.replace(/-/g,"/")).getTime() - 2*24*3600*1000) ;
+                              this.form['startTime'] = parseTime(new Date(this.form.activityStartTime.replace(/-/g,"/")).getTime() + 2*24*3600*1000) ;
                               this.setRate(this.form.startTime ,this.tryoutAmount,this.goodsAmount);
                             }
                             else{
+                              this.form.startTime = '';
                               this.setRate();
 
                             }
 
                           }else{
+                            this.form.startTime = '';
                             this.setRate();
                           }
 
@@ -624,9 +626,9 @@
                   }).catch( err => {
                     alert('服务器开小差啦，请稍等~')
                   });
-                }else{
-                  this.vipVisible = true ;
-                }
+                // }else{
+                //   this.vipVisible = true ;
+                // }
               }).catch( err => {
                 alert('服务器开小差啦，请稍等~')
               })
@@ -962,6 +964,7 @@
 
         //转化率日历
         setRate(value,total,dayItem ){
+
           let date ;
           this.weekItems = [] ;
           if(total !== undefined){
@@ -976,7 +979,7 @@
           }
           let daysArr = [] ;
           if(value === '' || value === undefined || value === null){
-            date = new Date();
+            date = new Date(new Date().getTime()+ 2* 24*3600*1000) ;
           }else{
             date = new Date(Date.parse(value.replace(/-/g,'/'))) ;
           }
@@ -986,8 +989,8 @@
           let startDay = date.getDate();
           let hour = date.getHours() ;
           this.day = startDay ;
-          this.today = new Date(parseTime(date.getTime())).getDate();
-          let afterday =  new Date(parseTime(date.getTime()+ 24*3600*1000)).getDate();
+          this.today = new Date(parseTime(date.getTime()- 2* 24*3600*1000) ).getDate();
+          let afterday =  new Date(parseTime(date.getTime()- 24*3600*1000)).getDate();
           // console.log(date.getDate(),startDay,this.today,afterday);
 
           let start = 0 ;
@@ -999,11 +1002,23 @@
             restDay =   dayLength + afterday - dayLong  ;
           }
 
-          if(targetDay !== 7){
-            start = targetDay  ;
+          if(targetDay !== 0 && targetDay !== 1){
+            start = targetDay -2  ;
             for(let i = 0 ; i< start; i++){
               daysArr.push('');
             }
+          }else{
+            if(targetDay === 0){
+              for(let i = 0 ; i< 5; i++){
+                daysArr.push('');
+              }
+            }
+            if(targetDay === 1){
+              for(let i = 0 ; i< 6; i++){
+                daysArr.push('');
+              }
+            }
+
           }
           daysArr.push(this.today);
           daysArr.push(afterday);
@@ -1011,19 +1026,19 @@
           if(restDay){
 
             let index = 0 ;
-            for(let i = afterday+1;i<= dayLong ;i++){
-              daysArr.push({ date : parseTime(date.getTime()+ (index+2)*24*3600*1000) ,num : new Date(parseTime(date.getTime()+ (index+2)*24*3600*1000)).getDate(), index : index});
+            for(let i = afterday;i<= dayLong ;i++){
+              daysArr.push({ date : parseTime(date.getTime()+ index*24*3600*1000) ,num : new Date(parseTime(date.getTime()+ index*24*3600*1000)).getDate(), index : index});
               index ++ ;
             }
             for(let j = 1; j <= restDay ;j ++ ){
-              daysArr.push({ date : parseTime(date.getTime()+ (index+2)*24*3600*1000) , num : j,index : index});
+              daysArr.push({ date : parseTime(date.getTime()+ index*24*3600*1000) , num : j,index : index});
               index ++ ;
             }
           }else{
             let index = 0 ;
 
-            for(let i = afterday + 1;i<= afterday +dayLength ;i++){
-              daysArr.push({ date : parseTime(date.getTime()+ (index+2)*24*3600*1000) ,num : new Date(parseTime(date.getTime()+ (index+2)*24*3600*1000)).getDate(), index : index});
+            for(let i = afterday ;i<= afterday +dayLength ;i++){
+              daysArr.push({ date : parseTime(date.getTime()+ index*24*3600*1000) ,num : new Date(parseTime(date.getTime()+ index*24*3600*1000)).getDate(), index : index});
               index ++ ;
             }
           }
@@ -1037,7 +1052,6 @@
             arr = daysArr.slice(num*7,7*(num+1));
             this.weekItems.push(arr) ;
           }
-          // console.log(this.daysArr);
         },
 
         //按钮修改投放数量
@@ -1130,18 +1144,18 @@
         allEditor(index){
           let time ;
           if(this.form.startTime){
-            time = new Date(this.form.startTime.replace(/-/g,"/")).getTime() + 24*3600*1000;
+            time = new Date(this.form.startTime.replace(/-/g,"/")).getTime() + 2*24*3600*1000;
           }else{
-            time = new Date().getTime() + 24*3600*1000 ;
+            time = new Date().getTime() + 2*24*3600*1000 ;
           }
           for(let j = 0 ; j < index ; j++){
             if(this.goodsAmount[j] === undefined  ){
               this.goodsAmount[j] = 1 ;
 
-              this.form.activityCalendar.splice(j ,0,{ activityDate : (parseTime(new Date(time).getTime()+(j+1)*24*3600*1000)) , tryoutQuantity :1 });
+              this.form.activityCalendar.splice(j ,0,{ activityDate : (parseTime(new Date(time).getTime()+j*24*3600*1000)) , tryoutQuantity :1 });
             }else if( this.goodsAmount[j] === '' ){
               this.goodsAmount[j] = 1 ;
-              this.form.activityCalendar.splice(j ,1,{ activityDate : (parseTime(new Date(time).getTime()+(j+1)*24*3600*1000)) , tryoutQuantity :1 });
+              this.form.activityCalendar.splice(j ,1,{ activityDate : (parseTime(new Date(time).getTime()+j*24*3600*1000)) , tryoutQuantity :1 });
 
             }
           }
