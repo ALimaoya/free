@@ -80,7 +80,7 @@
           <el-button class="check" type="text" v-if="scope.row.status==='6'&& scope.row.endTime > time" @click="handleShelves(scope.row.activityId,scope.row.status)">重新上架</el-button>
           <el-button class="check" type="text" v-if="(scope.row.status==='6'|| (scope.row.status==='5'&& scope.row.endTime < time )) && scope.row.payStatus==='1'" @click="applyAccounts(scope.$index,scope.row.activityId)">申请结算</el-button>
           <el-button class="check" type="text" v-if="scope.row.status==='7'" @click="cancelAccounts(scope.$index,scope.row.activityId)">取消结算</el-button>
-          <el-button class="check" type="text" @click="publish(scope.$index,scope.row.activityId)">重新发布</el-button>
+          <el-button class="check" type="text" @click="publish(scope.$index,scope.row.activityId)">克隆活动</el-button>
           <el-button class="check" type="text" v-if="scope.row.status ==='2' || scope.row.status==='4'" @click="handleCancel(scope.$index,scope.row.activityId)">取消发布</el-button>
           <el-button class="check" type="text" v-if="scope.row.payStatus==='0'" @click="toPay(scope.$index,scope.row.activityId)">去支付</el-button>
         </template>
@@ -357,7 +357,7 @@
         })
       },
 
-      //重新发布
+      //克隆活动
       publish(index ,id){
         this.$router.push({ path : '/publish/step1' , query : { order : id } });
 
@@ -448,7 +448,7 @@
 
       }
       .block{
-        width : 60% ;
+        width : 45% ;
         float : left;
         margin-bottom : 0.2rem ;
 

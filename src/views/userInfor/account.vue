@@ -293,7 +293,7 @@
     font-size: 0.15rem;
     color: #333;
     .getNum {
-      width: 1.1rem;
+      width: 1.3rem;
       margin-left: 0.3rem;
       padding: 0.12rem 0.15rem;
 
