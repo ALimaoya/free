@@ -149,10 +149,10 @@
             <!--<li>当日18点前提交担保金的活动，当日审核上架次日10点开奖；18点后提交的活动次日10点上架，隔天10点系统自动开奖</li>-->
           <!--</ul>-->
         <!--</el-form-item>-->
-        <el-form-item label="选择活动开始时间：" labelWidth="1.66rem" prop="startTime">
+        <el-form-item label="选择活动开始时间：" labelWidth="1.66rem" prop="activityStartTime">
           <div class="block">
-            <el-date-picker :disabled="read" v-model="form.startTime"  format="yyyy-MM-dd" value-format="yyyy-MM-dd" size="small" :picker-options="pickerOptions"
-              type="date" :clearable="autoUpload" placeholder="开始日期" @blur="setRate(form.startTime)" >
+            <el-date-picker :disabled="read" v-model="form.activityStartTime"  format="yyyy-MM-dd" value-format="yyyy-MM-dd" size="small" :picker-options="pickerOptions"
+              type="date" :clearable="autoUpload" placeholder="开始日期" @blur="setRate(form.activityStartTime)" >
             </el-date-picker>
           </div>
         </el-form-item>
@@ -348,7 +348,7 @@
             activityCalendar : [],
             productName : '',
             productDetail : '',
-            startTime : ''
+            // startTime : ''
           },
           platForm : [
             {
@@ -543,7 +543,7 @@
           if(res.data.status === '000000000'){
             if(res.data.data.length){
               getMember().then( res => {
-                // if(res.data.data.vipLevel*1){
+                if(res.data.data.vipLevel*1){
                   if(this.$route.query.order !== undefined ) {
                     this.editor = this.$route.query.editor;
                     let order = this.$route.query.order ;
@@ -578,17 +578,17 @@
                               this.tryoutAmount = num ;
                               this.totalNum = num ;
                               this.dayNum = this.goodsAmount.length ;
-                              this.form['startTime'] = parseTime(new Date(this.form.activityStartTime.replace(/-/g,"/")).getTime() + 2*24*3600*1000) ;
-                              this.setRate(this.form.startTime ,this.tryoutAmount,this.goodsAmount);
+                              // this.form['startTime'] = parseTime(new Date(this.form.activityStartTime.replace(/-/g,"/")).getTime() + 2*24*3600*1000) ;
+                              this.setRate(this.form.activityStartTime ,this.tryoutAmount,this.goodsAmount);
                             }
                             else{
-                              this.form.startTime = '';
+                              this.form.activityStartTime = '';
                               this.setRate();
 
                             }
 
                           }else{
-                            this.form.startTime = '';
+                            this.form.activityStartTime = '';
                             this.setRate();
                           }
 
@@ -626,9 +626,9 @@
                   }).catch( err => {
                     alert('服务器开小差啦，请稍等~')
                   });
-                // }else{
-                //   this.vipVisible = true ;
-                // }
+                }else{
+                  this.vipVisible = true ;
+                }
               }).catch( err => {
                 alert('服务器开小差啦，请稍等~')
               })
@@ -1078,13 +1078,14 @@
 
             }
 
-            this.getProgress(index, date, value);
+            this.getProgress(index, date);
 
 
         },
 
         //输入框修改投放数量
         numIpt(value,index,date){
+
           this.editorNum();
 
           if(value === ''|| value< 1 || isNaN(value)) {
@@ -1093,7 +1094,7 @@
 
             }
 
-          this.getProgress(index, date , value);
+          this.getProgress(index, date );
 
 
 
@@ -1128,6 +1129,7 @@
         },
 
         oneEditor(index,date){
+
           if( index > this.goodsAmount.length -1 ){
 
           }else{
@@ -1143,10 +1145,11 @@
 
         allEditor(index){
           let time ;
-          if(this.form.startTime){
-            time = new Date(this.form.startTime.replace(/-/g,"/")).getTime() + 2*24*3600*1000;
+          if(this.form.activityStartTime){
+            time = new Date(this.form.activityStartTime.replace(/-/g,"/")).getTime();
           }else{
-            time = new Date().getTime() + 2*24*3600*1000 ;
+            time = new Date().getTime() + 2* 24*3600*1000 ;
+
           }
           for(let j = 0 ; j < index ; j++){
             if(this.goodsAmount[j] === undefined  ){
@@ -1165,7 +1168,7 @@
           this.allEditor(index);
           this.oneEditor(index,date);
           // console.log(this.form.activityStartTime)
-          if(this.form.startTime === ''){
+          if(this.form.activityStartTime === ''){
             this.form.activityStartTime = parseTime(new Date().getTime() + 2*24*3600*1000);
 
           }else{
@@ -1217,7 +1220,7 @@
 
         //提交试用信息
         onSubmit(formName,index){
-          // console.log(this.form.activityCalendar,this.form.activityStartTime)
+          // console.log(this.form.activityCalendar,this.form.activityStartTime);
 
           if(this.form.showImageUrl === ''){
             this.showImgWarn = true ;
@@ -1234,7 +1237,6 @@
 
             this.$refs[formName].validate((valid) => {
               if (valid && !this.warn && !this.daysWarn && !this.changeNum && !this.showImgWarn && !this.goodsImgWarn) {
-                delete this.form.startTime;
                 // this.form.productId = '' ;
                 // this.getGoodsDetail(this.form.platformType ,this.form.productUrl,index,this.form) ;
                 this.submitDetail(index,this.form)
