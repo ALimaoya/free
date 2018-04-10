@@ -26,9 +26,11 @@
 							</a>
             <a href="javascript:;">
                 <img  src="../../assets/imgs/weixin.png" alt=""/>
+                <img :src="imageDomain+attendant.wechatQrcode" alt="" class="wechat">
             </a>
               <!-- {{ attendant.wechat}} -->
             </dl>
+           
           </div>
 
         </li>
@@ -253,9 +255,24 @@
           display : flex;
           flex-direction: column;
           justify-content: center;
+          position: relative;
           a{
-            img{width:1rem;margin-left:.4rem;margin-bottom:.1rem}
+            width:1.4rem;
+            position: relative;
+            img{width:.9rem;margin-left:.4rem;margin-bottom:.1rem}
+            .wechat{
+            position: absolute;
+            left:1.4rem;
+            width: 1.2rem;
+            top:-.6rem;
+            display: none;
           }
+          }
+          a:last-of-type:hover .wechat{
+            display: block;
+
+          }
+         
         }
 
       }
