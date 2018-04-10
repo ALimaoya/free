@@ -998,7 +998,7 @@
           if(dayLong < dayLength + afterday ){
             restDay =   dayLength + afterday - dayLong  ;
           }
-
+          console.log( targetDay)
           if(targetDay !== 7){
             start = targetDay  ;
             for(let i = 0 ; i< start; i++){
@@ -1007,7 +1007,7 @@
           }
           daysArr.push(this.today);
           daysArr.push(afterday);
-          // console.log(restDay);
+          console.log(restDay);
           if(restDay){
 
             let index = 0 ;
@@ -1027,7 +1027,6 @@
               index ++ ;
             }
           }
-          // console.log(daysArr);
           let blank = 7+ 6 - start ;
           for(let a= 0 ; a < blank ;a++){
             daysArr.push('') ;
@@ -1037,7 +1036,6 @@
             arr = daysArr.slice(num*7,7*(num+1));
             this.weekItems.push(arr) ;
           }
-          // console.log(this.daysArr);
         },
 
         //按钮修改投放数量
