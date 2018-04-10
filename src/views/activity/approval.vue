@@ -42,8 +42,8 @@
           {{ platformOptions[scope.row.platform].name}}
         </template>
       </el-table-column>
-      <el-table-column prop="shopName" label="试用活动店铺" width="140"></el-table-column>
-      <el-table-column prop="activityTitle" label="试用活动标题" width="140"></el-table-column>
+      <el-table-column prop="shopName" label="试用活动店铺" ></el-table-column>
+      <el-table-column prop="activityTitle" label="试用活动标题" ></el-table-column>
       <el-table-column prop="showImageUrl" label="试用品展示图" width="115">
         <template slot-scope="scope">
           <img v-if="scope.row.showImageUrl" class="showImg" @click="showImg(scope.row.showImageUrl)" :src="imageDomain + scope.row.showImageUrl" alt="" />
@@ -71,18 +71,18 @@
           <span v-else>支付完成</span>
         </template>
       </el-table-column>
-      <el-table-column  label="操作">
+      <el-table-column  label="操作" width="100">
         <template slot-scope="scope">
-          <el-button class="check" type="text"  @click="detail(scope.$index,scope.row.activityId)">查看详情</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='4'||scope.row.status==='2' " @click="editor(scope.$index,scope.row.activityId, scope.row.payStatus)">修改</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='4'" @click="reason(scope.$index,scope.row.reason)">查看原因</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='5'" @click="handleShelves(scope.row.activityId,scope.row.status)">下架</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='6'&& scope.row.endTime > time" @click="handleShelves(scope.row.activityId,scope.row.status)">重新上架</el-button>
-          <el-button class="check" type="text" v-if="(scope.row.status==='6'|| (scope.row.status==='5'&& scope.row.endTime < time )) && scope.row.payStatus==='1'" @click="applyAccounts(scope.$index,scope.row.activityId)">申请结算</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status==='7'" @click="cancelAccounts(scope.$index,scope.row.activityId)">取消结算</el-button>
-          <el-button class="check" type="text" @click="publish(scope.$index,scope.row.activityId)">克隆活动</el-button>
-          <el-button class="check" type="text" v-if="scope.row.status ==='2' || scope.row.status==='4'" @click="handleCancel(scope.$index,scope.row.activityId)">取消发布</el-button>
-          <el-button class="check" type="text" v-if="scope.row.payStatus==='0'" @click="toPay(scope.$index,scope.row.activityId)">去支付</el-button>
+          <el-button class="check" style="padding : 0 ;" type="text"  @click="detail(scope.$index,scope.row.activityId)">查看详情</el-button>
+          <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.status==='4'||scope.row.status==='2' " @click="editor(scope.$index,scope.row.activityId, scope.row.payStatus)">修改</el-button>
+          <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.status==='4'" @click="reason(scope.$index,scope.row.reason)">查看原因</el-button>
+          <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.status==='5'" @click="handleShelves(scope.row.activityId,scope.row.status)">下架</el-button>
+          <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.status==='6'&& scope.row.endTime > time" @click="handleShelves(scope.row.activityId,scope.row.status)">重新上架</el-button>
+          <el-button class="check" style="padding : 0 ;" type="text" v-if="(scope.row.status==='6'|| (scope.row.status==='5'&& scope.row.endTime < time )) && scope.row.payStatus==='1'" @click="applyAccounts(scope.$index,scope.row.activityId)">申请结算</el-button>
+          <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.status==='7'" @click="cancelAccounts(scope.$index,scope.row.activityId)">取消结算</el-button>
+          <el-button class="check" style="padding : 0 ;" type="text" @click="publish(scope.$index,scope.row.activityId)">克隆活动</el-button>
+          <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.status ==='2' || scope.row.status==='4'" @click="handleCancel(scope.$index,scope.row.activityId)">取消发布</el-button>
+          <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.payStatus==='0'" @click="toPay(scope.$index,scope.row.activityId)">去支付</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -483,11 +483,13 @@
 
       }
     }
+
     .el-table{
       width: 95%;
       margin : 0 auto ;
       border-color:#aaa ;
       border-radius : 0.05rem ;
+
       .check{
         padding : 0;
         margin : 0;

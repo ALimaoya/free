@@ -149,10 +149,10 @@
             <!--<li>当日18点前提交担保金的活动，当日审核上架次日10点开奖；18点后提交的活动次日10点上架，隔天10点系统自动开奖</li>-->
           <!--</ul>-->
         <!--</el-form-item>-->
-        <el-form-item label="选择活动开始时间：" labelWidth="1.66rem" prop="startTime">
+        <el-form-item label="选择活动开始时间：" labelWidth="1.66rem" prop="activityStartTime">
           <div class="block">
-            <el-date-picker :disabled="read" v-model="form.startTime"  format="yyyy-MM-dd" value-format="yyyy-MM-dd" size="small" :picker-options="pickerOptions"
-              type="date" :clearable="autoUpload" placeholder="开始日期" @blur="setRate(form.startTime)" >
+            <el-date-picker :disabled="read" v-model="form.activityStartTime"  format="yyyy-MM-dd" value-format="yyyy-MM-dd" size="small" :picker-options="pickerOptions"
+              type="date" :clearable="autoUpload" placeholder="开始日期" @blur="setRate(form.activityStartTime)" >
             </el-date-picker>
           </div>
         </el-form-item>
@@ -348,7 +348,7 @@
             activityCalendar : [],
             productName : '',
             productDetail : '',
-            startTime : ''
+            // startTime : ''
           },
           platForm : [
             {
@@ -578,15 +578,17 @@
                               this.tryoutAmount = num ;
                               this.totalNum = num ;
                               this.dayNum = this.goodsAmount.length ;
-                              this.form['startTime'] = parseTime(new Date(this.form.activityStartTime.replace(/-/g,"/")).getTime() - 2*24*3600*1000) ;
-                              this.setRate(this.form.startTime ,this.tryoutAmount,this.goodsAmount);
+                              // this.form['startTime'] = parseTime(new Date(this.form.activityStartTime.replace(/-/g,"/")).getTime() + 2*24*3600*1000) ;
+                              this.setRate(this.form.activityStartTime ,this.tryoutAmount,this.goodsAmount);
                             }
                             else{
+                              this.form.activityStartTime = '';
                               this.setRate();
 
                             }
 
                           }else{
+                            this.form.activityStartTime = '';
                             this.setRate();
                           }
 
@@ -962,6 +964,7 @@
 
         //转化率日历
         setRate(value,total,dayItem ){
+
           let date ;
           this.weekItems = [] ;
           if(total !== undefined){
@@ -976,7 +979,7 @@
           }
           let daysArr = [] ;
           if(value === '' || value === undefined || value === null){
-            date = new Date();
+            date = new Date(new Date().getTime()+ 2* 24*3600*1000) ;
           }else{
             date = new Date(Date.parse(value.replace(/-/g,'/'))) ;
           }
@@ -986,8 +989,8 @@
           let startDay = date.getDate();
           let hour = date.getHours() ;
           this.day = startDay ;
-          this.today = new Date(parseTime(date.getTime())).getDate();
-          let afterday =  new Date(parseTime(date.getTime()+ 24*3600*1000)).getDate();
+          this.today = new Date(parseTime(date.getTime()- 2* 24*3600*1000) ).getDate();
+          let afterday =  new Date(parseTime(date.getTime()- 24*3600*1000)).getDate();
           // console.log(date.getDate(),startDay,this.today,afterday);
 
           let start = 0 ;
@@ -998,12 +1001,24 @@
           if(dayLong < dayLength + afterday ){
             restDay =   dayLength + afterday - dayLong  ;
           }
-          console.log( targetDay)
-          if(targetDay !== 7){
-            start = targetDay  ;
+
+          if(targetDay !== 0 && targetDay !== 1){
+            start = targetDay -2  ;
             for(let i = 0 ; i< start; i++){
               daysArr.push('');
             }
+          }else{
+            if(targetDay === 0){
+              for(let i = 0 ; i< 5; i++){
+                daysArr.push('');
+              }
+            }
+            if(targetDay === 1){
+              for(let i = 0 ; i< 6; i++){
+                daysArr.push('');
+              }
+            }
+
           }
           daysArr.push(this.today);
           daysArr.push(afterday);
@@ -1011,19 +1026,19 @@
           if(restDay){
 
             let index = 0 ;
-            for(let i = afterday+1;i<= dayLong ;i++){
-              daysArr.push({ date : parseTime(date.getTime()+ (index+2)*24*3600*1000) ,num : new Date(parseTime(date.getTime()+ (index+2)*24*3600*1000)).getDate(), index : index});
+            for(let i = afterday;i<= dayLong ;i++){
+              daysArr.push({ date : parseTime(date.getTime()+ index*24*3600*1000) ,num : new Date(parseTime(date.getTime()+ index*24*3600*1000)).getDate(), index : index});
               index ++ ;
             }
             for(let j = 1; j <= restDay ;j ++ ){
-              daysArr.push({ date : parseTime(date.getTime()+ (index+2)*24*3600*1000) , num : j,index : index});
+              daysArr.push({ date : parseTime(date.getTime()+ index*24*3600*1000) , num : j,index : index});
               index ++ ;
             }
           }else{
             let index = 0 ;
 
-            for(let i = afterday + 1;i<= afterday +dayLength ;i++){
-              daysArr.push({ date : parseTime(date.getTime()+ (index+2)*24*3600*1000) ,num : new Date(parseTime(date.getTime()+ (index+2)*24*3600*1000)).getDate(), index : index});
+            for(let i = afterday ;i<= afterday +dayLength ;i++){
+              daysArr.push({ date : parseTime(date.getTime()+ index*24*3600*1000) ,num : new Date(parseTime(date.getTime()+ index*24*3600*1000)).getDate(), index : index});
               index ++ ;
             }
           }
@@ -1062,13 +1077,14 @@
 
             }
 
-            this.getProgress(index, date, value);
+            this.getProgress(index, date);
 
 
         },
 
         //输入框修改投放数量
         numIpt(value,index,date){
+
           this.editorNum();
 
           if(value === ''|| value< 1 || isNaN(value)) {
@@ -1077,7 +1093,7 @@
 
             }
 
-          this.getProgress(index, date , value);
+          this.getProgress(index, date );
 
 
 
@@ -1112,6 +1128,7 @@
         },
 
         oneEditor(index,date){
+
           if( index > this.goodsAmount.length -1 ){
 
           }else{
@@ -1127,19 +1144,20 @@
 
         allEditor(index){
           let time ;
-          if(this.form.startTime){
-            time = new Date(this.form.startTime.replace(/-/g,"/")).getTime() + 24*3600*1000;
+          if(this.form.activityStartTime){
+            time = new Date(this.form.activityStartTime.replace(/-/g,"/")).getTime();
           }else{
-            time = new Date().getTime() + 24*3600*1000 ;
+            time = new Date().getTime() + 2* 24*3600*1000 ;
+
           }
           for(let j = 0 ; j < index ; j++){
             if(this.goodsAmount[j] === undefined  ){
               this.goodsAmount[j] = 1 ;
 
-              this.form.activityCalendar.splice(j ,0,{ activityDate : (parseTime(new Date(time).getTime()+(j+1)*24*3600*1000)) , tryoutQuantity :1 });
+              this.form.activityCalendar.splice(j ,0,{ activityDate : (parseTime(new Date(time).getTime()+j*24*3600*1000)) , tryoutQuantity :1 });
             }else if( this.goodsAmount[j] === '' ){
               this.goodsAmount[j] = 1 ;
-              this.form.activityCalendar.splice(j ,1,{ activityDate : (parseTime(new Date(time).getTime()+(j+1)*24*3600*1000)) , tryoutQuantity :1 });
+              this.form.activityCalendar.splice(j ,1,{ activityDate : (parseTime(new Date(time).getTime()+j*24*3600*1000)) , tryoutQuantity :1 });
 
             }
           }
@@ -1149,7 +1167,7 @@
           this.allEditor(index);
           this.oneEditor(index,date);
           // console.log(this.form.activityStartTime)
-          if(this.form.startTime === ''){
+          if(this.form.activityStartTime === ''){
             this.form.activityStartTime = parseTime(new Date().getTime() + 2*24*3600*1000);
 
           }else{
@@ -1201,7 +1219,7 @@
 
         //提交试用信息
         onSubmit(formName,index){
-          // console.log(this.form.activityCalendar,this.form.activityStartTime)
+          // console.log(this.form.activityCalendar,this.form.activityStartTime);
 
           if(this.form.showImageUrl === ''){
             this.showImgWarn = true ;
@@ -1218,7 +1236,6 @@
 
             this.$refs[formName].validate((valid) => {
               if (valid && !this.warn && !this.daysWarn && !this.changeNum && !this.showImgWarn && !this.goodsImgWarn) {
-                delete this.form.startTime;
                 // this.form.productId = '' ;
                 // this.getGoodsDetail(this.form.platformType ,this.form.productUrl,index,this.form) ;
                 this.submitDetail(index,this.form)

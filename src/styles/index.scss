@@ -23,7 +23,7 @@ html {
     line-height: .56rem;
     padding: 0 .2rem;
     font-size: .14rem;
-  
+
 }
 #app .el-menu-item{
   padding-left: .4rem !important;
@@ -37,7 +37,9 @@ html {
 #app .nest-menu .el-menu .el-menu-item{
   padding-left: .6rem !important;
 }
-#app .el-button{padding: .12rem .2rem;}
+#app .el-button{
+  padding: .12rem .2rem ;
+}
 .settings .el-dialog__headerbtn{display: none}
 #app .el-form-item__label{
   padding: 0 .12rem 0 0;
