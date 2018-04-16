@@ -53,7 +53,7 @@
         </div>
         <el-form-item label="验证码：" style="width:5.45rem ;"  label-width="1.65rem" prop="pswVerify">
           <el-input placeholder="请输入验证码" v-model.trim="pswForm.pswVerify"></el-input>
-          <el-button class="getNum" @click="getNum" :disabled="disabled">{{ btntext }}</el-button>
+          <el-button class="getNum" @click="getNum" style="padding: 0;line-height: 0.4rem;text-align:center;font-size:0.12rem;" :disabled="disabled">{{ btntext }}</el-button>
         </el-form-item>
         <el-form-item label="支付密码：" :label-width="pswWidth" prop="payPsw">
           <el-input class="pswIpt" :type="pwdType1" placeholder="请输入六位数字支付密码" v-model.trim="pswForm.payPsw"></el-input>
@@ -88,7 +88,7 @@
         </div>
         <el-form-item label="验证码：" :label-width="formLabelWidth" prop="pswVerify">
           <el-input placeholder="请输入验证码" v-model.trim="changePsw.pswVerify"></el-input>
-          <el-button class="getNum" @click="getNum" :disabled="disabled">{{ btntext }}</el-button>
+          <el-button class="getNum" @click="getNum" style="padding: 0;line-height: 0.4rem;text-align:center;font-size:0.12rem;" :disabled="disabled">{{ btntext }}</el-button>
         </el-form-item>
         <el-form-item label="新密码：" :label-width="formLabelWidth" prop="newPsw">
           <el-input class="pswIpt" :type="pwdType1" placeholder="请输入新密码" v-model.trim="changePsw.newPsw"></el-input>

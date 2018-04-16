@@ -31,27 +31,29 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 .navbar {
-  height: 0.50rem;
-  line-height: 0.50rem;
+  height: 50px;
+  line-height: 50px;
   border-radius: 0 !important;
   position: fixed ;
-  top : 0.6rem;
+  top : 60px;
   width : 100% ;
   background : #fff ;
   z-index : 1500 ;
 
   .hamburger-container {
-    line-height: 0.02rem;
-    height: 0.50rem;
+    /*line-height: 2px;*/
+    height: 20px;
+    margin : 15px 0 ;
     float: left;
-    padding: 0 0.10rem;
+    padding: 0 10px;
   }
   .screenfull {
     position: absolute;
     right: 0.90rem;
-    top: 0.16rem;
+    top: 16px;
     color: red;
   }
+
 
 }
 </style>

@@ -476,7 +476,7 @@
       }
 
       .el-button {
-        width : 0.85rem ;
+        width : 65px ;
         margin-bottom : 0.2rem ;
         margin-left : 0.15rem ;
         float : left;

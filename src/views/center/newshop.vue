@@ -145,7 +145,7 @@
         if(value === ''){
           callback(new Error('请输入负责人微信号'))
         }else{
-          if(!validateWX(value)){
+          if(!validateWX(value) && !validatePhone(value)){
             callback(new Error('请输入正确格式的微信号'))
           }
           callback();

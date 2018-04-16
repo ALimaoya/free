@@ -53,9 +53,11 @@
       </el-form-item>
       <p class="title">第三步：选择目标推广宝贝</p>
       <el-form-item label="选择店铺：" labelWidth="1.66rem" prop="shopId">
-        <el-select :disabled="read" v-model="form.shopId"  placeholder="请选择店铺" size="small" >
+        <el-select :disabled="readShop" v-model="form.shopId"  placeholder="请选择店铺" size="small" >
           <el-option  v-for="(item,index) in shopOptions" :key="index" :label="item.name" :value="item.id"></el-option>
         </el-select>
+        <span v-if="form.shopId==='没有可选店铺'" class="tips" style="color : #f56c6c">该平台下未绑定店铺或绑定店铺未审核通过，请在店铺绑定并审核通过后再进行活动发布</span>
+
       </el-form-item>
       <el-form-item label="商品链接：" labelWidth="1.66rem" prop="productUrl">
         <el-input :readonly="readIpt" size="small" v-model.trim="form.productUrl" placeholder="请输入内容" @change="getGoodsDetail(form.platformType,form.productUrl)"></el-input>
@@ -83,6 +85,12 @@
       </el-form-item>
       <el-form-item label="下单价格：" labelWidth="1.66rem" prop="buyProductAmount">
         <el-input class="any" size="small" :maxlength="10" type="number" :readonly="readonly" v-model.number="form.buyProductAmount" placeholder="请输入内容" ></el-input>元
+      </el-form-item>
+      <el-form-item :label="this.payWay" labelWidth="1.66rem" prop="payMethod" style="float : left ;">
+        <el-radio-group :disabled="read"  v-model="form.payMethod">
+          <el-radio label="1" >支持</el-radio>
+          <el-radio label="0" >不支持</el-radio>
+        </el-radio-group>
       </el-form-item>
       <div class="post">
       <el-form-item label="商品运费：" labelWidth="1.66rem" prop="post" style="width : 40% ;float : left ;">
@@ -322,6 +330,13 @@
           callback();
 
         };
+        const validShop = (rule,value,callback) => {
+          if(value === ''|| value === '没有可选店铺'){
+            callback(new Error('请选择店铺'))
+          }
+
+          callback();
+        };
         return{
           type : '1',
           form : {
@@ -338,6 +353,7 @@
             buyProductQuantity : '1',
             buyProductAmount : '',
             post : '1',
+            payMethod : '1',
             keyword : [{
               'searchId' : '',
               'sortType' : '',
@@ -350,6 +366,7 @@
             productDetail : '',
             // startTime : ''
           },
+          payWay : '',
           platForm : [
             {
               name : '淘宝',
@@ -465,7 +482,7 @@
             ],
             shopId : [
               {
-                required : true ,message : '请选择店铺' , trigger : 'change'
+                required : true ,validator : validShop , trigger : 'change'
               }
             ],
             productUrl : [
@@ -482,6 +499,12 @@
             buyProductAmount : [
               {
                 required : true , validator : validMoney ,trigger : 'blur'
+              }
+            ],
+            payMethod : [
+              {
+                required : true , message : '请选择是否允许使用花呗/白条/信用卡' ,trigger : 'click'
+
               }
             ],
             post : [
@@ -525,15 +548,11 @@
           changeNum : false ,
           activityVisible : false ,
           read : false ,
+          readShop : false ,
           readIpt : false ,
           autoUpload : true ,
           vipVisible : false
 
-        // pickerOptions: {
-          //   disabledDate(time) {
-          //     return time.getTime() < Date.now();
-          //   }
-          // },
         }
       },
 
@@ -564,6 +583,7 @@
                             if(this.editor !== undefined){
                               if(this.editor === '2'){
                                 this.read = 'disabled' ;
+                                this.readShop = 'disabled';
                                 this.readonly = true ;
                                 this.readIpt = true ;
                                 this.readonlyKey = 'disabled' ;
@@ -763,6 +783,13 @@
         //获取对应平台店铺列表
         resetSearch(value,change){
           this.choosePlat = this.platForm[value-1].name ;
+          if(value === '1'|| value === '2'){
+            this.payWay = '花呗/信用卡：';
+          }
+          if(value === '3'){
+            this.payWay = '白条/信用卡：';
+
+          }
           if(change === 'change'){
             this.form.shopId = '';
             this.form.productUrl = '' ;
@@ -777,16 +804,26 @@
           getShopList(value).then( res => {
             if( res.data.status === '000000000'){
               this.shopOptions = res.data.data ;
-              if(this.form.shopId !== ''){
-                let arr = [] ;
-                this.shopOptions.forEach( i => {
-                  arr.push(i.id) ;
-
-                });
-                if(arr.indexOf(this.form.shopId) === -1){
-                  this.form.shopId = '' ;
-
+              if(this.shopOptions.length){
+                if(this.editor!=='2'){
+                  this.readShop = false;
                 }
+
+                if(this.form.shopId !== ''){
+                  let arr = [] ;
+                  this.shopOptions.forEach( i => {
+                    arr.push(i.id) ;
+
+                  });
+                  if(arr.indexOf(this.form.shopId) === -1){
+                    this.form.shopId = '' ;
+
+                  }
+                }
+
+              }else{
+                this.readShop = 'disabled';
+                this.form.shopId = '没有可选店铺';
               }
             }
           }).catch( err => {
@@ -797,6 +834,7 @@
 
          //获取平台类型
         getType(value){
+
           searchTypeList(value).then( res => {
             if(res.data.status === '000000000'){
               this.searchOptions = res.data.data ;
@@ -1022,7 +1060,7 @@
           }
           daysArr.push(this.today);
           daysArr.push(afterday);
-          console.log(restDay);
+          // console.log(restDay);
           if(restDay){
 
             let index = 0 ;

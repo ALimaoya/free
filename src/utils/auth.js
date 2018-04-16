@@ -1,7 +1,8 @@
 import Cookies from 'js-cookie'
 
-const TokenKey = 'admin'
-const Mobile="mobile"
+const TokenKey = 'admin';
+const Mobile="mobile";
+const User="user";
 export function getToken() {
   return Cookies.get(TokenKey)
 }
@@ -12,6 +13,17 @@ export function setToken(token) {
 
 export function removeToken() {
   return Cookies.remove(TokenKey)
+}
+
+export function setUser(value){
+  return Cookies.set(User,value, { expires: 7 })
+}
+
+export function getUser(){
+  return Cookies.get(User)
+}
+export function removeUser(){
+  return Cookies.remove(User);
 }
 export function getMobile() {
   return Cookies.get(Mobile)

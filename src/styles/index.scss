@@ -15,38 +15,38 @@ body {
 // div{  overflow-y: scroll; overflow-x:hidden;}
 html {
   box-sizing: border-box;
-  // font-size : 100;
+   font-size : 100px;
 
 }
 #app .el-menu-item, #app .el-submenu__title{
-  height: .56rem;
-    line-height: .56rem;
+  //height: .56rem;
+  //  line-height: .56rem;
     padding: 0 .2rem;
     font-size: .14rem;
 
 }
 #app .el-menu-item{
-  padding-left: .4rem !important;
+  padding-left: 40px !important;
 }
 #app .el-submenu>.el-submenu__title{
-  padding-left:.2rem !important;
+  padding-left:20px !important;
 }
 #app .nest-menu .el-submenu__title{
-  padding-left: .4rem !important;
+  padding-left: 40px !important;
 }
 #app .nest-menu .el-menu .el-menu-item{
-  padding-left: .6rem !important;
+  padding-left: 60px !important;
 }
 #app .el-button{
-  padding: .12rem .2rem ;
+  //padding: .12rem .2rem ;
 }
 .settings .el-dialog__headerbtn{display: none}
 #app .el-form-item__label{
-  padding: 0 .12rem 0 0;
-  font-size: .14rem;
+  padding: 0 12px 0 0;
+  font-size: 14px;
 }
 #app .el-radio__label{    font-size: .14rem;
-  padding-left: .1rem;}
+  padding-left: 10px;}
 *,
 *:before,
 *:after {
@@ -95,7 +95,7 @@ a:hover {
 }
 
 .app-container {
-  padding: 0.20rem;
+  padding: 20px;
 }
  .buyVip .payPsw{
   .el-form-item__label{

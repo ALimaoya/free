@@ -515,8 +515,9 @@
       color : #0a6cd6;
     }
   }
+
   .ruleBox{
-    height : 7.5rem ;
+    /*height : 7.5rem ;*/
     overflow : hidden ;
 
     .passage{
@@ -554,7 +555,9 @@
     }
 
     .dialog-footer{
-      height : 1rem ;
+      /*height : 1rem ;*/
+      height: 25% ;
+
       display: flex;
       justify-content: center;
       align-items: center;

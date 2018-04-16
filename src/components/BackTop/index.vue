@@ -68,7 +68,7 @@
       width : 1rem ;
       height : 0.5rem ;
       color : #666 ;
-
+      padding : 0;
     }
   }
 </style>

@@ -68,7 +68,7 @@ export default {
   .scroll-wrapper {
     position: absolute;
     top : 0;
-    height : 0.34rem ;
+    height : 34px ;
   }
 }
 </style>

@@ -221,8 +221,8 @@
       span{
         display : block;
         width : 27% ;
-        height : 0.3rem ;
-        line-height : 0.3rem ;
+        height : 0.4rem ;
+        line-height : 0.4rem ;
         float : left ;
         text-align : right ;
         color : #456 ;

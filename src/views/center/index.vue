@@ -10,8 +10,8 @@
             </span>
             <span v-else>您还不是会员</span>
             <span v-if="userInfo.vipLevel">会员到期时间：{{ userInfo.vip_time}}</span>
-            <el-button v-if="userInfo.vipLevel" @click="vipPlus" type="primary" size="small" style="width:1rem">续费会员</el-button>
-            <el-button v-else @click="vipPlus" type="primary" size="small" style="width:1rem">购买会员</el-button>
+            <el-button v-if="userInfo.vipLevel" @click="vipPlus" type="primary" size="small" style="width:1rem;padding : 0.09rem 0 ;">续费会员</el-button>
+            <el-button v-else @click="vipPlus" type="primary" size="small" style="width:1rem;padding : 0.09rem 0 ;">购买会员</el-button>
 
           </p>
         </li>
@@ -24,13 +24,13 @@
               <a :href="'http://wpa.qq.com/msgrd?v=3&uin='+attendant.qq+'&site=qq&menu=yes'" target="_blank">
                       <img  src="../../assets/imgs/qq.png" alt=""/>
 							</a>
-            <a href="javascript:;">
-                <img  src="../../assets/imgs/weixin.png" alt=""/>
-                <img :src="imageDomain+attendant.wechatQrcode" alt="" class="wechat">
+            <a href="#javascript:;">
+              <!--<img v-if="attendant.wechat !== ''" :src="imageDomain+ attendant.wechat" alt="" class="wechat">-->
+              <img   src="../../assets/imgs/weixin.png" alt=""  />
+
             </a>
               <!-- {{ attendant.wechat}} -->
-            </dl>
-           
+
           </div>
 
         </li>
@@ -272,7 +272,7 @@
             display: block;
 
           }
-         
+
         }
 
       }

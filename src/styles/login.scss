@@ -42,7 +42,7 @@ $light_gray:#eee;
   .el-input {
     display: inline-block;
     height: 0.47rem;
-    width: 85%;
+    width: 80%;
   }
   .tips {
     font-size: 0.14rem;
@@ -87,6 +87,11 @@ $light_gray:#eee;
     background: rgba(0, 0, 0, 0.1);
     border-radius: 0.05rem;
     color: #454545;
+    vertical-align: middle;
+  }
+  .el-form-item__content{
+    line-height : 0.4rem;
+
   }
   .show-pwd {
     position: absolute;
@@ -107,6 +112,8 @@ $light_gray:#eee;
     height: 0.52rem ;
     width : 1rem ;
     float : right ;
+    margin : auto 0;
+
   }
   .codeBtn{
     width : 0.8rem ;
@@ -126,5 +133,17 @@ $light_gray:#eee;
       }
 
     }
+  }
+  .remember{
+    border : 0 ;
+    background: 0;
+    margin : 0;
+  }
+  .el-checkbox__label{
+    font-size : 0.12rem ;
+  }
+  .el-checkbox__inner{
+    width : 0.14rem ;
+    height : 0.14rem ;
   }
 }

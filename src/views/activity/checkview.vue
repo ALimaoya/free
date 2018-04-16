@@ -12,7 +12,7 @@
       </el-select>
       <el-input size="small" :maxlength="20" v-model.trim="order.activityCode" placeholder="请输入试客试用活动编号"></el-input>
       <el-input size="small" :maxlength="20" v-model.trim="order.thirdOrderCode" placeholder="请输入第三方订单编号"></el-input>
-      <el-button size="small"  @click="getList()" class="searchOrder">查询</el-button>
+      <el-button size="small"  @click="getList()" class="searchOrder" style="padding: 0 0.05rem;">查询</el-button>
     </div>
     <el-table :data="tableData" border>
       <el-table-column prop="activityCode" label="试客任务编号" width="180"></el-table-column>

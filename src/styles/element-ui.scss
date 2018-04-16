@@ -1,5 +1,6 @@
  //to reset element-ui default css
-.el-upload {
+
+ .el-upload {
   input[type="file"] {
     display: none !important;
   }
@@ -21,6 +22,15 @@
  }
  .el-date-editor .el-range-separator{
    width : 8% ;
+ }
+ .el-input__inner{
+   height : 0.4rem ;
+   font-size : 0.14rem ;
+ }
+ .el-button{
+   //padding : 0 ;
+   text-align : center ;
+   line-height : 1 ;
  }
 //暂时性解决diolag 问题 https://github.com/ElemeFE/element/issues/2461
 .el-dialog {
@@ -44,9 +54,9 @@
  }
 
 
-// .el-submenu__title{
-//   width : 1.8rem ;
-// }
+ .el-submenu__title{
+   height : 50px;
+ }
 // .el-submenu .el-menu-item{
 //  width : 1.8rem ;
 //  box-sizing: border-box;

@@ -7,7 +7,7 @@
         <span class="svg-container svg-container_login">
           <svg-icon icon-class="user" />
         </span>
-        <el-input type="text" v-model.number="loginForm.mobile" autoComplete="on" placeholder="请输入手机号"></el-input>
+        <el-input type="text" v-model.number="loginForm.mobile" autoComplete="on" placeholder="请输入手机号" @input="freeLogin()"></el-input>
       </el-form-item>
       <el-form-item prop="password">
         <span class="svg-container">
@@ -27,6 +27,9 @@
         <el-input style="width : 1.5rem;" v-model="loginForm.captcha" autoComplete="on" placeholder="请输入验证码"></el-input>
         <img class="show-captcha" :src="'data:image/png;base64,'+ imgCode" alt="" @click="changeCaptcha" />
 
+      </el-form-item>
+      <el-form-item class="remember">
+        <el-checkbox v-model="checked">记住密码</el-checkbox>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" style="width:100%;" :loading="loading" @click.native.prevent="handleLogin('loginForm')">
@@ -51,7 +54,7 @@
     getCaptcha
   } from "@/api/login"
   import {
-    setMobile
+    setMobile ,setUser ,getUser ,removeUser
   } from '@/utils/auth'
   export default {
     name: 'login',
@@ -113,26 +116,30 @@
         userToken: '',
         loading: false,
         pwdType: 'password',
-        examine: false
+        examine: false ,
+        checked : false
 
       }
     },
     mounted() {
       this.changeCaptcha();
+
     },
     methods: {
+      freeLogin(){
+          if(getUser() !== undefined){
+            if(this.loginForm.mobile === getUser().split('&')[0]*1){
+              this.checked = true ;
+              this.loginForm.password = getUser().split('&')[1];
+            }else{
 
-            // if(res.data.status === '000000000'){
-            //   this.$router.push({ path: '/' });
-            // }else{
-            //     this.examine = true ;
-            //     this.$message({
-            //       message : res.data.message ,
-            //       type : 'error',
-            //       center : 'true'
-            //     })
-            //
-            // }
+              this.checked = false ;
+              this.loginForm.password = ''
+            }
+
+          }
+
+      },
       showPwd() {
         if (this.pwdType === 'password') {
           this.pwdType = ''
@@ -154,6 +161,11 @@
               // console.log(res);
               this.loading = false;
               if (res.data.status === '000000000') {
+                if(this.checked){
+                  setUser(this.loginForm.mobile+ '&'+this.loginForm.password)
+                }else{
+                  removeUser()
+                }
                 this.$router.push({
                   path: '/'
                 });
@@ -184,7 +196,26 @@
           }
         })
       },
-
+      //记住密码
+      // rememberPsw(loginForm){
+      //
+      //   this.$refs[loginForm].validate(valid => {
+      //
+      //     if(valid){
+      //
+      //
+      //     }else{
+      //       console.log(5);
+      //
+      //       this.$message({
+      //         type : 'error',
+      //         center : true ,
+      //         message : '请输入正确的手机号及登录密码'
+      //       })
+      //     }
+      //   })
+      //
+      // },
       //更换验证码
       changeCaptcha() {
         getCaptcha().then(res => {

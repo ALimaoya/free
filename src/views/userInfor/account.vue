@@ -3,7 +3,7 @@
     <h1 class="title">
       <p>绑定支付宝</p>
       <div>
-        <el-button type="primary" @click="binding">{{title}}</el-button>
+        <el-button style="padding : 0 0.05rem;text-align:center ;line-height: 0.4rem" type="primary" @click="binding">{{title}}</el-button>
         <span>支付宝关系到您的资金提现，请认真填写。</span>
       </div>
 

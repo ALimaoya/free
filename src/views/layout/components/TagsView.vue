@@ -116,27 +116,27 @@ export default {
 
   .tags-view-wrapper {
     position : fixed ;
-    top : 1.1rem;
+    top : 110px;
     background: #fff;
-    height: 0.34rem;
+    height: 34px;
     z-index : 2000 ;
     border-bottom: 0.01rem solid #d8dce5;
     box-shadow: 0 0.01rem 0.03rem 0 rgba(0, 0, 0, .12), 0 0 0.03rem 0 rgba(0, 0, 0, .04);
     .tags-view-item {
       display: inline-block;
       position: relative;
-      height: 0.26rem;
-      line-height: 0.26rem;
+      height: 26px;
+      line-height: 26px;
       border: 1px solid #d8dce5;
       color: #495060;
       background: #fff;
-      padding: 0 0.08rem;
+      padding: 0 8px;
       font-size: 0.12rem;
-      margin-left: 0.05rem;
+      margin-left: 5px;
       float : left ;
-      margin-top: 0.04rem;
+      margin-top: 4px;
       &:first-of-type {
-        margin-left: 0.15rem;
+        margin-left: 15px;
       }
       &.active {
         background-color: #42b983;
@@ -146,11 +146,11 @@ export default {
           content: '';
           background: #fff;
           display: inline-block;
-          width: 0.08rem;
-          height: 0.08rem;
+          width: 8px;
+          height: 8px;
           border-radius: 50%;
           position: relative;
-          margin-right: 0.02rem;
+          margin-right: 2px;
         }
       }
     }
