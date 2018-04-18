@@ -304,7 +304,9 @@
   .checkbonus{
     .search{
       border-bottom : 1px solid #aaa ;
-
+      .searchOrder{
+        height : 34px ;
+      }
     }
 
     .el-dialog {

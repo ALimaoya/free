@@ -12,6 +12,7 @@ $light_gray:#eee;
     .goOther {
       margin-top: .07rem;
       font-size: .12rem;
+      width: 327px;
       color: #fefefe;
 
       span,.toRes,.toLogin {
@@ -88,6 +89,7 @@ $light_gray:#eee;
     border-radius: 0.05rem;
     color: #454545;
     vertical-align: middle;
+    width : 327px;
   }
   .el-form-item__content{
     line-height : 0.4rem;
@@ -116,10 +118,10 @@ $light_gray:#eee;
 
   }
   .codeBtn{
-    width : 0.8rem ;
+    width : 80px ;
     height : 0.35rem ;
     color : #666;
-    margin : 0.085rem 0.1rem;
+    margin : 0.085rem 10px;
     padding : 0 ;
     line-height : 0.35rem ;
     text-align : center;

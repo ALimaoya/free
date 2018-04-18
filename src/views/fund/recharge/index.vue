@@ -224,7 +224,7 @@
               error(){
                 _this.depositStatus = false;
                 alert('服务器开小差啦，请稍等~');
-                return 
+                return
               }
             })
             var __div = document.getElementById('myForm');
@@ -336,7 +336,7 @@
                   color: #ff0000;
                   font-weight: 500;
                   font-size: 18px;
-                  padding-left: 0.2rem;
+                  padding-left: 20px;
 
                 }
               }

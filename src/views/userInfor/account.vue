@@ -15,7 +15,7 @@
           <el-input v-model.trim="payForm.mobile" readonly ></el-input>
           <b class="blank" ></b>
         </el-form-item>
-        <el-form-item label="验证码：" prop="pswVerify" >
+        <el-form-item label="验证码：" label-width="104.45px" prop="pswVerify" >
           <el-input placeholder="请输入验证码" v-model.trim="payForm.pswVerify" ></el-input>
           <el-button class="getNum" @click="getNum" :disabled="disabled">{{ btntext }}</el-button>
         </el-form-item>
@@ -28,7 +28,7 @@
           <b class="blank" ></b>
         </el-form-item>
         <span>温馨提示：如果您填写的支付宝账号不正确，可能无法成功返款，平台不承担由此产生的一切费用。</span>
-        <el-form-item class="btn">
+        <el-form-item class="btn" >
           <el-button type="primary" @click="onSubmit('payForm')">确定</el-button>
           <el-button @click="cancel('payForm')">取消</el-button>
         </el-form-item>
@@ -293,7 +293,7 @@
     font-size: 0.15rem;
     color: #333;
     .getNum {
-      width: 1.3rem;
+      /*width: 130px;*/
       margin-left: 0.3rem;
       padding: 0.12rem 0.15rem;
 
@@ -341,10 +341,10 @@
 
       p {
         width: 70%;
-        height: 0.4rem;
+        height: 40px;
         font-size: 0.18rem;
         color: #565656;
-        line-height: 0.4rem;
+        line-height: 40px;
         background: rgba(242, 242, 242, 1);
         margin: 0 auto 0.2rem;
         text-align: center;
@@ -354,13 +354,15 @@
         flex-direction: column;
         align-items: center;
         .el-form-item {
-          flex-direction: row;
-          display: flex;
-          flex : 1 ;
-          width : 70% ;
-          justify-content: flex-end;
+          /*flex-direction: row;*/
+          /*display: flex;*/
+          /*flex : 1 ;*/
+          width : 55% ;
+          margin : 0.15rem auto ;
+          /*justify-content: center;*/
         }
         .btn {
+          display : flex ;
           justify-content: center;
           .el-button:nth-child(1) {
             margin-right: 0.3rem;

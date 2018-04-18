@@ -17,7 +17,7 @@
         <el-date-picker size="small" v-model="searchForm.endDate" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择日期时间">
         </el-date-picker>
       </div>
-      <el-button type="primary" size="mini" @click="search(searchForm)">查询</el-button>
+      <el-button type="primary" size="mini" style="padding : 0 0.1rem;" @click="search(searchForm)">查询</el-button>
     </div>
     <el-table :data="tableData" style="width: 100%;" border>
       <el-table-column prop="" label="编号">
@@ -187,13 +187,16 @@
         width: 1rem;
         height: 0.36rem;
         margin-left: 0.25rem;
-        margin-top: 0.17rem;
+        margin-top: 0.14rem;
       }
     }
     .el-table {
       border-color: #aaa;
       border-radius: 0.05rem;
 
+    }
+    .block{
+      height : 60px;
     }
     .block2 {
       padding: 0.3rem;

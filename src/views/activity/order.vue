@@ -29,7 +29,7 @@
           <el-table-column prop="activityTitle" label="商品名称"></el-table-column>
           <el-table-column prop="" label="宝贝主图">
             <template slot-scope="scope">
-              <img :src=  " imageDomain  " alt="" />
+              <img class="mainPic" @click="showImg( scope.row.mainImageUrl)" :src=" imageDomain + scope.row.mainImageUrl " alt="" />
             </template>
           </el-table-column>
 
@@ -90,6 +90,9 @@
       <!--</el-form>-->
 
     <!--</el-dialog>-->
+    <div v-if="mask" @click="close" class="mask">
+      <img :src=" imageDomain + bigImg" alt="" />
+    </div>
   </div>
 </template>
 
@@ -232,7 +235,9 @@
             }
           ]
         } ,
-        imageDomain : process.env.IMAGE_DOMAIN
+        imageDomain : process.env.IMAGE_DOMAIN ,
+        mask : false ,
+        bigImg : ''
       }
     },
     mounted(){
@@ -271,6 +276,15 @@
         })
       },
 
+      //查看宝贝大图
+      showImg(url){
+        this.mask = true ;
+        this.bigImg = url ;
+      },
+      close(){
+        this.mask = false ;
+        this.bigImg = '' ;
+      },
       //查看订单详情
       goDetail(index,order){
         this.$router.push('/activity/detail/'+ order) ;
@@ -342,7 +356,9 @@
 
   .order{
 
-
+    .searchOrder{
+      height : 34px ;
+    }
     .note{
       padding-left : 0.3rem ;
       width : 100% ;
@@ -353,7 +369,10 @@
       text-indent : 0.32rem ;
       color : #999 ;
     }
-
+    .mainPic{
+      width : 0.6rem ;
+      height : 0.6rem ;
+    }
 
     .el-dialog{
       .el-form{
@@ -366,6 +385,22 @@
         .el-textarea{
           width : 80% ;
         }
+      }
+    }
+    .mask{
+      position : fixed ;
+      top : 0;
+      left : 0 ;
+      width : 100% ;
+      height : 100% ;
+      background : rgba(250,250,250,0.3) ;
+      display : flex ;
+      align-items: center;
+      justify-content: center;
+      z-index : 10000;
+      img{
+        max-height : 100% ;
+
       }
     }
   }

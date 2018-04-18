@@ -24,14 +24,21 @@
         <li><span>中奖时间：</span><span v-if="detailInfo.winTime">{{ detailInfo.winTime }}</span><span v-else>暂无</span></li>
         <li><span>开奖时间：</span><span v-if="detailInfo.receiveTime">{{ detailInfo.receiveTime }}</span><span v-else>暂无</span></li>
         <li><span>订单价格：</span><span v-if="detailInfo.amount">{{ detailInfo.amount }} 元</span><span v-else>暂无</span></li>
+        <li><span>用户购买金额：</span><span v-if="detailInfo.buyAmount">{{ detailInfo.buyAmount }} 元</span><span v-else>暂无</span></li>
         <li class="faileReason" v-if="detailInfo.remarks"><span>订单失败原因：</span><span>{{ detailInfo.remarks }} </span></li>
-        <li><span>图片详情：</span><span v-if="detailInfo.orderImageList == 0" class="noImg">暂无图片</span></li>
+        <li class="faileReason"><span>图片详情：</span><span v-if="detailInfo.orderImageList == 0" class="noImg">暂无图片</span></li>
         <li class="detailPic">
           <div v-if="detailInfo.orderImageList != 0">
             <dl v-for="item in detailInfo.orderImageList">
               <dt>{{ imgType[item.type-1] }}</dt>
               <dd>
                 <img @click="getImg(item.imageUrl)" :src="imageDomain + item.imageUrl" alt="" />
+              </dd>
+            </dl>
+            <dl v-if="detailInfo.mainImageUrl">
+              <dt>宝贝主图</dt>
+              <dd>
+                <img @click="getImg(detailInfo.mainImageUrl)" :src="imageDomain + detailInfo.mainImageUrl" alt="" />
               </dd>
             </dl>
           </div>

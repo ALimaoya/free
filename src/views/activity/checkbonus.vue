@@ -335,6 +335,9 @@
   .checkbonus{
     .search{
       border-bottom : 1px solid #aaa ;
+      .searchOrder{
+        height : 34px ;
+      }
     }
     .detailContent{
       /*height : 8rem ;*/

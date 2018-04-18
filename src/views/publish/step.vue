@@ -86,8 +86,8 @@
       <el-form-item label="下单价格：" labelWidth="1.66rem" prop="buyProductAmount">
         <el-input class="any" size="small" :maxlength="10" type="number" :readonly="readonly" v-model.number="form.buyProductAmount" placeholder="请输入内容" ></el-input>元
       </el-form-item>
-      <el-form-item :label="this.payWay" labelWidth="1.66rem" prop="payMethod" style="float : left ;">
-        <el-radio-group :disabled="read"  v-model="form.payMethod">
+      <el-form-item :label="this.payWay" labelWidth="1.66rem" prop="isCredit" style="float : left ;">
+        <el-radio-group :disabled="read"  v-model="form.isCredit">
           <el-radio label="1" >支持</el-radio>
           <el-radio label="0" >不支持</el-radio>
         </el-radio-group>
@@ -111,7 +111,7 @@
         <!--<el-input type="textarea" :rows="4" class="textarea" placeholder="请输入内容" @blur="cancelWarn(form.productShareUrl,appKey)" v-model.trim="form.productShareUrl"></el-input>-->
       <!--</el-form-item>-->
       <el-form-item class="size" v-for="(keyItem,index) in form.keyword" :label="'APP端关键词'+(index+1)*1+'：'"
-            :key="index" :prop="'keyword.'+ index + '.searchKeyword'" labelWidth="1.66rem">
+            :key="index" :prop="'keyword.'+ index + '.searchKeyword'" labelWidth="1.7rem">
         <el-select :disabled="read" class="search" @focus="getType(form.platformType)" v-model="keyItem.searchId" placeholder="搜索平台" size="small">
           <el-option
             v-for="(item ,index) in searchOptions"
@@ -157,7 +157,7 @@
             <!--<li>当日18点前提交担保金的活动，当日审核上架次日10点开奖；18点后提交的活动次日10点上架，隔天10点系统自动开奖</li>-->
           <!--</ul>-->
         <!--</el-form-item>-->
-        <el-form-item label="选择活动开始时间：" labelWidth="1.66rem" prop="activityStartTime">
+        <el-form-item label="选择活动开始时间：" labelWidth="2rem" prop="activityStartTime">
           <div class="block">
             <el-date-picker :disabled="read" v-model="form.activityStartTime"  format="yyyy-MM-dd" value-format="yyyy-MM-dd" size="small" :picker-options="pickerOptions"
               type="date" :clearable="autoUpload" placeholder="开始日期" @blur="setRate(form.activityStartTime)" >
@@ -353,7 +353,7 @@
             buyProductQuantity : '1',
             buyProductAmount : '',
             post : '1',
-            payMethod : '1',
+            isCredit : '1',
             keyword : [{
               'searchId' : '',
               'sortType' : '',
@@ -501,7 +501,7 @@
                 required : true , validator : validMoney ,trigger : 'blur'
               }
             ],
-            payMethod : [
+            isCredit : [
               {
                 required : true , message : '请选择是否允许使用花呗/白条/信用卡' ,trigger : 'click'
 
@@ -536,7 +536,7 @@
           pickerOptions : {
             disabledDate(time){
               let curDate = (new Date()).getTime() ;
-              return time.getTime() < Date.now() + 24*3600*1000 ;
+              return time.getTime() < Date.now() -  24*3600*1000 ;
             }
           } ,
           editor : '',
@@ -1384,7 +1384,7 @@
     .el-form-item{
       /*margin : 0;*/
       width : 100% ;
-      padding-left : 0.3rem ;
+      /*padding-left : 0.3rem ;*/
       .upload{
         width : 1.6rem ;
         float : left ;

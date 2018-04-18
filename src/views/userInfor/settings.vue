@@ -45,17 +45,17 @@
       </tr>
     </table>
     <!--设置/修改支付密码-->
-    <el-dialog :title="pswType" :visible.sync="pswVisible" center :before-close="close">
+    <el-dialog :title="pswType" width="750px" :visible.sync="pswVisible" center :before-close="close">
       <el-form ref="pswForm" :model="pswForm" :rules="pswRule">
         <div class="phoneNum">
-          <p class="tel" style="width : 1.5rem">绑定手机号：</p>
+          <p class="tel" style="width : 182px">绑定手机号：</p>
           <span>{{ user.mobile}}</span>
         </div>
-        <el-form-item label="验证码：" style="width:5.45rem ;"  label-width="1.65rem" prop="pswVerify">
+        <el-form-item label="验证码：" style="width:508px ;"  label-width="178px" prop="pswVerify">
           <el-input placeholder="请输入验证码" v-model.trim="pswForm.pswVerify"></el-input>
           <el-button class="getNum" @click="getNum" style="padding: 0;line-height: 0.4rem;text-align:center;font-size:0.12rem;" :disabled="disabled">{{ btntext }}</el-button>
         </el-form-item>
-        <el-form-item label="支付密码：" :label-width="pswWidth" prop="payPsw">
+        <el-form-item label="支付密码：" style="width:480px ;height:40.5px;"  :label-width="formLabelWidth" prop="payPsw">
           <el-input class="pswIpt" :type="pwdType1" placeholder="请输入六位数字支付密码" v-model.trim="pswForm.payPsw"></el-input>
           <div class="getNum" style="width : 1.5rem ;float : right ;"></div>
           <span class="show-pwd" @click="showPwd('1')">
@@ -63,7 +63,7 @@
             <svg-icon icon-class="eyeopen" v-else="pwdType1===''" ></svg-icon>
           </span>
         </el-form-item>
-        <el-form-item label="确认支付密码：" :label-width="pswWidth" prop="payPsw2">
+        <el-form-item label="确认支付密码：" style="width:480px ;height:40.5px;"  :label-width="formLabelWidth" prop="payPsw2">
           <el-input class="pswIpt" :type="pwdType2" placeholder="请再次确认支付密码" v-model.trim="pswForm.payPsw2"></el-input>
           <div class="getNum" style="width : 1.5rem ;float : right ;"></div>
           <span class="show-pwd" @click="showPwd('2')">
@@ -80,31 +80,34 @@
     </el-dialog>
 
     <!--修改登录密码-->
-    <el-dialog title="修改登录密码" :visible.sync="dialogFormVisible" center :before-close="close">
-      <el-form :model="changePsw" ref="changePsw" :rules="changePswRules">
+    <el-dialog title="修改登录密码" width="750px" :visible.sync="dialogFormVisible" center :before-close="close">
+      <el-form :model="changePsw" width="696px" ref="changePsw" :rules="changePswRules">
         <div class="phoneNum">
           <p class="tel">绑定手机号：</p>
           <span>{{ user.mobile}}</span>
         </div>
-        <el-form-item label="验证码：" :label-width="formLabelWidth" prop="pswVerify">
+        <el-form-item label="验证码：" style="width : 495px;" :label-width="formLabelWidth"   prop="pswVerify">
           <el-input placeholder="请输入验证码" v-model.trim="changePsw.pswVerify"></el-input>
           <el-button class="getNum" @click="getNum" style="padding: 0;line-height: 0.4rem;text-align:center;font-size:0.12rem;" :disabled="disabled">{{ btntext }}</el-button>
         </el-form-item>
-        <el-form-item label="新密码：" :label-width="formLabelWidth" prop="newPsw">
+        <el-form-item label="新密码：" style="width : 495px;height:40.5px;" :label-width="formLabelWidth" prop="newPsw">
           <el-input class="pswIpt" :type="pwdType1" placeholder="请输入新密码" v-model.trim="changePsw.newPsw"></el-input>
           <div class="getNum" style="width : 1.1rem ;float : right ;"></div>
           <span class="show-pwd" @click="showPwd('1')">
             <svg-icon icon-class="eyeclose" v-if="pwdType1==='password'" ></svg-icon>
             <svg-icon v-else="pwdType1===''" icon-class="eyeopen"></svg-icon>
           </span>
+          <p class="blank"></p>
         </el-form-item>
-        <el-form-item label="确认新密码：" :label-width="formLabelWidth" prop="checkPsw">
+        <el-form-item label="确认新密码：" style="width : 495px;height:40.5px;" :label-width="formLabelWidth" prop="checkPsw">
           <el-input class="pswIpt" :type="pwdType2" placeholder="请再次确认新密码" v-model.trim="changePsw.checkPsw"></el-input>
           <div class="getNum" style="width : 1.1rem ;float : right ;"></div>
           <span class="show-pwd" @click="showPwd('2')">
             <svg-icon v-if="pwdType2==='password'" icon-class="eyeclose"></svg-icon>
              <svg-icon icon-class="eyeopen" v-else="pwdType2===''" ></svg-icon>
           </span>
+          <p class="blank"></p>
+
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -114,20 +117,20 @@
       <!--</div>-->
     </el-dialog>
     <!--设置||修改qq/微信/email-->
-    <el-dialog :title="concatType" :visible.sync="contactVisible" center width="5rem" top="18%" :before-close="close">
+    <el-dialog :title="concatType" :visible.sync="contactVisible" center width="500px" top="18%" :before-close="close">
       <!---->
       <el-form :model="QQ" :rules="QQrule" ref="QQ" v-if="ways==='QQ'" class="contactInfo">
-        <el-form-item :label="labelname" label-width="0.95rem" prop="qqNum">
+        <el-form-item :label="labelname" label-width="95px" prop="qqNum">
           <el-input placeholder="请输入内容" v-model.trim="QQ.qqNum"></el-input>
         </el-form-item>
       </el-form>
       <el-form :model="wx" :rules="wxRule" ref="wx" v-else-if="ways==='wx'" class="contactInfo">
-        <el-form-item :label="labelname" label-width="0.95rem" prop="wechat">
+        <el-form-item :label="labelname" label-width="95px" prop="wechat">
           <el-input placeholder="请输入内容" v-model.trim="wx.wechat"></el-input>
         </el-form-item>
       </el-form>
       <el-form :model="email" :rules="emailRule" ref="email" v-else-if="ways==='email'" class="contactInfo">
-        <el-form-item :label="labelname" label-width="0.95rem" prop="emailStr">
+        <el-form-item :label="labelname" label-width="95px" prop="emailStr">
           <el-input placeholder="请输入内容" v-model.trim="email.emailStr"></el-input>
         </el-form-item>
       </el-form>
@@ -300,8 +303,7 @@
         popover: false,
         dialogFormVisible: false,
         contactVisible: false,
-        formLabelWidth: '1.65rem',
-        pswWidth: '1.65rem',
+        formLabelWidth: '165px',
         pswVisible: false,
         pswForm: {
           payPsw: '',
@@ -808,8 +810,8 @@
       border-radius: 0.05rem;
       border-collapse: collapse;
       tr {
-        height: 0.35rem;
-        line-height: 0.35rem;
+        height: 35px;
+        line-height: 35px;
 
         td {
           &:nth-child(1) {
@@ -848,11 +850,11 @@
           }
         }
         .set {
-          width: 0.7rem;
-          height: 0.28rem;
+          width: 80px;
+          height: 30px;
           margin: auto;
-          line-height: 0.28rem;
-          padding: 0;
+          line-height: 20px;
+          padding: 5px;
           border: 1px solid #eaeaea;
           border-radius: 0.07rem;
           display: block;
@@ -882,14 +884,19 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
       }
+      .el-form-item{
+        /*float: left;*/
+      }
+
       .pswIpt {
         position: relative;
       }
       .show-pwd {
         position: absolute;
-        left: 1.8rem;
-        top: 0.03rem;
+        left: 180px;
+        top: 3px;
         font-size: 0.16rem;
         color: #889aa4;
         cursor: pointer;
@@ -899,49 +906,49 @@
         padding-left: 1.85rem;
       }
       .phoneNum {
-        width: 5.05rem;
+        width: 505px;
         margin: 0 auto;
         p {
-          width: 1.65rem;
+          width: 173px;
           float: left;
           text-align : right ;
-          padding-right : 0.15rem ;
+          padding-right : 15px ;
         }
         span {
           width: 60%;
           /*float : right ;*/
-          height: 0.4rem;
-          line-height: 0.4rem;
+          height: 40px;
+          line-height: 40px;
           display: inline-block;
           color: #333;
         }
       }
       .tel {
-        padding-left: 0.25rem;
-        height: 0.4rem;
-        line-height: 0.4rem;
+        padding-left: 25px;
+        height: 40px;
+        line-height: 40px;
         display: block;
-        margin-bottom: 0.22rem;
+        margin-bottom: 22px;
       }
       .tel2 {
-        padding-left: 0.02rem;
+        padding-left: 2px;
       }
-      .phoneBox {
-        display: flex;
-        align-items: center;
-        .tel {
-          width: 80%;
-          text-align: left;
-        }
-        .el-form-item {
-          width: 80%;
-          /*margin : 0.1rem auto ;*/
-          display: flex;
-          flex-direction: row;
-          /*justify-content: center;*/
-        }
+      /*.phoneBox {*/
+        /*display: flex;*/
+        /*align-items: center;*/
+        /*.tel {*/
+          /*width: 80%;*/
+          /*text-align: left;*/
+        /*}*/
+        /*.el-form-item {*/
+          /*width: 80%;*/
+          /*!*margin : 0.1rem auto ;*!*/
+          /*display: flex;*/
+          /*flex-direction: row;*/
+          /*!*justify-content: center;*!*/
+        /*}*/
 
-      }
+      /*}*/
       .nextBtn {
         display: flex;
         flex: 1;
@@ -958,10 +965,14 @@
       /*.el-form-item__label{*/
       /*text-align : left ;*/
       /*}*/
-      .getNum {
-        width: 1.1rem;
-        margin-left: 0.3rem;
-        padding: 0.12rem 0.15rem;
+      .getNum ,.blank{
+        width: 100px;
+        margin-left: 30px;
+        padding: 12px 15px;
+        line-height : 40px;
+        height : 40px;
+        box-sizing: border-box;
+        float: right;
 
       }
       .contactInfo {
@@ -970,7 +981,9 @@
         }
       }
       .el-input {
-        width: 2rem;
+        width: 200px;
+        height: 40px;
+
       }
       /*}*/
     }

@@ -348,7 +348,7 @@
               error(){
                 _this.depositStatus = false;
                 alert('服务器开小差啦，请稍等~');
-                return 
+                return
               }
             })
             var __div = document.getElementById('myForm');
@@ -504,7 +504,7 @@
           line-height : 0.3rem ;
         }
         .text-center  {
-          line-height : 0.2rem ;
+          line-height : 20px ;
           font-size : 0.12rem ;
           text-align : left ;
           text-indent : 0.4rem ;
@@ -580,10 +580,10 @@
     }
     .choose {
       width: 100%;
-      height: 0.5rem;
+      height: 50px;
       padding: 0 0.3rem;
       box-sizing: border-box;
-      line-height: 0.5rem;
+      line-height: 50px;
       font-size: 0.17rem;
       color: #666;
       background: #f5f4f9;
@@ -617,8 +617,8 @@
         }
         li {
           width: 100%;
-          height: 0.6rem;
-          line-height: 0.6rem;
+          height: 60px;
+          line-height: 60px;
           float: left;
           padding-left: 0.2rem;
           border-bottom: 1px solid #aaa;
@@ -631,13 +631,13 @@
           }
           p {
             /*display : block ;*/
-            line-height: 0.3rem;
+            line-height: 30px;
             height: 100%;
           }
           img {
-            width: 0.3rem;
-            height: 0.3rem;
-            margin: 0 0.2rem;
+            width: 30px;
+            height: 30px;
+            margin: 0 20px;
           }
         }
         .el-radio {

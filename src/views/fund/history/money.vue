@@ -27,7 +27,7 @@
           placeholder="选择日期时间">
         </el-date-picker>
       </div>
-          <el-button type="primary" size="mini" @click="search(searchForm)">查询</el-button>
+          <el-button type="primary" style="padding : 0 0.1rem;line-height: 0.34rem;" size="mini" @click="search(searchForm)">查询</el-button>
     </div>
     <el-table :data="tableData" style="width: 100%;"  border>
       <el-table-column prop="" label="编号">

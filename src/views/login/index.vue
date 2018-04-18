@@ -7,7 +7,7 @@
         <span class="svg-container svg-container_login">
           <svg-icon icon-class="user" />
         </span>
-        <el-input type="text" v-model.number="loginForm.mobile" autoComplete="on" placeholder="请输入手机号" @input="freeLogin()"></el-input>
+        <el-input type="text" v-model.number="loginForm.mobile" autoComplete="on" placeholder="请输入手机号" @input="checkUser()"></el-input>
       </el-form-item>
       <el-form-item prop="password">
         <span class="svg-container">
@@ -123,22 +123,35 @@
     },
     mounted() {
       this.changeCaptcha();
-
+      this.freeLogin();
     },
     methods: {
       freeLogin(){
           if(getUser() !== undefined){
-            if(this.loginForm.mobile === getUser().split('&')[0]*1){
+            // if(this.loginForm.mobile === getUser().split('&')[0]*1){
+              this.loginForm.mobile = getUser().split('&')[0] ;
               this.checked = true ;
               this.loginForm.password = getUser().split('&')[1];
             }else{
 
               this.checked = false ;
+              this.loginForm.mobile = '';
               this.loginForm.password = ''
             }
 
-          }
+          // }
 
+      },
+      checkUser(){
+        if(this.loginForm.mobile === getUser().split('&')[0]*1){
+          this.loginForm.mobile = getUser().split('&')[0] ;
+          this.checked = true ;
+          this.loginForm.password = getUser().split('&')[1];
+        }else{
+          this.checked = false ;
+          // this.loginForm.mobile = '';
+          this.loginForm.password = ''
+        }
       },
       showPwd() {
         if (this.pwdType === 'password') {
