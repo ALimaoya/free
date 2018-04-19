@@ -382,12 +382,12 @@
             padding: 0 0.1rem;
             span {
               width: 100%;
-              line-height: 0.4rem;
-              height: 0.4rem;
+              line-height: 40px;
+              height: 40px;
               font-size: 0.14rem;
               color: #333;
               display: block;
-              margin-left: 1.5rem;
+              margin-left: 150px;
             }
           }
         }
@@ -397,7 +397,7 @@
           margin-left: 0.28rem;
         }
         .note {
-          margin-left: 1.6rem;
+          margin-left: 160px;
           font-size: 0.13rem;
           width: 100%;
           &:nth-of-type(1) {
@@ -414,7 +414,7 @@
         }
         &:nth-last-child(1) {
           margin-top: 0.4rem;
-          padding-left: 1.6rem;
+          padding-left: 160px;
           .el-button {
             min-width: 80px;
             &:nth-last-child(1) {

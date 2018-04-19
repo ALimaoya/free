@@ -2,13 +2,13 @@
   <div class="step">
     <el-form :model="form" ref="form" :rules="formRule">
       <p class="title">第一步：填写活动信息</p>
-       <el-form-item label="活动类型："  labelWidth="1.66rem">
+       <el-form-item label="活动类型："  labelWidth="120px">
          <el-radio-group v-model="type" :disabled="read">
            <el-radio  label="1">超级试用</el-radio>
            <el-radio  label="2" disabled>折扣试用（待开放）</el-radio>
          </el-radio-group>
        </el-form-item>
-      <el-form-item label="商品来源：" labelWidth="1.66rem" prop="platformType" >
+      <el-form-item label="商品来源：" labelWidth="120px" prop="platformType" >
         <el-radio-group :disabled="read" v-model="form.platformType"  @change="resetSearch(form.platformType,'change')">
           <el-radio  v-for="(item,index) in platForm"   :key="index" :label="item.id" >{{ item.name }}</el-radio>
           <!--<el-radio  label="2">天猫</el-radio>-->
@@ -16,16 +16,16 @@
           <!--<el-radio  label="4">拼多多</el-radio>-->
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="领取时间：" labelWidth="1.66rem" prop="receiveHours">
+      <el-form-item label="领取时间：" labelWidth="120px" prop="receiveHours">
         <el-radio :disabled="read" v-model="form.receiveHours+''" label="24">24小时内</el-radio>
         <span class="tips">（试客获得资格后会在24小时内下单领取，逾期将终止试用。）</span>
       </el-form-item>
       <p class="title">第二步：填写试用品展示信息</p>
-      <el-form-item label="活动标题：" class="activity" labelWidth="1.66rem" prop="activityTitle">
+      <el-form-item label="活动标题：" class="activity" labelWidth="120px" prop="activityTitle">
         <el-input :readonly="readIpt" placeholder="请输入内容" size="small" type="text" v-model.trim="form.activityTitle" ></el-input>
         <span class="tips"><img src="../../assets/imgs/tips3.png" alt=""/>写明赠品的数量、规格、属性等，不要复制淘宝商品标题</span>
       </el-form-item>
-      <el-form-item label="试用品类型：" labelWidth="1.66rem" prop="categoryId">
+      <el-form-item label="试用品类型：" labelWidth="120px" prop="categoryId">
         <el-select :disabled="read" v-model="form.categoryId" placeholder="请选择商品类型" size="small">
           <el-option
             v-for="(item ,index) in options"
@@ -34,7 +34,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="试用品展示图：" labelWidth="1.66rem" prop="showImageUrl">
+      <el-form-item label="试用品展示图：" labelWidth="120px" prop="showImageUrl">
         <el-upload class="upload"  :auto-upload="autoUpload" :action="imgUrl" :show-file-list="false" v-model.trim="form.showImageUrl"
           :on-success="handleShowSuccess" :before-upload="beforeShowUpload"
           :headers="{ 'Content-Type': 'multipart/form-data','yb-tryout-merchant-token':token}">
@@ -52,18 +52,18 @@
         </ul>
       </el-form-item>
       <p class="title">第三步：选择目标推广宝贝</p>
-      <el-form-item label="选择店铺：" labelWidth="1.66rem" prop="shopId">
+      <el-form-item label="选择店铺：" labelWidth="120px" prop="shopId">
         <el-select :disabled="readShop" v-model="form.shopId"  placeholder="请选择店铺" size="small" >
           <el-option  v-for="(item,index) in shopOptions" :key="index" :label="item.name" :value="item.id"></el-option>
         </el-select>
         <span v-if="form.shopId==='没有可选店铺'" class="tips" style="color : #f56c6c">该平台下未绑定店铺或绑定店铺未审核通过，请在店铺绑定并审核通过后再进行活动发布</span>
 
       </el-form-item>
-      <el-form-item label="商品链接：" labelWidth="1.66rem" prop="productUrl">
+      <el-form-item label="商品链接：" labelWidth="120px" prop="productUrl">
         <el-input :readonly="readIpt" size="small" v-model.trim="form.productUrl" placeholder="请输入内容" @change="getGoodsDetail(form.platformType,form.productUrl)"></el-input>
         <span class="tips"><img src="../../assets/imgs/tips3.png" alt=""/>平台会根据您填写的商品链接抓取宝贝信息，试客无法看到此链接</span>
       </el-form-item>
-      <el-form-item label="宝贝主图：" labelWidth="1.66rem">
+      <el-form-item label="宝贝主图：" labelWidth="120px">
         <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.mainImageUrl"
           :on-success="handleGoodsSuccess"   :show-file-list="false"  :before-upload="beforeMainUpload"
           :headers="{ 'Content-Type': 'multipart/form-data','yb-tryout-merchant-token':token}">
@@ -78,22 +78,22 @@
           <li>尺寸要求<span>（800*800）</span></li>
         </ul>
       </el-form-item>
-      <el-form-item label="下单规格：" labelWidth="1.66rem" prop="buyProductQuantity">
+      <el-form-item label="下单规格：" labelWidth="120px" prop="buyProductQuantity">
         <el-input :readonly="readIpt" :maxlength="200" placeholder="任意拍" size="small" class="any"  v-model.trim="form.buyProductSpec"></el-input>
         <span>拍：</span><el-input :readonly="readonly" type="number" :maxlength="5" v-model.number="form.buyProductQuantity"  size="small" class="any anyNum"></el-input><span>件</span>
         <span class="tips"><img src="../../assets/imgs/tips3.png" alt=""/>如需拍下指定规格，请务必填写此信息，如不填写默认任意拍一件；</span>
       </el-form-item>
-      <el-form-item label="下单价格：" labelWidth="1.66rem" prop="buyProductAmount">
+      <el-form-item label="下单价格：" labelWidth="120px" prop="buyProductAmount">
         <el-input class="any" size="small" :maxlength="10" type="number" :readonly="readonly" v-model.number="form.buyProductAmount" placeholder="请输入内容" ></el-input>元
       </el-form-item>
-      <el-form-item :label="this.payWay" labelWidth="1.66rem" prop="isCredit" style="float : left ;">
+      <el-form-item :label="this.payWay" labelWidth="120px" prop="isCredit" style="float : left ;">
         <el-radio-group :disabled="read"  v-model="form.isCredit">
           <el-radio label="1" >支持</el-radio>
           <el-radio label="0" >不支持</el-radio>
         </el-radio-group>
       </el-form-item>
       <div class="post">
-      <el-form-item label="商品运费：" labelWidth="1.66rem" prop="post" style="width : 40% ;float : left ;">
+      <el-form-item label="商品运费：" labelWidth="120px" prop="post" style="width : 40% ;float : left ;">
           <el-radio-group :disabled="read"  v-model="form.post">
             <el-radio label="1" >包邮</el-radio>
             <el-radio label="0" :disabled="form.buyProductAmount<100?true:false" >不包邮</el-radio>
@@ -104,14 +104,14 @@
       </div>
 
       <p class="title">第四步：设置试客找到商品入口</p>
-      <el-form-item label="APP关键词：" labelWidth="1.66rem">
+      <el-form-item label="APP关键词：" labelWidth="120px">
         <span >{{ choosePlat }}</span>
       </el-form-item>
-      <!--<el-form-item label="商品淘口令：" labelWidth="1.66rem" v-if="form.platformType==='1'||form.platformType==='2'">-->
+      <!--<el-form-item label="商品淘口令：" labelWidth="120px" v-if="form.platformType==='1'||form.platformType==='2'">-->
         <!--<el-input type="textarea" :rows="4" class="textarea" placeholder="请输入内容" @blur="cancelWarn(form.productShareUrl,appKey)" v-model.trim="form.productShareUrl"></el-input>-->
       <!--</el-form-item>-->
       <el-form-item class="size" v-for="(keyItem,index) in form.keyword" :label="'APP端关键词'+(index+1)*1+'：'"
-            :key="index" :prop="'keyword.'+ index + '.searchKeyword'" labelWidth="1.7rem">
+            :key="index" :prop="'keyword.'+ index + '.searchKeyword'" labelWidth="120px">
         <el-select :disabled="read" class="search" @focus="getType(form.platformType)" v-model="keyItem.searchId" placeholder="搜索平台" size="small">
           <el-option
             v-for="(item ,index) in searchOptions"
@@ -130,7 +130,7 @@
         <el-button :disabled="read" slot size="small" @click="deleteKey(keyItem)">删除</el-button>
 
       </el-form-item>
-      <el-form-item labelWidth="1.66rem" >
+      <el-form-item labelWidth="120px" >
         <el-button :disabled="read" type="primary" @click="addKey">添加一个APP关键词</el-button>
 
       </el-form-item>
@@ -157,7 +157,7 @@
             <!--<li>当日18点前提交担保金的活动，当日审核上架次日10点开奖；18点后提交的活动次日10点上架，隔天10点系统自动开奖</li>-->
           <!--</ul>-->
         <!--</el-form-item>-->
-        <el-form-item label="选择活动开始时间：" labelWidth="2rem" prop="activityStartTime">
+        <el-form-item label="选择活动开始时间：" labelWidth="150px" prop="activityStartTime">
           <div class="block">
             <el-date-picker :disabled="read" v-model="form.activityStartTime"  format="yyyy-MM-dd" value-format="yyyy-MM-dd" size="small" :picker-options="pickerOptions"
               type="date" :clearable="autoUpload" placeholder="开始日期" @blur="setRate(form.activityStartTime)" >
@@ -793,6 +793,7 @@
           if(change === 'change'){
             this.form.shopId = '';
             this.form.productUrl = '' ;
+            this.form.isCredit = '1' ;
             this.form.keyword = [{
               'searchId' : '',
               'sortType' : '',
@@ -1032,9 +1033,20 @@
           // console.log(date.getDate(),startDay,this.today,afterday);
 
           let start = 0 ;
-          let dayLength = 20;
+          let dayLength = 21;
           let restDay = 0;
-          let daysNum = new Date(this.year, this.month, 0);
+          let daysNum ;
+          if(this.day === 1|| this.day === 2){
+            if(this.month === 1){
+              daysNum = new Date(this.year-1, 12, 0);
+            }else{
+              daysNum = new Date(this.year, this.month-1, 0);
+            }
+
+          }else{
+            daysNum = new Date(this.year, this.month, 0);
+
+          }
           let dayLong =  daysNum.getDate() ;
           if(dayLong < dayLength + afterday ){
             restDay =   dayLength + afterday - dayLong  ;
@@ -1062,9 +1074,8 @@
           daysArr.push(afterday);
           // console.log(restDay);
           if(restDay){
-
             let index = 0 ;
-            for(let i = afterday;i<= dayLong ;i++){
+            for(let i = afterday;i< dayLong ;i++){
               daysArr.push({ date : parseTime(date.getTime()+ index*24*3600*1000) ,num : new Date(parseTime(date.getTime()+ index*24*3600*1000)).getDate(), index : index});
               index ++ ;
             }
@@ -1074,8 +1085,7 @@
             }
           }else{
             let index = 0 ;
-
-            for(let i = afterday ;i<= afterday +dayLength ;i++){
+            for(let i = 0 ;i< dayLength ;i++){
               daysArr.push({ date : parseTime(date.getTime()+ index*24*3600*1000) ,num : new Date(parseTime(date.getTime()+ index*24*3600*1000)).getDate(), index : index});
               index ++ ;
             }
@@ -1469,7 +1479,7 @@
       }
       .block{
         .el-input{
-          width : 2rem ;
+          width : 200px ;
         }
       }
       /*.keyBtn{*/
@@ -1687,7 +1697,7 @@
       text-indent : 0.1rem ;
     }
     .situation{
-      width : 2rem ;
+      width : 200px ;
     }
     .submit{
       display : flex ;

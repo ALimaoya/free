@@ -100,7 +100,7 @@
     </el-dialog>
     <el-dialog title="请输入支付密码" :visible.sync="dialogPswVisible" width="30%" :before-close="handleClose" top="20vh" center >
       <el-form ref="pswForm" :model="pswForm" :rules="pswRule" >
-        <el-form-item label="支付密码：" class="payPsw" prop="payPsw" label-width="1rem">
+        <el-form-item label="支付密码：" class="payPsw" prop="payPsw" label-width="100px">
           <el-input size="small" class="pswIpt" :type="pwdType" placeholder="请输入支付密码" v-model.trim="pswForm.payPsw">
             <span slot="suffix" class="show-pwd" @click="showPwd">
             <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
@@ -308,7 +308,6 @@
       },
       goApilyPay(_data){
         let _this=this;
-        console.log(this.chooseWay )
         $.ajax({
               url: process.env.BASE_API+"/tryout/vip/buy",
               type: 'POST',
@@ -361,14 +360,19 @@
       goPay(_data) {
         buyVip(_data).then(res => {
           if (res.data.status === '000000000') {
+
+            if(res.data.data !== null){
               const _div = document.createElement('div');
               _div.setAttribute('id', 'myForm');
               _div.innerHTML = res.data.data;
               document.body.appendChild(_div);
-              document.getElementById('myForm').getElementsByTagName("form")[0].setAttribute('target', "_blank");
+              document.getElementById('myForm').getElementsByTagName("form").setAttribute('target', "_blank");
               document.getElementById('myForm').getElementsByTagName("form")[0].submit();
               const __div = document.getElementById('myForm');
               document.body.removeChild(__div);
+              }
+
+
               this.dialogVisible = true;
               this.$message({
                 message: "恭喜您成功购买会员",
@@ -377,6 +381,7 @@
               });
               this.$router.push('/userInfor/vip')
           } else {
+
             if(res.data.status=='013001002'&&this.chooseWay!= '1'){
                     this.settingPsw=false
                 }else{
@@ -389,6 +394,8 @@
             });
           }
         }).catch(err => {
+          // console.log(err);
+
           alert('服务器开小差啦，请稍等~')
         })
       },
