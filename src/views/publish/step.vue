@@ -536,7 +536,7 @@
           pickerOptions : {
             disabledDate(time){
               let curDate = (new Date()).getTime() ;
-              return time.getTime() < Date.now() -  24*3600*1000 ;
+              return time.getTime() < Date.now() +  24*3600*1000 ;
             }
           } ,
           editor : '',
@@ -939,6 +939,8 @@
                 success: function (data) {
                   if (data['ret'][0] == 'SUCCESS::调用成功') {
                     let _data = data.data;
+                    // console.log(data.data);
+
                     _this.form.productName = _data.item.title ;
                     // _this.submitDetail(index,form);
 

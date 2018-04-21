@@ -26,6 +26,12 @@
         <li><span>订单价格：</span><span v-if="detailInfo.amount">{{ detailInfo.amount }} 元</span><span v-else>暂无</span></li>
         <li><span>用户购买金额：</span><span v-if="detailInfo.buyAmount">{{ detailInfo.buyAmount }} 元</span><span v-else>暂无</span></li>
         <li class="faileReason" v-if="detailInfo.remarks"><span>订单失败原因：</span><span>{{ detailInfo.remarks }} </span></li>
+        <li class="mainImg" >
+          <span style="width:18.9%;float : left ;">宝贝主图:</span><span v-if="!detailInfo.mainImageUrl">暂无详情</span>
+          <div v-else>
+            <img @click="getImg(detailInfo.mainImageUrl)" :src="imageDomain + detailInfo.mainImageUrl" alt="" />
+          </div>
+        </li>
         <li class="faileReason"><span>图片详情：</span><span v-if="detailInfo.orderImageList == 0" class="noImg">暂无图片</span></li>
         <li class="detailPic">
           <div v-if="detailInfo.orderImageList != 0">
@@ -33,12 +39,6 @@
               <dt>{{ imgType[item.type-1] }}</dt>
               <dd>
                 <img @click="getImg(item.imageUrl)" :src="imageDomain + item.imageUrl" alt="" />
-              </dd>
-            </dl>
-            <dl v-if="detailInfo.mainImageUrl">
-              <dt>宝贝主图</dt>
-              <dd>
-                <img @click="getImg(detailInfo.mainImageUrl)" :src="imageDomain + detailInfo.mainImageUrl" alt="" />
               </dd>
             </dl>
           </div>
@@ -159,7 +159,18 @@
 
       }
     }
+    .mainImg{
+      width : 100% ;
 
+      div{
+        width : 100% ;
+        float : left ;
+        img{
+          width : 15% ;
+          margin-left : 23% ;
+        }
+      }
+    }
 
     .detailPic{
       /*padding-top : 0.2rem ;*/
@@ -177,11 +188,14 @@
         dl{
           width : 45% ;
           font-weight : 100 ;
-          margin-left : 0.25rem ;
+          /*margin-left : 0.52rem ;*/
           height : 3.5rem ;
-          /*&:nth-child(1){*/
-            /*margin-left : 0.6rem ;*/
-          /*}*/
+          &:nth-child(n){
+            margin-left : 0.7rem ;
+          }
+          &:nth-child(2n){
+            margin-left : 0 ;
+          }
 
           dt{
             width : 100% ;
