@@ -24,7 +24,7 @@
         <span class="svg-container">
           <img src="../../assets/imgs/verify2.png" alt="" />
         </span>
-        <el-input style="width : 1.5rem;" v-model="loginForm.captcha" autoComplete="on" placeholder="请输入验证码"></el-input>
+        <el-input style="width : 150px;" v-model="loginForm.captcha" @keyup.enter.native="handleLogin('loginForm')" autoComplete="on" placeholder="请输入验证码"></el-input>
         <img class="show-captcha" :src="'data:image/png;base64,'+ imgCode" alt="" @click="changeCaptcha" />
 
       </el-form-item>
@@ -127,7 +127,9 @@
     },
     methods: {
       freeLogin(){
-          if(getUser() !== undefined){
+        // console.log(getUser());
+
+        if(getUser() !== undefined){
             // if(this.loginForm.mobile === getUser().split('&')[0]*1){
               this.loginForm.mobile = getUser().split('&')[0] ;
               this.checked = true ;
@@ -143,14 +145,16 @@
 
       },
       checkUser(){
-        if(this.loginForm.mobile === getUser().split('&')[0]*1){
-          this.loginForm.mobile = getUser().split('&')[0] ;
-          this.checked = true ;
-          this.loginForm.password = getUser().split('&')[1];
-        }else{
-          this.checked = false ;
-          // this.loginForm.mobile = '';
-          this.loginForm.password = ''
+        if(getUser() !== undefined){
+          if(this.loginForm.mobile === getUser().split('&')[0]*1){
+            this.loginForm.mobile = getUser().split('&')[0] ;
+            this.checked = true ;
+            this.loginForm.password = getUser().split('&')[1];
+          }else{
+            this.checked = false ;
+            // this.loginForm.mobile = '';
+            this.loginForm.password = ''
+          }
         }
       },
       showPwd() {
@@ -209,26 +213,7 @@
           }
         })
       },
-      //记住密码
-      // rememberPsw(loginForm){
-      //
-      //   this.$refs[loginForm].validate(valid => {
-      //
-      //     if(valid){
-      //
-      //
-      //     }else{
-      //       console.log(5);
-      //
-      //       this.$message({
-      //         type : 'error',
-      //         center : true ,
-      //         message : '请输入正确的手机号及登录密码'
-      //       })
-      //     }
-      //   })
-      //
-      // },
+
       //更换验证码
       changeCaptcha() {
         getCaptcha().then(res => {

@@ -25,8 +25,11 @@
                       <img  src="../../assets/imgs/qq.png" alt=""/>
 							</a>
             <a href="#javascript:;">
-              <!--<img v-if="attendant.wechat !== ''" :src="imageDomain+ attendant.wechat" alt="" class="wechat">-->
-              <img   src="../../assets/imgs/weixin.png" alt=""  />
+              <div class="wechat_info">
+                <img   src="../../assets/imgs/weixin.png" alt=""  />
+                <!--<span>微信号：{{ attendant.wechat }}</span>-->
+              </div>
+              <img v-if="attendant.wechatQrcode !== 'undefined'" :src="imageDomain+ attendant.wechatQrcode" alt="" class="wechat">
 
             </a>
               <!-- {{ attendant.wechat}} -->
@@ -266,7 +269,27 @@
             width: 1.2rem;
             top:-.6rem;
             display: none;
+
           }
+            &:nth-last-child(1){
+              width : 100% ;
+              .wechat_info{
+                width : 100% ;
+                height : 100% ;
+
+                img,span{
+                  float : left ;
+                }
+                span{
+                  display: block;
+                  line-height : 0.28rem ;
+                  height : 0.28rem ;
+                  margin-left : 0.07rem ;
+                  font-size : 0.14rem ;
+                }
+              }
+            }
+
           }
           a:last-of-type:hover .wechat{
             display: block;

@@ -487,7 +487,7 @@
   .login-container {
     .validateCode {
       .el-input {
-        width: 1.6rem;
+        width: 160px;
       }
     }
   }
@@ -505,8 +505,8 @@
     display : flex ;
     align-items: center;
     .el-checkbox__inner{
-      width : 0.12rem ;
-      height : 0.12rem ;
+      width : 12px ;
+      height : 12px ;
     }
     .el-checkbox__label{
       font-size : 0.12rem ;

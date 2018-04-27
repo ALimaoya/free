@@ -536,7 +536,7 @@
           pickerOptions : {
             disabledDate(time){
               let curDate = (new Date()).getTime() ;
-              return time.getTime() < Date.now() +  24*3600*1000 ;
+              return time.getTime() < Date.now() -  24*3600*1000 ;
             }
           } ,
           editor : '',
@@ -1245,13 +1245,14 @@
           });
 
           if(this.goodsAmount.indexOf('') === -1  ){
-            this.form.activityCalendar.forEach( i => {
-              let reg = /^[0-9]*$/ ;
-              if(i.tryoutQuantity <= 999 && reg.test(i.tryoutQuantity)){
+            this.form.activityCalendar.every( i => {
+              let reg = /^[1-9]{1}[0-9]{0,2}$/ ;
+              if(reg.test(i.tryoutQuantity)){
                 this.warn = false ;
+                return !this.warn ;
               }else{
                 this.warn = true ;
-
+                return !this.warn ;
               }
             })
            } else{

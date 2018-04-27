@@ -320,7 +320,7 @@
     .login-container {
       .validateCode {
         .el-input {
-          width: 1.6rem;
+          width: 160px;
         }
       }
     }

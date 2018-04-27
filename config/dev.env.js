@@ -8,8 +8,8 @@ module.exports = merge(prodEnv, {
   BASE_API: '"http://120.27.12.205:8005"',
   // BASE_API:'"http://rap2api.taobao.org/app/mock/3968"'
   IMAGE_DOMAIN : '"https://lgf8953.oss-cn-beijing.aliyuncs.com/"',//测试
-   //BASE_API: '"http://sksj-api.yabei.shop"',
-   //IMAGE_DOMAIN : '"http://yabei.oss-cn-beijing.aliyuncs.com/"',//正式
+  //  BASE_API: '"http://sksj-api.yabei.shop"',
+  //  IMAGE_DOMAIN : '"http://yabei.oss-cn-beijing.aliyuncs.com/"',//正式
 
 
 });
