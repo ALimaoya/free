@@ -10,8 +10,8 @@
             </span>
             <span v-else>您还不是会员</span>
             <span v-if="userInfo.vipLevel">会员到期时间：{{ userInfo.vip_time}}</span>
-            <el-button v-if="userInfo.vipLevel" @click="vipPlus" type="primary" size="small" style="width:1rem">续费会员</el-button>
-            <el-button v-else @click="vipPlus" type="primary" size="small" style="width:1rem">购买会员</el-button>
+            <el-button v-if="userInfo.vipLevel" @click="vipPlus" type="primary" size="small" style="width:1rem;padding : 0.09rem 0 ;">续费会员</el-button>
+            <el-button v-else @click="vipPlus" type="primary" size="small" style="width:1rem;padding : 0.09rem 0 ;">购买会员</el-button>
 
           </p>
         </li>
@@ -24,13 +24,16 @@
               <a :href="'http://wpa.qq.com/msgrd?v=3&uin='+attendant.qq+'&site=qq&menu=yes'" target="_blank">
                       <img  src="../../assets/imgs/qq.png" alt=""/>
 							</a>
-            <a href="javascript:;">
-                <img  src="../../assets/imgs/weixin.png" alt=""/>
-                <img :src="imageDomain+attendant.wechatQrcode" alt="" class="wechat">
+            <a href="#javascript:;">
+              <div class="wechat_info">
+                <img   src="../../assets/imgs/weixin.png" alt=""  />
+                <!--<span>微信号：{{ attendant.wechat }}</span>-->
+              </div>
+              <img v-if="attendant.wechatQrcode !== 'undefined'" :src="imageDomain+ attendant.wechatQrcode" alt="" class="wechat">
+
             </a>
               <!-- {{ attendant.wechat}} -->
-            </dl>
-           
+
           </div>
 
         </li>
@@ -266,13 +269,33 @@
             width: 1.2rem;
             top:-.6rem;
             display: none;
+
           }
+            &:nth-last-child(1){
+              width : 100% ;
+              .wechat_info{
+                width : 100% ;
+                height : 100% ;
+
+                img,span{
+                  float : left ;
+                }
+                span{
+                  display: block;
+                  line-height : 0.28rem ;
+                  height : 0.28rem ;
+                  margin-left : 0.07rem ;
+                  font-size : 0.14rem ;
+                }
+              }
+            }
+
           }
           a:last-of-type:hover .wechat{
             display: block;
 
           }
-         
+
         }
 
       }

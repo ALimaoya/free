@@ -64,7 +64,7 @@
     margin : 0 auto ;
     /*padding : 0.1rem 0;*/
     font-size : 0.15rem ;
-    height : 0.6rem ;
+    height : 60px ;
     position : fixed ;
     top : 0;
     z-index : 2000 ;
@@ -75,27 +75,28 @@
       float : left;
     }
     img{
-      width : 0.3rem ;
-      height : 0.3rem ;
-      margin : 0.15rem ;
+      width : 30px ;
+      height : 30px ;
+      margin : 15px ;
     }
     h1{
-      line-height : 0.6rem ;
-      font-size : 0.22rem ;
+      line-height : 60px ;
+      font-size : 22px ;
     }
 
     .avatar-container {
-      height: 0.50rem;
+      height: 50px;
+      line-height : 50px;
       display: inline-block;
       position: absolute;
-      right: 0.3rem;
+      right: 30px;
       top : 0 ;
       z-index : 10000 ;
       .avatar-wrapper {
         cursor: pointer;
         /*margin-top: 0.05rem;*/
         position: relative;
-        line-height : 0.6rem ;
+        line-height : 60px ;
         /*.user-avatar {*/
           /*width: 0.40rem;*/
           /*height: 0.40rem;*/
@@ -104,9 +105,9 @@
         /*}*/
         .el-icon-caret-bottom {
           position: absolute;
-          right: -0.20rem;
-          top: 0.25rem;
-          font-size: 0.12rem;
+          right: -20px;
+          top: 25px;
+          font-size: 12px;
         }
 
       }

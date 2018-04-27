@@ -20,7 +20,7 @@
              <svg-icon icon-class="verify" />
           </span>
           <el-input type="text" v-model.trim="RegForm.message" autoComplete="on" placeholder="请输入短信验证码" />
-          <el-button class="show-captcha codeBtn" size="mini" plain @click="getMessage" :disabled="disabled">{{ btntext }}</el-button>
+          <el-button class="show-captcha codeBtn" style="padding : 0;" size="mini" plain @click="getMessage" :disabled="disabled">{{ btntext }}</el-button>
         </el-form-item>
         <!--<span v-if="messageWarn" class="messageWarn">{{ warnText }}</span>-->
         <el-form-item prop="password">
@@ -320,7 +320,7 @@
     .login-container {
       .validateCode {
         .el-input {
-          width: 1.6rem;
+          width: 160px;
         }
       }
     }

@@ -40,13 +40,13 @@ export default {
   .app-breadcrumb.el-breadcrumb {
     .home{
       float : left ;
-      margin-right: 0.20rem;
+      margin-right: 20px;
 
     }
     display: inline-block;
-    font-size: 0.14rem;
-    line-height: 0.5rem;
-    margin-left: 0.10rem;
+    font-size: 14px;
+    line-height: 50px;
+    margin-left: 10px;
     float : left;
     .no-redirect {
       color: #97a8be;

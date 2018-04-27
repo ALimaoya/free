@@ -209,7 +209,7 @@
         margin-right : 0.3rem ;
       }
       .el-button:nth-child(2){
-        width : 0.98rem ;
+        width : 98px ;
         margin-right : 0.3rem ;
       }
     }
@@ -221,8 +221,8 @@
       span{
         display : block;
         width : 27% ;
-        height : 0.3rem ;
-        line-height : 0.3rem ;
+        height : 0.4rem ;
+        line-height : 0.4rem ;
         float : left ;
         text-align : right ;
         color : #456 ;

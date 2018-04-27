@@ -231,7 +231,7 @@
         margin-right : 0.3rem ;
       }
       .el-button:nth-child(2){
-        width : 0.98rem ;
+        width : 98px ;
         margin-right : 0.3rem ;
       }
     }
@@ -241,9 +241,9 @@
       margin : 0 auto ;
       span{
         display : block;
-        width : 0.8rem; ;
-        height : 0.3rem ;
-        line-height : 0.3rem ;
+        width : 80px; ;
+        height : 30px ;
+        line-height : 30px ;
         float : left ;
         text-align : right ;
         color : #456 ;
@@ -254,8 +254,8 @@
       }
       .show-pwd{
         width : 0.3rem ;
-        height : 0.4rem ;
-        line-height : 0.4rem ;
+        height : 40px ;
+        line-height : 40px ;
       }
     }
   }

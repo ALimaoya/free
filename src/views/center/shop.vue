@@ -53,9 +53,9 @@
         <el-table-column prop="updateTime" label="绑定时间"></el-table-column>
       <el-table-column prop="action" label="操作">
         <template slot-scope="scope" >
-            <el-button size="mini" v-if="scope.row.status === '3' || scope.row.status === '4'"  @click="reason(scope.$index,scope.row.reason)"  style="width : 0.6rem ;padding : 0.07rem 0.06rem;">查看原因</el-button>
-            <el-button size="mini" v-if="scope.row.status !== '2'" @click="change(scope.$index ,scope.row.shopId)"  style="width: 0.6rem ;">修改</el-button>
-            <el-button v-if="scope.row.payStatus === '0'"  class="patBtn" size="mini" @click="goPay(scope.$index ,scope.row.shopId)"  style="width: 0.6rem ;">去支付</el-button>
+            <el-button size="mini" v-if="scope.row.status === '3' || scope.row.status === '4'"  @click="reason(scope.$index,scope.row.reason)"  style="padding : 0 0.1rem;line-height:0.28rem;">查看原因</el-button>
+            <el-button size="mini" v-if="scope.row.status !== '2'" @click="change(scope.$index ,scope.row.shopId)"  style="width: 0.6rem ;padding : 0;line-height:0.28rem;">修改</el-button>
+            <el-button v-if="scope.row.payStatus === '0'"  class="patBtn" size="mini" @click="goPay(scope.$index ,scope.row.shopId)"  style="width: 0.6rem ;padding : 0;">去支付</el-button>
             <span  v-if="scope.row.status === '2'&& scope.row.payStatus === '1'">--</span>
         </template>
       </el-table-column>
@@ -223,14 +223,14 @@
         line-height : 0.8rem ;
         text-indent : 1.2rem ;
         button{
-          width : 1rem ;
-          height : 0.34rem ;
+          /*width : 1rem ;*/
+          height : 0.4rem ;
           border-radius: 0.05rem ;
           background : #409EFF ;
           color : #fff ;
           font-size : 0.14rem ;
           text-align: center;
-          line-height : 0.34rem ;
+          line-height : 0.4rem ;
           border : 0;
           float : right ;
           margin : 0.23rem 0.8rem ;

@@ -32,11 +32,12 @@ export default {
 .hamburger {
     display: inline-block;
     cursor: pointer;
-    width: 0.20rem;
-    height: 0.20rem;
+    width: 20px;
+    height: 20px;
     transform: rotate(0deg);
     transition: .38s;
     transform-origin: 50% 50%;
+  float : left ;
 }
 
 .hamburger.is-active {

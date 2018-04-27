@@ -3,16 +3,16 @@
   .main-container {
     min-height: 100%;
     transition: margin-left 0.28s;
-    margin-left: 1.8rem;
+    margin-left: 170px;
 
   } // 侧边栏
   .sidebar-container {
     //line-height : 0;
     transition: width 0.28s;
-    width: 1.8rem!important;
+    width: 170px;
     height: 100%;
     position: fixed;
-    top: 0.6rem;
+    top: 60px;
     bottom: 0;
     left: 0;
     z-index: 1001;
@@ -21,7 +21,7 @@
       width: 100%;
     }
     .svg-icon {
-      margin-right: 0.16rem;
+      margin-right: 16px;
     }
     .el-menu {
       border: none;
@@ -35,16 +35,16 @@
   }
   .hideSidebar {
     .sidebar-container,.sidebar-container .el-menu {
-      width: 0.36rem!important;
+      width: 36px!important;
       // overflow: inherit;
     }
     .main-container {
-      margin-left: 0.36rem;
+      margin-left: 36px;
     }
   }
   .hideSidebar {
     .submenu-title-noDropdown {
-      padding-left: 0.1rem!important;
+      padding-left: 10px!important;
       position: relative;
       span {
         height: 0;
@@ -60,13 +60,14 @@
           display: block;
           border-radius: 0.03rem;
           z-index: 1002;
-          width: 1.4rem;
-          height: 0.5rem;
+          width: 140px;
+          height: 50px;
+          line-height : 50px;
           visibility: visible;
           position: absolute;
-          right: -1.45rem;
+          right: -145px;
           text-align: left;
-          text-indent: 0.20rem;
+          text-indent: 20px;
           top: 0;
           background-color: $subMenuBg!important;
           opacity: 1;
@@ -75,7 +76,8 @@
     }
     .el-submenu {
       &>.el-submenu__title {
-        padding-left: 0.1rem!important;
+        padding-left: 10px!important;
+        height : 50px;
         &>span {
           display: none;
         }
@@ -95,14 +97,15 @@
   }
   .nest-menu .el-submenu>.el-submenu__title,
   .el-submenu .el-menu-item {
-    min-width: 1.80rem!important;
-    height : 0.5rem ;
+    min-width: 170px!important;
+    height : 50px ;
+    line-height : 50px;
     background-color: $subMenuBg!important;
     &:hover {
       background-color: $menuHover!important;
     }
   }
   .el-menu--collapse .el-menu .el-submenu{
-    min-width: 1.80rem!important;
+    //min-width: 1.80rem!important;
   }
 }

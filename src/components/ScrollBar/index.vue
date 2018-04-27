@@ -46,7 +46,7 @@ export default {
 
 .scroll-container {
   position: relative;
-  width: 100%;
+  width: 36px;
   height: 100%;
   background-color: $menuBg;
   .scroll-wrapper {

@@ -20,14 +20,20 @@
             :value="item.value">
           </el-option>
         </el-select>
-        <el-button size="small"  @click="getList()" class="searchOrder">查询</el-button>
+        <el-button size="small"  @click="getList()" class="searchOrder" style="padding: 0 0.05rem;">查询</el-button>
       </div>
       <div class="note">备注：以上搜索条件可根据单一条件进行搜索，当单独试客淘宝号搜索不到有用信息时，可尝试输入淘宝订单编号，反之亦然</div>
       <el-table :data="tableData" border>
           <el-table-column prop="activityCode" label="试客任务编号" width="180"></el-table-column>
           <el-table-column prop="orderCode" label="试客订单编号" width="180"></el-table-column>
           <el-table-column prop="activityTitle" label="商品名称"></el-table-column>
-          <el-table-column prop="platform" label="平台类型">
+          <el-table-column prop="" label="宝贝主图">
+            <template slot-scope="scope">
+              <img class="mainPic" @click="showImg( scope.row.mainImageUrl)" :src=" imageDomain + scope.row.mainImageUrl " alt="" />
+            </template>
+          </el-table-column>
+
+        <el-table-column prop="platform" label="平台类型">
             <template slot-scope="scope">
               {{ platformOptions[scope.row.platform].name }}
             </template>
@@ -84,6 +90,9 @@
       <!--</el-form>-->
 
     <!--</el-dialog>-->
+    <div v-if="mask" @click="close" class="mask">
+      <img :src=" imageDomain + bigImg" alt="" />
+    </div>
   </div>
 </template>
 
@@ -225,7 +234,10 @@
               required : true , message : '请填写具体投诉原因', trigger : 'blur'
             }
           ]
-        }
+        } ,
+        imageDomain : process.env.IMAGE_DOMAIN ,
+        mask : false ,
+        bigImg : ''
       }
     },
     mounted(){
@@ -264,6 +276,15 @@
         })
       },
 
+      //查看宝贝大图
+      showImg(url){
+        this.mask = true ;
+        this.bigImg = url ;
+      },
+      close(){
+        this.mask = false ;
+        this.bigImg = '' ;
+      },
       //查看订单详情
       goDetail(index,order){
         this.$router.push('/activity/detail/'+ order) ;
@@ -335,7 +356,9 @@
 
   .order{
 
-
+    .searchOrder{
+      height : 34px ;
+    }
     .note{
       padding-left : 0.3rem ;
       width : 100% ;
@@ -346,7 +369,10 @@
       text-indent : 0.32rem ;
       color : #999 ;
     }
-
+    .mainPic{
+      width : 0.6rem ;
+      height : 0.6rem ;
+    }
 
     .el-dialog{
       .el-form{
@@ -359,6 +385,22 @@
         .el-textarea{
           width : 80% ;
         }
+      }
+    }
+    .mask{
+      position : fixed ;
+      top : 0;
+      left : 0 ;
+      width : 100% ;
+      height : 100% ;
+      background : rgba(250,250,250,0.3) ;
+      display : flex ;
+      align-items: center;
+      justify-content: center;
+      z-index : 10000;
+      img{
+        max-height : 100% ;
+
       }
     }
   }

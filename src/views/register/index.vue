@@ -487,7 +487,7 @@
   .login-container {
     .validateCode {
       .el-input {
-        width: 1.6rem;
+        width: 160px;
       }
     }
   }
@@ -505,8 +505,8 @@
     display : flex ;
     align-items: center;
     .el-checkbox__inner{
-      width : 0.12rem ;
-      height : 0.12rem ;
+      width : 12px ;
+      height : 12px ;
     }
     .el-checkbox__label{
       font-size : 0.12rem ;
@@ -515,8 +515,9 @@
       color : #0a6cd6;
     }
   }
+
   .ruleBox{
-    height : 7.5rem ;
+    /*height : 7.5rem ;*/
     overflow : hidden ;
 
     .passage{
@@ -554,7 +555,9 @@
     }
 
     .dialog-footer{
-      height : 1rem ;
+      /*height : 1rem ;*/
+      height: 25% ;
+
       display: flex;
       justify-content: center;
       align-items: center;

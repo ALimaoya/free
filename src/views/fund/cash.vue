@@ -318,15 +318,15 @@
           margin-bottom: 0;
         }
         .tag {
-          width: 1.3rem;
-          height: 0.4rem;
-          line-height: 0.4rem;
+          width: 130px;
+          height: 40px;
+          line-height: 40px;
           text-align: right;
           float: left;
         }
         span,
         .noAli {
-          line-height: 0.4rem;
+          line-height: 40px;
           display: inline-block;
           margin-left: 0.3rem;
 
@@ -336,8 +336,8 @@
         }
         .show-pwd {
           position: absolute;
-          left: 3.5rem;
-          top: 0.03rem;
+          left: 350px;
+          top: 3px;
           font-size: 0.16rem;
           color: #889aa4;
           cursor: pointer;
@@ -382,22 +382,22 @@
             padding: 0 0.1rem;
             span {
               width: 100%;
-              line-height: 0.4rem;
-              height: 0.4rem;
+              line-height: 40px;
+              height: 40px;
               font-size: 0.14rem;
               color: #333;
               display: block;
-              margin-left: 1.5rem;
+              margin-left: 150px;
             }
           }
         }
 
         .el-input {
-          width: 2.5rem;
+          width: 250px;
           margin-left: 0.28rem;
         }
         .note {
-          margin-left: 1.6rem;
+          margin-left: 160px;
           font-size: 0.13rem;
           width: 100%;
           &:nth-of-type(1) {
@@ -414,9 +414,9 @@
         }
         &:nth-last-child(1) {
           margin-top: 0.4rem;
-          padding-left: 1.6rem;
+          padding-left: 160px;
           .el-button {
-            min-width: 0.8rem;
+            min-width: 80px;
             &:nth-last-child(1) {
               margin-left: 0.5rem;
             }

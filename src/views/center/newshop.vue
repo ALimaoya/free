@@ -5,9 +5,9 @@
       <!--<p class="tips" v-show="tips">绑定新店铺（请认真填写绑定信息，一经提交无法修改）-->
         <!--<img class="close" src="../../assets/imgs/close.png" @click="close" alt="" />-->
       <!--</p>-->
-      <el-form ref="sizeForm" :model="sizeForm" label-width="1.8rem" size="mini" :rules="rules">
+      <el-form ref="sizeForm" :model="sizeForm" label-width="160px" size="mini" :rules="rules">
         <el-form-item label="平台类型：" prop="platformType">
-          <el-radio-group v-model="sizeForm.platformType" @change="resetShop">
+          <el-radio-group style="width:218px" v-model="sizeForm.platformType" @change="resetShop">
             <el-radio v-for="item in platform" :disabled="type!=''?type!==item.value:false" :key="item.value"
                       :label="item.value">{{ item.name }}</el-radio>
             <!--<el-radio :disabled="sizeForm.platformType!=''?sizeForm.platformType!==label:false" label="1">淘宝</el-radio>-->
@@ -33,7 +33,7 @@
           <img src="../../assets/imgs/u445.png" alt=""/>
           <li>2、再将这个商品的详情页链接，复制到下面输入框中进行验证。</li>
         </ul>
-        <el-form-item label="待验证商品链接：" label-width="1.8rem" prop="productUrl">
+        <el-form-item label="待验证商品链接：" label-width="160px" prop="productUrl">
           <el-input v-model.trim="sizeForm.productUrl" class="big"></el-input>
         </el-form-item>
         <el-form-item label="负责人QQ：" prop="managerQq">
@@ -145,7 +145,7 @@
         if(value === ''){
           callback(new Error('请输入负责人微信号'))
         }else{
-          if(!validateWX(value)){
+          if(!validateWX(value) && !validatePhone(value)){
             callback(new Error('请输入正确格式的微信号'))
           }
           callback();
@@ -399,10 +399,12 @@
       }
       .el-form{
         margin : 0 auto ;
-        width : 70% ;
+        width : 55% ;
+
         .el-radio-group{
           /* width : 3.2rem ; */
         }
+
       }
      label{
        text-align : left ;
@@ -411,28 +413,29 @@
       .el-form-item__label{
         text-align : left ;
       }
+
       /*.ipt{*/
         /*width : 2rem ;*/
       /*}*/
       .small{
-        width : 1.6rem ;
-        height : 0.28rem ;
+        width : 160px ;
+        height : 28px ;
         border : 1px solid #dcdfe6;
         border-radius : 0.04rem ;
         display : block ;
         float : left ;
         text-align : center;
-        line-height : 0.28rem ;
+        line-height : 28px ;
         color : #666 ;
       }
       .big{
-        width : 2.4rem ;
+        width : 240px ;
       }
       .copyBtn{
         margin-left : 0.2rem ;
       }
       ul{
-        margin-left : 1.4rem;
+        margin-left : 160px;
         font-size : 0.12rem ;
         color : #555 ;
         width : 60% ;
