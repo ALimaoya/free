@@ -60,7 +60,7 @@
           return  {
             detailInfo : {},
             platForm : ['','淘宝','天猫', '京东'],
-            imgType : ['商品收藏截图','店铺收藏截图','订单截图','评价截图'] ,
+            imgType : ['商品收藏截图','店铺收藏截图','订单截图','评价截图','搜索截图'] ,
             showImg : false ,
             bigImg : '' ,
             imageDomain : process.env.IMAGE_DOMAIN ,
