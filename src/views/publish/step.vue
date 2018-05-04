@@ -536,7 +536,7 @@
           pickerOptions : {
             disabledDate(time){
               let curDate = (new Date()).getTime() ;
-              return time.getTime() < Date.now() -  24*3600*1000 ;
+              return time.getTime() < Date.now() +  24*3600*1000 ;
             }
           } ,
           editor : '',
@@ -849,57 +849,46 @@
         //获取商品详情
         getGoodsDetail(type,url){
           this.form.productId = '' ;
+          var that = this ;
+
           if( type === '3'){
             getJDetail(url).then( res => {
               if( res.data.status === '000000000'){
-                this.form.productName = res.data.data.productName ;
-                this.form.productDetail = res.data.data.productDetail ;
-                this.form.productId = res.data.data.productId ;
+                that.form.productName = res.data.data.productName ;
+                that.form.productDetail = res.data.data.productDetail ;
+                that.form.productId = res.data.data.productId ;
                 // this.submitDetail(index,form);
 
+                return true ;
               }else{
                 this.$message({
                   message : res.data.message ,
                   type : 'error',
                   center : true
                 });
-                this.form.productUrl = '' ;
-                this.form.productId = '' ;
-                // this.form.productUrl = '' ;
+                that.form.productUrl = '' ;
+                that.form.productId = '' ;
+
               }
+
             }).catch( err => {
               alert('服务器开小差啦，请稍等~')
             })
           }else{
-            if(type === '1'){
-              if(url.indexOf('item.taobao.com') === -1){
-                this.$message({
-                  message : '请重新输入对应平台的商品链接' ,
-                  center : true ,
-                  type : 'error'
-                });
-                this.form.productUrl = '' ;
-                this.form.productId = '' ;
-                return false;
-              }
-            }else{
-              if(type === '2'){
-                if(url.indexOf('detail.tmall.com') === -1){
-                  this.$message({
-                    message : '请重新输入对应平台的商品链接' ,
-                    center : true ,
-                    type : 'error'
-                  });
-                  this.form.productUrl = '' ;
-                  this.form.productId = '' ;
-                  return false;
 
-                }
-              }
-            }
             if( url.indexOf('?') !== -1 ){
 
               const num = getQueryString(url,'id');
+              if(num === undefined){
+
+                this.$message({
+                  message : '您输入的商品链接有误，请重新输入',
+                  center : 'true',
+                  type : 'error'
+                });
+                this.form.productUrl = '';
+                return false ;
+              }
               this.form.productId = num ;
               let params = {'item_num_id': num };
               let _this = this ;
@@ -911,14 +900,9 @@
                     _this.form.productDetail = JSON.stringify(data['data']['images']);
 
                   } else {
-                    // _this.$message({
-                    //   message : '服务器开小差啦，请稍等' ,
-                    //   center : true ,
-                    //   type : 'error'
-                    // });
+
                     alert('服务器开小差啦，请稍等~');
-                    // _this.form.productUrl = '' ;
-                    // _this.form.productId = '' ;
+
                   }
                 }
               });
@@ -939,20 +923,12 @@
                 success: function (data) {
                   if (data['ret'][0] == 'SUCCESS::调用成功') {
                     let _data = data.data;
-                    // console.log(data.data);
 
                     _this.form.productName = _data.item.title ;
-                    // _this.submitDetail(index,form);
 
                   }else{
-                    // _this.$message({
-                    //   message : '服务器开小差啦，请稍等' ,
-                    //   center : true ,
-                    //   type : 'error'
-                    // });
+
                     alert('服务器开小差啦，请稍等~')
-                    // _this.form.productUrl = '' ;
-                    // _this.form.productId = '' ;
 
                   }
                 }
@@ -967,7 +943,38 @@
               });
               this.form.productUrl = '' ;
               this.form.productId = '' ;
+
+
             }
+            if(type === '1'){
+              if(url.indexOf('item.taobao.com') === -1){
+                this.$message({
+                  message : '请重新输入对应平台的商品链接' ,
+                  center : true ,
+                  type : 'error'
+                });
+                this.form.productUrl = '' ;
+                this.form.productId = '' ;
+
+                return false;
+              }
+            }else{
+              if(type === '2'){
+                if(url.indexOf('detail.tmall.com') === -1){
+                  this.$message({
+                    message : '请重新输入对应平台的商品链接' ,
+                    center : true ,
+                    type : 'error'
+                  });
+                  this.form.productUrl = '' ;
+                  this.form.productId = '' ;
+
+                  return false;
+
+                }
+              }
+            }
+
 
           }
 
@@ -1284,11 +1291,13 @@
 
           }
           this.hasWarn();
+          // this.getGoodsDetail(this.form.platformType,this.form.productUrl);
 
+          // if(this.form.productId&&this.form.productDetail&&this.form.productName){
             this.$refs[formName].validate((valid) => {
               if (valid && !this.warn && !this.daysWarn && !this.changeNum && !this.showImgWarn && !this.goodsImgWarn) {
                 // this.form.productId = '' ;
-                // this.getGoodsDetail(this.form.platformType ,this.form.productUrl,index,this.form) ;
+
                 this.submitDetail(index,this.form)
 
               } else {
@@ -1300,6 +1309,8 @@
                 return false;
               }
             })
+
+          // }
 
 
         },

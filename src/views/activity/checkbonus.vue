@@ -77,7 +77,7 @@
 
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="check('1')">审核成功</el-button>
-        <el-button type="error" @click="check('2')">审核失败</el-button>
+        <el-button type="error" @click="check('2')">审核拒绝</el-button>
         <el-button type="info" @click="detailInfo = false">取 消</el-button>
       </div>
     </el-dialog>

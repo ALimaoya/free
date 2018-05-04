@@ -68,28 +68,7 @@
       </el-pagination>
       <span class="totalItems">共{{ totalPages }}页，{{totalElements}}条记录</span>
     </div>
-    <!--投诉弹窗-->
-    <!--<el-dialog title="投诉" :visible.sync="complainBox" :before-close="close">-->
-      <!--<el-form :model="complaintForm" ref="complaintForm" :rules="complaintRules">-->
-        <!--<el-form-item prop="reason">-->
-          <!--<span class="reason">选择投诉原因：</span>-->
-          <!--<el-select size="small" v-model="complaintForm.reason" placeholder="请选择">-->
-            <!--<el-option v-for="item in reasonOptions" :key="item.value" :label="item.name" :value="item.value"></el-option>-->
-          <!--</el-select>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item prop="detail">-->
-          <!--<p>备注：</p>-->
-          <!--<el-input type="textarea" :rows="4" v-model.trim="complaintForm.detail" placeholder="请输入具体原因"></el-input>-->
-        <!--</el-form-item>-->
-        <!--&lt;!&ndash;<div slot="footer" class="dialog-footer">&ndash;&gt;-->
-        <!--<el-form-item>-->
-          <!--<el-button size="small" @click="cancel('complaintForm')">取 消</el-button>-->
-          <!--<el-button size="small" type="primary" @click="submit('complaintForm')">确认提交</el-button>-->
-        <!--</el-form-item>-->
-        <!--&lt;!&ndash;</div>&ndash;&gt;-->
-      <!--</el-form>-->
 
-    <!--</el-dialog>-->
     <div v-if="mask" @click="close" class="mask">
       <img :src=" imageDomain + bigImg" alt="" />
     </div>
@@ -205,36 +184,6 @@
         totalElements : 0 ,
         complaintOrder : '',
         complainBox : false ,
-        reasonOptions : [
-            {
-              value : '1',
-              name : '试客操作违规'
-            },
-            {
-              value : '2',
-              name : '试客订单未付款'
-            },
-            {
-              value : '3',
-              name : '试客订单未查到'
-            }
-        ],
-        complaintForm : {
-          reason : '',
-          detail : ''
-        },
-        complaintRules : {
-          reason : [
-            {
-              required : true ,message : '请选择投诉原因', trigger : 'change'
-            }
-          ],
-          detail : [
-            {
-              required : true , message : '请填写具体投诉原因', trigger : 'blur'
-            }
-          ]
-        } ,
         imageDomain : process.env.IMAGE_DOMAIN ,
         mask : false ,
         bigImg : ''
@@ -299,35 +248,7 @@
         })
       },
 
-      //打开投诉操作弹窗
-      // handleComplaint(index,row){
-      //   this.complainBox = true ;
-      //   this.complaintOrder = row ;
-      //   console.log(index,row)
-      // },
-      //修改价格
-      // 提交投诉问题
-      // submit(formName){
-      //   this.$refs[formName].validate((valid) => {
-      //     if(valid){
-      //       this.$message({
-      //         center : true ,
-      //         message : '提交成功',
-      //         type : 'success'
-      //       });
-      //       console.log(this.complaintForm);
-      //       this.$refs[formName].resetFields();
-      //       this.complainBox = false ;
-      //     }else{
-      //       this.$message({
-      //         type : 'error',
-      //         message : '提交失败，请重新确认信息',
-      //         center : true
-      //       });
-      //       return false ;
-      //     }
-      //   })
-      // },
+
 
       // 清空弹窗内容值
       // close(){
