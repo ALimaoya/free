@@ -203,4 +203,12 @@ export function getJDetail(url){
   })
 }
 
+//修改活动关键词
+export function updateKeyword(data){
+  return request({
+    url : '/tryout/activity/updateKeyword',
+    method : 'post',
+    data
+  })
+}
 
