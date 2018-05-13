@@ -46,12 +46,14 @@
     </div>
 
     <el-dialog width="50%" :visible.sync="detailInfo" center top="10vh" title="评价审核">
-      <dl>
+      <dl v-if="viewImg">
         <dt>评价截图</dt>
-        <dd v-if="viewImg">
+        <dd >
           <img @click="getImg(viewImg)" :src=" imageDomain + viewImg" alt="" />
         </dd>
       </dl>
+      <dl v-else class="noViewPic">暂无评价截图</dl>
+
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="check('1')">审核成功</el-button>
         <el-button type="error" @click="check('2')">审核拒绝</el-button>
@@ -314,6 +316,8 @@
       dl{
         width : 40% ;
         margin : 0 auto ;
+        text-align : center ;
+
         dt{
           width : 100% ;
           height : 0.5rem ;
@@ -334,6 +338,10 @@
             max-height : 2.5rem  ;
           }
         }
+      }
+      .noViewPic{
+        height : 100px;
+        line-height : 100px;
       }
       p {
         display: inline-block;

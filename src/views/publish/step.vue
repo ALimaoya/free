@@ -983,10 +983,9 @@
 
 
           }
+          console.log(this.form.productDetail,this.form.productName);
 
-
-        } ,
-
+        },
         //删除APP端关键词
         deleteKey(item){
             let index = this.form.keyword.indexOf(item);
@@ -1303,6 +1302,7 @@
             this.$refs[formName].validate((valid) => {
               if (valid && !this.warn && !this.daysWarn && !this.changeNum && !this.showImgWarn && !this.goodsImgWarn) {
                 // this.form.productId = '' ;
+                this.goPlatform(this.form.platformType,this.form.productUrl);
 
                 this.submitDetail(index,this.form)
 
