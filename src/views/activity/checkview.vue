@@ -52,7 +52,7 @@
           <img @click="getImg(viewImg)" :src=" imageDomain + viewImg" alt="" />
         </dd>
       </dl>
-      <dl v-else>暂无评价截图</dl>
+      <dl v-else class="noViewPic">暂无评价截图</dl>
 
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="check('1')">审核成功</el-button>
@@ -338,6 +338,10 @@
             max-height : 2.5rem  ;
           }
         }
+      }
+      .noViewPic{
+        height : 100px;
+        line-height : 100px;
       }
       p {
         display: inline-block;

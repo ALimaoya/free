@@ -536,7 +536,7 @@
           pickerOptions : {
             disabledDate(time){
               let curDate = (new Date()).getTime() ;
-              return time.getTime() < Date.now() +  24*3600*1000 ;
+              return time.getTime() < Date.now() -  24*3600*1000 ;
             }
           } ,
           editor : '',
@@ -849,6 +849,12 @@
         //获取商品详情
         getGoodsDetail(type,url){
           this.form.productId = '' ;
+
+          this.goPlatform(type,url);
+
+
+        } ,
+        goPlatform(type,url){
           var that = this ;
 
           if( type === '3'){
@@ -977,10 +983,9 @@
 
 
           }
+          console.log(this.form.productDetail,this.form.productName);
 
-
-        } ,
-
+        },
         //删除APP端关键词
         deleteKey(item){
             let index = this.form.keyword.indexOf(item);
@@ -1297,6 +1302,7 @@
             this.$refs[formName].validate((valid) => {
               if (valid && !this.warn && !this.daysWarn && !this.changeNum && !this.showImgWarn && !this.goodsImgWarn) {
                 // this.form.productId = '' ;
+                this.goPlatform(this.form.platformType,this.form.productUrl);
 
                 this.submitDetail(index,this.form)
 

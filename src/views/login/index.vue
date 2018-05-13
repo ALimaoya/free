@@ -24,22 +24,26 @@
         <span class="svg-container">
           <img src="../../assets/imgs/verify2.png" alt="" />
         </span>
-        <el-input style="width : 150px;" v-model="loginForm.captcha" @keyup.enter.native="handleLogin('loginForm')" autoComplete="on" placeholder="请输入验证码"></el-input>
+        <el-input style="width : 150px;" v-model="loginForm.captcha"  autoComplete="on" placeholder="请输入验证码"></el-input>
         <img class="show-captcha" :src="'data:image/png;base64,'+ imgCode" alt="" @click="changeCaptcha" />
 
       </el-form-item>
       <el-form-item class="remember">
-        <el-checkbox v-model="checked">记住密码</el-checkbox>
+        <el-checkbox v-model="checked" @change="rememberPsw=true">记住密码</el-checkbox>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" style="width:100%;" :loading="loading" @click.native.prevent="handleLogin('loginForm')">
+        <el-button id="login_btn" type="primary" style="width:100%;"  :loading="loading" @click.native.prevent="handleLogin('loginForm')" >
           登录
         </el-button>
       </el-form-item>
+
       <div class="goOther">
         <router-link class="toRes" to="/register">去注册</router-link>
         <router-link class="toPsw" to="/changePsw">忘记密码?</router-link>
       </div>
+      <!--<el-form-item style="opacity:0">-->
+        <!--<el-input   @keyup.enter="handleLogin('loginForm')" ></el-input>-->
+      <!--</el-form-item>-->
     </el-form>
   </div>
 </template>
@@ -117,23 +121,34 @@
         loading: false,
         pwdType: 'password',
         examine: false ,
-        checked : false
+        checked : false,
+        rememberPsw : false
 
       }
     },
     mounted() {
       this.changeCaptcha();
       this.freeLogin();
+
     },
     methods: {
+      //记住密码状态下监听enter键登录
+      enterLogin(){
+        var button = document.getElementById('login_btn');
+        button.focus();
+
+      },
+
       freeLogin(){
-        // console.log(getUser());
 
         if(getUser() !== undefined){
             // if(this.loginForm.mobile === getUser().split('&')[0]*1){
               this.loginForm.mobile = getUser().split('&')[0] ;
               this.checked = true ;
               this.loginForm.password = getUser().split('&')[1];
+              this.enterLogin();
+
+
             }else{
 
               this.checked = false ;
@@ -141,15 +156,18 @@
               this.loginForm.password = ''
             }
 
-          // }
 
       },
       checkUser(){
+
         if(getUser() !== undefined){
+
           if(this.loginForm.mobile === getUser().split('&')[0]*1){
             this.loginForm.mobile = getUser().split('&')[0] ;
             this.checked = true ;
             this.loginForm.password = getUser().split('&')[1];
+            this.enterLogin();
+
           }else{
             this.checked = false ;
             // this.loginForm.mobile = '';
@@ -164,6 +182,7 @@
           this.pwdType = 'password'
         }
       },
+
       //用户登录
       handleLogin(loginForm) {
         this.$refs[loginForm].validate(valid => {
@@ -178,10 +197,14 @@
               // console.log(res);
               this.loading = false;
               if (res.data.status === '000000000') {
-                if(this.checked){
+
+                if(this.checked&&this.rememberPsw){
                   setUser(this.loginForm.mobile+ '&'+this.loginForm.password)
                 }else{
-                  removeUser()
+                  if(!this.checked&&this.rememberPsw){
+                    removeUser()
+
+                  }
                 }
                 this.$router.push({
                   path: '/'
@@ -189,7 +212,6 @@
                 setMobile( this.loginForm.mobile)
               } else {
                 this.examine = true;
-
                 this.$message({
                     message: res.data.message,
                     type: 'error',
@@ -226,7 +248,9 @@
           alert('服务器开小差啦，请稍等~')
         })
       }
-    }
+    },
+
+
   }
 
 </script>
