@@ -71,7 +71,7 @@
           <span v-if="scope.row.status==='9'">已完成</span>
           <span v-else-if="scope.row.status==='10'">已取消</span>
           <span v-else-if="scope.row.status === '5'&& scope.row.startTime>time">待开始</span>
-          <span v-else-if="scope.row.status === '5'&& scope.row.startTime<=time<scope.row.endTime">进行中</span>
+          <span v-else-if="scope.row.status === '5'&& scope.row.startTime<=time&&time<scope.row.endTime">进行中</span>
           <span v-else-if="scope.row.status === '5'&& scope.row.endTime<=time">已结束</span>
 
           <span v-else>{{ options[scope.row.status-1].name}}</span>
@@ -149,10 +149,10 @@
           <el-select  class="searchType" v-model="keyItem.sortType" placeholder="综合排序" size="small">
             <el-option v-for="item in topOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
-          <el-input  class="key" placeholder="填写搜索关键词"
+          <el-input  class="key" placeholder="填写搜索关键词" style="width : 200px;"
                     :maxlength="100"  v-model.trim="keyItem.searchKeyword" size="small" ></el-input>
           <span>筛选条件：</span>
-          <el-input :maxlength="100" class="key"   placeholder="如价格区间、销量区间等" size="small" v-model.trim="keyItem.searchCondition" ></el-input>
+          <el-input :maxlength="100" class="key" style="width : 200px;"  placeholder="如价格区间、销量区间等" size="small" v-model.trim="keyItem.searchCondition" ></el-input>
           <el-button slot size="small" @click="deleteKey(keyItem)">删除</el-button>
         </el-form-item>
         <el-form-item labelWidth="120px" >

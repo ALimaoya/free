@@ -30,12 +30,12 @@
       <el-table-column prop="receiveTime" label="订单创建时间" ></el-table-column>
       <el-table-column prop="searchImageUrl" label="搜索截图">
         <template slot-scope="scope">
-          <img class="mainPic" @click="getImg( scope.row.searchImageUrl )" :src=" imageDomain + scope.row.searchImageUrl " alt="" />
+          <img class="showPic" @click="getImg( scope.row.searchImageUrl )" :src=" imageDomain + scope.row.searchImageUrl " alt="" />
         </template>
       </el-table-column>
       <el-table-column prop="collectImageUrl" label="收藏截图">
         <template slot-scope="scope">
-          <img class="mainPic" @click="getImg( scope.row.collectImageUrl)" :src=" imageDomain + scope.row.collectImageUrl" alt="" />
+          <img class="showPic" @click="getImg( scope.row.collectImageUrl)" :src=" imageDomain + scope.row.collectImageUrl" alt="" />
         </template>
       </el-table-column>
       <el-table-column prop="status" label="订单状态">
@@ -67,20 +67,22 @@
     </div>
 
     <el-dialog width="50%" :visible.sync="detailInfo" center top="10vh" title="评价审核">
-      <dl v-if="searchImg">
-        <dt>搜索截图</dt>
-        <dd >
-          <img @click="getImg(searchImg)" :src=" imageDomain + searchImg" alt="" />
-        </dd>
-      </dl>
-      <dl v-else class="noViewPic">暂无搜索截图</dl>
-      <dl v-if="likeImg">
-        <dt>评价截图</dt>
-        <dd >
-          <img @click="getImg(likeImg)" :src=" imageDomain + likeImg" alt="" />
-        </dd>
-      </dl>
-      <dl v-else class="noViewPic">暂无评价截图</dl>
+      <div class="checkPic">
+        <dl v-if="searchImg">
+          <dt>搜索截图</dt>
+          <dd >
+            <img  @click="getImg(searchImg)" :src=" imageDomain + searchImg" alt="" />
+          </dd>
+        </dl>
+        <dl v-else class="noViewPic">暂无搜索截图</dl>
+        <dl v-if="likeImg">
+          <dt>评价截图</dt>
+          <dd >
+            <img @click="getImg(likeImg)" :src=" imageDomain + likeImg" alt="" />
+          </dd>
+        </dl>
+        <dl v-else class="noViewPic">暂无评价截图</dl>
+      </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="check('1')">审核成功</el-button>
         <el-button type="error" @click="check('2')">审核拒绝</el-button>
@@ -356,6 +358,7 @@
       border-bottom : 1px solid #aaa ;
 
     }
+
     .el-dialog {
       dl {
         width: 40%;

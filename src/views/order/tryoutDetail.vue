@@ -21,7 +21,7 @@
             <img @click="getImg(detailInfo.mainImageUrl)" :src="imageDomain + detailInfo.mainImageUrl" alt="" />
           </div>
         </li>
-        <li class="faileReason"><span>图片详情：</span><span v-if="detailInfo.orderImageList == 0" class="noImg">暂无图片</span></li>
+        <li class="faileReason"><span>用户上传图片详情：</span><span v-if="detailInfo.orderImageList == 0" class="noImg">暂无图片</span></li>
         <li class="detailPic">
           <div v-if="detailInfo.orderImageList != 0">
             <dl v-for="item in detailInfo.orderImageList">
@@ -48,7 +48,7 @@
       data(){
           return  {
             detailInfo : {},
-            activityTitle : ['超级试用','','拼团试用'],
+            activityTitle : ['超级试用','','拼团活动'],
             platForm : ['','淘宝','天猫', '京东'],
             imgType : ['商品收藏截图','店铺收藏截图','订单截图','评价截图','搜索截图'] ,
             showImg : false ,

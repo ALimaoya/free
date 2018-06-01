@@ -87,7 +87,7 @@
 
           <!--<el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.status ==='2' || scope.row.status==='4'" @click="handleCancel(scope.$index,scope.row.activityId)">取消发布</el-button>-->
           <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.payStatus==='0'" @click="toPay(scope.$index,scope.row.activityId)">去支付</el-button>
-          <!--<el-button class="check" style="padding : 0 ;" type="text" @click="changeKeys(scope.$index,scope.row.activityId)">修改关键词</el-button>-->
+          <el-button class="check" style="padding : 0 ;" type="text" @click="changeKeys(scope.$index,scope.row.activityId)">修改关键词</el-button>
 
         </template>
       </el-table-column>
@@ -104,6 +104,41 @@
       </el-pagination>
       <span class="totalItems">共{{totalPages }}页，{{ totalElements }}条记录</span>
     </div>
+    <!--修改对应活动关键词弹窗-->
+    <el-dialog class="key_dialog" width="65%" center title="修改活动关键词" :visible.sync="keyBox" >
+      <el-form :model="form" ref="form" :rules="formRule" label-position="left">
+        <el-form-item label="APP关键词：" labelWidth="130px">
+          <span >{{ choosePlat }}</span>
+        </el-form-item>
+        <el-form-item class="size" v-for="(keyItem,index) in form.keyword" :label="'APP端关键词'+(index+1)*1+'：'"
+                      :key="index" :prop="'keyword.'+ index + '.searchKeyword'" labelWidth="130px">
+          <el-select class="searchType" @focus="getType(form.platformType)" v-model="keyItem.searchId" placeholder="搜索平台" size="small">
+            <el-option
+              v-for="(item ,index) in searchOptions"
+              :key="index"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+          <el-select  class="searchType" v-model="keyItem.sortType" placeholder="综合排序" size="small">
+            <el-option v-for="item in topOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+          <el-input  class="key" placeholder="填写搜索关键词" style="width : 200px;"
+                     :maxlength="100"  v-model.trim="keyItem.searchKeyword" size="small" ></el-input>
+          <span>筛选条件：</span>
+          <el-input :maxlength="100" class="key" style="width : 200px;"  placeholder="如价格区间、销量区间等" size="small" v-model.trim="keyItem.searchCondition" ></el-input>
+          <el-button slot size="small" @click="deleteKey(keyItem)">删除</el-button>
+        </el-form-item>
+        <el-form-item labelWidth="120px" >
+          <el-button type="primary" @click="addKey">添加一个APP关键词</el-button>
+        </el-form-item>
+      </el-form>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button size="small" style="width:80px" type="primary" @click="submitChange(form.keyword)">确定修改</el-button>
+        <el-button style="width:80px" size="small"  @click="cancelSubmit">关&nbsp;&nbsp;闭</el-button>
+      </div>
+    </el-dialog>
     <div v-if="mask" @click="close" class="mask">
       <img :src=" imageDomain + bigImg" alt="" />
     </div>
@@ -134,6 +169,8 @@
               // pageSize : 10
             },
             form : {},
+            formRule : {},
+            choosePlat : '',
             tableData : [],
             platformOptions : [
               {
@@ -166,7 +203,45 @@
             imageDomain : process.env.IMAGE_DOMAIN, //获取图片的外链域名
             mask : false ,
             bigImg : '',
-
+            keyBox : false ,
+            reasonDetail : '',
+            searchOptions : [],
+            platForm : [
+              {
+                name : '淘宝',
+                id : '1',
+              },
+              {
+                name : '天猫',
+                id : '2'
+              },
+              {
+                name : '京东',
+                id : '3'
+              },
+              // {
+              //   name : '拼多多',
+              //   id : '4'
+              // }
+            ],
+            topOptions : [
+              {
+                label : '综合排序',
+                value : '1'
+              },
+              {
+                label : '人气排序',
+                value : '2',
+              },
+              {
+                label : '销量排序',
+                value : '3'
+              },
+              {
+                label : '信用排序',
+                value : '4'
+              }
+            ],
           }
       },
       mounted(){
@@ -240,6 +315,151 @@
         }).catch( err => {
           alert('服务开小差啦，请稍等~')
         });
+      },
+
+      //修改关键词
+      changeKeys(index,order){
+        this.keyBox = true ;
+        this.$store.dispatch('getPublishDetail',order).then( res => {
+
+          if (res.data.status === '000000000') {
+            this.form = res.data.data;
+            this.choosePlat = this.platForm[this.form.platformType-1].name ;
+            this.getType(this.form.platformType);
+
+          } else {
+            this.$message({
+              message: res.data.message,
+              center: true,
+              type: 'error'
+            })
+          }
+        }).catch( err => {
+          alert('服务器开小差啦，请稍等~')
+        })
+      },
+      //获取平台类型
+      getType(value){
+
+        searchTypeList(value).then( res => {
+          if(res.data.status === '000000000'){
+            this.searchOptions = res.data.data ;
+          }else{
+            this.$message({
+              message : res.data.message ,
+              type : 'error',
+              center : true,
+            })
+          }
+        }).catch( err => {
+          // console.log(err);
+        })
+      },
+      //删除APP端关键词
+      deleteKey(item){
+        let index = this.form.keyword.indexOf(item);
+        if(index !== -1 && this.form.keyword.length> 1){
+          this.form.keyword.splice(index,1)
+        }
+
+
+      },
+      //添加app端关键词
+      addKey(){
+        if(this.form.keyword.length <10){
+          this.form.keyword.push({
+            'searchId' : '',
+            'sortType' : '',
+            'searchKeyword' : '',
+            'searchCondition': '',
+          })
+
+        }else{
+          this.$message({
+            message : '您添加的关键词太多啦，不能再加啦~',
+            center : true ,
+            type : 'error'
+          })
+        }
+      },
+      //提交关键词修改
+      submitChange(key){
+        let keyArr = [];
+        let keyWarn = false ;
+        if(key.length){
+          key.some(i=>{
+            if(i.searchKeyword!==''){
+              if(i.searchId===''){
+                this.$message({
+                  message : '请选择关键词对应搜索平台',
+                  center : true ,
+                  type : 'error'
+                });
+                keyWarn = true ;
+                return false ;
+              }
+              else if(i.sortType === ''){
+                this.$message({
+                  message : '请选择关键词排序方式',
+                  center : true ,
+                  type : 'error'
+                });
+                keyWarn = true ;
+                return false ;
+
+              }
+              keyArr.push(i);
+
+            }
+
+          });
+          if(!keyWarn){
+            let data = {
+              activityId : this.form.activityId ,
+              keyword : keyArr
+            };
+            if(keyArr.length){
+              updateKeyword(data).then((res)=>{
+                if(res.data.status === '000000000'){
+                  this.$message({
+                    message : '修改成功',
+                    center : true ,
+                    type : 'success'
+                  });
+                  this.keyBox = false ;
+                }else{
+                  this.$message({
+                    message : res.data.message ,
+                    center : true ,
+                    type : 'error'
+                  })
+                }
+              }).catch((err)=>{
+                alert('服务器开小差啦，请稍等~')
+              })
+
+            }else{
+              this.$message({
+                message : '请填写活动关键词',
+                center : true ,
+                type : 'error'
+              })
+            }
+          }
+
+        }else{
+          this.$message({
+            message : '请填写活动关键词',
+            center : true ,
+            type : 'error'
+          })
+        }
+
+      },
+      //取消关键词修改
+      cancelSubmit(){
+        this.keyBox = false ;
+        this.form = {};
       },
 
       //去支付

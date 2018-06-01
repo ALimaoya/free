@@ -2,8 +2,8 @@
   <div class="tryoutActivity step">
     <el-form :model="form" ref="form" :rules="formRule">
       <p class="title">第一步：填写活动信息</p>
-       <el-form-item label="活动类型："  :labelWidth="labelWidth" prop="activityType" >
-         <el-radio-group v-model="form.activityType" :disabled="read" >
+       <el-form-item label="活动类型："  :labelWidth="labelWidth" prop="activityType"  >
+         <el-radio-group v-model="form.activityType" :disabled="read" @change="form.activityStartTime = '';setRate()">
            <el-radio  v-for="item in typeList" :label="item.value" :key="item.value">{{ item.name }}</el-radio>
          </el-radio-group>
        </el-form-item>
@@ -103,7 +103,7 @@
         <el-input class="any" size="small" :maxLength="10" v-model.num="form.groupPeopleQuantity" type="number" min="1" :readonly="readonly" placeholder="请输入内容"></el-input>人
         <span class="tips" ><img src="../../assets/imgs/tips3.png" alt=""/>参团人数：申请人数满足此条件时，立即开奖</span>
       </el-form-item>
-      <span v-if="form.activityType!=='1'&&form.activityType !== undefined&&this.joinTips" class="tips tips_warn" style="margin-left :120px ;margin-bottom : 22px;" >注：参团人数需在1 ~ 下单价格/2 之间的整数范围内，最低人数为1</span>
+      <span v-if="form.activityType!=='1'&&form.activityType !== undefined" class="tips tips_warn" style="margin-left :120px ;margin-bottom : 22px;" >注：参团人数需在1 ~ 下单价格/2 之间的整数范围内，且不能小于每日开奖份数的输入值，最低人数为1</span>
 
       <el-form-item :label="this.payWay" :labelWidth="labelWidth" prop="isCredit" style="float : left ;">
         <el-radio-group :disabled="read"  v-model="form.isCredit">
@@ -370,22 +370,32 @@
 
           callback();
         };
-        const validOpenNum = (rule,value,callback) => {
+        const validOpenNum = (rule,value,callback)=>{
           if(value === ''){
-            this.joinTips = false ;
+            callback(new Error('请输入每日开奖份数'))
+          }else{
+            if(value  !==''&&this.form.activityType === '3'){
+              this.$refs.form.validateField('groupPeopleQuantity');
+
+            }
+            callback();
+          }
+        };
+        const validOpenPeople = (rule,value,callback) => {
+          if(value === ''){
             callback(new Error('请输入参团人数'))
           }else{
             if(this.form.buyProductAmount<2){
               this.form.groupPeopleQuantity = 1 ;
-              this.joinTips = true ;
             }
             if(!(/^[1-9]\d*$/).test(value)||value>this.form.buyProductAmount/2){
-              this.joinTips = false ;
               callback(new Error('请输入不小于1 ，且不大于下单价格/2的正整数'))
             }else{
               this.form.groupPeopleQuantity = Math.round(value) ;
-              this.joinTips = true ;
 
+            }
+            if(value < this.form.groupProductQuantity){
+              callback(new Error('输入的参团人数不得小于每日开奖份数'))
             }
             callback();
           }
@@ -552,12 +562,12 @@
             ],
             groupProductQuantity : [
               {
-                required : true , trigger : 'blur',message : '请选择每日开奖份数'
+                required : true , trigger : 'blur',validator : validOpenNum
               }
             ],
             groupPeopleQuantity : [
               {
-                required : true ,trigger : 'blur',validator : validOpenNum
+                required : true ,trigger : 'blur',validator : validOpenPeople
               }
             ],
             isCredit : [
@@ -611,7 +621,6 @@
           readIpt : false ,  //查看活动详情时禁止输入
           autoUpload : true ,
           vipVisible : false ,
-          joinTips : true ,
           calendarNumType : ''
 
         }
@@ -1381,12 +1390,17 @@
           });
 
           if(this.goodsAmount.indexOf('') === -1  ){
+
             this.form.activityCalendar.every( i => {
               let reg = /^[1-9]{1}[0-9]{0,2}$/ ;
               let canlenderNum = '';
+
               if(this.form.activityType === '3'){
+
                 canlenderNum = reg.test(i.groupQuantity)
+
               }else{
+
                 canlenderNum = reg.test(i.tryoutQuantity)
 
               }
@@ -1394,6 +1408,7 @@
                 this.warn = false ;
                 return !this.warn ;
               }else{
+
                 this.warn = true ;
                 return !this.warn ;
               }
@@ -1413,7 +1428,6 @@
 
         //提交试用信息
         onSubmit(formName,index){
-          // console.log(this.form.activityCalendar,this.form.activityStartTime);
 
           if(this.form.showImageUrl === ''){
             this.showImgWarn = true ;
@@ -1427,14 +1441,14 @@
 
           }
           this.hasWarn();
-          // this.getGoodsDetail(this.form.platformType,this.form.productUrl);
+          console.log(this.form,this.warn,this.daysWarn,this.changeNum,this.showImgWarn,this.goodsImgWarn);
 
-          // if(this.form.productId&&this.form.productDetail&&this.form.productName){
-            this.$refs[formName].validate((valid) => {
-              if (valid && !this.warn && !this.daysWarn && !this.changeNum && !this.showImgWarn && !this.goodsImgWarn) {
+          this.$refs[formName].validate((valid) => {
+
+            if (valid && !this.warn && !this.daysWarn && !this.changeNum && !this.showImgWarn && !this.goodsImgWarn) {
                 // this.form.productId = '' ;
-                this.goPlatform(this.form.platformType,this.form.productUrl);
 
+                this.goPlatform(this.form.platformType,this.form.productUrl);
                 this.submitDetail(index,this.form)
 
               } else {
@@ -1455,7 +1469,6 @@
       // 提交活动信息
         submitDetail(index,form){
           //试用类型不为拼团类时删除拼团相关参数字段
-          // console.log(form)
 
           if (index === 1) {
             publishActivity(form).then(res => {

@@ -58,23 +58,9 @@ export const constantRouterMap = [
     path: '/publish',
     name: 'Publish',
     component: Layout,
-    meta: { title: '发布试用', icon: 'pay' },
+    meta: { title: '发布活动', icon: 'pay' },
     children : [
-      {
-        path : 'flow_step1',
-        name : 'FlowActivity',
-        // hidden : true ,
-        component: () => import('@/views/publish/flowActivity'),
-        meta: { title: '发布流量活动',noCache: true },
 
-      },
-      {
-        path: 'flow_step2/:id',
-        name: 'FlowPay',
-        component: () => import('@/views/publish/flowPay'),
-        meta: { title: '流量活动支付', icon: 'flowPay',noCache: true  },
-        hidden : true
-      },
       {
         path : 'tryout_step1',
         name : 'TryoutActivity',
@@ -88,6 +74,21 @@ export const constantRouterMap = [
         name: 'TryoutPay',
         component: () => import('@/views/publish/tryoutPay'),
         meta: { title: '试用活动支付', icon: 'tryoutPay',noCache: true  },
+        hidden : true
+      },
+      {
+        path : 'flow_step1',
+        name : 'FlowActivity',
+        // hidden : true ,
+        component: () => import('@/views/publish/flowActivity'),
+        meta: { title: '发布流量任务',noCache: true },
+
+      },
+      {
+        path: 'flow_step2/:id',
+        name: 'FlowPay',
+        component: () => import('@/views/publish/flowPay'),
+        meta: { title: '流量活动支付', icon: 'flowPay',noCache: true  },
         hidden : true
       },
       {
