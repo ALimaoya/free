@@ -57,7 +57,7 @@
         </el-form-item>
         <el-form-item label="支付密码：" style="width:480px ;height:40.5px;"  :label-width="formLabelWidth" prop="payPsw">
           <el-input class="pswIpt" :type="pwdType1" placeholder="请输入六位数字支付密码" v-model.trim="pswForm.payPsw"></el-input>
-          <div class="getNum" style="width : 1.5rem ;float : right ;"></div>
+          <!--<div class="getNum" style="width : 1.5rem ;float : right ;"></div>-->
           <span class="show-pwd" @click="showPwd('1')">
             <svg-icon v-if="pwdType1==='password'" icon-class="eyeclose"></svg-icon>
             <svg-icon icon-class="eyeopen" v-else="pwdType1===''" ></svg-icon>
@@ -65,7 +65,7 @@
         </el-form-item>
         <el-form-item label="确认支付密码：" style="width:480px ;height:40.5px;"  :label-width="formLabelWidth" prop="payPsw2">
           <el-input class="pswIpt" :type="pwdType2" placeholder="请再次确认支付密码" v-model.trim="pswForm.payPsw2"></el-input>
-          <div class="getNum" style="width : 1.5rem ;float : right ;"></div>
+          <!--<div class="getNum" style="width : 1.5rem ;float : right ;"></div>-->
           <span class="show-pwd" @click="showPwd('2')">
             <svg-icon v-if="pwdType2==='password'" icon-class="eyeclose"></svg-icon>
             <svg-icon icon-class="eyeopen" v-else="pwdType2===''" ></svg-icon>
@@ -92,7 +92,7 @@
         </el-form-item>
         <el-form-item label="新密码：" style="width : 495px;height:40.5px;" :label-width="formLabelWidth" prop="newPsw">
           <el-input class="pswIpt" :type="pwdType1" placeholder="请输入新密码" v-model.trim="changePsw.newPsw"></el-input>
-          <div class="getNum" style="width : 1.1rem ;float : right ;"></div>
+          <!--<div class="getNum" style="width : 1.1rem ;float : right ;"></div>-->
           <span class="show-pwd" @click="showPwd('1')">
             <svg-icon icon-class="eyeclose" v-if="pwdType1==='password'" ></svg-icon>
             <svg-icon v-else="pwdType1===''" icon-class="eyeopen"></svg-icon>
@@ -101,7 +101,7 @@
         </el-form-item>
         <el-form-item label="确认新密码：" style="width : 495px;height:40.5px;" :label-width="formLabelWidth" prop="checkPsw">
           <el-input class="pswIpt" :type="pwdType2" placeholder="请再次确认新密码" v-model.trim="changePsw.checkPsw"></el-input>
-          <div class="getNum" style="width : 1.1rem ;float : right ;"></div>
+          <!--<div class="getNum" style="width : 1.1rem ;float : right ;"></div>-->
           <span class="show-pwd" @click="showPwd('2')">
             <svg-icon v-if="pwdType2==='password'" icon-class="eyeclose"></svg-icon>
              <svg-icon icon-class="eyeopen" v-else="pwdType2===''" ></svg-icon>

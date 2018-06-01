@@ -1,30 +1,46 @@
 <template>
-  <div class="order">
-    <h1>订单查询</h1>
-      <div class="search">
-        <el-select size="small" clearable v-model="order.platformType" filterable placeholder="请选择试用平台">
-          <el-option
-            v-for="item in platformOptions"
-            :key="item.value"
-            :label="item.name"
-            :value="item.value">
-          </el-option>
-        </el-select>
-        <el-input size="small" :maxlength="20" v-model.trim="order.activityCode" placeholder="请输入试客试用活动编号"></el-input>
-        <el-input size="small" :maxlength="20" v-model.trim="order.thirdOrderCode" placeholder="请输入第三方订单编号"></el-input>
-        <el-select clearable size="small"  v-model="order.EQ_status" filterable placeholder="请选择订单状态">
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.name"
-            :value="item.value">
-          </el-option>
-        </el-select>
-        <el-button size="small"  @click="getList()" class="searchOrder" style="padding: 0 0.05rem;">查询</el-button>
-      </div>
+  <div class="activityOrder tableBox">
+    <h1>试用订单查询</h1>
+    <search-bar @searchobj="getData" :platform-type="true" :activity-type="true" :third-order-code="true" :activity-code="true" :eq_status="true" :activity="true"></search-bar>
+
+    <!--<div class="search">-->
+        <!--<el-select size="small" clearable v-model="order.platformType" filterable placeholder="请选择试用平台">-->
+          <!--<el-option-->
+            <!--v-for="item in platformOptions"-->
+            <!--:key="item.value"-->
+            <!--:label="item.name"-->
+            <!--:value="item.value">-->
+          <!--</el-option>-->
+        <!--</el-select>-->
+        <!--<el-select size="small" clearable v-model="order.platformType" filterable placeholder="请选择试用类型">-->
+          <!--<el-option-->
+            <!--v-for="item in activityType"-->
+            <!--:key="item.value"-->
+            <!--:label="item.name"-->
+            <!--:value="item.value">-->
+          <!--</el-option>-->
+        <!--</el-select>-->
+        <!--<el-input size="small" :maxlength="20" v-model.trim="order.activityCode" placeholder="请输入试客试用活动编号"></el-input>-->
+        <!--<el-input size="small" :maxlength="20" v-model.trim="order.thirdOrderCode" placeholder="请输入第三方订单编号"></el-input>-->
+        <!--<el-select clearable size="small"  v-model="order.EQ_status" filterable placeholder="请选择订单状态">-->
+          <!--<el-option-->
+            <!--v-for="item in options"-->
+            <!--:key="item.value"-->
+            <!--:label="item.name"-->
+            <!--:value="item.value">-->
+          <!--</el-option>-->
+        <!--</el-select>-->
+        <!--<el-button size="small"  @click="getList()" class="searchOrder" style="padding: 0 0.05rem;">查询</el-button>-->
+      <!--</div>-->
       <div class="note">备注：以上搜索条件可根据单一条件进行搜索，当单独试客淘宝号搜索不到有用信息时，可尝试输入淘宝订单编号，反之亦然</div>
       <el-table :data="tableData" border>
-          <el-table-column prop="activityCode" label="试客任务编号" width="180"></el-table-column>
+        <el-table-column prop="activityType" label="试客任务类型" width="100">
+          <template slot-scope="scope">
+            <span v-if="scope.row.activityType === '1'">超级试用</span>
+            <span v-else-if="scope.row.activityType === '3'">拼团试用</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="activityCode" label="试客活动编号" width="180"></el-table-column>
           <el-table-column prop="orderCode" label="试客订单编号" width="180"></el-table-column>
           <el-table-column prop="activityTitle" label="商品名称"></el-table-column>
           <el-table-column prop="" label="宝贝主图">
@@ -77,17 +93,20 @@
 
 <script>
   import ElButton from "element-ui/packages/button/src/button";
-  import { getOrderList ,changeStatus } from "@/api/activity"
+  import { getOrderList ,changeStatus } from "@/api/activity";
+  import searchBar from "@/components/searchBar"
   // import ElDialog from "element-ui/packages/dialog/src/component";
 
   export default {
-    name: "order" ,
+    name: "activity-order" ,
     components: {
       // ElDialog,
       ElButton,
+      searchBar
     },
     data(){
       return{
+        activityTitle : ['超级试用','','拼团试用'],
         platformOptions : [
           {
             value: '',
@@ -171,6 +190,7 @@
         order : {
           EQ_status: '',
           // thirdAccount: '',
+          EQ_activityType:'',
           platformType : '' ,
           activityCode : '',
           thirdOrderCode: '',
@@ -208,7 +228,13 @@
           }else{
             formData.append('EQ_tryoutOrderWin.thirdOrderCode', '');
           }
+          formData.append('EQ_activityType',this.order.EQ_activityType);
+          if(this.order.EQ_activityType === ''){
+            formData.append('IN_activityType','1,3');
+          }else{
+            formData.append('IN_activityType','');
 
+          }
           formData.append('EQ_status',this.order.EQ_status);
           formData.append('currentPage', this.currentPage);
           formData.append('pageSize', this.pageSize);
@@ -224,7 +250,12 @@
 
         })
       },
-
+      //根据搜索条件获取订单列表
+      getData(res){
+        this.order ={...res }  ;
+        // console.log(this.order);
+        this.getList();
+      },
       //查看宝贝大图
       showImg(url){
         this.mask = true ;
@@ -236,17 +267,17 @@
       },
       //查看订单详情
       goDetail(index,order){
-        this.$router.push('/activity/detail/'+ order) ;
+        this.$router.push('/order/tryoutDetail/'+ order) ;
       },
 
       //修改订单状态
-      changeStatus(index,order){
-        changeStatus({ data : { orderId : order }}).then( res => {
-
-        }).catch( err => {
-          alert('服务器开小差啦，请稍等~')
-        })
-      },
+      // changeStatus(index,order){
+      //   changeStatus({ data : { orderId : activityOrder }}).then(res => {
+      //
+      //   }).catch( err => {
+      //     alert('服务器开小差啦，请稍等~')
+      //   })
+      // },
 
 
 
@@ -275,54 +306,8 @@
 <style scoped lang="scss" rel="stylesheet/scss">
   @import "src/styles/table.scss" ;
 
-  .order{
+  .activityOrder{
 
-    .searchOrder{
-      height : 34px ;
-    }
-    .note{
-      padding-left : 0.3rem ;
-      width : 100% ;
-      border-bottom : 1px solid #aaa ;
-      height : 0.4rem ;
-      line-height : 0.4rem ;
-      font-size : 0.14rem ;
-      text-indent : 0.32rem ;
-      color : #999 ;
-    }
-    .mainPic{
-      width : 0.6rem ;
-      height : 0.6rem ;
-    }
 
-    .el-dialog{
-      .el-form{
-        padding : 0  0.3rem ;
-        .reason{
-          width : 100% ;
-          color : #666;
-          display : inline-block ;
-        }
-        .el-textarea{
-          width : 80% ;
-        }
-      }
-    }
-    .mask{
-      position : fixed ;
-      top : 0;
-      left : 0 ;
-      width : 100% ;
-      height : 100% ;
-      background : rgba(250,250,250,0.3) ;
-      display : flex ;
-      align-items: center;
-      justify-content: center;
-      z-index : 10000;
-      img{
-        max-height : 100% ;
-
-      }
-    }
   }
 </style>

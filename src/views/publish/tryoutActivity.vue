@@ -1,31 +1,40 @@
 <template>
-  <div class="step">
+  <div class="tryoutActivity step">
     <el-form :model="form" ref="form" :rules="formRule">
       <p class="title">第一步：填写活动信息</p>
-       <el-form-item label="活动类型："  labelWidth="120px">
-         <el-radio-group v-model="type" :disabled="read">
-           <el-radio  label="1">超级试用</el-radio>
-           <el-radio  label="2" disabled>折扣试用（待开放）</el-radio>
+       <el-form-item label="活动类型："  :labelWidth="labelWidth" prop="activityType" >
+         <el-radio-group v-model="form.activityType" :disabled="read" >
+           <el-radio  v-for="item in typeList" :label="item.value" :key="item.value">{{ item.name }}</el-radio>
          </el-radio-group>
        </el-form-item>
-      <el-form-item label="商品来源：" labelWidth="120px" prop="platformType" >
+      <el-form-item label="商品来源：" :labelWidth="labelWidth" prop="platformType" >
         <el-radio-group :disabled="read" v-model="form.platformType"  @change="resetSearch(form.platformType,'change')">
           <el-radio  v-for="(item,index) in platForm"   :key="index" :label="item.id" >{{ item.name }}</el-radio>
-          <!--<el-radio  label="2">天猫</el-radio>-->
-          <!--<el-radio  label="3">京东</el-radio>-->
-          <!--<el-radio  label="4">拼多多</el-radio>-->
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="领取时间：" labelWidth="120px" prop="receiveHours">
+      <el-form-item label="领取时间：" :labelWidth="labelWidth" prop="receiveHours">
         <el-radio :disabled="read" v-model="form.receiveHours+''" label="24">24小时内</el-radio>
         <span class="tips">（试客获得资格后会在24小时内下单领取，逾期将终止试用。）</span>
       </el-form-item>
+      <div v-if="form.activityType === '3'" class="tips_ul tips_warn">
+        <p>注：</p>
+        <ul  class="tips tips_warn">
+          <li>（1）商家设定好开团所需人数，及开奖次数，满足条件后立即开奖，无需等到第二日</li>
+          <!--<li v-if="form.activityType!=='3'">（2）新用户参与试用100%中奖，且再从该用户邀请的申请此商品的好友中，选择一名用户中奖</li>-->
+          <!--<li v-if="form.activityType === ''">（3）用户同一时间能且仅能参与一个此类商品的试用活动</li>-->
+        </ul>
+
+      </div>
       <p class="title">第二步：填写试用品展示信息</p>
-      <el-form-item label="活动标题：" class="activity" labelWidth="120px" prop="activityTitle">
+      <!--<el-form-item label="活动品牌：" :labelWidth="labelWidth" prop="activityBrand">-->
+        <!--<el-input :readonly="readIpt" placeholder="请输入内容" size="small" type="text" v-model.trim="form.activityBrand"></el-input>-->
+        <!--<span class="tips"><img src="../../assets/imgs/tips3.png" alt=""/>所填写的商品品牌内容将在APP中展示在商品名称前</span>-->
+      <!--</el-form-item>-->
+      <el-form-item label="活动标题：" class="activity" :labelWidth="labelWidth" prop="activityTitle">
         <el-input :readonly="readIpt" placeholder="请输入内容" size="small" type="text" v-model.trim="form.activityTitle" ></el-input>
         <span class="tips"><img src="../../assets/imgs/tips3.png" alt=""/>写明赠品的数量、规格、属性等，不要复制淘宝商品标题</span>
       </el-form-item>
-      <el-form-item label="试用品类型：" labelWidth="120px" prop="categoryId">
+      <el-form-item label="试用品类型：" :labelWidth="labelWidth" prop="categoryId">
         <el-select :disabled="read" v-model="form.categoryId" placeholder="请选择商品类型" size="small">
           <el-option
             v-for="(item ,index) in options"
@@ -34,15 +43,15 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="试用品展示图：" labelWidth="120px" prop="showImageUrl">
+      <el-form-item label="试用品展示图：" :labelWidth="labelWidth" prop="showImageUrl">
         <el-upload class="upload"  :auto-upload="autoUpload" :action="imgUrl" :show-file-list="false" v-model.trim="form.showImageUrl"
           :on-success="handleShowSuccess" :before-upload="beforeShowUpload"
-          :headers="{ 'Content-Type': 'multipart/form-data','yb-tryout-merchant-token':token}">
+          :headers="{ 'yb-tryout-merchant-token':token}">
           <!--:auto-upload="false" :http-request="beforeShowUpload"-->
 
           <img v-if="showImg"  :src="showImg" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          <span class="imgWarn" v-if="showImgWarn">请上传试用品展示图</span>
+          <span class="imgWarn tips_warn" v-if="showImgWarn">请上传试用品展示图</span>
         </el-upload>
         <ul class="require">
           <span>展示图要求：</span>
@@ -52,48 +61,58 @@
         </ul>
       </el-form-item>
       <p class="title">第三步：选择目标推广宝贝</p>
-      <el-form-item label="选择店铺：" labelWidth="120px" prop="shopId">
+      <el-form-item label="选择店铺：" :labelWidth="labelWidth" prop="shopId">
         <el-select :disabled="readShop" v-model="form.shopId"  placeholder="请选择店铺" size="small" >
           <el-option  v-for="(item,index) in shopOptions" :key="index" :label="item.name" :value="item.id"></el-option>
         </el-select>
         <span v-if="form.shopId==='没有可选店铺'" class="tips" style="color : #f56c6c">该平台下未绑定店铺或绑定店铺未审核通过，请在店铺绑定并审核通过后再进行活动发布</span>
 
       </el-form-item>
-      <el-form-item label="商品链接：" labelWidth="120px" prop="productUrl">
+      <el-form-item label="商品链接：" :labelWidth="labelWidth" prop="productUrl">
         <el-input :readonly="readIpt" size="small" v-model.trim="form.productUrl" placeholder="请输入内容" @change="getGoodsDetail(form.platformType,form.productUrl)"></el-input>
         <span class="tips"><img src="../../assets/imgs/tips3.png" alt=""/>平台会根据您填写的商品链接抓取宝贝信息，试客无法看到此链接</span>
       </el-form-item>
-      <el-form-item label="宝贝主图：" labelWidth="120px">
+      <el-form-item label="宝贝主图：" :labelWidth="labelWidth">
         <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.mainImageUrl"
           :on-success="handleGoodsSuccess"   :show-file-list="false"  :before-upload="beforeMainUpload"
-          :headers="{ 'Content-Type': 'multipart/form-data','yb-tryout-merchant-token':token}">
+          :headers="{ 'yb-tryout-merchant-token':token}">
           <img v-if="mainImg"  :src="mainImg" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          <span class="imgWarn" v-if="goodsImgWarn">请上传宝贝主图</span>
+          <span class="imgWarn tips_warn" v-if="goodsImgWarn">请上传宝贝主图</span>
         </el-upload>
         <ul class="require">
           <span>宝贝主图要求：</span>
           <li>目标商品搜索结果页展示的主图</li>
           <li>(淘宝展示主图)</li>
-          <li>尺寸要求<span>（800*800）</span></li>
+          <li>尺寸要求<span class="tips_warn">（800*800）</span></li>
         </ul>
       </el-form-item>
-      <el-form-item label="下单规格：" labelWidth="120px" prop="buyProductQuantity">
+      <el-form-item label="下单规格：" :labelWidth="labelWidth" prop="buyProductQuantity">
         <el-input :readonly="readIpt" :maxlength="200" placeholder="任意拍" size="small" class="any"  v-model.trim="form.buyProductSpec"></el-input>
         <span>拍：</span><el-input :readonly="readonly" type="number" :maxlength="5" v-model.number="form.buyProductQuantity"  size="small" class="any anyNum"></el-input><span>件</span>
         <span class="tips"><img src="../../assets/imgs/tips3.png" alt=""/>如需拍下指定规格，请务必填写此信息，如不填写默认任意拍一件；</span>
       </el-form-item>
-      <el-form-item label="下单价格：" labelWidth="120px" prop="buyProductAmount">
+      <el-form-item label="下单价格：" :labelWidth="labelWidth" prop="buyProductAmount">
         <el-input class="any" size="small" :maxlength="10" type="number" :readonly="readonly" v-model.number="form.buyProductAmount" placeholder="请输入内容" ></el-input>元
       </el-form-item>
-      <el-form-item :label="this.payWay" labelWidth="120px" prop="isCredit" style="float : left ;">
+      <el-form-item v-if="form.activityType!=='1'&&  form.activityType !== undefined" label="每日开奖份数：" :labelWidth="labelWidth" prop="groupProductQuantity">
+      <el-input class="any" size="small" :maxlength="10" v-model.num="form.groupProductQuantity" type="number" min="1" :readonly="readonly" placeholder="请输入内容"></el-input>次
+      <span class="tips"><img src="../../assets/imgs/tips3.png" alt=""/>开奖份数为：满足开团条件时的中奖人数</span>
+      </el-form-item>
+      <el-form-item v-if="form.activityType!=='1'&&form.activityType !== undefined" label="参团人数：" :labelWidth="labelWidth" prop="groupPeopleQuantity" style="margin-bottom:22px;">
+        <el-input class="any" size="small" :maxLength="10" v-model.num="form.groupPeopleQuantity" type="number" min="1" :readonly="readonly" placeholder="请输入内容"></el-input>人
+        <span class="tips" ><img src="../../assets/imgs/tips3.png" alt=""/>参团人数：申请人数满足此条件时，立即开奖</span>
+      </el-form-item>
+      <span v-if="form.activityType!=='1'&&form.activityType !== undefined&&this.joinTips" class="tips tips_warn" style="margin-left :120px ;margin-bottom : 22px;" >注：参团人数需在1 ~ 下单价格/2 之间的整数范围内，最低人数为1</span>
+
+      <el-form-item :label="this.payWay" :labelWidth="labelWidth" prop="isCredit" style="float : left ;">
         <el-radio-group :disabled="read"  v-model="form.isCredit">
           <el-radio label="1" >支持</el-radio>
           <el-radio label="0" >不支持</el-radio>
         </el-radio-group>
       </el-form-item>
       <div class="post">
-      <el-form-item label="商品运费：" labelWidth="120px" prop="post" style="width : 40% ;float : left ;">
+      <el-form-item label="商品运费：" :labelWidth="labelWidth" prop="post" style="width : 40% ;float : left ;">
           <el-radio-group :disabled="read"  v-model="form.post">
             <el-radio label="1" >包邮</el-radio>
             <el-radio label="0" :disabled="form.buyProductAmount<100?true:false" >不包邮</el-radio>
@@ -104,14 +123,14 @@
       </div>
 
       <p class="title">第四步：设置试客找到商品入口</p>
-      <el-form-item label="APP关键词：" labelWidth="120px">
+      <el-form-item label="APP关键词：" :labelWidth="labelWidth">
         <span >{{ choosePlat }}</span>
       </el-form-item>
       <!--<el-form-item label="商品淘口令：" labelWidth="120px" v-if="form.platformType==='1'||form.platformType==='2'">-->
         <!--<el-input type="textarea" :rows="4" class="textarea" placeholder="请输入内容" @blur="cancelWarn(form.productShareUrl,appKey)" v-model.trim="form.productShareUrl"></el-input>-->
       <!--</el-form-item>-->
       <el-form-item class="size" v-for="(keyItem,index) in form.keyword" :label="'APP端关键词'+(index+1)*1+'：'"
-            :key="index" :prop="'keyword.'+ index + '.searchKeyword'" labelWidth="120px">
+            :key="index" :prop="'keyword.'+ index + '.searchKeyword'" :labelWidth="labelWidth">
         <el-select :disabled="read" class="search" @focus="getType(form.platformType)" v-model="keyItem.searchId" placeholder="搜索平台" size="small">
           <el-option
             v-for="(item ,index) in searchOptions"
@@ -124,13 +143,13 @@
           <el-option v-for="item in topOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
         <el-input :readonly="readIpt" class="key" placeholder="填写搜索关键词" :rule="{ message : '关键词不能为空', trigger : 'blur' , required : true }"
-                  :maxlength="100"  v-model.trim="keyItem.searchKeyword" size="small" ></el-input>
+                  :maxlength="40"  v-model.trim="keyItem.searchKeyword" size="small" ></el-input>
         <span>筛选条件：</span>
         <el-input :maxlength="100" class="key" :readonly="readIpt"  placeholder="如价格区间、销量区间等" size="small" v-model.trim="keyItem.searchCondition" ></el-input>
         <el-button :disabled="read" slot size="small" @click="deleteKey(keyItem)">删除</el-button>
 
       </el-form-item>
-      <el-form-item labelWidth="120px" >
+      <el-form-item :labelWidth="labelWidth" >
         <el-button :disabled="read" type="primary" @click="addKey">添加一个APP关键词</el-button>
 
       </el-form-item>
@@ -164,8 +183,8 @@
             </el-date-picker>
           </div>
         </el-form-item>
-        <div class="rate">设置转化率：</div>
-        <ul class="rules">
+        <div class="rate">设置<span v-if="form.activityType ==='1'">转化率：</span><span v-else="form.activityType==='3'">每日开团次数：</span></div>
+        <ul class="rules" v-if="form.activityType ==='1'">
           <span>投放周期建议：</span>
           <li>1、 新品基础优化建议不低于3期活动，每期设置活动3~5天的单量，单量需要做螺旋，新品第一期PC长词+淘口令，第二期PC核心词+淘口令+手淘长词，第三期PC核心词+手淘核心词。</li>
           <li>2、 老品权重提升建议不低于3期活动，每期活动3~5天的单量，配合人气任务模式做收藏加购人气，单量和人气都需要螺旋，加购率做到30%，收藏率20%以上，PC核心词+手淘核心词+猜你喜欢+直通车。</li>
@@ -176,16 +195,16 @@
             <li v-for="item in week">{{ item.value }}</li>
           </ul>
           <ul class="weeks">
-            <li v-for="(daysItem,index) in weekItems">
+            <li v-for="(daysItem,index) in weekItems" :key="index">
               <ul>
-                <li class="dayDiv" v-for="(item,index) in daysItem">
+                <li class="dayDiv" v-for="(item,index) in daysItem" :key="index">
                   <div v-if="item===''"></div>
                   <!--<div v-else="item == day"><span>{{item }}</span><p>试用展示时间</p></div>-->
                   <div class="setGoods" v-else-if="item.date" >
                     <span class="dateNum">{{ item.num }}</span>
                     <div>
                       <input type="button" class="miniBtn" :disabled="read" @click="setNum(1,goodsAmount[item.index],item.index,item.date)" value="-"/>
-                      <input v-model.number="goodsAmount[item.index]" :disabled="readonlyKey"  @blur="numIpt(goodsAmount[item.index],item.index,item.date)" placeholder="投放数量" />
+                      <input v-model.number="goodsAmount[item.index]" :disabled="readonlyKey"  @blur="numIpt(goodsAmount[item.index],item.index,item.date)" :placeholder="form.activityType==='1'?'投放数量':'开团次数'" />
                       <input type="button" class="miniBtn" :disabled="read" @click="setNum(2,goodsAmount[item.index],item.index,item.date)" value="+">
                     </div>
                   </div>
@@ -198,21 +217,22 @@
             </li>
           </ul>
         </div>
-        <span v-if="warn" class="daysWarn">投放数量请填写不小于1且不大于999的整数！</span>
-        <span class="daysWarn" v-if="daysWarn">投放天数不得小于3！</span>
-        <span class="daysWarn" v-if="changeNum&& $route.query.payStatus === '1'">投放总量不得更改！</span>
+        <span v-if="warn" class="daysWarn tips_warn">投放数量请填写不小于1且不大于999的整数！</span>
+        <span class="daysWarn tips_warn" v-if="daysWarn">投放天数不得小于3！</span>
+        <span class="daysWarn tips_warn" v-if="changeNum&& $route.query.payStatus === '1'">投放总量不得更改！</span>
 
         <div class="situation">投放情况：</div>
         <el-form-item>
           <table border="1" bordercolor="#dcdfe6" >
             <tr>
-              <td>投放天数</td>
-              <td>投放总量（试用品份数）</td>
+              <td><span v-if="form.activityType==='1'">投放</span><span v-else="form.activityType==='3'">开团</span>天数</td>
+              <td><span v-if="form.activityType==='1'">投放</span><span v-else="form.activityType==='3'">开团</span>总量（试用品份数）</td>
             </tr>
             <tr>
               <td v-if="goodsAmount.length">{{ dayNum }}</td>
               <td v-else></td>
-              <td v-if="tryoutAmount">{{ tryoutAmount }}</td>
+              <td v-if="tryoutAmount&&form.activityType==='1'">{{ tryoutAmount }}</td>
+              <td v-else-if="tryoutAmount&&form.activityType==='3'">{{ tryoutAmount*form.groupProductQuantity}}</td>
               <td v-else></td>
             </tr>
           </table>
@@ -249,7 +269,7 @@
     import { getToken } from '@/utils/auth'
     import ElRadioGroup from "element-ui/packages/radio/src/radio-group";
     import ElButtonGroup from "element-ui/packages/button/src/button-group";
-    import { getCategory ,getShopList ,searchTypeList , uploadImage , publishActivity  , changeDetail , getJDetail} from "@/api/activity"
+    import { getCategory ,getShopList ,searchTypeList , uploadImage , publishActivity  , changeDetail , getJDetail } from "@/api/activity"
     import { shopList } from "@/api/shop"
     import { getMember } from '@/api/userInfor'
     import $ from '../../../static/js/jquery-3.3.1.min.js'
@@ -263,6 +283,16 @@
       name: "step",
 
       data(){
+        // const validBrand = (rule,value,callback) => {
+        //   if(value === ''){
+        //     callback(new Error('请填写商品品牌'))
+        //   }else{
+        //     if(value.length > 40){
+        //       callback(new Error('商品品牌不得超过40个字'))
+        //     }
+        //     callback();
+        //   }
+        // };
         const validTitle = (rule , value ,callback) => {
           if(value === ''){
             callback(new Error('请填写活动标题'))
@@ -317,6 +347,9 @@
             if( !checkFloat(value)){
               callback( new Error('输入的小数不能超过两位，请重新输入'))
             }
+            if(value !==''&&this.form.activityType === '3'){
+              this.$refs.form.validateField('groupPeopleQuantity')
+            }
               callback();
 
           }
@@ -337,13 +370,35 @@
 
           callback();
         };
+        const validOpenNum = (rule,value,callback) => {
+          if(value === ''){
+            this.joinTips = false ;
+            callback(new Error('请输入参团人数'))
+          }else{
+            if(this.form.buyProductAmount<2){
+              this.form.groupPeopleQuantity = 1 ;
+              this.joinTips = true ;
+            }
+            if(!(/^[1-9]\d*$/).test(value)||value>this.form.buyProductAmount/2){
+              this.joinTips = false ;
+              callback(new Error('请输入不小于1 ，且不大于下单价格/2的正整数'))
+            }else{
+              this.form.groupPeopleQuantity = Math.round(value) ;
+              this.joinTips = true ;
+
+            }
+            callback();
+          }
+        };
         return{
-          type : '1',
+
           form : {
+            activityType: '1',
             platformType: '1',
             receiveHours : '24',
             categoryId : '',
             productId : '',
+            // activityBrand : '',
             activityTitle : '',
             productUrl: '',
             shopId : '' ,
@@ -352,6 +407,8 @@
             buyProductSpec:'',
             buyProductQuantity : '1',
             buyProductAmount : '',
+            groupProductQuantity  : 1 ,
+            groupPeopleQuantity : 1,
             post : '1',
             isCredit : '1',
             keyword : [{
@@ -366,6 +423,7 @@
             productDetail : '',
             // startTime : ''
           },
+          labelWidth : '120px',
           payWay : '',
           platForm : [
             {
@@ -385,44 +443,30 @@
             //   id : '4'
             // }
           ],
-          options : [
+          typeList : [
+            {
+              value : '1',
+              name : '超级试用'
+            },
+            {
+              value : '3' ,
+              name : '拼团试用'
+            },
             // {
-            //   label :'潮流女装',
-            //   value : '1'
-            // },
-            // {
-            //   label :'精品男装',
-            //   value : '2'
-            // },
-            // {
-            //   label :'鞋子箱包',
-            //   value : '3'
-            // },
-            // {
-            //   label :'时尚配饰',
-            //   value : '4'
-            // },
-            // {
-            //   label :'美食特产',
-            //   value : '5'
-            // },
-            // {
-            //   label :'数码家电',
-            //   value : '6'
-            // },
-            // {
-            //   label :'家具日用',
-            //   value : '7'
-            // },
-            // {
-            //   label :'美容护肤',
-            //   value : '8'
-            // },
-            // {
-            //   label :'综合试用',
-            //   value : '9'
+            //   value : '3',
+            //   name : '流量模式'
             // }
-          ] ,
+            // ,
+            // {
+            //   value : '3',
+            //   name : '新手试用'
+            // },
+            // {
+            //   value : '4' ,
+            //   name : '高价值商品邀请试用'
+            // }
+          ],
+          options : [] ,
           shopOptions : [],
           searchOptions : [],
           topOptions : [
@@ -470,6 +514,11 @@
                 required : true ,message : '请选择领取时间' ,trigger : 'change'
               }
             ],
+            // activityBrand : [
+            //   {
+            //     required : true ,trigger : 'blur',validator : validBrand
+            //   }
+            // ],
             activityTitle : [
               {
                 required : true ,trigger : 'blur' , validator : validTitle
@@ -499,6 +548,16 @@
             buyProductAmount : [
               {
                 required : true , validator : validMoney ,trigger : 'blur'
+              }
+            ],
+            groupProductQuantity : [
+              {
+                required : true , trigger : 'blur',message : '请选择每日开奖份数'
+              }
+            ],
+            groupPeopleQuantity : [
+              {
+                required : true ,trigger : 'blur',validator : validOpenNum
               }
             ],
             isCredit : [
@@ -542,16 +601,18 @@
           editor : '',
           order : '',
           pickTime : '' ,
-          readonly : false ,
-          readonlyKey : false ,
+          readonly : false ,  //付款后及查看活动详情时不能修改的值
+          readonlyKey : false ,  //付款后及查看活动详情时日历输入框禁止修改输入
           totalNum : '',
           changeNum : false ,
           activityVisible : false ,
-          read : false ,
+          read : false ,    //查看活动详情时禁止选择
           readShop : false ,
-          readIpt : false ,
+          readIpt : false ,  //查看活动详情时禁止输入
           autoUpload : true ,
-          vipVisible : false
+          vipVisible : false ,
+          joinTips : true ,
+          calendarNumType : ''
 
         }
       },
@@ -560,73 +621,16 @@
       mounted(){
         shopList().then( res => {
           if(res.data.status === '000000000'){
+            //获取用户是否已绑定店铺
             if(res.data.data.length){
               getMember().then( res => {
+                //判断用户是否是会员身份
                 if(res.data.data.vipLevel*1){
-                  if(this.$route.query.order !== undefined ) {
-                    this.editor = this.$route.query.editor;
-                    let order = this.$route.query.order ;
-                    if( order !== undefined){
-                      this.order = order ;
-                      this.$store.dispatch('getPublishDetail',order).then( res => {
-                        if (res.data.status === '000000000') {
-                          this.form = res.data.data;
-                          if(this.$route.query.payStatus === '1'){
-                            this.readonly = true ;
-                          }
-                          if(this.form.activityId !== '' ){
-                            let num = 0 ;
-                            this.resetSearch(this.form.platformType);
-                            this.getType(this.form.platformType);
-                            this.mainImg = this.imageDomain + this.form.mainImageUrl ;
-                            this.showImg = this.imageDomain + this.form.showImageUrl ;
-                            if(this.editor !== undefined){
-                              if(this.editor === '2'){
-                                this.read = 'disabled' ;
-                                this.readShop = 'disabled';
-                                this.readonly = true ;
-                                this.readIpt = true ;
-                                this.readonlyKey = 'disabled' ;
-                                this.autoUpload = false ;
-                              }
-                              if(this.form.activityCalendar.length !== 0){
-                                this.form.activityCalendar.forEach((i) => {
-                                  num = num + i.tryoutQuantity ;
-                                  this.goodsAmount.push(i.tryoutQuantity);
-                                });
-                              }
-                              this.tryoutAmount = num ;
-                              this.totalNum = num ;
-                              this.dayNum = this.goodsAmount.length ;
-                              // this.form['startTime'] = parseTime(new Date(this.form.activityStartTime.replace(/-/g,"/")).getTime() + 2*24*3600*1000) ;
-                              this.setRate(this.form.activityStartTime ,this.tryoutAmount,this.goodsAmount);
-                            }
-                            else{
-                              this.form.activityStartTime = '';
-                              this.setRate();
+                  // if(this.$route.query.order !== undefined ) {
+                  //判断活动是新建还是已存在活动
+                  this.activityDetail();
 
-                            }
-
-                          }else{
-                            this.form.activityStartTime = '';
-                            this.setRate();
-                          }
-
-                        } else {
-                          this.$message({
-                            message: res.data.message,
-                            center: true,
-                            type: 'error'
-                          })
-                        }
-                      }).catch( err => {
-                        alert('服务器开小差啦，请稍等~')
-                      })
-                    }
-                  }else{
-                    this.resetSearch('1');
-                    this.setRate();
-                  }
+                  //获取商品类型列表
                   getCategory().then( res => {
                     if(res.data.status === '000000000'){
                       this.options = res.data.data ;
@@ -675,6 +679,95 @@
 
       methods: {
 
+        //判断是新建活动还是已存在活动
+        activityDetail(){
+          this.editor = this.$route.query.editor;
+          let order = this.$route.query.order ;
+          if( order !== undefined){
+            this.order = order ;
+            //获取活动详情
+            this.$store.dispatch('getPublishDetail',order).then( res => {
+              if (res.data.status === '000000000') {
+                this.form = res.data.data;
+                //判断活动是否已支付
+                if(this.$route.query.payStatus === '1'){
+                  this.readonly = true ;
+                }
+                //已存在活动相关操作
+                this.activityStatus();
+
+              } else {
+                this.$message({
+                  message: res.data.message,
+                  center: true,
+                  type: 'error'
+                })
+              }
+            }).catch( err => {
+              alert('服务器开小差啦，请稍等~')
+            })
+          } else{
+            this.resetSearch('1');
+            this.setRate();
+          }
+        },
+        //已存在的活动相关操作
+        activityStatus(){
+          if(this.form.activityId !== '' ){
+            let num = 0 ;
+            this.resetSearch(this.form.platformType);
+            this.getType(this.form.platformType);
+            this.mainImg = this.imageDomain + this.form.mainImageUrl ;
+            this.showImg = this.imageDomain + this.form.showImageUrl ;
+
+            //判断活动编辑状态
+            this.editorStatus(num)
+
+          }else{
+            this.form.activityStartTime = '';
+            //生成对应日历
+            this.setRate();
+          }
+        },
+
+        //判断活动编辑状态
+        editorStatus(num){
+        if(this.editor !== undefined){
+          //查看活动，该状态下活动内容均不能进行编辑
+          if(this.editor === '2'){
+            this.read = 'disabled' ;
+            this.readShop = 'disabled';
+            this.readonly = true ;
+            this.readIpt = true ;
+            this.readonlyKey = 'disabled' ;
+            this.autoUpload = false ;
+          }
+          //获取活动日历信息
+          if(this.form.activityCalendar.length !== 0){
+            this.form.activityCalendar.forEach((i) => {
+              if(this.form.activityType === '3'){
+                num = num + i.groupQuantity ;
+                this.goodsAmount.push(i.groupQuantity);
+              }else{
+
+                num = num + i.tryoutQuantity ;
+                this.goodsAmount.push(i.tryoutQuantity);
+              }
+
+            });
+          }
+          this.tryoutAmount = num ;
+          this.totalNum = num ;
+          this.dayNum = this.goodsAmount.length ;
+          // this.form['startTime'] = parseTime(new Date(this.form.activityStartTime.replace(/-/g,"/")).getTime() + 2*24*3600*1000) ;
+          this.setRate(this.form.activityStartTime ,this.tryoutAmount,this.goodsAmount);
+        }
+        else{
+          this.form.activityStartTime = '';
+          this.setRate();
+
+        }
+    },
         //上传商品展示图
         handleShowSuccess(res, file) {
           // console.log(res,file);
@@ -851,8 +944,6 @@
           this.form.productId = '' ;
 
           this.goPlatform(type,url);
-
-
         } ,
         goPlatform(type,url){
           var that = this ;
@@ -983,7 +1074,7 @@
 
 
           }
-          console.log(this.form.productDetail,this.form.productName);
+          // console.log(this.form.productDetail,this.form.productName);
 
         },
         //删除APP端关键词
@@ -1015,6 +1106,17 @@
           }
         },
 
+        // //获取对应活动日历传输数据字段
+        // getActivityCalendar(){
+        //
+        //     if(this.form.activityType === '1'){
+        //      this.calendarNumType =  'tryoutQuantity'
+        //     }
+        //     if(this.form.activityType === '3'){
+        //       this.calendarNumType = 'groupQuantity'
+        //     }
+        //
+        // },
         //转化率日历
         setRate(value,total,dayItem ){
 
@@ -1190,15 +1292,26 @@
         },
 
         oneEditor(index,date){
-
           if( index > this.goodsAmount.length -1 ){
 
           }else{
             if(this.form.activityCalendar[index] === undefined ){
-              this.form.activityCalendar.splice(index ,0,{ activityDate : date , tryoutQuantity :this.goodsAmount[index] });
+              if(this.form.activityType === '3'){
+                this.form.activityCalendar.splice(index ,0,{ activityDate : date , groupQuantity :this.goodsAmount[index] });
+
+              }else{
+                this.form.activityCalendar.splice(index ,0,{ activityDate : date , tryoutQuantity :this.goodsAmount[index] });
+
+              }
             }
             else{
-              this.form.activityCalendar.splice(index ,1,{ activityDate : date , tryoutQuantity :this.goodsAmount[index] });
+              if(this.form.activityType === '3') {
+                this.form.activityCalendar.splice(index ,1,{ activityDate : date , groupQuantity :this.goodsAmount[index] });
+
+              }else{
+                this.form.activityCalendar.splice(index ,1,{ activityDate : date , tryoutQuantity :this.goodsAmount[index] });
+
+              }
             }
           }
 
@@ -1215,11 +1328,22 @@
           for(let j = 0 ; j < index ; j++){
             if(this.goodsAmount[j] === undefined  ){
               this.goodsAmount[j] = 1 ;
+              if(this.form.activityType === '3'){
+                this.form.activityCalendar.splice(j ,0,{ activityDate : (parseTime(new Date(time).getTime()+j*24*3600*1000)) , groupQuantity :1 });
 
-              this.form.activityCalendar.splice(j ,0,{ activityDate : (parseTime(new Date(time).getTime()+j*24*3600*1000)) , tryoutQuantity :1 });
+              }else{
+                this.form.activityCalendar.splice(j ,0,{ activityDate : (parseTime(new Date(time).getTime()+j*24*3600*1000)) , tryoutQuantity :1 });
+
+              }
             }else if( this.goodsAmount[j] === '' ){
               this.goodsAmount[j] = 1 ;
-              this.form.activityCalendar.splice(j ,1,{ activityDate : (parseTime(new Date(time).getTime()+j*24*3600*1000)) , tryoutQuantity :1 });
+              if(this.form.activityType === '3'){
+                this.form.activityCalendar.splice(j ,1,{ activityDate : (parseTime(new Date(time).getTime()+j*24*3600*1000)) ,groupQuantity :1 });
+
+              }else{
+                this.form.activityCalendar.splice(j ,1,{ activityDate : (parseTime(new Date(time).getTime()+j*24*3600*1000)) , tryoutQuantity :1 });
+
+              }
 
             }
           }
@@ -1259,7 +1383,14 @@
           if(this.goodsAmount.indexOf('') === -1  ){
             this.form.activityCalendar.every( i => {
               let reg = /^[1-9]{1}[0-9]{0,2}$/ ;
-              if(reg.test(i.tryoutQuantity)){
+              let canlenderNum = '';
+              if(this.form.activityType === '3'){
+                canlenderNum = reg.test(i.groupQuantity)
+              }else{
+                canlenderNum = reg.test(i.tryoutQuantity)
+
+              }
+              if(canlenderNum){
                 this.warn = false ;
                 return !this.warn ;
               }else{
@@ -1323,6 +1454,8 @@
 
       // 提交活动信息
         submitDetail(index,form){
+          //试用类型不为拼团类时删除拼团相关参数字段
+          // console.log(form)
 
           if (index === 1) {
             publishActivity(form).then(res => {
@@ -1334,7 +1467,7 @@
                   duration: 500
 
                 });
-                this.$router.push({name: 'Pay', params: {id: res.data.data.activityId}});
+                this.$router.push({name: 'TryoutPay', params: {id: res.data.data.activityId}});
 
               } else {
                 this.$message({
@@ -1357,7 +1490,7 @@
                     center: true,
                     duration: 500
                   });
-                  this.$router.push({name: 'Pay', params: {id: this.order}});
+                  this.$router.push({name: 'TryoutPay', params: {id: this.order}});
 
                 } else {
                   this.$message({
@@ -1396,344 +1529,6 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  .step{
-    width : 90% ;
-    margin : 0 auto ;
-    .title{
-      width : 100% ;
-      height : 0.5rem ;
-      line-height : 0.5rem ;
-      font-size : 0.22rem ;
-      font-weight : bold ;
-      color : #333;
-      text-indent : 0.1rem ;
-      border-bottom : 1px solid #aaa ;
-      margin-bottom : 0.2rem ;
-      float : left ;
-    }
-    .el-form-item{
-      /*margin : 0;*/
-      width : 100% ;
-      /*padding-left : 0.3rem ;*/
-      .upload{
-        width : 1.6rem ;
-        float : left ;
-        margin-top : 0.2rem ;
-        position : relative ;
+  @import 'src/styles/tryout';
 
-        .avatar {
-          width: 1.46rem;
-          height: 1.46rem;
-          display: block;
-        }
-        .imgWarn{
-          color: #f56c6c;
-          font-size: 12px;
-          line-height: 1;
-          padding-top: 4px;
-          position: absolute;
-          top: 100%;
-          left: 0;
-        }
-      }
-      .require{
-        margin-top : 0.2rem ;
-        margin-left : 0.3rem ;
-        float : left ;
-        width : 60% ;
-        li{
-          height : 0.3rem ;
-          line-height : 0.3rem ;
-          span{
-            color : #ff0000 ;
-          }
-        }
-      }
-      .el-input{
-        width : 4rem ;
-      }
-      .activity{
-        .el-input{
-          width : 3rem ;
-        }
-      }
-      .any{
-        width : 1.2rem ;
-        margin-right : 0.1rem ;
-
-      }
-
-
-      .keyTip{
-        left: 30% ;
-      }
-      .conditions{
-        left : 50%;
-      }
-
-      .anyNum{
-        width : 1rem ;
-      }
-      .post{
-        /*height : 0.5rem ;*/
-        /*float : left ;*/
-        /*margin-right : 1.1rem ;*/
-        .el-form-item{
-          width : 50% ;
-        }
-        .tip{
-          width : 50% ;
-          float : right ;
-        }
-      }
-      .textarea{
-        width : 40% ;
-      }
-      .search{
-        width : 1.2rem ;
-        margin-right : 0.2rem ;
-      }
-      .key{
-        width : 20% ;
-        margin-right : 0.2rem ;
-      }
-      .block{
-        .el-input{
-          width : 200px ;
-        }
-      }
-      /*.keyBtn{*/
-        /*!*width : 100% ;*!*/
-        /*!*margin-top : 0.2rem ;*!*/
-        /*!*padding-left : 2rem ;*!*/
-        /*!*box-sizing: border-box;*!*/
-      /*}*/
-      table{
-        border-collapse: collapse;
-        width : 60% ;
-        margin : auto 1.2rem;
-        td{
-          width : 2rem ;
-          height : 0.3rem ;
-          text-align : center;
-          color : #456 ;
-        }
-      }
-
-    }
-    .tips{
-      width : 50% ;
-      /*height : 0.3rem ;*/
-      line-height : 0.3rem ;
-      font-size : 0.12rem ;
-      color : #456 ;
-      margin-left : 0.2rem ;
-      display: inline-block;
-      img{
-        width : 0.2rem ;
-        height : 0.2rem ;
-        float : left ;
-        margin-top : 0.03rem ;
-        margin-right : 0.05rem ;
-      }
-    }
-
-    .rules{
-      width : 90% ;
-      padding-left : 0.28rem ;
-      font-size : 0.13rem ;
-      color : #456 ;
-      span{
-        font-size : 0.14rem ;
-        display: block ;
-        line-height : 0.3rem ;
-      }
-      li{
-        padding-left : 0.25rem ;
-        line-height : 0.25rem ;
-      }
-    }
-    .datePicker{
-      width : 90% ;
-      margin : 0.3rem auto ;
-      display : flex;
-      flex-direction : column;
-      justify-content: center;
-      border : 1px solid #ccc ;
-      p{
-        width : 100% ;
-        height : 0.4rem ;
-        line-height : 0.4rem ;
-        font-size : 0.14rem ;
-        text-align: center;
-        border-bottom : 1px solid #ccc  ;
-        color : #666 ;
-      }
-      .dayTitle{
-        width : 100% ;
-        height : 0.4rem ;
-        display : flex ;
-        flex-direction: row;
-        li{
-          flex : 1 ;
-          height : 100% ;
-          line-height : 0.4rem ;
-          font-size : 0.15rem ;
-          font-weight : bold ;
-          color : #fff;
-          text-align : center;
-          background : #8f949b;
-          border-right : 1px solid #f1f1f1 ;
-          &:nth-last-child(1){
-            border-right : 0;
-          }
-        }
-      }
-      .weeks{
-        width : 100% ;
-        display : flex ;
-        flex-direction : column ;
-        li{
-          flex : 1 ;
-          height : 1rem ;
-          border-top : 1px solid #ccc ;
-          ul{
-            width : 100% ;
-            height : 100% ;
-            display : flex;
-            flex-direction : row ;
-            .dayDiv{
-              flex : 1 ;
-              border-right : 1px solid #ccc ;
-              &:nth-last-child(1){
-                border-right : 0;
-              }
-              div{
-                width : 100% ;
-                height : 100%;
-              }
-              .today{
-                padding : 0.05rem ;
-                background : #D3D3D3 ;
-                color : #8f949a;
-
-                span{
-                  width : 100% ;
-                  height : 0.4rem ;
-                  line-height : 0.4rem ;
-                  font-size : 0.2rem ;
-                  font-weight : bold ;
-                  display: inline-block;
-                  text-align : center ;
-                }
-                p{
-                  font-size : 0.14rem ;
-                  font-weight : bold ;
-                  border-bottom : 0 ;
-                }
-              }
-              .setGoods{
-                display: flex ;
-                flex : 1;
-                height : 100% ;
-                /*justify-content: center;*/
-                align-items: center;
-                flex-direction: column;
-                .dateNum{
-                  width : 100% ;
-                  height : 0.3rem ;
-                  line-height : 0.3rem ;
-                  display : block ;
-                  text-align: center;
-                  color : #889aa4;
-                  font-size : 0.2rem ;
-                  font-weight : bold ;
-                }
-                div{
-                  width : 90% ;
-                  display : flex ;
-                  flex-direction: row ;
-                  justify-content: center;
-                  margin-top : 0.1rem ;
-                  height : 0.22rem ;
-                  border : 1px solid #ccc ;
-                  border-radius: 0.05rem ;
-                  .miniBtn{
-                    width : 20% ;
-                    height : 100% ;
-                    text-align : center ;
-                    background : 0;
-                    padding : 0;
-                    border : 0;
-                    &:nth-child(1){
-                      border-right : 1px solid #ccc ;
-                    }
-                    &:nth-last-child(1){
-                      border-left : 1px solid #ccc ;
-                    }
-                  }
-                  input{
-                    width : 60% ;
-                    height : 0.2rem ;
-                    font-size : 0.12rem ;
-                    padding : 0;
-                    border : 0;
-                    text-align: center;
-                    color : #aaa ;
-                  }
-                }
-                /*.numWarn{*/
-                  /*width : 100% ;*/
-                  /*height : 0.2rem ;*/
-                  /*line-height : 0.2rem ;*/
-                  /*text-align : center;*/
-                  /*font-size : 0.1rem ;*/
-                  /*color : #ff0011 ;*/
-                  /*display : inline-block;*/
-                  /*margin-top : 0.07rem ;*/
-                /*}*/
-              }
-            }
-          }
-        }
-      }
-    }
-    .daysWarn,.keyWarn{
-      width : 100% ;
-      height : 0.3rem ;
-      line-height : 0.3rem ;
-      display : block ;
-      font-size : 0.14rem ;
-      color : #f56c6c;
-      text-indent : 1.5rem ;
-    }
-
-    .rate,.situation{
-      font-size : 0.18rem ;
-      font-weight : bold ;
-      height : 0.6rem ;
-      line-height : 0.6rem ;
-      color : #333;
-      text-indent : 0.1rem ;
-    }
-    .situation{
-      width : 200px ;
-    }
-    .submit{
-      display : flex ;
-      justify-content: center;
-      margin-top : 0.5rem ;
-    }
-    .el-dialog{
-      p{
-        text-align : center ;
-        line-height : 0.4rem ;
-        font-size : 0.16rem ;
-      }
-      .el-button{
-        margin : 0.1rem  auto;
-
-      }
-    }
-  }
 </style>

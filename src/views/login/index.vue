@@ -24,7 +24,7 @@
         <span class="svg-container">
           <img src="../../assets/imgs/verify2.png" alt="" />
         </span>
-        <el-input style="width : 150px;" v-model="loginForm.captcha"  autoComplete="on" placeholder="请输入验证码"></el-input>
+        <el-input style="width : 150px;"  v-model="loginForm.captcha" @keyup.enter.native="handleLogin('loginForm')" autoComplete="on" placeholder="请输入验证码"></el-input>
         <img class="show-captcha" :src="'data:image/png;base64,'+ imgCode" alt="" @click="changeCaptcha" />
 
       </el-form-item>

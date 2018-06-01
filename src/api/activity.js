@@ -186,9 +186,9 @@ export function uploadImage(file){
     url : "/tryout/file/upload" ,
     method : 'post' ,
     data : file ,
-    headers : {
-      'Content-Type' : 'multipart/form-data'
-    }
+    // headers : {
+    //   // 'Content-Type' : 'form-data'
+    // }
   })
 }
 
@@ -209,6 +209,14 @@ export function updateKeyword(data){
     url : '/tryout/activity/updateKeyword',
     method : 'post',
     data
+  })
+}
+
+//获取活动佣金
+export function getCommission(){
+  return request({
+    url : '/tryout/activity/getCommission',
+    method : 'post'
   })
 }
 

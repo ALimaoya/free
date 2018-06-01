@@ -1,37 +1,17 @@
 <template>
   <div class="detail">
-    <div class="title">活动商品详情</div>
+    <div class="title">流量任务订单详情</div>
     <div class="content">
       <ul class="detailInfor">
-        <!--<li>1、活动类型：{{ detailInfo.activity}}</li>-->
-        <!--<li>2、商品来源：{{detailInfo.resource}}</li>-->
-        <!--<li>3、活动标题：{{ detailInfo.title }}</li>-->
-        <!--<li>4、试用品类型：{{ detailInfo.type}}</li>-->
-        <!--<li>5、商品链接：{{ detailInfo.link}}</li>-->
-        <!--<li>6、下单规格：{{ detailInfo.size }} </li>-->
-        <!--<li class="keys">  件数：{{ detailInfo.number }}  </li>-->
-        <!--<li class="keys">  金额：{{detailInfo.money }}  </li>-->
-        <!--<li class="keys">  包邮：{{detailInfo.passway}}</li>-->
-        <!--<li>7、找到推广宝贝的入口 </li>-->
-        <!--<li class="keys">关键词：{{detailInfo.key}}</li>-->
-        <!--<li class="keys">淘口令：{{ detailInfo.tao }}</li>-->
-        <!--<li>8、上架时间：{{detailInfo.date }}</li>-->
-        <li><span>试客活动编号：</span><span>{{ detailInfo.activityCode }}</span></li>
-        <li><span>试客订单编号：</span><span>{{ detailInfo.orderCode}}</span></li>
+        <li><span>任务编号：</span><span>{{ detailInfo.activityCode }}</span></li>
+        <li><span>订单编号：</span><span>{{ detailInfo.orderCode}}</span></li>
         <li><span>商铺名称：</span><span v-if="detailInfo.platform">{{ detailInfo.shopName }}</span><span v-else>暂无</span></li>
         <li><span>平台类型：</span><span v-if="detailInfo.platform">{{ platForm[detailInfo.platform] }}</span><span v-else>暂无</span></li>
-        <li><span>第三方单号：</span><span v-if="detailInfo.thirdOrderCode">{{ detailInfo.thirdOrderCode }}</span><span v-else>暂无</span></li>
-        <li><span>中奖时间：</span><span v-if="detailInfo.winTime">{{ detailInfo.winTime }}</span><span v-else>暂无</span></li>
-        <li><span>开奖时间：</span><span v-if="detailInfo.receiveTime">{{ detailInfo.receiveTime }}</span><span v-else>暂无</span></li>
-        <li><span>订单价格：</span><span v-if="detailInfo.amount">{{ detailInfo.amount }} 元</span><span v-else>暂无</span></li>
-        <li><span>用户购买金额：</span><span v-if="detailInfo.buyAmount">{{ detailInfo.buyAmount }} 元</span><span v-else>暂无</span></li>
+        <!--<li><span>第三方单号：</span><span v-if="detailInfo.thirdOrderCode">{{ detailInfo.thirdOrderCode }}</span><span v-else>暂无</span></li>-->
+        <li><span>订单创建时间：</span><span v-if="detailInfo.receiveTime">{{ detailInfo.winTime }}</span><span v-else>暂无</span></li>
+        <!--<li><span>订单价格：</span><span v-if="detailInfo.amount">{{ detailInfo.amount }} 元</span><span v-else>暂无</span></li>-->
+        <li><span>订单状态：</span><span v-if="detailInfo.buyAmount">{{ detailInfo.buyAmount }} </span><span v-else>暂无</span></li>
         <li class="faileReason" v-if="detailInfo.remarks"><span>订单失败原因：</span><span>{{ detailInfo.remarks }} </span></li>
-        <li class="mainImg" >
-          <span style="width:18.9%;float : left ;">宝贝主图:</span><span v-if="!detailInfo.mainImageUrl">暂无详情</span>
-          <div v-else>
-            <img @click="getImg(detailInfo.mainImageUrl)" :src="imageDomain + detailInfo.mainImageUrl" alt="" />
-          </div>
-        </li>
         <li class="faileReason"><span>图片详情：</span><span v-if="detailInfo.orderImageList == 0" class="noImg">暂无图片</span></li>
         <li class="detailPic">
           <div v-if="detailInfo.orderImageList != 0">

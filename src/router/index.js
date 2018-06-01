@@ -61,18 +61,33 @@ export const constantRouterMap = [
     meta: { title: '发布试用', icon: 'pay' },
     children : [
       {
-        path : 'step1',
-        name : 'Step',
+        path : 'flow_step1',
+        name : 'FlowActivity',
         // hidden : true ,
-        component: () => import('@/views/publish/step'),
-        meta: { title: '发布试用',noCache: true },
+        component: () => import('@/views/publish/flowActivity'),
+        meta: { title: '发布流量活动',noCache: true },
 
       },
       {
-        path: 'step2/:id',
-        name: 'Pay',
-        component: () => import('@/views/publish/pay'),
-        meta: { title: '试用活动支付', icon: 'pay',noCache: true  },
+        path: 'flow_step2/:id',
+        name: 'FlowPay',
+        component: () => import('@/views/publish/flowPay'),
+        meta: { title: '流量活动支付', icon: 'flowPay',noCache: true  },
+        hidden : true
+      },
+      {
+        path : 'tryout_step1',
+        name : 'TryoutActivity',
+        // hidden : true ,
+        component: () => import('@/views/publish/tryoutActivity'),
+        meta: { title: '发布试用活动',noCache: true },
+
+      },
+      {
+        path: 'tryout_step2/:id',
+        name: 'TryoutPay',
+        component: () => import('@/views/publish/tryoutPay'),
+        meta: { title: '试用活动支付', icon: 'tryoutPay',noCache: true  },
         hidden : true
       },
       {
@@ -98,24 +113,58 @@ export const constantRouterMap = [
         meta: { title: '试用管理', icon: 'approval' }
       },
       {
-        path: 'order',
-        name: 'Order',
-        component: () => import('@/views/activity/order'),
-        meta: { title: '订单查询', icon: 'order' }
+        path: 'flow',
+        name: 'Flow',
+        component: () => import('@/views/activity/flow'),
+        meta: { title: '流量模式', icon: 'flow' }
+      }
+      // {
+      //   path: 'flowDetail/:order',
+      //   name: 'FlowDetail',
+      //   component: () => import('@/views/activity/flowDetail'),
+      //   hidden : true ,
+      //   meta: { title: '流量活动任务详情', icon: 'flowDetail' }
+      // }
+
+
+    ]
+  },
+  {
+    path : '/order',
+    component : Layout,
+    name : 'Order',
+    meta : { title : '订单管理', icon : 'order'},
+    children : [
+      {
+        path: 'activityOrder',
+        name: 'ActivityOrder',
+        component: () => import('@/views/order/activityOrder'),
+        meta: { title: '试用订单查询', icon: 'activityOrder' }
+      },
+      {
+        path: 'flowOrder',
+        name: 'FlowOrder',
+        component: () => import('@/views/order/flowOrder'),
+        meta: { title: '流量订单查询', icon: 'flowOrder' }
       },
       {
         path: 'bonus',
         name: 'Bonus',
-        component: () => import('@/views/activity/checkbonus'),
-        meta: { title: '领奖审核', icon: 'bonus' }
+        component: () => import('@/views/order/checkbonus'),
+        meta: { title: '试用领奖审核', icon: 'bonus' }
       },
       {
         path: 'view',
         name: 'View',
-        component: () => import('@/views/activity/checkview'),
-        meta: { title: '评价审核', icon: 'view' }
+        component: () => import('@/views/order/checkview'),
+        meta: { title: '试用评价审核', icon: 'view' }
       },
-
+      {
+        path: 'checkFlow',
+        name: 'CheckFlow',
+        component: () => import('@/views/order/checkFlow'),
+        meta: { title: '流量订单审核', icon: 'checkFlow' }
+      },
       // {
       //   path: 'feedback',
       //   name: 'Feedback',
@@ -123,12 +172,19 @@ export const constantRouterMap = [
       //   meta: { title: '投诉反馈', icon: 'feedback' }
       // },
       {
-        path: 'detail/:order',
-        name: 'Detail',
-        component: () => import('@/views/activity/detail'),
+        path: 'tryoutDetail/:order',
+        name: 'TryoutDetail',
+        component: () => import('@/views/order/tryoutDetail'),
         hidden: true ,
-        meta: { title: '商品详情', icon: 'detail'  }
+        meta: { title: '试用活动订单详情', icon: 'tryoutDetail'  }
       },
+      {
+        path: 'flowDetail/:order',
+        name: 'FlowDetail',
+        component: () => import('@/views/order/flowDetail'),
+        hidden: true ,
+        meta: { title: '流量任务订单详情', icon: 'flowDetail'  }
+      }
     ]
   },
   {
