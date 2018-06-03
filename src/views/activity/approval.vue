@@ -69,11 +69,11 @@
       <el-table-column prop="status" label="活动状态" width="92">
         <template slot-scope="scope">
           <span v-if="scope.row.status==='9'">已完成</span>
+          <span v-else-if="scope.row.payStatus==='0'">待支付</span>
           <span v-else-if="scope.row.status==='10'">已取消</span>
           <span v-else-if="scope.row.status === '5'&& scope.row.startTime>time">待开始</span>
           <span v-else-if="scope.row.status === '5'&& scope.row.startTime<=time&&time<scope.row.endTime">进行中</span>
           <span v-else-if="scope.row.status === '5'&& scope.row.endTime<=time">已结束</span>
-
           <span v-else>{{ options[scope.row.status-1].name}}</span>
         </template>
       </el-table-column>
@@ -388,6 +388,7 @@
         this.activity.EQ_activityStatus = res.EQ_activityStatus ;
         this.activity.GT_activityEndTime = res.GT_activityEndTime ;
         this.activity.LT_activityStartTime = res.LT_activityStartTime ;
+        this.currentPage = 1 ;
 
         this.getData();
       },

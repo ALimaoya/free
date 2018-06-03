@@ -66,8 +66,9 @@
       <el-table-column prop="status" label="任务状态">
         <template slot-scope="scope">
           <span v-if="scope.row.status==='9'">结算成功</span>
+          <span v-else-if="scope.row.payStatus==='0'">待支付</span>
           <span v-else-if="scope.row.status==='5'&& scope.row.startTime > time">待开始</span>
-          <span v-else-if="scope.row.status==='5'&& scope.row.startTime <= time&&time< scope.row.endTime">进行中</span>
+          <span v-else-if="scope.row.status==='5'&& scope.row.startTime <= time&&time< scope.row.endTime&&scope.row.payStatus === '1'">进行中</span>
           <span v-else-if="scope.row.status==='5'&& scope.row.endTime <= time">已结束</span>
           <span v-else-if="scope.row.status==='6'">下架</span>
           <span v-else-if="scope.row.status==='7'">申请结算</span>
@@ -78,7 +79,7 @@
           <el-button class="check" style="padding : 0 ;" type="text"  @click="detail(scope.$index,scope.row.activityId)">查看详情</el-button>
           <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.payStatus==='0'" @click="editor(scope.$index,scope.row.activityId, scope.row.payStatus)">修改</el-button>
           <!--<el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.status==='4'" @click="reason(scope.$index,scope.row.reason)">查看原因</el-button>-->
-          <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.status==='5'&& scope.row.startTime <= time" @click="handleShelves(scope.row.activityId,scope.row.status)">下架</el-button>
+          <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.status==='5'&& scope.row.startTime <= time&& scope.row.payStatus==='1'" @click="handleShelves(scope.row.activityId,scope.row.status)">下架</el-button>
           <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.status==='6'&& scope.row.endTime > time" @click="handleShelves(scope.row.activityId,scope.row.status)">上架</el-button>
           <el-button class="check" style="padding : 0 ;" type="text" v-if="(scope.row.status==='6'|| (scope.row.status==='5'&& scope.row.endTime < time )) && scope.row.payStatus==='1'" @click="applyAccounts(scope.$index,scope.row.activityId)">申请结算</el-button>
           <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.status==='7'" @click="cancelAccounts(scope.$index,scope.row.activityId)">取消结算</el-button>
@@ -299,6 +300,7 @@
         this.activity.EQ_activityStatus = res.EQ_activityStatus ;
         this.activity.GT_activityEndTime = res.activityStartTime ;
         this.activity.LT_activityStartTime = res.activityEndTime ;
+        this.currentPage = 1 ;
 
         // console.log(this.activity);
         this.getData();

@@ -254,6 +254,8 @@
       getData(res){
         this.order ={...res }  ;
         // console.log(this.order);
+        this.currentPage = 1 ;
+
         this.getList();
       },
       //查看宝贝大图

@@ -114,7 +114,7 @@
             </ul>
           </div>
           <span v-if="warn" class="daysWarn tips_warn">投放数量请填写不小于1且不大于999的整数！</span>
-          <span class="daysWarn tips_warn" v-if="daysWarn">设置试用总单数不得少于15单！</span>
+          <span class="daysWarn tips_warn" v-if="daysWarn">设置投放总单数不得少于15单！</span>
           <span class="daysWarn tips_warn" v-if="changeNum&& $route.query.payStatus === '1'">投放总量不得更改！</span>
 
           <div class="situation">投放情况：</div>

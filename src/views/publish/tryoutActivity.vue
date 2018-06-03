@@ -95,7 +95,7 @@
       <el-form-item label="下单价格：" :labelWidth="labelWidth" prop="buyProductAmount">
         <el-input class="any" size="small" :maxlength="10" type="number" :readonly="readonly" v-model.number="form.buyProductAmount" placeholder="请输入内容" ></el-input>元
       </el-form-item>
-      <el-form-item v-if="form.activityType!=='1'&&  form.activityType !== undefined" label="每日开奖份数：" :labelWidth="labelWidth" prop="groupProductQuantity">
+      <el-form-item v-if="form.activityType!=='1'&&  form.activityType !== undefined" label="每次开奖份数：" :labelWidth="labelWidth" prop="groupProductQuantity">
       <el-input class="any" size="small" :maxlength="10" v-model.num="form.groupProductQuantity" type="number" min="1" :readonly="readonly" placeholder="请输入内容"></el-input>次
       <span class="tips"><img src="../../assets/imgs/tips3.png" alt=""/>开奖份数为：满足开团条件时的中奖人数</span>
       </el-form-item>
@@ -103,7 +103,7 @@
         <el-input class="any" size="small" :maxLength="10" v-model.num="form.groupPeopleQuantity" type="number" min="1" :readonly="readonly" placeholder="请输入内容"></el-input>人
         <span class="tips" ><img src="../../assets/imgs/tips3.png" alt=""/>参团人数：申请人数满足此条件时，立即开奖</span>
       </el-form-item>
-      <span v-if="form.activityType!=='1'&&form.activityType !== undefined" class="tips tips_warn" style="margin-left :120px ;margin-bottom : 22px;" >注：参团人数需在1 ~ 下单价格/2 之间的整数范围内，且不能小于每日开奖份数的输入值，最低人数为1</span>
+      <span v-if="form.activityType!=='1'&&form.activityType !== undefined" class="tips tips_warn" style="margin-left :120px ;margin-bottom : 22px;" >注：参团人数需在1 ~ 下单价格/2 之间的整数范围内，且不能小于每次开奖份数的输入值，最低人数为1</span>
 
       <el-form-item :label="this.payWay" :labelWidth="labelWidth" prop="isCredit" style="float : left ;">
         <el-radio-group :disabled="read"  v-model="form.isCredit">
@@ -372,7 +372,7 @@
         };
         const validOpenNum = (rule,value,callback)=>{
           if(value === ''){
-            callback(new Error('请输入每日开奖份数'))
+            callback(new Error('请输入每次开奖份数'))
           }else{
             if(value  !==''&&this.form.activityType === '3'){
               this.$refs.form.validateField('groupPeopleQuantity');
@@ -395,7 +395,7 @@
 
             }
             if(value < this.form.groupProductQuantity){
-              callback(new Error('输入的参团人数不得小于每日开奖份数'))
+              callback(new Error('输入的参团人数不得小于每次开奖份数'))
             }
             callback();
           }

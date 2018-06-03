@@ -41,9 +41,9 @@
     <el-select v-if="activityShop" clearable size="small"  v-model="order.EQ_activityShop"  filterable placeholder="请选择店铺">
       <el-option
         v-for="item in shopList"
-        :key="item.shopId"
-        :label="item.shopName"
-        :value="item.shopId">
+        :key="item.id"
+        :label="item.name"
+        :value="item.id">
       </el-option>
     </el-select>
     <!--流量任务状态-->
@@ -87,7 +87,7 @@
 
 <script>
   // import {  getActivity ,getDetail ,getOrderList } from '@/api/activity'
-  import { shopList  } from "@/api/shop";
+  import { getShopList  } from "@/api/activity";
 
   export default {
         name: "index",
@@ -189,6 +189,10 @@
                 name : '全部试用活动状态',
                 value : ''
               },
+              {
+                name : '待支付',
+                value : '14'
+              },
               // {
               //   name : '待付款',
               //   value : '1'
@@ -238,6 +242,10 @@
               {
                 name : '全部状态',
                 value : ''
+              },
+              {
+                name : '待支付',
+                value : '14'
               },
               {
                 name : '待开始',
@@ -319,16 +327,15 @@
       methods : {
         //获取店铺列表
         getShop(){
-          let formData = new FormData();
-          formData.append('EQ_platformType' , this.order.platformType);
-          formData.append('EQ_status','2');
-          // formData.append('currentPage' ,this.currentPage);
+          // let formData = new FormData();
+          // formData.append('EQ_platformType' , this.order.platformType);
+          // formData.append('EQ_status','2');
+          // formData.append('currentPage' ,'2');
           // formData.append('pageSize' , this.pageSize);
-          formData.append('EQ_payStatus','1');
-          shopList(formData).then( res => {
+          // formData.append('EQ_payStatus','1');
+          getShopList(this.order.platformType).then( res => {
 
             if(res.data.status === '000000000'){
-              // console.log(res.data);
               this.shopList = res.data.data ;
 
             }

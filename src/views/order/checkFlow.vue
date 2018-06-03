@@ -1,6 +1,6 @@
 <template>
   <div class="checkflow tableBox">
-    <h1>评价审核</h1>
+    <h1>流量订单审核</h1>
     <search-bar @searchobj="getData" :platform-type="true" :activity-shop="true" :activity-code="true"  :flow="'checkFlow'"></search-bar>
 
     <!--<div class="search">-->
@@ -66,7 +66,7 @@
       <span class="totalItems">共{{ totalPages }}页，{{totalElements}}条记录</span>
     </div>
 
-    <el-dialog width="50%" :visible.sync="detailInfo" center top="10vh" title="评价审核">
+    <el-dialog width="50%" :visible.sync="detailInfo" center top="10vh" title="流量订单审核">
       <div class="checkPic">
         <dl v-if="searchImg">
           <dt>搜索截图</dt>
@@ -76,12 +76,12 @@
         </dl>
         <dl v-else class="noViewPic">暂无搜索截图</dl>
         <dl v-if="likeImg">
-          <dt>评价截图</dt>
+          <dt>商品收藏截图</dt>
           <dd >
             <img @click="getImg(likeImg)" :src=" imageDomain + likeImg" alt="" />
           </dd>
         </dl>
-        <dl v-else class="noViewPic">暂无评价截图</dl>
+        <dl v-else class="noViewPic">暂无商品收藏截图</dl>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="check('1')">审核成功</el-button>
@@ -207,6 +207,8 @@
       //根据搜索条件获取订单列表
       getData(res){
         this.order ={...res }  ;
+        this.currentPage = 1 ;
+
         // console.log(this.order);
         this.getList();
       },
