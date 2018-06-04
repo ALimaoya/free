@@ -217,8 +217,8 @@
             </li>
           </ul>
         </div>
-        <span v-if="warn" class="daysWarn tips_warn">投放数量请填写不小于1且不大于999的整数！</span>
-        <span class="daysWarn tips_warn" v-if="daysWarn">投放天数不得小于3！</span>
+        <span v-if="warn" class="daysWarn tips_warn"><span v-if="form.activityType==='1'">投放数量</span><span v-else="form.activityType==='3'">开团次数</span>请填写不小于1且不大于999的整数！</span>
+        <span class="daysWarn tips_warn" v-if="daysWarn"><span v-if="form.activityType==='1'">投放天数</span><span v-else="form.activityType==='3'">开团天数</span>不得小于3！</span>
         <span class="daysWarn tips_warn" v-if="changeNum&& $route.query.payStatus === '1'">投放总量不得更改！</span>
 
         <div class="situation">投放情况：</div>
