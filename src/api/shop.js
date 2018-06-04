@@ -12,6 +12,18 @@ export function shopList(data){
   })
 }
 
+// //获取下拉框商铺列表
+// export function selectShopList(data){
+//   return request({
+//     url : '/tryout/shop/select/list',
+//     method : 'post',
+//     data : data ,
+//     headers : {
+//       'Content-Type' : 'multipart/form-data'
+//     }
+//   })
+// }
+
 //添加商店信息
 export function shopInfo(data){
   return request({

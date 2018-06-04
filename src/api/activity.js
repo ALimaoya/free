@@ -69,9 +69,12 @@ export function getCategory(){
 //获取试用店铺列表
 export function getShopList(data){
   return request({
-    url : `/tryout/shop/select/${data}/list`,
+    url : '/tryout/shop/select/list',
     // url : '/tryout/select/'+data+'/list',
     method : 'get',
+    params : {
+      platform : data
+    }
     // headers : {
     //   'Content-Type' : 'multipart/form-data'
     // }

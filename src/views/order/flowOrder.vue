@@ -17,12 +17,12 @@
       <el-table-column prop="receiveTime" label="订单创建时间" ></el-table-column>
       <el-table-column prop="searchImageUrl" label="搜索截图">
         <template slot-scope="scope">
-          <img class="mainPic" @click="showImg( scope.row.searchImageUrl )" :src=" imageDomain + scope.row.searchImageUrl " alt="" />
+          <img v-if="scope.row.searchImageUrl!==null" class="showPic" @click="showImg( scope.row.searchImageUrl )" :src=" imageDomain + scope.row.searchImageUrl " alt="" />
         </template>
       </el-table-column>
       <el-table-column prop="collectImageUrl" label="收藏截图">
         <template slot-scope="scope">
-          <img class="mainPic" @click="showImg( scope.row.collectImageUrl)" :src=" imageDomain + scope.row.collectImageUrl" alt="" />
+          <img v-if="scope.row.collectImageUrl !== null" class="showPic" @click="showImg( scope.row.collectImageUrl)" :src=" imageDomain + scope.row.collectImageUrl" alt="" />
         </template>
       </el-table-column>
       <el-table-column prop="status" label="订单状态">
@@ -30,6 +30,8 @@
           <span v-if="scope.row.status==99">已完成</span>
           <span v-else-if="scope.row.status==11">订单失败</span>
           <span v-else-if="scope.row.status==4">审核中</span>
+          <span v-else-if="scope.row.status==3">已接单</span>
+
           <!--<span v-else>{{ options[scope.row.status].name}}</span>-->
         </template>
       </el-table-column>
@@ -176,6 +178,7 @@
         getData(res){
           this.order ={...res }  ;
           // console.log(this.order);
+          this.currentPage = 1 ;
           this.getList();
         },
         //查看订单详情
