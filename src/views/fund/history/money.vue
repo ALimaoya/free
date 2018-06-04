@@ -118,6 +118,7 @@
       },
       methods : {
         search(form){
+          this.currentPage = 1 ;
           this.getMoneyList();
         },
 

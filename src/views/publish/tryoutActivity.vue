@@ -374,6 +374,10 @@
           if(value === ''){
             callback(new Error('请输入每次开奖份数'))
           }else{
+            if(!(/^[1-9]\d*$/).test(value) ){
+              callback(new Error('请输入不小于1的正整数'))
+
+            }
             if(value  !==''&&this.form.activityType === '3'){
               this.$refs.form.validateField('groupPeopleQuantity');
 
@@ -1441,7 +1445,7 @@
 
           }
           this.hasWarn();
-          console.log(this.form,this.warn,this.daysWarn,this.changeNum,this.showImgWarn,this.goodsImgWarn);
+          // console.log(this.form,this.warn,this.daysWarn,this.changeNum,this.showImgWarn,this.goodsImgWarn);
 
           this.$refs[formName].validate((valid) => {
 

@@ -15,7 +15,6 @@
         }
       },
       mounted(){
-        console.log(this.$route)
         if(this.$route.params.type !== ''){
           this.type = this.$route.params.type ;
         }
