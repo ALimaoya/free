@@ -370,7 +370,7 @@
           formData.append('currentPage',this.currentPage);
           formData.append('pageSize',this.pageSize);
           getActivity(formData).then(res => {
-            console.log(this.activity,res);
+            // console.log(this.activity,res);
             if (res.data.status === '000000000') {
               this.tableData = res.data.data;
               this.totalPages = res.data.totalPages ;
