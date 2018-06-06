@@ -130,7 +130,7 @@
                 <!--<td v-else>{{ brokeragePrice }}</td>-->
                 <td v-if="tryoutAmount">{{ tryoutAmount }}单</td>
                 <td v-else></td>
-                <td>{{ form.brokeragePrice * tryoutAmount}} 元</td>
+                <td>{{ (form.brokeragePrice * tryoutAmount).toFixed(2)}} 元</td>
                 <!--<td v-else>{{ brokeragePrice * tryoutAmount}}</td>-->
               </tr>
             </table>
@@ -780,7 +780,7 @@
           }
           let daysArr = [] ;
           if(value === '' || value === undefined || value === null){
-            date = new Date(new Date().getTime()+ 2* 24*3600*1000) ;
+            date = new Date(new Date().getTime()) ;
           }else{
             date = new Date(Date.parse(value.replace(/-/g,'/'))) ;
           }
@@ -790,8 +790,8 @@
           // let startDay = date.getDate();
           // let hour = date.getHours() ;
           this.startDay = date.getDate();
-          this.today = new Date(parseTime(date.getTime()- 2* 24*3600*1000) ).getDate();
-          let afterday =  new Date(parseTime(date.getTime()- 24*3600*1000)).getDate();
+          this.today = new Date(parseTime(date.getTime()) ).getDate();
+          // let afterday =  new Date(parseTime(date.getTime()- 24*3600*1000)).getDate();
           // console.log(date.getDate(),startDay,this.today,afterday);
 
           let start = 0 ;
@@ -810,34 +810,35 @@
 
           }
           let dayLong =  daysNum.getDate() ;
-          if(dayLong < dayLength + afterday ){
-            restDay =   dayLength + afterday - dayLong  ;
+          if(dayLong < dayLength  ){
+            restDay =   dayLength  - dayLong  ;
           }
 
-          if(targetDay !== 0 && targetDay !== 1){
-            start = targetDay -2  ;
+          if(targetDay !== 0 ){
+            start = targetDay   ;
             for(let i = 0 ; i< start; i++){
               daysArr.push('');
             }
-          }else{
-            if(targetDay === 0){
-              for(let i = 0 ; i< 5; i++){
-                daysArr.push('');
-              }
-            }
-            if(targetDay === 1){
-              for(let i = 0 ; i< 6; i++){
-                daysArr.push('');
-              }
-            }
-
           }
-          daysArr.push(this.today);
-          daysArr.push(afterday);
+          // else{
+          //   // if(targetDay === 0){
+          //   //   for(let i = 0 ; i< 7; i++){
+          //   //     daysArr.push('');
+          //   //   }
+          //   // }
+          //   if(targetDay === 1){
+          //     // for(let i = 0 ; i< 6; i++){
+          //       daysArr.push('');
+          //     // }
+          //   }
+          //
+          // }
+          // daysArr.push(this.today);
+          // daysArr.push(afterday);
           // console.log(restDay);
           if(restDay){
             let index = 0 ;
-            for(let i = afterday;i< dayLong ;i++){
+            for(let i = this.today;i< dayLong ;i++){
               daysArr.push({ date : parseTime(date.getTime()+ index*24*3600*1000) ,num : new Date(parseTime(date.getTime()+ index*24*3600*1000)).getDate(), index : index});
               index ++ ;
             }
@@ -857,7 +858,7 @@
             daysArr.push('') ;
           }
           let arr = [] ;
-          for(let num = 0; num < 5 ; num ++){
+          for(let num = 0; num < 4 ; num ++){
             arr = daysArr.slice(num*7,7*(num+1));
             this.weekItems.push(arr) ;
           }
@@ -1041,13 +1042,13 @@
           }
           this.hasWarn();
           // this.getGoodsDetail(this.form.platformType,this.form.productUrl);
+          // console.log(this.form.activityCalendar)
 
           // if(this.form.productId&&this.form.productDetail&&this.form.productName){
           this.$refs[formName].validate((valid) => {
             if (valid && !this.warn && !this.daysWarn && !this.changeNum  && !this.goodsImgWarn) {
               // this.form.productId = '' ;
               this.goPlatform(this.form.platformType,this.form.productUrl);
-
               this.submitDetail(index,this.form)
 
             } else {
