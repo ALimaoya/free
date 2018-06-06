@@ -958,7 +958,7 @@
           if(this.form.activityStartTime){
             time = new Date(this.form.activityStartTime.replace(/-/g,"/")).getTime();
           }else{
-            time = new Date().getTime() + 2* 24*3600*1000 ;
+            time = new Date().getTime();
 
           }
           for(let j = 0 ; j < index ; j++){
@@ -979,7 +979,7 @@
           this.oneEditor(index,date);
           // console.log(this.form.activityStartTime)
           if(this.form.activityStartTime === ''){
-            this.form.activityStartTime = parseTime(new Date().getTime() + 2*24*3600*1000);
+            this.form.activityStartTime = parseTime(new Date().getTime() );
 
           }else{
             this.form.activityStartTime = this.form.activityCalendar[0].activityDate ;
