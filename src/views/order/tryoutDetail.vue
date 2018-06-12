@@ -1,21 +1,10 @@
 <template>
-  <div class="detail">
-    <div class="title">活动商品详情</div>
+  <div class="tryoutDetail">
+    <div class="title">{{ activityTitle[detailInfo.activityType-1]}}订单详情</div>
+
+
     <div class="content">
       <ul class="detailInfor">
-        <!--<li>1、活动类型：{{ detailInfo.activity}}</li>-->
-        <!--<li>2、商品来源：{{detailInfo.resource}}</li>-->
-        <!--<li>3、活动标题：{{ detailInfo.title }}</li>-->
-        <!--<li>4、试用品类型：{{ detailInfo.type}}</li>-->
-        <!--<li>5、商品链接：{{ detailInfo.link}}</li>-->
-        <!--<li>6、下单规格：{{ detailInfo.size }} </li>-->
-        <!--<li class="keys">  件数：{{ detailInfo.number }}  </li>-->
-        <!--<li class="keys">  金额：{{detailInfo.money }}  </li>-->
-        <!--<li class="keys">  包邮：{{detailInfo.passway}}</li>-->
-        <!--<li>7、找到推广宝贝的入口 </li>-->
-        <!--<li class="keys">关键词：{{detailInfo.key}}</li>-->
-        <!--<li class="keys">淘口令：{{ detailInfo.tao }}</li>-->
-        <!--<li>8、上架时间：{{detailInfo.date }}</li>-->
         <li><span>试客活动编号：</span><span>{{ detailInfo.activityCode }}</span></li>
         <li><span>试客订单编号：</span><span>{{ detailInfo.orderCode}}</span></li>
         <li><span>商铺名称：</span><span v-if="detailInfo.platform">{{ detailInfo.shopName }}</span><span v-else>暂无</span></li>
@@ -32,7 +21,7 @@
             <img @click="getImg(detailInfo.mainImageUrl)" :src="imageDomain + detailInfo.mainImageUrl" alt="" />
           </div>
         </li>
-        <li class="faileReason"><span>图片详情：</span><span v-if="detailInfo.orderImageList == 0" class="noImg">暂无图片</span></li>
+        <li class="faileReason"><span>用户上传图片详情：</span><span v-if="detailInfo.orderImageList == 0" class="noImg">暂无图片</span></li>
         <li class="detailPic">
           <div v-if="detailInfo.orderImageList != 0">
             <dl v-for="item in detailInfo.orderImageList">
@@ -55,10 +44,11 @@
 <script>
   import { orderDetail } from '@/api/activity'
     export default {
-        name: "detail" ,
+        name: "tryoutDetail" ,
       data(){
           return  {
             detailInfo : {},
+            activityTitle : ['超级试用','','拼团活动'],
             platForm : ['','淘宝','天猫', '京东'],
             imgType : ['商品收藏截图','店铺收藏截图','订单截图','评价截图','搜索截图'] ,
             showImg : false ,
@@ -93,7 +83,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  .detail{
+  .tryoutDetail{
     width : 70% ;
     margin : 0.3rem  auto;
     padding : 0.3rem ;

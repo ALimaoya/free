@@ -1,6 +1,6 @@
 <template>
   <div class="top">
-    <img src="../../assets/imgs/ic_launcher.png"  alt="" />
+    <img src="../../assets/imgs/logo.png"  alt="" />
     <h1>商家中心</h1>
     <el-dropdown class="avatar-container" trigger="click">
       <div class="avatar-wrapper">

@@ -1,7 +1,7 @@
 <template>
-  <div class="pay">
+  <div class="tryoutPay pay">
     <div class="stepImg"><img src="../../assets/imgs/u258.png" alt="" /></div>
-    <p class="tips">您现在为《<span>&nbsp;{{ activity.activityTitle }}&nbsp;</span>》试用活动存入试用活动款（合计总费用）：<span>{{ activity.activityTotalAmount }}</span>元</p>
+    <p class="tips">您现在为《<span>&nbsp;{{ activity.activityTitle }}&nbsp;</span>》试用活动存入试用活动款（合计总费用）：<span class="money_color">{{ activity.activityTotalAmount }}</span>元</p>
     <div class="note">费用说明：</div>
     <table border="1" bordercolor="#d3d3dd">
       <tr>
@@ -18,7 +18,7 @@
         <td>{{ activity.activityTotalAmount }} 元</td>
       </tr>
     </table>
-    <div class="result">您当前的押金余额为：<span>{{ activity.totalDeposit }}</span> 元，本次总共要支付的金额为：<span>{{ activity.activityTotalAmount }}</span> 元。</div>
+    <div class="result">您当前的押金余额为：<span class="money_color">{{ activity.totalDeposit }}</span> 元，本次总共要支付的金额为：<span class="money_color">{{ activity.activityTotalAmount }}</span> 元。</div>
     <div class="payPsw">
       <span>支付密码：</span>
       <el-input :type="pwdType"  v-model.trim="password" auto-complete="off" placeholder="请输入支付密码" >
@@ -41,7 +41,7 @@
   import {   activityPay , getPayDetail } from "@/api/activity"
 
   export default {
-        name: "pay" ,
+        name: "tryout-pay" ,
       data(){
           return{
 
@@ -141,7 +141,7 @@
 
         //返回修改活动
         back(){
-          this.$router.push({ path : '/publish/step1' ,query : { editor :'1' ,order : this.activity.activityId }})
+          this.$router.push({ path : '/publish/tryout_step1' ,query : { editor :'1' ,order : this.activity.activityId }})
 
         },
 
@@ -158,105 +158,5 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  .pay{
-    width : 80% ;
-    margin : 0 auto ;
-    .stepImg{
-      width : 100% ;
-      margin : 0.5rem 0;
-
-      img{
-        width : 80% ;
-        height : 100% ;
-        margin : 0 auto ;
-        display : block ;
-      }
-    }
-    .tips{
-      text-align : center ;
-      color : #333 ;
-      line-height : 0.5rem ;
-
-      span{
-        color : #ff0011 ;
-      }
-    }
-
-    .tips,.note,.result{
-      color : #333 ;
-      font-weight : bold ;
-      font-size : 0.18rem ;
-      span{
-        color : #ff0011 ;
-      }
-    }
-    p{
-      width : 100% ;
-      text-align : center ;
-      /*height : 0.4rem ;*/
-      line-height : 0.4rem ;
-
-    }
-    .note{
-      width : 100% ;
-      margin : 0.3rem auto ;
-      color : #666 ;
-      text-indent : 1.5rem ;
-    }
-    table{
-      border-collapse: collapse;
-      width : 60% ;
-      margin : auto auto 0.3rem ;
-      tr{
-        height : 0.4rem ;
-        text-align : center ;
-
-      }
-      td{
-        width : 50% ;
-      }
-    }
-    .result{
-      /*margin-left : 2rem ;*/
-      line-height : 0.5rem;
-      width : 78% ;
-
-      text-align : left ;
-      margin : 0 auto 0.5rem ;
-    }
-    .btn{
-      display: flex ;
-      justify-content: center;
-      .el-button:nth-child(1){
-        margin-right : 0.3rem ;
-      }
-      .el-button:nth-child(2){
-        width : 98px ;
-        margin-right : 0.3rem ;
-      }
-    }
-    .payPsw{
-      width : 50% ;
-      height : 1.2rem ;
-      margin : 0 auto ;
-      span{
-        display : block;
-        width : 80px; ;
-        height : 30px ;
-        line-height : 30px ;
-        float : left ;
-        text-align : right ;
-        color : #456 ;
-      }
-      .el-input{
-        float : left ;
-        width : 45% ;
-      }
-      .show-pwd{
-        width : 0.3rem ;
-        height : 40px ;
-        line-height : 40px ;
-      }
-    }
-  }
+  @import 'src/styles/pay';
 </style>

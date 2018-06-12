@@ -118,6 +118,7 @@
       },
       methods : {
         search(form){
+          this.currentPage = 1 ;
           this.getMoneyList();
         },
 
@@ -137,7 +138,6 @@
             formdata.append('LT_createTime','');
           }
           getWalletLog(formdata).then( res => {
-            // console.log(res)
             if( res.data.status === '000000000'){
               this.tableData = res.data.data;
               this.moneyRecord=res.data

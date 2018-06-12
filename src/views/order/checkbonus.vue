@@ -1,20 +1,28 @@
 <template>
-  <div class="checkbonus">
+  <div class="checkbonus tableBox">
     <h1>领奖审核</h1>
-    <div class="search">
-      <el-select size="small"  v-model="order.platformType" clearable filterable placeholder="请选择试用平台">
-        <el-option
-          v-for="item in platformOptions"
-          :key="item.value"
-          :label="item.name"
-          :value="item.value">
-        </el-option>
-      </el-select>
-      <el-input size="small" :maxlength="20" v-model.trim="order.activityCode" placeholder="请输入试客试用活动编号"></el-input>
-      <el-input size="small" :maxlength="20" v-model.trim="order.thirdOrderCode" placeholder="请输入第三方订单编号"></el-input>
-      <el-button size="small"  @click="getList()" class="searchOrder" style="padding: 0 0.05rem;">查询</el-button>
-    </div>
+    <search-bar @searchobj="getData" :platform-type="true" :activity-type="true" :third-order-code="true" :activity-code="true" :activity="'bonus'"></search-bar>
+
+    <!--<div class="search">-->
+      <!--<el-select size="small"  v-model="order.platformType" clearable filterable placeholder="请选择试用平台">-->
+        <!--<el-option-->
+          <!--v-for="item in platformOptions"-->
+          <!--:key="item.value"-->
+          <!--:label="item.name"-->
+          <!--:value="item.value">-->
+        <!--</el-option>-->
+      <!--</el-select>-->
+      <!--<el-input size="small" :maxlength="20" v-model.trim="order.activityCode" placeholder="请输入试客试用活动编号"></el-input>-->
+      <!--<el-input size="small" :maxlength="20" v-model.trim="order.thirdOrderCode" placeholder="请输入第三方订单编号"></el-input>-->
+      <!--<el-button size="small"  @click="getList()" class="searchOrder" style="padding: 0 0.05rem;">查询</el-button>-->
+    <!--</div>-->
     <el-table :data="tableData" border>
+      <el-table-column prop="activityType" label="试客任务类型" width="100">
+        <template slot-scope="scope">
+          <span v-if="scope.row.activityType === '1'">超级试用</span>
+          <span v-else-if="scope.row.activityType === '3'">拼团试用</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="activityCode" label="试客任务编号" width="180"></el-table-column>
       <el-table-column prop="orderCode" label="试客订单编号" width="180"></el-table-column>
       <el-table-column prop="activityTitle" label="商品名称"></el-table-column>
@@ -98,12 +106,14 @@
 <script>
   import { getOrderList , orderDetail , checkOrder   } from "@/api/activity"
   import ElDialog from "element-ui/packages/dialog/src/component";
+  import SearchBar from "@/components/searchBar"
 
   export default {
-    components: { ElDialog },
+    components: { ElDialog, SearchBar},
     name: "checkbonus" ,
       data(){
           return {
+            activityTitle : ['超级试用','','拼团试用'],
             platformOptions : [
               {
                 value: '',
@@ -129,11 +139,11 @@
             order : {
               EQ_status: '',
               // thirdAccount: '',
+              EQ_activityType:'',
               platformType : '' ,
               activityCode : '',
               thirdOrderCode: '',
-              // currentPage : 1,
-              // pageSize : 10
+
             },
             tableData : [],
             currentPage : 1 ,
@@ -151,7 +161,8 @@
             refuseReason : '' ,
             status : '' ,
             imageDomain : process.env.IMAGE_DOMAIN,
-            showImg : false
+            showImg : false,
+
             // imageDomain : 'http://yabei.oss-cn-beijing.aliyuncs.com/'
           }
       },
@@ -175,7 +186,13 @@
           }else{
             formData.append('EQ_tryoutOrderWin.thirdOrderCode', '');
           }
+          formData.append('EQ_activityType',this.order.EQ_activityType);
+          if(this.order.EQ_activityType === ''){
+            formData.append('IN_activityType','1,3');
+          }else{
+            formData.append('IN_activityType','');
 
+          }
           formData.append('currentPage', this.currentPage);
           formData.append('EQ_status','4');
           formData.append('pageSize', this.pageSize);
@@ -191,11 +208,18 @@
 
           })
         },
+        //根据搜索条件获取订单列表
+        getData(res){
+          this.order ={...res }  ;
+          // console.log(this.order);
+          this.currentPage = 1 ;
 
+          this.getList();
+        },
         //查看订单详情
         goDetail(index,order){
 
-          this.$router.push('/activity/detail/'+ order) ;
+          this.$router.push('/order/tryoutDetail/'+ order) ;
 
         },
 
@@ -247,7 +271,7 @@
 
         //提交审核
         handelRefuse(){
-          checkOrder({ orderId : this.orderId , status : this.status ,reason : this.refuseReason }).then( res => {
+          checkOrder({ orderId : this.orderId , status : this.status ,reason : this.refuseReason ,activityType : this.order.EQ_activityType}).then( res => {
              if(res.data.status === '000000000'){
                this.$message({
                  message : '审核提交成功，请稍后确认' ,
@@ -335,9 +359,7 @@
   .checkbonus{
     .search{
       border-bottom : 1px solid #aaa ;
-      .searchOrder{
-        height : 34px ;
-      }
+
     }
     .detailContent{
       /*height : 8rem ;*/
@@ -422,22 +444,7 @@
         }
 
       }
-    .mask{
-      position : fixed ;
-      top : 0;
-      left : 0 ;
-      width : 100% ;
-      height : 100% ;
-      background : rgba(250,250,250,0.3) ;
-      display : flex ;
-      align-items: center;
-      justify-content: center;
-      z-index : 10000;
-      img{
-        max-height : 100% ;
 
-      }
-    }
 
   }
 </style>

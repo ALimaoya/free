@@ -97,13 +97,14 @@
     },
     methods: {
       search(form) {
+        this.currentPage = 1 ;
         this.getMoneyList();
       },
 
       getMoneyList() {
         let formdata = new FormData();
-        formdata.append('currentPage', this.currentPage)
-        formdata.append('pageSize', this.pageSize)
+        formdata.append('currentPage', this.currentPage);
+        formdata.append('pageSize', this.pageSize);
         formdata.append('EQ_status', this.searchForm.detail);
         if(this.searchForm.startDate){
           formdata.append('GT_createTime',this.searchForm.startDate);

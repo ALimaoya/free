@@ -13,7 +13,7 @@ import store from './store'
 import '@/icons' // icon
 import '@/permission' // permission control
 import '@/utils/rem.js'
-Vue.use(ElementUI);
+Vue.use(ElementUI)
 
 Vue.config.productionTip = false ;
 
@@ -23,4 +23,4 @@ new Vue({
   store,
   template: '<App/>',
   components: { App }
-});
+})
