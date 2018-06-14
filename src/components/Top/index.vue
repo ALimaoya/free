@@ -1,7 +1,20 @@
 <template>
   <div class="top">
     <img src="../../assets/imgs/logo.png"  alt="" />
-    <h1>商家中心</h1>
+    <h1>丫贝商家管理后台</h1>
+    <ul class="menu">
+      <li v-for="(item,index) in menuList" :key="index">
+        <router-link :to="item.path">{{ item.name }}</router-link>
+      </li>
+      <!--<li>hello</li>-->
+      <!--<li>-->
+        <!--<router-link to="/a">点这里</router-link>-->
+      <!--</li>-->
+      <!--<li>-->
+        <!--<router-link to="/freeManage/index">去试用</router-link>-->
+      <!--</li>-->
+    </ul>
+
     <el-dropdown class="avatar-container" trigger="click">
       <div class="avatar-wrapper">
         您好！{{  userInfo }}
@@ -31,7 +44,29 @@
       name: "top" ,
       data(){
         return {
-           userInfo : getMobile()
+           userInfo : getMobile(),
+          menuList : [
+            {
+              name : '首页',
+              path : '/home'
+            },
+            {
+              name : '试用中心',
+              path : '/freeManage'
+            },
+            {
+              name : '特卖商城',
+              path : '/specialSale'
+            },
+            {
+              name : '规则中心',
+              path : '/ruleCenter'
+            },
+            {
+              name : '账号管理',
+              path : '/accountManage'
+            }
+          ]
         }
       },
       computed: {
@@ -58,6 +93,7 @@
 </script>
 
 <style lang="scss" scoped rel="stylesheet/scss" >
+  @import '../../styles/variables.scss';
   .top{
     width : 100% ;
     box-sizing: border-box;
@@ -68,9 +104,8 @@
     position : fixed ;
     top : 0;
     z-index : 2000 ;
-    background : #fff ;
-    /*border-radius : 0.05rem ;*/
-    border-bottom : 1px solid #d8dce5 ;
+    background : $bg ;
+    /*border-bottom : 1px solid #d8dce5 ;*/
     img,h1{
       float : left;
     }
@@ -82,6 +117,7 @@
     h1{
       line-height : 60px ;
       font-size : 22px ;
+      color : #fff ;
     }
 
     .avatar-container {
@@ -97,6 +133,7 @@
         /*margin-top: 0.05rem;*/
         position: relative;
         line-height : 60px ;
+        color : #fff ;
         /*.user-avatar {*/
           /*width: 0.40rem;*/
           /*height: 0.40rem;*/
@@ -113,7 +150,26 @@
       }
 
     }
+    .menu{
+      display : flex ;
+      flex-direction: row;
+      width: 50%;
+      height : 100% ;
+      align-items: center;
+    }
+    .menu li{
+      flex : 1;
+      text-align: center;
+      color : #aaa ;
+      a{
+        font-size : 0.18rem ;
 
+      }
+    }
+
+    .router-link-active{
+      color : #fff ;
+    }
   }
 
 </style>

@@ -76,7 +76,7 @@
   import { getToken } from '@/utils/auth'
 
   export default {
-        name: "home",
+        name: "CenterHome",
         data() {
           return {
             userInfo : {},

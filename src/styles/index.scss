@@ -18,6 +18,10 @@ html {
    font-size : 100px;
 
 }
+#app .mainContainer{
+  min-height : 100% ;
+  margin-top : 60px;
+}
 #app .el-menu-item, #app .el-submenu__title{
   //height: .56rem;
   //  line-height: .56rem;
@@ -35,7 +39,7 @@ html {
   padding-left: 40px !important;
 }
 #app .nest-menu .el-menu .el-menu-item{
-  padding-left: 60px !important;
+  //padding-left: 60px !important;
 }
 #app .el-button{
   //padding: .12rem .2rem ;
@@ -89,7 +93,7 @@ a:hover {
   }
 }
 
-//main-container全局样式
+//sub-container全局样式
 .app-main{
   min-height: 100%
 }

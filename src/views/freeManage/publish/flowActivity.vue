@@ -25,7 +25,7 @@
         </el-form-item>
         <el-form-item label="商品链接：" :labelWidth="labelWidth" prop="productUrl">
           <el-input :readonly="readIpt" size="small" v-model.trim="form.productUrl" placeholder="请输入内容" @change="getGoodsDetail(form.platformType,form.productUrl)"></el-input>
-          <span class="tips"><img src="../../assets/imgs/tips3.png" alt=""/>平台会根据您填写的商品链接抓取宝贝信息，试客无法看到此链接</span>
+          <span class="tips"><img src="../../../assets/imgs/tips3.png" alt=""/>平台会根据您填写的商品链接抓取宝贝信息，试客无法看到此链接</span>
         </el-form-item>
         <el-form-item label="宝贝主图：" :labelWidth="labelWidth">
           <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.mainImageUrl"
@@ -170,7 +170,7 @@
   import { getCategory ,getShopList ,searchTypeList , uploadImage , publishActivity  , changeDetail , getJDetail,getCommission} from "@/api/activity"
   import { shopList } from "@/api/shop"
   import { getMember } from '@/api/userInfor'
-  import $ from '../../../static/js/jquery-3.3.1.min.js'
+  import $ from '../../../../static/js/jquery-3.3.1.min.js'
     export default {
       name: "flow-activity",
       components: {
@@ -1031,7 +1031,7 @@
 
         //提交试用信息
         onSubmit(formName,index){
-          // console.log(this.form.activityCalendar,this.form.activityStartTime);
+          console.log(this.form.activityCalendar,this.form.activityStartTime);
 
 
           if(this.form.mainImageUrl === ''){
