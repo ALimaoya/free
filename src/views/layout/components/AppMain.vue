@@ -32,7 +32,7 @@
     margin : 143px auto ;
     padding : 0.3rem 0.2rem ;
     box-sizing: border-box;
-    font-size : 0.15rem ;
+    font-size : 0.14rem ;
     .content{
       margin-bottom : 0.5rem ;
     }

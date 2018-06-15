@@ -18,14 +18,22 @@ export default {
       'sidebar'
     ]),
     routes(){
+        if(this.$route.path.indexOf('merchantCenter') !== -1){
+          return this.$router.options.routes[1].children;
 
-        return this.$router.options.routes[0].children;
+        }
+
+      if(this.$route.path.indexOf('freeManage') !== -1){
+          return this.$router.options.routes[0].children;
+
+        }
 
     },
     isCollapse() {
       return !this.sidebar.opened
     }
-  }
+  },
+
 }
 </script>
 

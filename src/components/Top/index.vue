@@ -56,7 +56,7 @@
             },
             {
               name : '特卖商城',
-              path : '/specialSale'
+              path : '/merchantCenter'
             },
             {
               name : '规则中心',

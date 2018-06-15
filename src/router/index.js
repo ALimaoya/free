@@ -1,13 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+/* Layout */
+import Layout from '../views/layout/Layout'
+import FreeManage from '../views/layout/components/FreeManage'
 
 // in development-env not use lazy-loading, because lazy-loading too many pages will cause webpack hot update too slow. so only in production use lazy-loading;
 
 Vue.use(Router)
-
-/* Layout */
-import Layout from '../views/layout/Layout'
-import FreeManage from '../views/layout/components/FreeManage'
 
 export const constantRouterMap = [
   {
@@ -276,6 +275,202 @@ export const constantRouterMap = [
       },
     ]
   },
+  { path: '/merchantCenter',
+    // name: 'Home',
+    redirect : '/merchantCenter/index',
+    component : Layout,
+    // meta: { title: '特卖商城', icon: 'center' },
+    hidden: true,
+    children :[
+      {
+        path: '/merchantCenter',
+        redirect : '/merchantCenter/index',
+        // name: 'MerchantCenter',
+        component: FreeManage ,
+        hidden : true ,
+          children : [
+            {
+              path: 'index',
+              name: 'MerchantCenter-home',
+              component:() => import('@/views/merchantCenter/center/index'),
+              hidden : true ,
+              meta: { title: '商户中心首页', icon: 'merchantCenter' },
+
+            }
+          ]
+      },
+      {
+        path: '/merchantCenter/base',
+        name: 'Base',
+        component: FreeManage,
+        meta: { title: '基础管理', icon: 'base' },
+        children : [
+          {
+            path: 'userManage',
+            name: 'UserManage',
+            component: () => import('@/views/merchantCenter/base/userManage'),
+            meta: { title: '用户管理', icon: 'userManage' },
+
+          },
+        ]
+      },
+      {
+        path: '/merchantCenter/goods',
+        name: 'Goods',
+        component: FreeManage,
+        meta: { title: '商品管理', icon: 'goods' },
+        children : [
+          {
+            path: 'goodsList',
+            name: 'GoodsList',
+            component: () => import('@/views/merchantCenter/goods/goodsList'),
+            meta: { title: '商品清单', icon: 'goodsList' },
+
+          },
+        ]
+      },
+      {
+        path: '/merchantCenter/userCenter',
+        name: 'UserCenter',
+        component: FreeManage,
+        meta: { title: '商户中心', icon: 'userCenter' },
+        children : [
+          {
+            path: 'infoUpload',
+            name: 'InfoUpload',
+            component: () => import('@/views/merchantCenter/userCenter/infoUpload'),
+            meta: { title: '资质上传', icon: 'infoUpload' },
+
+          },
+          {
+            path: 'openShop',
+            name: 'OpenShop',
+            component: () => import('@/views/merchantCenter/userCenter/OpenShop'),
+            meta: { title: '我要开店', icon: 'OpenShop' },
+
+          },
+          {
+            path: 'settlement',
+            name: 'Settlement',
+            component: () => import('@/views/merchantCenter/userCenter/settlement'),
+            meta: { title: '结算账户', icon: 'settlement' },
+
+          },
+          {
+            path: 'postSetting',
+            name: 'PostSetting',
+            component: () => import('@/views/merchantCenter/userCenter/postSetting'),
+            meta: { title: '运费设置', icon: 'postSetting' },
+
+          },
+          {
+            path: 'address',
+            name: 'Address',
+            component: () => import('@/views/merchantCenter/userCenter/address'),
+            meta: { title: '地址管理', icon: 'address' },
+
+          },
+          {
+            path: 'bond',
+            name: 'Bond',
+            component: () => import('@/views/merchantCenter/userCenter/bond'),
+            meta: { title: '保证金设置', icon: 'bond' },
+
+          },
+        ]
+      },
+      {
+        path: '/merchantCenter/transaction',
+        name: 'Transaction',
+        component: FreeManage,
+        meta: { title: '交易管理', icon: 'transaction' },
+        children : [
+          {
+            path: 'search',
+            name: 'Search',
+            component: () => import('@/views/merchantCenter/transaction/search'),
+            meta: { title: '交易查询', icon: 'search' },
+
+          },
+          {
+            path: 'refund',
+            name: 'Refund',
+            component: () => import('@/views/merchantCenter/transaction/refund'),
+            meta: { title: '退款管理', icon: 'refund' },
+
+          },
+        ]
+      },
+      {
+        path: '/merchantCenter/settleManage',
+        name: 'SettleManage',
+        component: FreeManage,
+        meta: { title: '结算管理', icon: 'settleManage' },
+        children : [
+          {
+            path: 'current',
+            name: 'Current',
+            component: () => import('@/views/merchantCenter/settleManage/current'),
+            meta: { title: '当前结算', icon: 'current' },
+
+          },
+          {
+            path: 'history',
+            name: 'SettleHistory',
+            component: () => import('@/views/merchantCenter/settleManage/history'),
+            meta: { title: '历史结算', icon: 'history' },
+
+          },
+        ]
+      },
+      {
+        path: '/merchantCenter/shopManage',
+        name: 'ShopManage',
+        component: FreeManage,
+        meta: { title: '店铺管理', icon: 'shopManage' },
+        children : [
+          {
+            path: 'shopInfo',
+            name: 'ShopInfo',
+            component: () => import('@/views/merchantCenter/shopManage/shopInfo'),
+            meta: { title: '商家/店铺信息', icon: 'shopInfo' },
+
+          },
+          {
+            path: 'subAccount',
+            name: 'SubAccount',
+            component: () => import('@/views/merchantCenter/shopManage/subAccount'),
+            meta: { title: '子账号管理', icon: 'subAccount' },
+
+          },
+        ]
+      },
+      {
+        path: '/merchantCenter/tool',
+        name: 'Tool',
+        component: FreeManage,
+        meta: { title: '商家工具', icon: 'tool' },
+        children : [
+          {
+            path: 'getGoods',
+            name: 'GetGoods',
+            component: () => import('@/views/merchantCenter/tool/getGoods'),
+            meta: { title: '一键抓取商品', icon: 'getGoods' },
+
+          },
+          {
+            path: 'sourceGoods',
+            name: 'SourceGoods',
+            component: () => import('@/views/merchantCenter/tool/sourceGoods'),
+            meta: { title: '查看源宝贝', icon: 'sourceGoods' },
+
+          },
+        ]
+      },
+
+    ]
+  },
+
   { path: '/login', component: () => import('@/views/login/index'), hidden: true },
   { path: '/changePsw', component: () => import('@/views/login/changePsw'), hidden: true },
   { path: '/register', component: () => import('@/views/register/index'), hidden: true },
@@ -297,21 +492,6 @@ export const constantRouterMap = [
         path: '/home',
         // name: 'Home',
         component: () => import('@/views/home/index'),
-
-      }
-    ]
-  },
-  { path: '/specialSale',
-    // name: 'Home',
-    redirect : '/specialSale/index',
-    component : Layout,
-    // meta: { title: '特卖商城', icon: 'center' },
-    hidden: true,
-    children :[
-      {
-        path: '/specialSale/index',
-        name: 'SpecialSale',
-        component: () => import('@/views/specialSale/index'),
 
       }
     ]
@@ -354,7 +534,7 @@ export const constantRouterMap = [
   //     {
   //       path: '/a/index',
   //       name: 'Test',
-  //       component: () => import('@/views/specialSale/test'),
+  //       component: () => import('@/views/merchantCenter/test'),
   //
   //     }
   //   ]
