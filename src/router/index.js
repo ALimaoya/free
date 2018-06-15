@@ -283,7 +283,7 @@ export const constantRouterMap = [
     hidden: true,
     children :[
       {
-        path: '/merchantCenter',
+        path: '/',
         redirect : '/merchantCenter/index',
         // name: 'MerchantCenter',
         component: FreeManage ,
