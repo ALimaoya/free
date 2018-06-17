@@ -15,16 +15,22 @@
         <el-input type="text" size="small" v-model="form.enterprise" :disabled="readOnly"></el-input>
       </el-form-item>
       <el-form-item class="imgWrap">
-        <dl >
+        <dl @click="BigImg(form.src)">
           <dt>店铺LOGO</dt>
           <dd>
-            <img v-if="form.src !== undefined" :src="item.src" alt="" />
+            <img v-if="form.src !== undefined" :src="form.src" alt="" />
             <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
           </dd>
         </dl>
       </el-form-item>
     </el-form>
     <el-button type="primary" size="small" @click="goDetail">查看</el-button>
+    <el-dialog title="店铺LOGO" :visible.sync="dialogVisible" width="60%" center>
+      <div class="wrap">
+        <!--<img :src="ImgSrc" alt="" />-->
+        <img src="../../../assets/imgs/logo.png" />
+      </div>
+    </el-dialog>
   </div>
 
 </template>
@@ -35,7 +41,10 @@
       data(){
         return {
           form : {},
-          readOnly : true
+          readOnly : true,
+          imgTitle : '',
+          ImgSrc : '',
+          dialogVisible: false,
         }
       },
       computed:{
@@ -47,6 +56,12 @@
       methods : {
         goDetail(){
           this.$router.push('/merchantCenter/userCenter/OpenShop') ;
+        },
+        BigImg(src){
+
+          // this.imgTitle = this.imgType[index] ;
+          // this.ImgSrc = src ;
+          this.dialogVisible = true ;
         }
       }
     }

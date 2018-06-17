@@ -26,8 +26,10 @@
     </el-form>
     <el-button type="primary" size="small" @click="goDetail">查看</el-button>
     <el-dialog :title="imgTitle" :visible.sync="dialogVisible" width="60%" center>
-      <!--<img :src="ImgSrc" alt="" />-->
-    <img src="../../../assets/imgs/logo.png" />
+      <div class="wrap">
+        <!--<img :src="ImgSrc" alt="" />-->
+        <img src="../../../assets/imgs/logo.png" />
+      </div>
     </el-dialog>
   </div>
 </template>

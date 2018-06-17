@@ -125,3 +125,39 @@ a:hover {
 .ml10{margin-left: .1rem}
 .line_through{text-decoration: line-through}
 .text-center{text-align: center}
+.h_title{
+    margin : 0 ;
+    padding : 0.2rem  0.4rem ;
+    border-bottom : 1px solid #666 ;
+    font-size : 0.22rem ;
+    line-height : 0.4rem ;
+}
+.tableC{
+  border-collapse: collapse;
+  border : 0;
+  margin : auto ;
+  th,td{
+    height : 30px;
+    padding : 0 0.1rem ;
+    border : 0;
+
+  }
+  .thColor {
+    background : #cee ;
+  }
+  .tbColor {
+    background : #fdebd1 ;
+  }
+  tr:hover>td{
+    background : #fdebd1!important; ;
+  }
+
+}
+.subOrder{
+  color: #f59c1a!important;
+  font-size : 0.12rem ;
+  width : 100% ;
+  text-align: center;
+  display: inline-block;
+
+}

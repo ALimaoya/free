@@ -31,6 +31,11 @@ export function validateEmail(val){
   const email = /^([a-zA-Z0-9._-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/ ;
   return email.test(val)
 }
+/*邮编验证*/
+export function validateZipCode(val){
+  const reg = /^[1-9][0-9]{5}$/ ;
+  return reg.test(val)
+}
 /* 小写字母*/
 export function validateLowerCase(str) {
   const reg = /^[a-z]+$/

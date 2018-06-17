@@ -263,7 +263,7 @@
 </template>
 
 <script>
-    import ElFormItem from "element-ui/packages/form/src/form-item";
+    // import ElFormItem from "element-ui/packages/form/src/form-item";
     import { validateURL ,getQueryString , checkFloat } from '@/utils/validate'
     import { parseTime} from '@/utils'
     import { getToken } from '@/utils/auth'
@@ -278,7 +278,7 @@
       components: {
         ElButtonGroup,
         ElRadioGroup,
-        ElFormItem ,
+        // ElFormItem ,
       },
       name: "step",
 
@@ -609,7 +609,7 @@
           pickerOptions : {
             disabledDate(time){
               let curDate = (new Date()).getTime() ;
-              return time.getTime() < Date.now() +  24*3600*1000 ;
+              return time.getTime() < Date.now() -  24*3600*1000 ;
             }
           } ,
           editor : '',

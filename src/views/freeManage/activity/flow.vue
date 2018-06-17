@@ -1,41 +1,6 @@
 <template>
   <div class="flow activityTable">
     <search-bar @searchobj="getSearchData" :platform-type="true" :activity-shop="true" :task-status="true" :activity-code="true" :flow="'flowTask'" ></search-bar>
-
-    <!--<div class="search">-->
-      <!--<el-select size="small" clearable v-model="activity.EQ_platformType" filterable placeholder="请选择活动平台">-->
-        <!--<el-option-->
-          <!--v-for="item in platformOptions"-->
-          <!--:key="item.value"-->
-          <!--:label="item.name"-->
-          <!--:value="item.value">-->
-        <!--</el-option>-->
-      <!--</el-select>-->
-      <!--<el-input size="small" :maxlength="20"  v-model.trim="activity.EQ_activityShop" placeholder="请输入店铺名称"></el-input>-->
-      <!--<el-input size="small" :maxlength="20"  v-model.trim="activity.EQ_activityCode" placeholder="请输入活动编号"></el-input>-->
-      <!--<el-select size="small" clearable v-model="activity.EQ_activityStatus" filterable placeholder="请选择任务状态">-->
-        <!--<el-option-->
-          <!--v-for="item in options"-->
-          <!--:key="item.value"-->
-          <!--:label="item.name"-->
-          <!--:value="item.value">-->
-        <!--</el-option>-->
-      <!--</el-select>-->
-      <!--<div class="block">-->
-        <!--<span class="demonstration">选择日期：</span>-->
-        <!--<el-date-picker format="yyyy - MM - dd " value-format="yyyy-MM-dd" size="small"-->
-                        <!--v-model="activity.GT_activityEndTime" clearable type="date"-->
-                        <!--placeholder="开始时间" >-->
-        <!--</el-date-picker>-->
-        <!--<span class="demonstration2">~</span>-->
-        <!--<el-date-picker size="small" v-model="activity.LT_activityStartTime"  clearable-->
-                        <!--type="date" format="yyyy - MM - dd " value-format="yyyy-MM-dd"-->
-                        <!--placeholder="结束日期">-->
-        <!--</el-date-picker>-->
-        <!--<el-button round size="small" type="primary" @click="getData()">搜索</el-button>-->
-
-      <!--</div>-->
-    <!--</div>-->
     <el-table :data="tableData"  border fit>
       <el-table-column prop="activityId" label="序号"></el-table-column>
       <el-table-column prop="shopName" label="商铺名称" ></el-table-column>

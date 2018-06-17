@@ -312,6 +312,13 @@ export const constantRouterMap = [
             meta: { title: '用户管理', icon: 'userManage' },
 
           },
+          {
+            path: 'newAccount',
+            name: 'NewAccount',
+            component: () => import('@/views/merchantCenter/base/newAccount'),
+            meta: { title: '新增账户', icon: 'newAccount' },
+
+          },
         ]
       },
       {
@@ -325,6 +332,13 @@ export const constantRouterMap = [
             name: 'GoodsList',
             component: () => import('@/views/merchantCenter/goods/goodsList'),
             meta: { title: '商品清单', icon: 'goodsList' },
+
+          },
+          {
+            path: 'newGoods',
+            name: 'NewGoods',
+            component: () => import('@/views/merchantCenter/goods/newGoods'),
+            meta: { title: '新增商品', icon: 'newGoods' },
 
           },
         ]
@@ -364,10 +378,10 @@ export const constantRouterMap = [
 
           },
           {
-            path: 'address',
-            name: 'Address',
-            component: () => import('@/views/merchantCenter/userCenter/address'),
-            meta: { title: '地址管理', icon: 'address' },
+            path: 'addressManage',
+            name: 'AddressManage',
+            component: () => import('@/views/merchantCenter/userCenter/addressManage'),
+            meta: { title: '地址管理', icon: 'addressManage' },
 
           },
           {
@@ -398,6 +412,20 @@ export const constantRouterMap = [
             component: () => import('@/views/merchantCenter/transaction/refund'),
             meta: { title: '退款管理', icon: 'refund' },
 
+          },
+          {
+            path: 'transitionOrder/:id',
+            name: 'transitionOrder',
+            component: () => import('@/views/merchantCenter/transaction/transitionOrder'),
+            meta: { title: '交易详情', icon: 'transitionOrder' },
+            hidden: true
+          },
+          {
+            path: 'refundOrder/:id',
+            name: 'RefundOrder',
+            component: () => import('@/views/merchantCenter/transaction/refundOrder'),
+            meta: { title: '退款详情', icon: 'refundOrder' },
+            hidden: true
           },
         ]
       },

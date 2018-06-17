@@ -15,7 +15,7 @@
           <el-input v-model.trim="payForm.mobile" readonly ></el-input>
           <b class="blank" ></b>
         </el-form-item>
-        <el-form-item label="验证码：" label-width="104.45px" prop="pswVerify" >
+        <el-form-item label="验证码：" label-width="110.45px" prop="pswVerify" >
           <el-input placeholder="请输入验证码" v-model.trim="payForm.pswVerify" ></el-input>
           <el-button class="getNum" @click="getNum" :disabled="disabled">{{ btntext }}</el-button>
         </el-form-item>
