@@ -51,7 +51,7 @@
       <el-table-column prop="goodsName" label="商品名称" ></el-table-column>
       <el-table-column prop="brand" label="商品品牌" ></el-table-column>
       <el-table-column prop="type" label="分类" ></el-table-column>
-      <el-table-column prop="size" label="规格" >
+      <el-table-column prop="size" label="规格" width="160">
         <template slot-scope="scope">
           <!--<el-table :data="scope.row.size"  border fit :header-row-class-name="thColor" :row-style="tbColor">-->
             <!--<el-table-column prop="size" label="尺码" ></el-table-column>-->
@@ -59,8 +59,8 @@
             <!--<el-table-column prop="num" label="库存" ></el-table-column>-->
           <!--</el-table>-->
           <table class="tableC">
-            <tr><th>尺寸</th><th>颜色</th><th>库存</th></tr>
-            <tr><td></td><td></td><td></td></tr>
+            <tr class="thColor"><th>尺寸</th><th>颜色</th><th>库存</th></tr>
+            <tr class="tbColor"><td></td><td></td><td></td></tr>
           </table>
         </template>
       </el-table-column>
@@ -69,7 +69,8 @@
       <el-table-column prop="status" label="状态" ></el-table-column>
       <el-table-column label="操作" >
         <template slot-scope="scope">
-          <el-button class="check" style="padding : 0 ;" type="warning"  @click="handleOff(scope.$index,scope.row.activityId)">下架</el-button>
+          <el-button size="mini" type="warning"  @click="handleOff(scope.$index,scope.row.goodsId)">下架</el-button>
+          <el-button size="mini" type="primary"  @click="editor(scope.$index,scope.row.goodsId)">修改</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -94,7 +95,12 @@
       data(){
           return{
             account : {
-
+              name: '',
+              code: '',
+              firstType: '',
+              secondType: '',
+              thirdType: '',
+              status: ''
             },
             firstTypeList : [],
             secondTypeList : [],
@@ -133,7 +139,28 @@
       methods : {
         //  获取商品列表
         getList(){
-          // this.tableData =
+          this.tableData = [
+            {
+              time: '2016-05-02',
+              subOrderId : '111',
+              orderId: '王小虎',
+              address: '上海市普陀区金沙江路 1518 弄'
+            }, {
+              time: '2016-05-04',
+              orderId: '王小虎',
+              subOrderId : '4535435354',
+              address: '上海市普陀区金沙江路 1517 弄'
+            }, {
+              time: '2016-05-01',
+              orderId: '王小虎',
+              address: '上海市普陀区金沙江路 1519 弄'
+            }, {
+              time: '2016-05-03',
+              orderId: '王小虎',
+              address: '上海市普陀区金沙江路 1516 弄'
+            }
+          ]
+
         },
         //  获取一级分类
         getFirstList(type){
@@ -151,8 +178,21 @@
 
         },
         reset(){
-          this.account = {}
+          this.account = {
+
+          }
         },
+        //下架操作
+        handleOff(index,order){
+
+          window.location.reload();
+        },
+        //修改商品
+        editor(index,order){
+          this.$router.push({ path : '/merchantCenter/goods/newGoods',query: {'order':order}})
+
+        },
+        //新增商品
         newGoods(){
           this.$router.push('/merchantCenter/goods/newGoods')
 
@@ -189,6 +229,9 @@
 
     .cell{
       height : 0.5rem ;
+    }
+    .el-button{
+      margin : 0.1rem auto;
     }
 
 

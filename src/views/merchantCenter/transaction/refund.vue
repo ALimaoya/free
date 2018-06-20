@@ -68,7 +68,7 @@
       </el-pagination>
       <span class="totalItems">共{{totalPages }}页，{{ totalElements }}条记录</span>
     </div>
-    <el-dialog title="确认退款" :visible.sync="dialogVisible" width="60%" >
+    <el-dialog title="确认退款" :visible.sync="dialogVisible" width="50%" center >
       <div class="tips">
         <h3>注意：</h3>
         <p>确认退款后退款金额回退到买家支付账户中。</p>
@@ -77,31 +77,29 @@
         <el-form-item  labelWidth="130px" label="审批结果：" prop="result">
           <el-select  size="small" clearable v-model="form.result" filterable>
             <el-option
-              v-for="item in statusList"
+              v-for="item in checkList"
               :key="item.value"
               :label="item.name"
               :value="item.value">
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item   labelWidth="130px"  label="商品名称：" disbaled="disabled" prop="expressOrder">
-          <el-input class="inputInfo" size="small" v-model.trim="form.expressOrder" ></el-input>
+        <el-form-item   labelWidth="130px"  label="商品名称：" prop="expressOrder">
+          <el-input class="inputInfo" size="small" v-model.trim="form.expressOrder" disabled="disabled"></el-input>
         </el-form-item>
-        <el-form-item   labelWidth="130px"  label="商品数量：" disbaled="disabled"  prop="goodsNum">
-          <el-input class="inputInfo" size="small" v-model.trim="form.goodsNum"></el-input>
+        <el-form-item   labelWidth="130px"  label="商品数量："  prop="goodsNum">
+          <el-input class="inputInfo" size="small" v-model.trim="form.goodsNum" disabled="disabled"></el-input>
         </el-form-item>
-        <el-form-item   labelWidth="130px"  label="退款金额：" disbaled="disabled"  prop="refund">
-          <el-input class="inputInfo" size="small" v-model.trim="form.refund"></el-input>
+        <el-form-item   labelWidth="130px"  label="退款金额："   prop="refund">
+          <el-input class="inputInfo" size="small" v-model.trim="form.refund" disabled="disabled"></el-input>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="确认密码：" prop="checkPsw">
           <el-input class="inputInfo" size="small" v-model.trim="form.checkPsw" placeholder="请输入登录密码"></el-input>
         </el-form-item>
       </el-form>
-
       <div slot="footer" class="dialog-footer" >
         <el-button type="primary" size="mini" @click="confirm('form')">确认</el-button>
         <el-button plain size="mini" @click="close('form')">关闭</el-button>
-
       </div>
     </el-dialog>
 
@@ -163,7 +161,11 @@
           pageSize : 10,
           dialogVisible: false ,
           form : {
-
+            result: '1',
+            expressOrder:'',
+            goodsNum: '',
+            refund: '',
+            checkPsw: ''
           },
           formRule : {
 
@@ -174,6 +176,16 @@
               }
             ]
           },
+          checkList: [
+            {
+              value : '1',
+              name : '通过并退款'
+            },
+            {
+              value : '2',
+              name : '拒绝'
+            }
+          ]
         }
       },
       mounted(){
@@ -215,10 +227,11 @@
         handleCheck(index,order){
           this.dialogVisible = true ;
         },
-        //  确认快递相关操作
+        //  确认退款相关操作
         confirm(formName){
           this.$refs[formName].validate((valid) => {
             if(valid){
+              this.dialogVisible = false ;
 
             }else{
 
@@ -271,6 +284,30 @@
   .el-table{
     .el-button{
       margin : 0.05rem auto ;
+    }
+  }
+  .el-dialog{
+    .tips{
+      /*width : 80% ;*/
+      height : 1rem ;
+      margin : 0.2rem auto ;
+      color : #a94442 ;
+      background : rgb(248, 178, 178);
+      border-radius : 0.05rem;
+      padding : 0.1rem 0.2rem;
+      box-sizing: border-box;
+      h3{
+        font-size : 0.26rem ;
+        /*font-weight : 100 ;*/
+      }
+      p{
+        font-size : 0.14rem ;
+        line-height : 0.3rem ;
+      }
+    }
+    .el-form-item{
+      width : 80% ;
+      margin : 0.2rem auto ;
     }
   }
 

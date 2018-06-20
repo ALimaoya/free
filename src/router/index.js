@@ -319,6 +319,13 @@ export const constantRouterMap = [
             meta: { title: '新增账户', icon: 'newAccount' },
 
           },
+          {
+            path: 'changeAccount/:user',
+            name: 'ChangeAccount',
+            component: () => import('@/views/merchantCenter/base/changeAccount'),
+            meta: { title: '修改账户', icon: 'changeAccount' },
+            hidden : true
+          },
         ]
       },
       {
@@ -492,6 +499,13 @@ export const constantRouterMap = [
             component: () => import('@/views/merchantCenter/tool/sourceGoods'),
             meta: { title: '查看源宝贝', icon: 'sourceGoods' },
 
+          },
+          {
+            path: 'list',
+            name: 'List',
+            component: () => import('@/views/merchantCenter/tool/list'),
+            meta: { title: '源宝贝列表', icon: 'list' },
+            hidden: true
           },
         ]
       },

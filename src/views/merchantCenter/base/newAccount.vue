@@ -19,10 +19,7 @@
         <div class="inputInfo">年青人</div>
       </el-form-item>
       <el-form-item labelWidth="130px" label="分配角色">
-        <el-radio-group class="inputInfo" v-model="form.role">
-          <el-radio  label="1">商户平台用户</el-radio>
-          <!--<el-radio  label="2">备选项</el-radio>-->
-        </el-radio-group>
+        <el-checkbox class="inputInfo" v-model="form.role" label="1">商户平台用户</el-checkbox>
       </el-form-item>
       <el-form-item labelWidth="120px" >
         <el-button class="inputInfo button" type="primary" size="small" @click="submitForm('form')">提交</el-button>
@@ -89,7 +86,7 @@
               password : '',
               checkPsw: '',
               // owner : '',
-              role : '',
+              role : false,
             },
             formRule : {
               name : [

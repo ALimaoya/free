@@ -52,8 +52,8 @@
                         :maxlength="40"  v-model.trim="item.size" size="small" ></el-input>
               <el-input  class="key" placeholder="颜色"
                         :maxlength="40"  v-model.trim="item.color" size="small" ></el-input>
-              <el-input  class="key" placeholder="库存量"
-                        :maxlength="40"  v-model.trim="item.stock" size="small" ></el-input>
+              <el-input  class="key" placeholder="库存量" type="number"
+                        :maxlength="40"  v-model.number="item.stock" size="small" ></el-input>
               <el-button slot type="primary" size="mini" @click="addSize">添加</el-button>
               <el-button  slot plain size="mini" @click="deleteSize(item)">删除</el-button>
             </li>
@@ -69,9 +69,9 @@
         <el-form-item labelWidth="130px" label="图片" prop="imgList">
           <ul class="imgList">
             <li v-for="(item,index) in form.imgList" @change="getImg(index)">
-              <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.imgList"
-                          :show-file-list="false"  :before-upload="beforeImgUpload"
-                          :headers="{ 'yb-tryout-merchant-token':token}">
+              <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.imgList[index]"
+                          :headers="{ 'yb-tryout-merchant-token':token}"
+                          :show-file-list="false"  :before-upload="beforeImgUpload">
                 <img v-if="form.imgList[index]" :src="imageDomain + form.imgList[index]" class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                 <span class="imgWarn tips_warn" v-if="goodsImgWarn">请上传商品图片</span>
@@ -80,7 +80,7 @@
           </ul>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="描述" prop="goodsInfo">
-          <editor id="tinymce" v-model="form.tinymceHtml" :init="init" ></editor>
+          <editor :id="tinymceId" v-model="form.tinymceHtml" :init="init" ></editor>
         </el-form-item>
         <el-form-item>
           <el-button class="inputInfo button" type="primary" size="small" @click="submitForm('form')">提交</el-button>
@@ -135,6 +135,37 @@
       // ElFormItem,
       Editor},
     name: "new-goods",
+    props: {
+      id: {
+        type: String
+      },
+      value: {
+        type: String,
+        default: ''
+      },
+      // toolbar: {
+      //   type: Array,
+      //   required: false,
+      //   default() {
+      //     return ['bold italic underline strikethrough | fontsizeselect | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent blockquote | undo redo | link unlink image media | removeformat']
+      //   }
+      // },
+      // menubar: {
+      //   default: ''
+      // },
+      height: {
+        type: Number,
+        required: false,
+        default: 360
+      },
+      // language:{
+      //   default : '/static/tinymce/zh_CN.js'
+      // },
+      // skin : {
+      //   default : '/static/tinymce/skins/lightgray'
+      // }
+
+    },
         data() {
         const validGoodsName = (rule,value,callback) => {
           if(value === ''){
@@ -232,31 +263,39 @@
               imageDomain : process.env.IMAGE_DOMAIN ,
               imgIndex : '',
               noTinymceImg : false ,
+              hasInit:false,
+              hasChange:false,
+              tinymceId: this.id || 'vue-tinymce'+ Date.parse(new Date()),
               init: {
-                language_url: '/static/tinymce/zh_CN.js',
-                language: 'zh_CN',
+                language_url : '/static/tinymce/zh_CN.js',
                 skin_url: '/static/tinymce/skins/lightgray',
-                height: 300,
                 plugins: 'link lists image media table colorpicker textcolor wordcount contextmenu',
                 toolbar: 'bold italic underline strikethrough | fontsizeselect | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent blockquote | undo redo | link unlink image media | removeformat',
-                branding: false,
-                media_live_embeds: true,
-                menubar: "insert",
-                // image_advtab: true, //开启图片上传的高级选项功能
-                // automatic_uploads: true, //开启点击图片上传时，自动进行远程上传操作
-                // images_upload_base_path: process.env.BASE_API+'/tryout/file/upload', // 图片上传的基本路径
-                images_upload_url: process.env.BASE_API+'/tryout/file/upload', // 图片上传的具体地址，该选项一定需要设置，才会出现图片上传选项
+                automatic_uploads: true, //开启点击图片上传时，自动进行远程上传操作
+
               },
               dialogVisible: false,
               // currentRow : null,
               inputName : ''
             }
         },
-        mounted() {
+        mounted(){
+
+
           this.getFirstList();
           tinymce.init({});
-          this.editiorInit();
+          this.initTinymce();
+          // tinymce.init({});
+
           this.getBrandList();
+        },
+        watch:{
+          value(newV,oldV){
+            if(this.hasInit&& !this.hasChange){
+              this.$nextTick(() => window.tinymce.get(this.tinymceId).setContent(val))
+
+            }
+          }
         },
         computed:{
           showImg(){
@@ -391,12 +430,13 @@
                 } else {
                   let formData = new FormData();
                   formData.append('image', file);
-                  uploadImage(formData).then(res => {
+                  console.log(_this.token)
+                  uploadImage(formData,_this.token).then(res => {
                     if (res.data.status === '000000000') {
 
                       if(_this.noTinymceImg){
 
-                          _this.form.imgList[_this.imgIndex] = res.data.data.fileName;
+                          _this.$set(_this.form.imgList,_this.imgIndex,  res.data.data.fileName);
                           // console.log(_this.form.imgList)
                       }
                       // _this.goodsImgWarn = false;
@@ -451,34 +491,54 @@
           },
 
           //  富文本
-          editiorInit() {
-            const self = this
-
-            this.Editor = window.tinymce.init({
-        //       // 默认配置
-        //       ...this.tinymceConfig,
-        //
-        //       // 图片上传
+          initTinymce() { // editor组件传过来的值赋给content
+            const _this = this ;
+            window.tinymce.init({
+              // ..._this.init,
+            selector: `#${_this.tinymceId}`,
+              // setup: (editor)=> {
+              // language_url: this.language,
+              language: 'zh_CN',
+              // skin_url: this.skin,
+              height: this.height,
+              body_class: 'panel-body ',
+              object_resizing: false,
+              // toolbar: this.toolbar,
+              // menubar: this.menubar,
+              // plugins: 'link lists image media table colorpicker textcolor wordcount contextmenu',
+              // toolbar: 'bold italic underline strikethrough | fontsizeselect | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent blockquote | undo redo | link unlink image media | removeformat',
+              branding: false,
+              media_live_embeds: true,
+              default_link_target: '_blank',
+              link_title: false,
+              menubar: "insert",
+              paste_data_images: true, // 粘贴的同时能把内容里的图片自动上传，非常强力的功能
+              paste_convert_word_fake_lists: false, // 插入word文档需要该属性
+              // paste_webkit_styles: 'all',
+              // image_advtab: true, //开启图片上传的高级选项功能
+              // imagetools_toolbar: 'watermark',
+              images_upload_base_path: process.env.BASE_API, // 图片上传的基本路径
+              images_upload_url: process.env.BASE_API + '/tryout/file/upload', // 图片上传的具体地址，该选项一定需要设置，才会出现图片上传选项
               images_upload_handler: function (blobInfo, success, failure) {
+                let file = blobInfo.blob();
                 if (blobInfo.blob().size > self.maxSize) {
                   failure('文件体积过大')
                 }
-        //
-                if (self.accept.indexOf(blobInfo.blob().type) > 0) {
-                  let formData = new FormData();
-                  let _this = this;
 
-                  formData.set('upload_file', blobInfo.blob());
-                  uploadImage(formData).then(res => {
+                if (file.type !== undefined || file.type !== '') {
+                  let formData = new FormData();
+                  let token = getToken();
+                  formData.set('upload_file', file);
+                  uploadImage(formData, token).then(res => {
                     if (res.data.status === '000000000') {
                       success(res.data.data.src);
+                      console.log(res.data.data)
                     } else {
-                      _this.$message({
+                      this.$message({
                         message: res.data.message,
                         center: true,
                         type: 'error'
                       });
-                      _this.goodsImgWarn = true;
 
                     }
                   }).catch(err => {
@@ -490,12 +550,32 @@
                 } else {
                   failure('图片格式错误')
                 }
-        //
-        //
+                //
+                //
               },
-            })
-          },
 
+              init_instance_callback: editor => {
+                console.log(1)
+                if (_this.value) {
+                  editor.setContent(_this.value)
+                }
+                _this.hasInit = true
+                editor.on('NodeChange Change input KeyUp', () => {
+                  //change触发watch去setContent，光标变化了，
+                  this.hasChange = true
+                  this.$emit('input', editor.getContent({format: 'raw'}))
+                })
+              }
+
+            })
+            // console.log(content)
+          },
+          setContent(val){
+            window.tinymce.get(this.tinymceId).setContent(val)
+          },
+          getContent(){
+            window.tinymce.get(this.tinymceId).getContent()
+          },
           //提交表格
           submitForm(formName){
 

@@ -184,14 +184,14 @@ export function checkOrder(data){
 // }
 
 //上传图片
-export function uploadImage(file){
+export function uploadImage(file,token){
   return request({
     url : "/tryout/file/upload" ,
     method : 'post' ,
     data : file ,
-    // headers : {
-    //   // 'Content-Type' : 'form-data'
-    // }
+    headers : {
+      'yb-tryout-merchant-token':token
+    }
   })
 }
 

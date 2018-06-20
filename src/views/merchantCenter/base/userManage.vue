@@ -11,17 +11,17 @@
       <el-button size="mini" type="primary" @click="newAccount()">新增</el-button>
     </div>
     <el-table :data="tableData"  border fit>
-      <el-table-column prop="activityId" label="账户编号"></el-table-column>
+      <el-table-column prop="code" label="账户编号"></el-table-column>
       <el-table-column prop="shopName" label="账户名称" ></el-table-column>
-      <el-table-column prop="code" label="所属平台" ></el-table-column>
-      <el-table-column prop="platform" label="是否有效" ></el-table-column>
-      <el-table-column prop="platform" label="激活状态" ></el-table-column>
-      <el-table-column prop="platform" label="真实姓名" ></el-table-column>
-      <el-table-column prop="platform" label="创建时间" ></el-table-column>
-      <el-table-column prop="platform" label="操作" >
+      <el-table-column prop="type" label="所属平台" ></el-table-column>
+      <el-table-column prop="effect" label="是否有效" ></el-table-column>
+      <el-table-column prop="status" label="激活状态" ></el-table-column>
+      <el-table-column prop="realName" label="真实姓名" ></el-table-column>
+      <el-table-column prop="time" label="创建时间" ></el-table-column>
+      <el-table-column label="操作" >
         <template slot-scope="scope">
-          <el-button class="check" style="padding : 0 ;" type="text"  @click="handleBan(scope.$index,scope.row.activityId)">禁用</el-button>
-          <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.payStatus==='0'" @click="editor(scope.$index,scope.row.activityId, scope.row.payStatus)">修改</el-button>
+          <el-button class="check" style="padding : 0 ;" type="text"  @click="handleBan(scope.$index,scope.row.name)">禁用</el-button>
+          <el-button class="check" style="padding : 0 ;" type="text"  @click="editor(scope.$index,scope.row.name)">修改</el-button>
         </template>
       </el-table-column>
 
@@ -63,7 +63,27 @@
       methods : {
         //  查询列表
         getList(){
-
+          this.tableData = [
+            {
+              time: '2016-05-02',
+              subOrderId : '111',
+              orderId: '王小虎',
+              address: '上海市普陀区金沙江路 1518 弄'
+            }, {
+              time: '2016-05-04',
+              name: '王小虎',
+              code : '4535435354',
+              address: '上海市普陀区金沙江路 1517 弄'
+            }, {
+              time: '2016-05-01',
+              name: '王小虎',
+              address: '上海市普陀区金沙江路 1519 弄'
+            }, {
+              time: '2016-05-03',
+              name: '王小虎',
+              address: '上海市普陀区金沙江路 1516 弄'
+            }
+          ];
         },
         //新增账户
         newAccount(){
@@ -74,9 +94,9 @@
 
         },
       //  修改操作
-        editor(index ,order ,payStatus){
+        editor(index ,user){
           // console.log(order) ;
-
+          this.$router.push('/merchantCenter/base/changeAccount/'+1)
         },
 
         handleSizeChange(val) {
