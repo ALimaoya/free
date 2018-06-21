@@ -25,7 +25,7 @@
         <el-table-column prop="type" label="订单类型"></el-table-column>
         <el-table-column prop="orderId" label="订单号/退款单号" ></el-table-column>
         <el-table-column prop="subOrderId" label="子订单" ></el-table-column>
-        <el-table-column prop="goods" label="商品" >
+        <el-table-column prop="goods" label="商品" show-overflow-tooltip>
           <template slot-scope="scope">
             <!--<el-table :data="scope.row.size"  border fit :header-row-class-name="thColor" :row-style="tbColor">-->
             <!--<el-table-column prop="size" label="尺码" ></el-table-column>-->

@@ -25,9 +25,18 @@
       },
       methods : {
         getGoods(url){
-          console.log(httpString(url))
           this.urlArr = httpString(url);
-          this.$router.push({ name: 'List',params: {type: "1"} })
+          console.log(this.urlArr);
+
+          if(this.urlArr !== null ){
+            this.$router.push({ path: '/merchantCenter/tool/list',query: { type: "1" } })
+          }else{
+            this.$message({
+              center : true ,
+              type : 'error' ,
+              message : '请输入商品链接'
+            })
+          }
         }
       }
     }

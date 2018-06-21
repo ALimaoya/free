@@ -45,7 +45,7 @@
           <span class="subOrder">({{ scope.row.subOrderId }})</span>
         </template>
       </el-table-column>
-      <el-table-column  label="商品" class="goodsInfo">
+      <el-table-column  label="商品" class="goodsInfo" show-overflow-tooltip>
         <template slot-scope="scope">
           <table class="tableC">
             <tr class="thColor">

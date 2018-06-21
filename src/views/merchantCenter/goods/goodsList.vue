@@ -51,7 +51,7 @@
       <el-table-column prop="goodsName" label="商品名称" ></el-table-column>
       <el-table-column prop="brand" label="商品品牌" ></el-table-column>
       <el-table-column prop="type" label="分类" ></el-table-column>
-      <el-table-column prop="size" label="规格" width="160">
+      <el-table-column label="规格" width="160" show-overflow-tooltip>
         <template slot-scope="scope">
           <!--<el-table :data="scope.row.size"  border fit :header-row-class-name="thColor" :row-style="tbColor">-->
             <!--<el-table-column prop="size" label="尺码" ></el-table-column>-->

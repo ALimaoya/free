@@ -31,7 +31,16 @@
         getGoods(){
           this.orderArr = this.orderId.split('\n');
           console.log(this.orderArr);
-          this.$router.push({ name: 'List',params: {type: "2"}})
+          if(this.orderArr.length>0&&this.orderArr.indexOf('')=== -1 ){
+            this.$router.push({ path: '/merchantCenter/tool/list',query: {type: "2"}})
+
+          }else{
+            this.$message({
+              center : true ,
+              type : 'error' ,
+              message : '请输入丫贝商家编号'
+            })
+          }
 
         }
       }
