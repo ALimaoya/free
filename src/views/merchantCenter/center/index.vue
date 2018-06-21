@@ -127,8 +127,6 @@
 
       /*a{*/
         display : flex ;
-        height : 100% ;
-        flex : 1 ;
         flex-direction: row;
         padding : 10px ;
         box-sizing: border-box;
