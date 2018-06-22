@@ -24,21 +24,30 @@
       },
       data(){
           return{
-            menu :['基本信息（个人）','资质信息（个人）','基本信息（企业）','资质信息（企业）'],
+            menu :['基本信息','资质信息'],
             isActive : false,
             tabView : 'tab1',
-            show : '',
-
+            show : '0',
+            userType: '',
           }
       },
       mounted(){
-
+        this.userType = '2';
+        this.changeTab(0);
       },
       methods : {
+
         changeTab(index){
           this.show = index ;
+
           // this.store.dispatch('GetUserInfo',this.user);
-          this.tabView = 'tab'+ (index+1)*1 ;
+          if(this.userType==='1'){
+            this.tabView = 'tab'+ (index+1)*1 ;
+
+          }else if(this.userType==='2'){
+            this.tabView = 'tab'+ (index+3)*1 ;
+
+          }
         }
       }
     }
@@ -53,7 +62,7 @@
       flex-direction: row;
       border-bottom : 1px solid #aaa ;
       li{
-        width : 10% ;
+        width : 15% ;
         height : 0.5rem ;
         color : #aaa ;
         font-weight : bold ;
