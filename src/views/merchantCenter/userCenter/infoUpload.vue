@@ -12,8 +12,8 @@
       <el-form-item  labelWidth="130px" label="企业名称" prop="password">
         <el-input class="inputInfo" size="small" v-model.trim="form.password" :disabled="readOnly" placeholder="企业名称"></el-input>
       </el-form-item>
-      <el-form-item  labelWidth="130px" label="邮箱" prop="checkPsw">
-        <el-input class="inputInfo" size="small" v-model.trim="form.checkPsw" :disabled="readOnly" placeholder="邮箱"></el-input>
+      <el-form-item  labelWidth="130px" label="邮箱" prop="email">
+        <el-input class="inputInfo" size="small" v-model.trim="form.email" :disabled="readOnly" placeholder="邮箱"></el-input>
       </el-form-item>
       <el-form-item class="imgWrap"  label="资质" prop="imgList">
         <ul >
@@ -86,6 +86,15 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
   @import '../../../styles/step';
+  h1{
+    margin : 0 ;
+    padding : 0.2rem  0.4rem ;
+    border-bottom : 1px solid #666 ;
+    font-size : 0.22rem ;
+    line-height : 0.4rem ;
+    height : 0.7rem ;
+
+  }
   .el-form{
     margin-top : 0.5rem ;
     justify-content: flex-start;

@@ -18,15 +18,20 @@ export default {
       'sidebar'
     ]),
     routes(){
-        if(this.$route.path.indexOf('merchantCenter') !== -1){
-          return this.$router.options.routes[1].children;
+      if (this.$route.path.indexOf('freeManage') !== -1) {
+        return this.$router.options.routes[0].children;
 
-        }
+      }
+      if (this.$route.path.indexOf('merchantCenter') !== -1) {
+        return this.$router.options.routes[1].children;
 
-      if(this.$route.path.indexOf('freeManage') !== -1){
-          return this.$router.options.routes[0].children;
+      }
+      if(this.$route.path.indexOf('accountManage') !== -1){
+        return this.$router.options.routes[2].children;
 
-        }
+      }
+
+
 
     },
     isCollapse() {

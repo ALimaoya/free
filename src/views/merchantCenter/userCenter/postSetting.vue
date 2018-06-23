@@ -1,7 +1,7 @@
 <template>
-  <div class="postSetting">
+  <div class="postSetting activityTable">
     <!--<div class="top">-->
-      <h1>运费设置<el-button type="primary" size="mini" @click="newRule">新增运费规则</el-button></h1>
+      <h1 class="h_title">运费设置<el-button type="primary" size="mini" @click="newRule">新增运费规则</el-button></h1>
     <!--</div>-->
     <el-form :model="form" ref="form" label-position="left" :rules="formRule" >
       <ul >
@@ -94,13 +94,15 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
   @import '../../../styles/step';
+  @import '../../../styles/activityTable';
+
   /*.top{*/
     /*border-bottom*/
     h1{
-      /*width : 50% ;*/
-      /*border : 0;*/
+      height : 0.7rem ;
       .el-button{
         float : right ;
+
       }
     }
 

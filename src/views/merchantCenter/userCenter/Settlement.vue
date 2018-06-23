@@ -1,6 +1,6 @@
 <template>
-  <div class="settlement">
-    <h1>我要开店</h1>
+  <div class="settlement ">
+    <h1 class="h_title">结算账户</h1>
     <el-form :model="form" ref="form" label-position="right" :rules="formRule" >
       <el-form-item   labelWidth="130px"  label="姓名" prop="name">
         <el-input class="inputInfo"  size="small" v-model.trim="form.name" :disabled="readOnly" placeholder="姓名"></el-input>
@@ -137,6 +137,14 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
   @import '../../../styles/step';
+  h1{
+    margin : 0 ;
+    padding : 0.2rem  0.4rem ;
+    border-bottom : 1px solid #666 ;
+    font-size : 0.22rem ;
+    line-height : 0.4rem ;
+    height : 0.7rem ;
+  }
   .el-form{
     margin : 0.5rem auto ;
     .el-form-item{

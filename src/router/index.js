@@ -3,6 +3,7 @@ import Router from 'vue-router'
 /* Layout */
 import Layout from '../views/layout/Layout'
 import FreeManage from '../views/layout/components/FreeManage'
+// import AppMain from '../views/layout/components/AppMain'
 
 // in development-env not use lazy-loading, because lazy-loading too many pages will cause webpack hot update too slow. so only in production use lazy-loading;
 
@@ -197,18 +198,18 @@ export const constantRouterMap = [
         name: 'UserInfor',
         meta: { title: '账号信息', icon: 'userInfor' },
         children: [
-          {
-            path: 'settings',
-            name: 'Settings',
-            component: () => import('@/views/freeManage/userInfor/settings'),
-            meta: { title: '基本设置', icon: 'settings' }
-          },
-          {
-            path: 'account',
-            name: 'account',
-            component: () => import('@/views/freeManage/userInfor/account'),
-            meta: { title: '绑定支付宝', icon: 'account' }
-          },
+          // {
+          //   path: 'settings',
+          //   name: 'Settings',
+          //   component: () => import('@/views/freeManage/userInfor/settings'),
+          //   meta: { title: '基本设置', icon: 'settings' }
+          // },
+          // {
+          //   path: 'account',
+          //   name: 'account',
+          //   component: () => import('@/views/freeManage/userInfor/account'),
+          //   meta: { title: '绑定支付宝', icon: 'account' }
+          // },
           {
             path: 'vip',
             name: 'Vip',
@@ -356,6 +357,35 @@ export const constantRouterMap = [
         component: FreeManage,
         meta: { title: '商户中心', icon: 'userCenter' },
         children : [
+          {
+            path: 'admissionShop/index',
+            // redirect: 'admissionShop/index',
+            name: 'AdmissionShop',
+            component: () => import('@/views/merchantCenter/userCenter/admissionShop/index'),
+            meta: { title: '入驻商城', icon: 'admissionShop' },
+
+          },
+          {
+            path: 'admissionShop/personal',
+            name: 'Personal1',
+            component: () => import('@/views/merchantCenter/userCenter/admissionShop/personal'),
+            meta: { title: '个人入驻', icon: 'personal' },
+            hidden: true ,
+          },
+          {
+            path: 'admissionShop/enterprise',
+            name: 'Enterprise',
+            component: () => import('@/views/merchantCenter/userCenter/admissionShop/enterprise'),
+            meta: { title: '企业入驻', icon: 'enterprise' },
+            hidden: true ,
+          },
+          {
+            path: 'admissionShop/successAdd',
+            name: 'SuccessAdd',
+            component: () => import('@/views/merchantCenter/userCenter/admissionShop/successAdd'),
+            meta: { title: '入驻成功', icon: 'success' },
+            hidden: true ,
+          },
           {
             path: 'infoUpload',
             name: 'InfoUpload',
@@ -512,6 +542,116 @@ export const constantRouterMap = [
 
     ]
   },
+  { path: '/accountManage',
+    redirect : '/accountManage/admission/index',
+    component : Layout,
+    hidden: true,
+    children :[
+      {
+        path: '/accountManage/admission',
+        redirect : '/accountManage/admission/index',
+        // name: 'AdmissionManage',
+        component: FreeManage ,
+        meta: { title: '账号管理', icon: 'admission' },
+        children:[
+          {
+            path: 'index',
+            name: 'AdmissionManage',
+            component: () => import('@/views/accountManage/admission/index'),
+            meta: { title: '入驻管理', icon: 'admission' },
+
+          },
+
+
+        ]
+      },
+      {
+        path: '/accountManage/accountInfo',
+        name: 'accountInfo',
+        meta: { title: '账号信息', icon: 'userInfor' },
+        component: FreeManage,
+        children : [
+          {
+            path: 'settings',
+            name: 'Settings',
+            component: () => import('@/views/accountManage/userInfor/settings'),
+            meta: { title: '基本设置', icon: 'settings' }
+          },
+          {
+            path: 'account',
+            name: 'account',
+            component: () => import('@/views/accountManage/userInfor/account'),
+            meta: { title: '绑定支付宝', icon: 'account' }
+          },
+          // {
+          //   path: 'vip',
+          //   name: 'Vip',
+          //   component: () => import('@/views/accountManage/userInfor/vip'),
+          //   meta: { title: '会员管理', icon: 'vip' }
+          // },
+          // {
+          //   path: 'buyVip',
+          //   name: 'BuyVip',
+          //   component: () => import('@/views/freeManage/userInfor/buyVip'),
+          //   meta: { title: '开通会员', icon: 'vip' },
+          //   hidden : true
+          // }
+        ]
+      },
+      // {
+      //   path: '/userInfor',
+      //   component: FreeManage,
+      //   // redirect: '/userInfor/approval',
+      //   name: 'UserInfor',
+      //   meta: { title: '账号信息', icon: 'userInfor' },
+      //   children: [
+      //     {
+      //       path: 'settings',
+      //       name: 'Settings',
+      //       component: () => import('@/views/accountManage/userInfor/settings'),
+      //       meta: { title: '基本设置', icon: 'settings' }
+      //     },
+      //     {
+      //       path: 'account',
+      //       name: 'account',
+      //       component: () => import('@/views/accountManage/userInfor/account'),
+      //       meta: { title: '绑定支付宝', icon: 'account' }
+      //     },
+      //     {
+      //       path: 'vip',
+      //       name: 'Vip',
+      //       component: () => import('@/views/accountManage/userInfor/vip'),
+      //       meta: { title: '会员管理', icon: 'vip' }
+      //     },
+      //     {
+      //       path: 'buyVip',
+      //       name: 'BuyVip',
+      //       component: () => import('@/views/freeManage/userInfor/buyVip'),
+      //       meta: { title: '开通会员', icon: 'vip' },
+      //       hidden : true
+      //     }
+      //   ]
+      // },
+
+      // {
+      //   path: '/accountManage/admission',
+      //   redirect: '/accountManage/admission/index',
+      //   // name: 'AdmissionManage',
+      //   component: FreeManage,
+      //   // meta: {title: '账号管理', icon: 'center'},
+      //
+      //   children: [
+      //     {
+      //       path: '/accountManage/accountInfo/index',
+      //       name: 'AccountInfo',
+      //       component: () => import('@/views/accountManage/AccountInfo/index'),
+      //     },
+      //
+      //   ]
+      // },
+    ]
+  },
+
 
   { path: '/login', component: () => import('@/views/login/index'), hidden: true },
   { path: '/changePsw', component: () => import('@/views/login/changePsw'), hidden: true },
@@ -548,20 +688,6 @@ export const constantRouterMap = [
         path: '/ruleCenter/index',
         name: 'RuleCenter',
         component: () => import('@/views/ruleCenter/index'),
-
-      }
-    ]
-  },
-  { path: '/accountManage',
-    redirect : '/accountManage/index',
-    component : Layout,
-    // meta: { title: '特卖商城', icon: 'center' },
-    hidden: true,
-    children :[
-      {
-        path: '/accountManage/index',
-        name: 'AccountManage',
-        component: () => import('@/views/accountManage/index'),
 
       }
     ]

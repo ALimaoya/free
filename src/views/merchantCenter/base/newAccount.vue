@@ -10,10 +10,18 @@
         <el-input class="inputInfo" :maxLength="20" size="small" v-model.trim="form.realName" placeholder="真实姓名 最长20位"></el-input>
       </el-form-item>
       <el-form-item  labelWidth="130px" label="账户密码" prop="password">
-        <el-input class="inputInfo" size="small" v-model.trim="form.password" placeholder="账户密码 6-12位"></el-input>
+        <el-input class="inputInfo" :type="pwdType1" size="small" v-model.trim="form.password" placeholder="账户密码 8-16位"></el-input>
+        <span class="show-pwd" @click="showPwd('1')">
+            <svg-icon icon-class="eyeopen" v-if="pwdType1===''" />
+            <svg-icon v-else="pwdType1==='password'" icon-class="eyeclose" />
+          </span>
       </el-form-item>
       <el-form-item  labelWidth="130px" label="确认密码" prop="checkPsw">
-        <el-input class="inputInfo" size="small" v-model.trim="form.checkPsw" placeholder="确认密码 6-12位"></el-input>
+        <el-input class="inputInfo" :type="pwdType2" size="small" v-model.trim="form.checkPsw" placeholder="确认密码 8-16位"></el-input>
+        <span class="show-pwd" @click="showPwd('2')">
+            <svg-icon icon-class="eyeopen" v-if="pwdType2===''" />
+            <svg-icon v-else="pwdType2==='password'" icon-class="eyeclose" />
+          </span>
       </el-form-item>
       <el-form-item labelWidth="130px" label="所属商户">
         <div class="inputInfo">年青人</div>
@@ -61,7 +69,7 @@
         // };
         const validatePass = (rule, value, callback) => {
           if (!validPassWord(value)) {
-            callback(new Error('密码为6-12位的数字、字母组合'))
+            callback(new Error('密码为8-16位的数字、字母组合'))
           } else {
             if (this.form.checkPsw !== '') {
               this.$refs.form.validateField('checkPsw');
@@ -109,7 +117,9 @@
                 trigger: 'blur',
                 validator: validateCheck
               }]
-            }
+            },
+            pwdType1: 'password',
+            pwdType2: 'password',
           }
       },
       methods : {
@@ -122,7 +132,23 @@
             }
           })
 
-        }
+        },
+        showPwd(type) {
+          if(type === '1'){
+            if (this.pwdType1 === 'password') {
+              this.pwdType1 = ''
+            } else {
+              this.pwdType1 = 'password'
+            }
+          }else{
+            if (this.pwdType2 === 'password') {
+              this.pwdType2 = ''
+            } else {
+              this.pwdType2 = 'password'
+            }
+          }
+        },
+
       }
     }
 </script>

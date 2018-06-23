@@ -2,26 +2,26 @@
   <div class="tab3 tab">
     <el-form :model="form" ref="form" :rules="formRule" label-position="right" >
       <h1>基本信息</h1>
-      <el-form-item  labelWidth="160px" label="店铺名称：" >
+      <el-form-item  labelWidth="180px" label="店铺名称：" >
         <div class="inputInfo">{{ form.shopName }}</div>
       </el-form-item>
-      <el-form-item  labelWidth="160px" label="店铺类型：" >
+      <el-form-item  labelWidth="180px" label="店铺类型：" >
         <div class="inputInfo">企业入驻</div>
       </el-form-item>
-      <el-form-item  labelWidth="160px" label="主营类目：" >
+      <el-form-item  labelWidth="180px" label="主营类目：" >
         <div class="inputInfo">{{ form.goodsType }}</div>
       </el-form-item>
-      <el-form-item   labelWidth="160px"  label="招商对接联系方式：">
+      <el-form-item   labelWidth="180px"  label="招商对接联系方式：">
         <el-button size="small" type="text">查看</el-button>
       </el-form-item>
-      <el-form-item   labelWidth="160px"  label="第三方平台店铺：">
+      <el-form-item   labelWidth="180px"  label="第三方平台店铺：">
         <div v-if="form.shopUrl === ''">
           <span>无</span>
           <el-button size="small" type="text" @click="dialogVisible=true;">添加第三方平台店铺链接</el-button>
         </div>
         <div v-else>{{ form.shopUrl }}</div>
       </el-form-item>
-      <el-form-item labelWidth="160px" label="店铺LOGO：" prop="logo">
+      <el-form-item labelWidth="180px" label="店铺LOGO：" prop="logo">
         <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logo"
                     :show-file-list="false"  :before-upload="beforeImgUpload">
           <img v-if="form.logo" :src="imageDomain + form.logo" class="avatar">
@@ -30,30 +30,30 @@
         <p class="require">请上传尺寸为300px×300px，500k以内的图片</p>
         <span class="imgWarn tips_warn" v-if="goodsImgWarn">请上传店铺LOGO</span>
       </el-form-item>
-      <el-form-item   labelWidth="160px"  label="店铺详情：" prop="shopDetail">
+      <el-form-item   labelWidth="180px"  label="店铺详情：" prop="shopDetail">
         <el-input class="inputInfo" type="textarea" :rows="4" size="small" v-model.trim="form.shopDetail" placeholder=""></el-input>
       </el-form-item>
-      <el-form-item   labelWidth="160px"  label="店铺管理人姓名：" prop="manageName">
+      <el-form-item   labelWidth="180px"  label="店铺管理人姓名：" prop="manageName">
         <el-input class="inputInfo telInput" :maxLength="4" size="small" v-model.trim="form.manageName" placeholder="请输入店铺管理人姓名"></el-input>
       </el-form-item>
-      <el-form-item   labelWidth="160px"  label="店铺管理人邮箱：" prop="email">
+      <el-form-item   labelWidth="180px"  label="店铺管理人邮箱：" prop="email">
         <el-input class="inputInfo telInput"  size="small" v-model.trim="form.email" placeholder="请输入店铺管理人邮箱"></el-input>
       </el-form-item>
-      <el-form-item   labelWidth="160px" label="店铺管理人手机号：" prop="tel1">
+      <el-form-item   labelWidth="180px" label="店铺管理人手机号：" prop="tel1">
         <el-input class="inputInfo telInput"  size="small" v-model.trim="form.tel1" disabled="disabled"></el-input>
         <el-button type="text" size="mini" @click="goChange">修改</el-button>
       </el-form-item>
-      <el-form-item   labelWidth="160px"  label="法定代表人姓名：" prop="legalName">
+      <el-form-item   labelWidth="180px"  label="法定代表人姓名：" prop="legalName">
         <el-input class="inputInfo telInput" :maxLength="4" size="small" v-model.trim="form.legalName" placeholder="请输入法定代表人姓名"></el-input>
       </el-form-item>
-      <el-form-item   labelWidth="160px"  label="法定代表人手机号：" prop="tel2">
+      <el-form-item   labelWidth="180px"  label="法定代表人手机号：" prop="tel2">
         <el-input class="inputInfo telInput" size="small" v-model.trim="form.tel2" placeholder="请输入法定代表人手机号"></el-input>
       </el-form-item>
       <el-form-item class="ruleDetail">
         <el-checkbox class="inputInfo"  size="small" v-model.trim="agree"></el-checkbox>
         <span>我声明，此页面内容由本店铺自行填写和发布，内容真实有效，如有相关法律法规，平台协议及平台规则之规定冲突的，以法律法规、平台协议及平台规则规定为准。</span>
       </el-form-item>
-      <el-form-item labelWidth="160px">
+      <el-form-item labelWidth="180px">
         <el-button @click="submitForm('form')" type="primary" >保存</el-button>
       </el-form-item>
     </el-form>

@@ -22,12 +22,44 @@
       </div>
     </el-dialog>
     <el-dialog title="新建子账号" :visible.sync="newSubDialog" width="50%" center >
-      <div class="dialog_content">
-        <span>修改备注：</span><el-input type="text" size="small" v-model.trim="nickName" placeholder="请输入新昵称"></el-input>
-      </div>
+      <el-form :model="form" ref="form" :rules="formRule" label-position="right" >
+        <el-form-item  labelWidth="150px" label="账号名：" prop="account">
+          <el-input class="inputInfo" size="small" v-model.trim="form.account" placeholder="请输入账号名"></el-input>
+        </el-form-item>
+        <el-form-item   labelWidth="150px"  label="账号备注：" prop="note">
+          <el-input class="inputInfo" size="small" v-model.trim="form.note" placeholder="请输入账号备注"></el-input>
+        </el-form-item>
+        <el-form-item  labelWidth="150px" label="登陆密码：" prop="password">
+          <el-input :type="pwdType1" class="inputInfo" size="small" v-model.trim="form.password" placeholder="请输入登录密码"></el-input>
+          <!--<ul>-->
+            <!--<p>安全程度</p>-->
+            <!--<li>8到16位</li>-->
+            <!--<li></li>-->
+          <!--</ul>-->
+          <span class="show-pwd" @click="showPwd('1')">
+            <svg-icon icon-class="eyeopen" v-if="pwdType1===''" />
+            <svg-icon v-else="pwdType1==='password'" icon-class="eyeclose"></svg-icon>
+          </span>
+        </el-form-item>
+        <el-form-item  labelWidth="150px" label="确认密码：" prop="checkPsw">
+          <el-input  :type="pwdType2" class="inputInfo" size="small" v-model.trim="form.checkPsw" placeholder="请再次确认密码"></el-input>
+          <span class="show-pwd" @click="showPwd('2')">
+            <svg-icon icon-class="eyeopen" v-if="pwdType2===''" />
+            <svg-icon v-else="pwdType2==='password'" icon-class="eyeclose" />
+          </span>
+        </el-form-item>
+        <el-form-item  labelWidth="150px" label="拥有的权限：" prop="role">
+          <el-checkbox-group v-model="form.role">
+            <el-checkbox v-for="(item,index) in roleList" :label="item.value" :key="index" name="role">{{item.name}}</el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+        <el-form-item  labelWidth="150px" label="账户绑定手机号：" prop="tel">
+          <el-input class="inputInfo" size="small" v-model.trim="form.tel" placeholder="请输入手机号"></el-input>
+        </el-form-item>
+      </el-form>
       <div slot="footer" class="dialog-footer" >
-        <el-button type="danger" size="mini" @click="confirmNew()">确认创建</el-button>
-        <el-button plain size="mini" @click="cancel()">取消</el-button>
+        <el-button type="danger" size="mini" @click="confirmNew('form')">确认创建</el-button>
+        <el-button plain size="mini" @click="cancel('form')">取消</el-button>
       </div>
     </el-dialog>
     <div class="block2">
@@ -47,10 +79,43 @@
 </template>
 
 <script>
-    export default {
+  import {  validPassWord,validatePhone } from '@/utils/validate'
+
+  export default {
         name: "sub-account",
       data(){
-          return{
+        const validatePass = (rule, value, callback) => {
+          if (!validPassWord(value)) {
+            callback(new Error('密码为8-16位的数字、字母组合'))
+          } else {
+            if (this.form.checkPsw !== '') {
+              this.$refs.form.validateField('checkPsw');
+            }
+            callback()
+          }
+        };
+        const validateCheck = (rule, value, callback) => {
+          if (value === '') {
+            callback(new Error('请再次输入密码'));
+          } else {
+            if (value !== this.form.password) {
+              callback(new Error('两次输入密码不一致！'))
+            }
+            callback()
+          }
+        };
+        const validTel = ( rule,value,callback) => {
+          if(value === ''){
+            callback(new Error('请填写联系电话'))
+          }else{
+            if(!validatePhone(value)){
+              callback(new Error('请填写正确格式的联系电话'))
+            }
+            callback()
+          }
+        };
+
+        return{
             tableData: [],
             dialogVisible: false ,
             nickName: '',
@@ -60,7 +125,62 @@
             totalElements : 0,
             currentPage : 1,
             pageSize : 10,
-            newSubDialog: false
+            newSubDialog: false,
+            form:{
+              account:'',
+              note: '',
+              password:'',
+              checkPsw:'',
+              role:[],
+              tel:''
+            },
+            formRule: {
+              account:[
+                {
+                  required: true, trigger : 'blur',message : '请输入账号名'
+                }
+              ],
+              password: [
+                {
+                  required: true, trigger: 'blur', validator: validatePass
+                }
+              ],
+              checkPsw: [
+                {
+                  required: true, trigger: 'blur', validator: validateCheck
+                }
+              ],
+              role: [
+                {
+                  required : true ,trigger : 'change',message : '请至少选择一个账号权限', type: 'array',
+                }
+              ],
+              tel: [
+                {
+                  required : true ,trigger : 'blur',validator : validTel
+                }
+              ]
+            },
+            roleList: [
+              {
+                value : '1',
+                name : '管理员'
+              },
+              {
+                value : '2',
+                name : '客服'
+              },
+              {
+                value : '3',
+                name : '运营'
+              },
+              {
+                value : '4',
+                name : '客服管理员'
+              }
+            ],
+            pwdType1: 'password',
+            pwdType2: 'password',
           }
       },
       mounted(){
@@ -94,12 +214,37 @@
 
 
         },
+        showPwd(type) {
+          if(type === '1'){
+            if (this.pwdType1 === 'password') {
+              this.pwdType1 = ''
+            } else {
+              this.pwdType1 = 'password'
+            }
+          }else{
+            if (this.pwdType2 === 'password') {
+              this.pwdType2 = ''
+            } else {
+              this.pwdType2 = 'password'
+            }
+          }
+        },
+
         //提交新建子账号
-        confirmNew(){
-          this.newSubDialog = false ;
+        confirmNew(formName){
+          console.log(this.form);
+          this.$refs[formName].validate((valid) => {
+            if(valid){
+              this.newSubDialog = false ;
+
+            }else{
+
+            }
+          })
 
         },
-        cancel(){
+        cancel(formName){
+          this.$refs[formName].resetFields();
           this.newSubDialog = false ;
         },
         handleSizeChange(val) {
@@ -129,6 +274,27 @@
     .el-input{
       width : 40%;
       margin-left : 0.2rem;
+    }
+  }
+  .el-form{
+    .el-form-item{
+      width : 70% ;
+      margin : 0.3rem auto ;
+      position: relative;
+
+      .el-input{
+        width : 80% ;
+
+      }
+      .show-pwd {
+          position: absolute;
+          left: 70%;
+          top: 0;
+          font-size: 0.16rem;
+          color: $dark_gray;
+          cursor: pointer;
+          user-select:none;
+        }
     }
   }
 </style>

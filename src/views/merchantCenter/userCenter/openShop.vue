@@ -66,6 +66,15 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
   @import '../../../styles/step';
+  h1{
+    margin : 0 ;
+    padding : 0.2rem  0.4rem ;
+    border-bottom : 1px solid #666 ;
+    font-size : 0.22rem ;
+    line-height : 0.4rem ;
+    height : 0.7rem ;
+
+  }
   .el-form{
     margin-top : 0.5rem ;
   }

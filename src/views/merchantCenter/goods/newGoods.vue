@@ -70,7 +70,6 @@
           <ul class="imgList">
             <li v-for="(item,index) in form.imgList" @change="getImg(index)">
               <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.imgList[index]"
-                          :headers="{ 'yb-tryout-merchant-token':token}"
                           :show-file-list="false"  :before-upload="beforeImgUpload">
                 <img v-if="form.imgList[index]" :src="imageDomain + form.imgList[index]" class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -593,7 +592,6 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  @import '../../../styles/variables';
   @import '../../../styles/new';
   .el-form{
     width  : 90%!important;

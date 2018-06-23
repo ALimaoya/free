@@ -12,7 +12,7 @@
       <div class="wrap allWid" >
 
 
-        <component  :is="tabView " :getData="form"></component>
+        <component  :is="tabView " @getData="getInfo"></component>
 
         <!--<step-wrap></step-wrap>-->
       </div>
@@ -64,7 +64,7 @@
             isActive : false,
             tabView : 'step1',
             user : getUser(),
-            form : {},
+            // form : {},
           }
       },
     mounted(){
@@ -80,6 +80,9 @@
         // this.store.dispatch('GetUserInfo',this.user);
         this.tabView = 'Step'+ (index+1)*1 ;
       },
+      getInfo(){
+
+      }
 
     }
     }

@@ -47,6 +47,11 @@ export function validateZipCode(val){
   const reg = /^[1-9][0-9]{5}$/ ;
   return reg.test(val)
 }
+/*身份证号验证*/
+export function validateIDCard(val){
+  const reg =  /^[1-9]{1}[0-9]{14}$|^[1-9]{1}[0-9]{16}([0-9]|[xX])$/ ;
+  return reg.test(val);
+}
 /* 小写字母*/
 export function validateLowerCase(str) {
   const reg = /^[a-z]+$/
