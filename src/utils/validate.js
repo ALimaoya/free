@@ -117,3 +117,8 @@ export function checkFloat(value){
   const reg = /^(0|[1-9][0-9]*)+(\.\d{1,2})?$/ ;
   return reg.test(value) ;
 }
+/*验证社会统一信用代码*/
+export function validCreditCode(value){
+  const reg = /[^_IOZSVa-z\W]{2}\d{6}[^_IOZSVa-z\W]{10}$/ ;
+  return reg.test(value);
+}

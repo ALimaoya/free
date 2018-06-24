@@ -105,9 +105,10 @@ h1{
       text-align: center;
     }
     .isActive{
+      color : rgba(255, 0, 0, 0.6);
       span:nth-child(1){
         background : rgba(255, 0, 0, 0.6) ;
-        color : #fff ;
+        color : #fff!important; ;
         border : 1px solid transparent ;
 
       }

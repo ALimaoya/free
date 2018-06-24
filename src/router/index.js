@@ -386,20 +386,20 @@ export const constantRouterMap = [
             meta: { title: '入驻成功', icon: 'success' },
             hidden: true ,
           },
-          {
-            path: 'infoUpload',
-            name: 'InfoUpload',
-            component: () => import('@/views/merchantCenter/userCenter/infoUpload'),
-            meta: { title: '资质上传', icon: 'infoUpload' },
-
-          },
-          {
-            path: 'openShop',
-            name: 'OpenShop',
-            component: () => import('@/views/merchantCenter/userCenter/OpenShop'),
-            meta: { title: '我要开店', icon: 'OpenShop' },
-
-          },
+          // {
+          //   path: 'infoUpload',
+          //   name: 'InfoUpload',
+          //   component: () => import('@/views/merchantCenter/userCenter/infoUpload'),
+          //   meta: { title: '资质上传', icon: 'infoUpload' },
+          //
+          // },
+          // {
+          //   path: 'openShop',
+          //   name: 'OpenShop',
+          //   component: () => import('@/views/merchantCenter/userCenter/OpenShop'),
+          //   meta: { title: '我要开店', icon: 'OpenShop' },
+          //
+          // },
           {
             path: 'settlement',
             name: 'Settlement',

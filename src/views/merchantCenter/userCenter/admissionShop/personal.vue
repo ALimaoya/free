@@ -1,18 +1,16 @@
 <template>
     <div class="personal admission">
         <ul class="admissionStep">
-          <li :class="{isActive:show === '1' }"><span>1</span><span>身份信息</span></li>
-          <li class="icon">＞＞＞＞＞＞＞＞＞</li>
-          <li :class="{isActive:show === '2' }"><span>2</span><span>店铺信息</span></li>
-          <li class="icon">＞＞＞＞＞＞＞＞＞</li>
+          <li class="isActive"><span>1</span><span>身份信息</span></li>
+          <li class="icon" :class="{isActive:show !== '1' }">＞＞＞＞＞＞＞＞＞</li>
+          <li :class="{isActive:show !== '1' }"><span>2</span><span>店铺信息</span></li>
+          <li class="icon" :class="{isActive:show === '3' }">＞＞＞＞＞＞＞＞＞</li>
           <li :class="{isActive:show === '3' }"><span>3</span><span>入驻成功</span></li>
         </ul>
       <div class="wrap" >
 
-
         <component  :is="tabView" @stepObj="getStep"></component>
 
-        <!--<step-wrap></step-wrap>-->
       </div>
     </div>
 </template>
@@ -46,7 +44,7 @@
           getStep(res){
             this.show = res.index ;
             // this.store.dispatch('GetUserInfo',this.user);
-            this.tabView = 'Personal2' ;
+            this.tabView = res.component ;
           },
         }
     }

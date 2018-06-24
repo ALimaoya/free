@@ -56,28 +56,62 @@
 .tagView{
   .el-form{
     width : 80%!important ;
+    padding-bottom : 0.7rem;
+    .otherInfo{
+      font-size: 0.24rem;
+      font-weight : bold ;
+      border-top: 1px solid #aaa ;
+    }
+    .el-form-item{
+      position : relative ;
+      width : 85% ;
+      margin : 0.3rem auto  ;
+      .el-checkbox-button{
+        margin-right : 0.1rem ;
+
+      }
+    }
     .tip{
-      width : 100% ;
+      width : 60% ;
+      margin : auto;
       display: inline-block;
       font-size : 0.14rem ;
       color : #666;
-      height : 0.3rem ;
-      line-height :0.2rem;
+      min-height : 0.4rem ;
+      line-height :0.4rem;
+      background : #fdf1ce;
+      border : 1px solid #ffe18d ;
+      border-radius : 0.05rem;
+      padding : 0 0.2rem;
+      box-sizing: border-box;
       .svg-icon{
         width : 0.3rem;
         height : 0.3rem;
-        margin-right : 0.05rem;
+        margin : 0.04rem 0.05rem;
+        float : left;
+
       }
     }
     .line{
       margin-left : 0.2rem;
     }
+    .uploadImg{
+      margin-bottom: 0.5rem;
+    }
     .upload{
       width : 25%;
       float : left;
+
       img{
-        width : 100%;
-      }
+          width : 100%;
+        }
+        .imgWarn{
+          position: absolute;
+          top: 100%;
+          left: 0;
+          display: inline;
+          font-size: 0.12rem ;
+        }
     }
     .showBtn{
       float : left ;
@@ -90,6 +124,14 @@
       float : right ;
       color : #666;
       line-height: 0.3rem;
+    }
+    .showShop{
+      font-size : 0.18rem ;
+      color : #666 ;
+      border-bottom : 1px solid #aaa ;
+      line-height : 0.4rem;
+      height: 0.4rem;
+      text-indent : 0.2rem;
     }
   }
   .el-dialog{
