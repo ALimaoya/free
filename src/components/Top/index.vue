@@ -58,10 +58,10 @@
               name : '特卖商城',
               path : '/merchantCenter'
             },
-            {
-              name : '规则中心',
-              path : '/ruleCenter'
-            },
+            // {
+            //   name : '规则中心',
+            //   path : '/ruleCenter'
+            // },
             {
               name : '账号管理',
               path : '/accountManage'
@@ -82,7 +82,7 @@
       methods : {
         logout() {
           this.$store.dispatch('LogOut').then(() => {
-            location.reload()
+            this.$router.push('/login')
           })
           //   .catch( err => {
           //   console.log(err) ;

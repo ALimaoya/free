@@ -20,10 +20,19 @@
       </el-form-item>
       <el-form-item>
         <div class="btnWrap">
-          <el-button type="primary" size="small" @click="submitForm('form')">换绑</el-button>
+          <el-button type="primary" size="small" v-if="hasAccount" @click="changeForm('form')">换绑</el-button>
+          <el-button type="primary" size="small" v-else-if="!hasAccount" @click="submitForm('form')">绑定</el-button>
+
         </div>
       </el-form-item>
     </el-form>
+    <el-dialog title="提示" :visible.sync="isRegister" width="60%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+        <!--<img :src="ImgSrc" alt="" />-->
+        <p class="tips">您还未上传资质信息，请先前往上传资质信息</p>
+      <div slot="footer">
+        <el-button plain @click="goUpload">前往资质上传</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -31,7 +40,7 @@
     import ElButton from "element-ui/packages/button/src/button";
     import ElFormItem from "element-ui/packages/form/src/form-item";
     import { getCaptcha } from "@/api/userInfor";
-    import { validateEmail,} from '@/utils/validate'
+    import { validatePhone, validateEmail} from '@/utils/validate'
     export default {
       components: {
         ElFormItem,
@@ -43,12 +52,12 @@
           if(value === ''){
             callback(new Error('请输入结算账户'))
           }else{
-            if(!validateEmail.test(value)){
-              callback(new Error('请输入正确格式的邮箱'))
+            if(!validatePhone.test(value) || !validateEmail.test(value)){
+              callback(new Error('请输入正确格式的结算账户'))
             }
             callback()
           }
-        }
+        };
         return {
           form: {
             name:'',
@@ -59,6 +68,7 @@
           readOnly: true,
           message : '发送验证码',
           disabled : false,
+          hasAccount:  false ,
           formRule : {
             account: [
               {
@@ -68,11 +78,13 @@
             verify : [
               { message : '请输入验证码',required : true ,trigger : 'blur'}
             ]
-          }
+          },
+          isRegister: false
         }
       },
-      mouted(){
+      mounted(){
         this.getInfo();
+        // this.isRegister =
       },
       methods : {
         getInfo(){
@@ -119,7 +131,7 @@
             alert('服务器开小差啦，请稍等~')
           })
         },
-        //换绑
+        //绑定
         submitForm(formName){
 
           console.log(this.form);
@@ -130,6 +142,21 @@
 
             }
           })
+        },
+        //换绑
+        changeForm(formName){
+
+          console.log(this.form);
+          this.$refs[formName].validate((valid) => {
+            if(valid){
+
+            }else{
+
+            }
+          })
+        },
+        goUpload(){
+          this.$router.push('/merchantCenter/userCenter/infoUpload')
         }
       }
     }
@@ -162,5 +189,14 @@
         padding : 0.1rem ;
       }
     }
+  }
+  .el-dialog{
+    /*height : 50%!important;*/
+    p{
+       height : 10vh;
+       font-size : 0.3rem ;
+       text-align : center ;
+       line-height : 10vh ;
+     }
   }
 </style>

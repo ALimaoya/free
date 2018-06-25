@@ -90,6 +90,7 @@
 </template>
 
 <script>
+    import { getGoodsList } from "@/api/merchant"
     export default {
         name: "goods-list",
       data(){
@@ -139,6 +140,11 @@
       methods : {
         //  获取商品列表
         getList(){
+          getGoodsList().then( res => {
+
+          }).catch( err => {
+
+          });
           this.tableData = [
             {
               time: '2016-05-02',

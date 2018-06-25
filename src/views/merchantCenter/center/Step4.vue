@@ -1,34 +1,52 @@
 <template>
   <div class="step4">
     <h1>我要开店</h1>
-    <el-form ref="form" :model="form"  center label-position="top">
-      <el-form-item label="店铺名称"  >
-        <el-input type="text" size="small" v-model="form.shopName" :disabled="readOnly"></el-input>
+    <el-form ref="form" :model="form" :rules="formRule" center label-position="top">
+      <el-form-item label="店铺名称"  prop="name">
+        <el-input type="text" size="small" v-model="form.name" :disabled="readOnly"></el-input>
       </el-form-item>
-      <el-form-item label="主营" >
-        <el-input type="text" size="small" :disabled="readOnly" v-model="form.email"></el-input>
+      <el-form-item label="主营" prop="mainBusiness">
+        <el-input type="text" size="small" :disabled="readOnly" v-model="form.mainBusiness"></el-input>
       </el-form-item>
-      <el-form-item label="类型">
-        <el-input type="text" size="small" v-model="form.type" :disabled="readOnly"></el-input>
+      <el-form-item label="类型" prop="type">
+        <el-select  size="small" clearable v-model="form.type" :disabled="readOnly" filterable placeholder="请选择店铺类型">
+          <el-option
+            v-for="item in typeList"
+            :key="item.value"
+            :label="item.name"
+            :value="item.value">
+          </el-option>
+        </el-select>
       </el-form-item>
-      <el-form-item label="描述">
-        <el-input type="text" size="small" v-model="form.enterprise" :disabled="readOnly"></el-input>
+      <el-form-item label="描述" prop="describes">
+        <el-input type="textarea" :rows="4" size="small" v-model="form.describes" :disabled="readOnly"></el-input>
       </el-form-item>
-      <el-form-item class="imgWrap">
-        <dl @click="BigImg(form.src)">
+      <el-form-item class="imgWrap" prop="logoImage" v-if="!readOnly" label="店铺LOGO">
+            <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logoImage"
+                        :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeImgUpload">
+              <img v-if="form.logoImage" :src="imageDomain + form.logoImage" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+            <span class="imgWarn tips_warn" v-if="goodsImgWarn">请上传店铺LOGO</span>
+
+      </el-form-item>
+      <!--<el-form-item class="imgWrap" prop="logo" label="店铺LOGO">-->
+       <dl @click="dialogVisible = true;" v-else-if="readOnly" >
           <dt>店铺LOGO</dt>
           <dd>
-            <img v-if="form.src !== undefined" :src="form.src" alt="" />
+            <img v-if="form.logo !== undefined" :src="form.logo" alt="" />
             <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
           </dd>
         </dl>
-      </el-form-item>
+      <!--</el-form-item>-->
     </el-form>
-    <el-button type="primary" size="small" @click="goDetail">查看</el-button>
+    <el-button v-if="readOnly" type="primary" size="small" @click="goDetail">查看</el-button>
+    <el-button v-if="!readOnly" type="primary" size="small" @click="submit('form')">{{ handleType}}</el-button>
+
     <el-dialog title="店铺LOGO" :visible.sync="dialogVisible" width="60%" center>
       <div class="wrap">
-        <!--<img :src="ImgSrc" alt="" />-->
-        <img src="../../../assets/imgs/logo.png" />
+        <img :src="form.logo" alt="" />
+        <!--<img src="../../../assets/imgs/logo.png" />-->
       </div>
     </el-dialog>
   </div>
@@ -36,32 +54,202 @@
 </template>
 
 <script>
+  import {  getToken } from '@/utils/auth'
+  import { uploadImage  } from "@/api/activity"
+  import { shopInfo, getShop } from "@/api/merchant"
     export default {
       name: "step4",
+      props : ['step4Status'],
       data(){
         return {
-          form : {},
-          readOnly : true,
-          imgTitle : '',
-          ImgSrc : '',
+          form : {
+            id: '',
+            name : '',
+            mainBusiness: '',
+            describes:'',
+            logoImage: '',
+            type: '',
+            status : ''
+            },
+          formRule: {
+            name: [
+              {
+                required: true ,trigger:'blur',message: '请输入店铺名称'
+              }
+            ],
+            mainBusiness:[
+              {
+                required : true ,trigger : 'blur',message : '请输入店铺主营类目'
+              }
+            ],
+            type: [
+              {
+                required: true ,trigger: 'change',message : '请选择店铺类型'
+              }
+            ],
+            describes: [
+              {
+                required : true ,trigger: 'blur',message : '请填写店铺相关描述'
+              }
+            ]
+          },
+          typeList: [
+
+            {
+              value: '1',
+              name : '旗舰店'
+            },
+            {
+              value : '2',
+              name : '专卖店'
+            },
+            {
+              value : '3',
+              name: '专营店'
+            }
+          ],
+          readOnly : false ,
           dialogVisible: false,
+          token : getToken() ,
+          autoUpload : true ,
+          imgUrl : process.env.BASE_API+'/tryout/file/upload',
+          goodsImgWarn : false ,
+          imageDomain : process.env.IMAGE_DOMAIN ,
+          status: '0',
+          handleType: '提交',
+
         }
       },
-      computed:{
-        // form : function(){
-        //   return this.$store.state.step.userInfo
-        //
-        // }
+      mounted(){
+        this.getShopInfo();
+
+
       },
       methods : {
+        getShopInfo(){
+          this.$emit('shop','2');
+
+          getShop().then( res => {
+            if(res.data.status === '000000000'){
+              this.form = res.data.data ;
+              this.status = res.data.data.status ;
+              if(this.status === '1' || this.status === '2'){
+                this.readOnly = true ;
+              }else{
+                if(this.status === '0'){
+                  this. handleType = '提交'
+
+                }else if( this.status === '3'){
+                  this. handleType = '修改'
+
+                }
+                this.readOnly = false ;
+              }
+              this.$emit('shop',this.status)
+            }else{
+              this.$message({
+                message : res.data.message ,
+                type : 'error',
+                center : true
+              })
+            }
+          }).catch( err => {
+
+          })
+
+        },
         goDetail(){
           this.$router.push('/merchantCenter/userCenter/OpenShop') ;
         },
-        BigImg(src){
+        // 上传图片
+        beforeImgUpload(file) {
+          let reader = new FileReader();
+          let ret = [];
+          let _this = this;
+          reader.onload = (e) => {
+            let image = new Image();
+            image.onload = function () {
+              const isHeight = this.height;
+              const isWidth = this.width;
+              if (isWidth > 800 || isHeight > 800) {
+                _this.$message.error('图片尺寸过大，请重新选择后上传');
+                return false;
 
-          // this.imgTitle = this.imgType[index] ;
-          // this.ImgSrc = src ;
-          this.dialogVisible = true ;
+              } else {
+                let formData = new FormData();
+                formData.append('image', file);
+                uploadImage(formData,_this.token).then(res => {
+                  if (res.data.status === '000000000') {
+                      _this.form.logoImage = res.data.data.fileName ;
+
+                    // console.log(_this.form.imgList)
+                    _this.goodsImgWarn = false;
+                  } else {
+                    _this.$message({
+                      message: res.data.message,
+                      center: true,
+                      type: 'error'
+                    });
+                    _this.goodsImgWarn = true;
+
+                  }
+                }).catch(err => {
+                  // console.log(err) ;
+                  _this.goodsImgWarn = true;
+
+                })
+              }
+            };
+
+            image.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        },
+        submit(formName){
+          console.log(this.form);
+
+
+            if(this.form.logoImage === ''){
+              this.goodsImgWarn = true ;
+            }
+
+
+          this.$refs[formName].validate((valid) => {
+            if(valid&&!this.goodsImgWarn){
+            //  判断资质信息是否已通过审核
+              if(this.step4Status !== '2' ){
+                this.$message({
+                  message : '您上传的资质信息尚未通过，请通过后再进行店铺申请',
+                  type : 'error',
+                  center : true
+                })
+              }else {
+            //  提交表单
+              shopInfo(this.form).then( res => {
+                if(res.data.status === '000000000'){
+                  this.$message({
+                    message : '您的店铺信息已提交，通过审核后即可添加商品' ,
+                    type : 'success',
+                    center : true,
+                    duration : 2000
+                  });
+                  window.location.reload();
+
+                }else{
+                  this.$message({
+                    message : res.data.message ,
+                    type : 'error',
+                    center : true
+                  })
+                }
+                }).catch( err => {
+
+              })
+            }
+            }else{
+
+            }
+          })
         }
       }
     }
@@ -69,4 +257,13 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
   @import '../../../styles/step';
+  .el-select{
+    width : 100% ;
+  }
+   dl{
+      width : 1.5rem!important ;
+      float: left ;
+      margin-left: 0!important ;
+   }
+
 </style>

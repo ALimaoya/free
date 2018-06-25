@@ -12,9 +12,24 @@ h1{
   .el-form-item{
     width : 49%;
     justify-content: center;
+    .upload{
+      img{
+        width: 100% ;
+      }
+    }
   }
   .imgWrap{
-    width : 25%;
+    width : 80%;
+    .imeTilte{
+      width : 1.5rem;
+      height: 0.4rem ;
+      line-height : 0.4rem ;
+      background : #eee ;
+      border-radius : 0.05rem ;
+      color : #333 ;
+      text-align : center ;
+      display: inline-block;
+    }
   }
   dl{
     width : 60%;

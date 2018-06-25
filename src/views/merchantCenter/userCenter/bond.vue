@@ -37,7 +37,13 @@
         <el-button plain size="mini" @click="dialogVisible= false;">取消</el-button>
       </div>
     </el-dialog>
-
+    <el-dialog class="bondDialog" title="提示" :visible.sync="isBond" width="60%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+      <!--<img :src="ImgSrc" alt="" />-->
+      <p class="tips">您还未缴纳保证金，请先前往缴纳保证金后方可查看相关信息</p>
+      <div slot="footer">
+        <el-button plain @click="goUpload">前往缴纳保证金</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -59,9 +65,10 @@
             //
             // },
             dialogVisible : false ,
+            isBond: true
           }
       },
-      monted(){
+      mounted(){
         this.getForm();
       },
       methods : {
@@ -131,6 +138,14 @@
       font-size : 0.14rem ;
       height : 0.4rem ;
       line-height : 0.4rem ;
+    }
+  }
+  .bondDialog{
+    p{
+      height : 10vh;
+      font-size : 0.3rem ;
+      text-align : center ;
+      line-height : 10vh ;
     }
   }
 </style>

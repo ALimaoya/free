@@ -1,32 +1,95 @@
 <template>
   <div class="infoUpload">
     <h1>资质上传</h1>
-    <el-form :model="form" ref="form" label-position="right" >
-      <!--<h2>账户表单</h2>-->
-      <el-form-item  labelWidth="130px" label="店铺负责人"  prop="name">
-        <el-input class="inputInfo" size="small" v-model.trim="form.name" placeholder="店铺负责人" :disabled="readOnly"></el-input>
+    <el-form ref="form" :model="form" :rules="formRule" center label-position="right">
+      <el-form-item  :labelWidth="labelWidth" label="店铺负责人："  prop="name">
+        <el-input class="inputInfo" type="text" size="small" :disabled="isRegister" v-model.trim="form.name" placeholder="店铺负责人" ></el-input>
       </el-form-item>
-      <el-form-item   labelWidth="130px"  label="身份证号" prop="idCard">
-        <el-input class="inputInfo" :maxLength="20" size="small" v-model.trim="form.realName" :disabled="readOnly" placeholder="144242342"></el-input>
+      <el-form-item   :labelWidth="labelWidth"  label="身份证号：" prop="id">
+        <el-input class="inputInfo" :maxLength="18" size="small" :disabled="isRegister" v-model.trim="form.id"  placeholder="144242342"></el-input>
       </el-form-item>
-      <el-form-item  labelWidth="130px" label="企业名称" prop="password">
-        <el-input class="inputInfo" size="small" v-model.trim="form.password" :disabled="readOnly" placeholder="企业名称"></el-input>
+      <el-form-item  :labelWidth="labelWidth" label="企业名称：" prop="enterprise">
+        <el-input class="inputInfo" size="small" :disabled="isRegister" v-model.trim="form.enterprise"  placeholder="企业名称"></el-input>
       </el-form-item>
-      <el-form-item  labelWidth="130px" label="邮箱" prop="email">
-        <el-input class="inputInfo" size="small" v-model.trim="form.email" :disabled="readOnly" placeholder="邮箱"></el-input>
+      <el-form-item  :labelWidth="labelWidth" label="邮箱：" prop="email">
+        <el-input class="inputInfo" size="small" :disabled="isRegister" v-model.trim="form.email" placeholder="邮箱"></el-input>
       </el-form-item>
-      <el-form-item class="imgWrap"  label="资质" prop="imgList">
-        <ul >
-          <li v-for="(item,index) in form.imgList" :key="index" @click="bigImg(index,item.src)" >
-              <span class="img_Title">{{ imgType[index] }}</span>
-              <img  v-if="item.src !== undefined" :src="item.src" alt="" />
-              <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
-            <!--</dl>-->
+      <el-form-item :labelWidth="labelWidth" class="imgWrap" label="资质：" prop="imgList" v-if="!isRegister">
+        <ul class="imgList" >
+          <li>
+            <span class="imeTilte">营业执照</span>
+            <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.businessImage"
+                        :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeBusinessUpload">
+              <img v-if="form.businessImage" :src="imageDomain + businessImage" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+            <span class="imgWarn tips_warn" v-if="businessImageWarn">请上传相关图片</span>
+          </li>
+          <li>
+            <span class="imeTilte">授权证书</span>
+            <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.authorizeImage"
+                        :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeAuthorizeUpload">
+              <img v-if="form.authorizeImage" :src="imageDomain + authorizeImage" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+            <span class="imgWarn tips_warn" v-if="authorizeImageWarn">请上传授权证书</span>
+          </li>
+          <li>
+            <span class="imeTilte">身份证正面</span>
+            <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.cardFaceImage"
+                        :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeCardFaceImgUpload">
+              <img v-if="form.cardFaceImage" :src="imageDomain + cardFaceImage" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+            <span class="imgWarn tips_warn" v-if="cardFaceImageWarn">请上传身份证正面照</span>
+          </li>
+          <li>
+            <span class="imeTilte">身份证反面</span>
+            <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.cardBackImage"
+                        :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeCardBackImgUpload">
+              <img v-if="form.cardBackImage" :src="imageDomain + cardBackImage" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+            <span class="imgWarn tips_warn" v-if="cardBackImageWarn">请上传身份证反面照</span>
           </li>
         </ul>
       </el-form-item>
+      <el-form-item :labelWidth="labelWidth" class="imgWrap" label="资质" v-else="isRegister">
+        <dl @click="bigImg(index,form.businessImage)"  >
+          <dt>{{ imgType[index] }}</dt>
+          <dd>
+            <img v-if="form.businessImage !== ''" :src="form.businessImage" alt="" />
+            <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
+          </dd>
+        </dl>
+        <dl @click="bigImg(index,form.authorizeImage)"  >
+          <dt>{{ imgType[index] }}</dt>
+          <dd>
+            <img v-if="form.authorizeImage !== ''" :src="form.authorizeImage" alt="" />
+            <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
+          </dd>
+        </dl>
+        <dl @click="bigImg(index,form.cardFaceImage)"  >
+          <dt>{{ imgType[index] }}</dt>
+          <dd>
+            <img v-if="form.cardFaceImage !== ''" :src="form.cardFaceImage" alt="" />
+            <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
+          </dd>
+        </dl>
+        <dl @click="bigImg(index,form.cardBackImage)"  >
+          <dt>{{ imgType[index] }}</dt>
+          <dd>
+            <img v-if="form.cardBackImage !== ''" :src="form.cardBackImage" alt="" />
+            <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
+          </dd>
+        </dl>
 
+      </el-form-item>
+      <el-form-item class="btnWrap">
+        <el-button v-if="!isRegister" type="primary" size="small" @click="submit('form')">提交审核</el-button>
+      </el-form-item>
     </el-form>
+
     <el-dialog :title="imgTitle" :visible.sync="dialogVisible" width="60%" center>
       <div class="wrap">
         <!--<img :src="ImgSrc" alt="" />-->
@@ -38,47 +101,303 @@
 
 <script>
     import ElFormItem from "element-ui/packages/form/src/form-item";
-
+    import {  getToken } from '@/utils/auth'
+    import { uploadImage  } from "@/api/activity"
+    import { infoUpload , getInfo } from "@/api/merchant"
+    import { validateEmail,validateIDCard,validName } from '@/utils/validate'
     export default {
       components: {ElFormItem},
       name: "info-upload",
       data(){
+        const validateName = (rule , value ,callback)=>{
+          if(value === ''){
+            callback(new Error('请填写店铺负责人姓名'))
+          }else{
+            if(!validName(value) ){
+              callback(new Error('请填写正确格式的店铺负责人姓名'))
+            }
+            callback();
+          }
+        };
+        const validEmail = (rule,value,callback) => {
+          if(value === ''){
+            callback(new Error('请输入常用邮箱'))
+          }else{
+            if(!validateEmail(value)){
+              callback(new Error('请输入正确格式的邮箱'))
+            }
+            callback();
+          }
+        };
+        const validCode= (rule,value,callback) => {
+          if(value === ''){
+            callback(new Error('请输入店铺管理人身份证号'))
+          }else{
+            if(!validateIDCard(value)){
+              callback(new Error('请输入正确格式的身份证号码'))
+            }
+          }
+        };
           return{
             form : {
-              imgList : [
+              name : '',
+              email : '',
+              cardId : '',
+              enterpriseName : '',
+              businessImage : '',
+              authorizeImage:'',
+              cardFaceImage:'',
+              cardBackImage:'',
+            },
+            formRule: {
+              name : [
                 {
-                },
-                {
-
-                },
-                {
-
-                },
-                {
-
+                  required : true ,trigger : 'blur' , validator : validateName
                 }
               ],
-            },
-            readOnly : true,
-            imgType : ['营业执照','授权证书','身份证（正面）','身份证（反面）'],
+              email: [
+                {
+                  required : true ,trigger:'blur', validator : validEmail
+                }
+              ],
+              cardId: [
+                {
+                  required : true ,trigger : 'blur', validator: validCode
+                }
+              ],
+              enterpriseName: [
+                {
+                  required : true ,trigger : 'blur' ,message : '请填写企业名称'
+                }
+              ],
 
+            },
+            // readOnly : false,
+            imgType : ['营业执照','授权证书','身份证（正面）','身份证（反面）'],
             imgTitle : '',
-            ImgSrc : '',
             dialogVisible: false,
+            isRegister: false,
+            token : getToken() ,
+            autoUpload : true ,
+            imgUrl : process.env.BASE_API+'/tryout/file/upload',
+            businessImageWarn : false ,
+            authorizeImageWarn: false ,
+            cardFaceImageWarn: false ,
+            cardBackImageWarn: false ,
+            imageDomain : process.env.IMAGE_DOMAIN ,
+            imgSrc:'',
+            labelWidth: '150px',
           }
       },
       mounted(){
-        this.getInfo();
+        this.getUserInfo();
       },
       methods : {
-        //获取信息
-        getInfo(){
-          // ths.form =
+        getUserInfo(){
+          getInfo().then( res =>{
+            if(res.data.status === '000000000'){
+              this.form = res.data.status ;
+              this.status = res.data.data.status ;
+              this.$emit('info',this.status)
+            }else{
+              this.$message({
+                message : res.data.message ,
+                type : 'error',
+                center : true
+              })
+            }
+          }).catch( err => {
+
+          })
         },
+
+
+        //查看大图
         bigImg(index,src){
+
           this.imgTitle = this.imgType[index] ;
-          // this.ImgSrc = src ;
+          this.imgSrc = src ;
           this.dialogVisible = true ;
+        },
+        //限制上传图片大小
+        limitImg(file){
+          let reader = new FileReader();
+          let _this = this;
+          const isImg = file.type === 'image/jpeg'|| file.type === 'image/png';
+          reader.onload = (e) => {
+            let image = new Image();
+            image.onload = function () {
+              const isHeight = this.height;
+              const isWidth = this.width;
+              if (isWidth > 800 || isHeight > 800) {
+                _this.$message.error('图片尺寸过大，请重新选择后上传');
+                return false;
+
+              }else if(!isImg){
+                _this.$message.error('图片必须为jpg或者png格式，请重新选择后上传');
+                return false;
+
+              }
+            };
+
+            image.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+          return true ;
+        },
+        // 上传图片
+        beforeBusinessUpload(file) {
+          let that = this ;
+          if (this.limitImg(file)) {
+            let formData = new FormData();
+            formData.append('image', file);
+            uploadImage(formData, that.token).then(res => {
+              if (res.data.status === '000000000') {
+
+                that.form.businessImage = res.data.data.fileName;
+
+                that.businessImageWarn = false;
+              } else {
+                that.$message({
+                  message: res.data.message,
+                  center: true,
+                  type: 'error'
+                });
+                that.businessImageWarn = true;
+
+              }
+            }).catch(err => {
+              // console.log(err) ;
+              that.businessImageWarn = true;
+
+            })
+          }
+
+        },
+        beforeAuthorizeUpload(file) {
+          let that = this ;
+          if (this.limitImg(file)) {
+            let formData = new FormData();
+            formData.append('image', file);
+            uploadImage(formData, that.token).then(res => {
+              if (res.data.status === '000000000') {
+
+                that.form.authorizeImage = res.data.data.fileName;
+
+                that.authorizeImageWarn = false;
+              } else {
+                that.$message({
+                  message: res.data.message,
+                  center: true,
+                  type: 'error'
+                });
+                that.authorizeImageWarn = true;
+
+              }
+            }).catch(err => {
+              // console.log(err) ;
+              that.authorizeImageWarn = true;
+
+            })
+          }
+
+        },
+        beforeCardFaceImgUpload(file) {
+          let that = this ;
+          if (this.limitImg(file)) {
+            let formData = new FormData();
+            formData.append('image', file);
+            uploadImage(formData, that.token).then(res => {
+              if (res.data.status === '000000000') {
+
+                that.form.cardFaceImage = res.data.data.fileName;
+
+                that.authorizeImageWarn = false;
+              } else {
+                that.$message({
+                  message: res.data.message,
+                  center: true,
+                  type: 'error'
+                });
+                that.authorizeImageWarn = true;
+
+              }
+            }).catch(err => {
+              // console.log(err) ;
+              that.authorizeImageWarn = true;
+
+            })
+          }
+
+        },
+        beforeCardBackImgUpload(file) {
+          let that = this ;
+          if (this.limitImg(file)) {
+            let formData = new FormData();
+            formData.append('image', file);
+            uploadImage(formData, that.token).then(res => {
+              if (res.data.status === '000000000') {
+
+                that.form.cardBackImage = res.data.data.fileName;
+
+                that.cardBackImageWarn = false;
+              } else {
+                that.$message({
+                  message: res.data.message,
+                  center: true,
+                  type: 'error'
+                });
+                that.cardBackImageWarn = true;
+
+              }
+            }).catch(err => {
+              // console.log(err) ;
+              that.cardBackImageWarn = true;
+
+            })
+          }
+
+        },
+        submit(formName){
+          console.log(this.form);
+          if(this.form.businessImage === ''){
+            this.businessImageWarn = true
+          }
+          if(this.form.authorizeImage === ''){
+            this.authorizeImageWarn = true
+          }
+          if(this.form.cardFaceImage === ''){
+            this.cardFaceImageWarn = true
+          }
+          if(this.form.cardBackImage === ''){
+            this.cardBackImageWarn = true
+          }
+
+          this.$refs[formName].validate((valid) => {
+            if(valid&&!this.businessImageWarn&&!this.authorizeImageWarn&&!this.cardFaceImageWarn&&!this.cardBackImageWarn){
+              infoUpload(this.form).then( res => {
+                if(res.data.status === '000000000'){
+                  this.$message({
+                    message : '您的资质信息已上传成功，通过审核后即可进行相关操作' ,
+                    type : 'success',
+                    center : true,
+                    duration: 2000,
+                  });
+                  window.location.reload();
+                }else{
+                  this.$message({
+                    message : res.data.message ,
+                    type : 'error',
+                    center : true
+                  })
+                }
+              }).catch( err => {
+
+              })
+            }else{
+
+            }
+          })
         }
       }
     }
@@ -99,26 +418,37 @@
     margin-top : 0.5rem ;
     justify-content: flex-start;
     .el-form-item{
-      width : 40% ;
+      width : 60% ;
+      margin: 0.5rem auto ;
     }
     .imgWrap{
-      width : 90% ;
-      margin-left : 80px ;
+      /*width : 90% ;*/
+      /*margin-left : 80px ;*/
       ul{
-        width :70% ;
+        width :100% ;
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: space-around;
         align-items: center;
         li{
-          width : 20% ;
+          width : 24% ;
 
-          img{
+          .upload{
+            width: 100%;
+            img{
+              width : 100% ;
+            }
+          }
+          dl{
             width : 100% ;
           }
+
         }
       }
+    }
+    .btnWrap{
+      text-align: center;
     }
   }
 </style>

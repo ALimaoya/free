@@ -357,49 +357,49 @@ export const constantRouterMap = [
         component: FreeManage,
         meta: { title: '商户中心', icon: 'userCenter' },
         children : [
+          // {
+          //   path: 'admissionShop/index',
+          //   // redirect: 'admissionShop/index',
+          //   name: 'AdmissionShop',
+          //   component: () => import('@/views/merchantCenter/userCenter/admissionShop/index'),
+          //   meta: { title: '入驻商城', icon: 'admissionShop' },
+          //
+          // },
+          // {
+          //   path: 'admissionShop/personal',
+          //   name: 'Personal1',
+          //   component: () => import('@/views/merchantCenter/userCenter/admissionShop/personal'),
+          //   meta: { title: '个人入驻', icon: 'personal' },
+          //   hidden: true ,
+          // },
+          // {
+          //   path: 'admissionShop/enterprise',
+          //   name: 'Enterprise',
+          //   component: () => import('@/views/merchantCenter/userCenter/admissionShop/enterprise'),
+          //   meta: { title: '企业入驻', icon: 'enterprise' },
+          //   hidden: true ,
+          // },
+          // {
+          //   path: 'admissionShop/successAdd',
+          //   name: 'SuccessAdd',
+          //   component: () => import('@/views/merchantCenter/userCenter/admissionShop/successAdd'),
+          //   meta: { title: '入驻成功', icon: 'success' },
+          //   hidden: true ,
+          // },
           {
-            path: 'admissionShop/index',
-            // redirect: 'admissionShop/index',
-            name: 'AdmissionShop',
-            component: () => import('@/views/merchantCenter/userCenter/admissionShop/index'),
-            meta: { title: '入驻商城', icon: 'admissionShop' },
+            path: 'infoUpload',
+            name: 'InfoUpload',
+            component: () => import('@/views/merchantCenter/userCenter/infoUpload'),
+            meta: { title: '资质上传', icon: 'infoUpload' },
 
           },
           {
-            path: 'admissionShop/personal',
-            name: 'Personal1',
-            component: () => import('@/views/merchantCenter/userCenter/admissionShop/personal'),
-            meta: { title: '个人入驻', icon: 'personal' },
-            hidden: true ,
+            path: 'openShop',
+            name: 'OpenShop',
+            component: () => import('@/views/merchantCenter/userCenter/OpenShop'),
+            meta: { title: '我要开店', icon: 'OpenShop' },
+
           },
-          {
-            path: 'admissionShop/enterprise',
-            name: 'Enterprise',
-            component: () => import('@/views/merchantCenter/userCenter/admissionShop/enterprise'),
-            meta: { title: '企业入驻', icon: 'enterprise' },
-            hidden: true ,
-          },
-          {
-            path: 'admissionShop/successAdd',
-            name: 'SuccessAdd',
-            component: () => import('@/views/merchantCenter/userCenter/admissionShop/successAdd'),
-            meta: { title: '入驻成功', icon: 'success' },
-            hidden: true ,
-          },
-          // {
-          //   path: 'infoUpload',
-          //   name: 'InfoUpload',
-          //   component: () => import('@/views/merchantCenter/userCenter/infoUpload'),
-          //   meta: { title: '资质上传', icon: 'infoUpload' },
-          //
-          // },
-          // {
-          //   path: 'openShop',
-          //   name: 'OpenShop',
-          //   component: () => import('@/views/merchantCenter/userCenter/OpenShop'),
-          //   meta: { title: '我要开店', icon: 'OpenShop' },
-          //
-          // },
           {
             path: 'settlement',
             name: 'Settlement',
@@ -488,57 +488,57 @@ export const constantRouterMap = [
           },
         ]
       },
-      {
-        path: '/merchantCenter/shopManage',
-        name: 'ShopManage',
-        component: FreeManage,
-        meta: { title: '店铺管理', icon: 'shopManage' },
-        children : [
-          {
-            path: 'shopInfo',
-            name: 'ShopInfo',
-            component: () => import('@/views/merchantCenter/shopManage/shopInfo'),
-            meta: { title: '商家/店铺信息', icon: 'shopInfo' },
-
-          },
-          {
-            path: 'subAccount',
-            name: 'SubAccount',
-            component: () => import('@/views/merchantCenter/shopManage/subAccount'),
-            meta: { title: '子账号管理', icon: 'subAccount' },
-
-          },
-        ]
-      },
-      {
-        path: '/merchantCenter/tool',
-        name: 'Tool',
-        component: FreeManage,
-        meta: { title: '商家工具', icon: 'tool' },
-        children : [
-          {
-            path: 'getGoods',
-            name: 'GetGoods',
-            component: () => import('@/views/merchantCenter/tool/getGoods'),
-            meta: { title: '一键抓取商品', icon: 'getGoods' },
-
-          },
-          {
-            path: 'sourceGoods',
-            name: 'SourceGoods',
-            component: () => import('@/views/merchantCenter/tool/sourceGoods'),
-            meta: { title: '查看源宝贝', icon: 'sourceGoods' },
-
-          },
-          {
-            path: 'list',
-            name: 'List',
-            component: () => import('@/views/merchantCenter/tool/list'),
-            meta: { title: '源宝贝列表', icon: 'list' },
-            hidden: true
-          },
-        ]
-      },
+      // {
+      //   path: '/merchantCenter/shopManage',
+      //   name: 'ShopManage',
+      //   component: FreeManage,
+      //   meta: { title: '店铺管理', icon: 'shopManage' },
+      //   children : [
+      //     {
+      //       path: 'shopInfo',
+      //       name: 'ShopInfo',
+      //       component: () => import('@/views/merchantCenter/shopManage/shopInfo'),
+      //       meta: { title: '商家/店铺信息', icon: 'shopInfo' },
+      //
+      //     },
+      //     {
+      //       path: 'subAccount',
+      //       name: 'SubAccount',
+      //       component: () => import('@/views/merchantCenter/shopManage/subAccount'),
+      //       meta: { title: '子账号管理', icon: 'subAccount' },
+      //
+      //     },
+      //   ]
+      // },
+      // {
+      //   path: '/merchantCenter/tool',
+      //   name: 'Tool',
+      //   component: FreeManage,
+      //   meta: { title: '商家工具', icon: 'tool' },
+      //   children : [
+      //     {
+      //       path: 'getGoods',
+      //       name: 'GetGoods',
+      //       component: () => import('@/views/merchantCenter/tool/getGoods'),
+      //       meta: { title: '一键抓取商品', icon: 'getGoods' },
+      //
+      //     },
+      //     {
+      //       path: 'sourceGoods',
+      //       name: 'SourceGoods',
+      //       component: () => import('@/views/merchantCenter/tool/sourceGoods'),
+      //       meta: { title: '查看源宝贝', icon: 'sourceGoods' },
+      //
+      //     },
+      //     {
+      //       path: 'list',
+      //       name: 'List',
+      //       component: () => import('@/views/merchantCenter/tool/list'),
+      //       meta: { title: '源宝贝列表', icon: 'list' },
+      //       hidden: true
+      //     },
+      //   ]
+      // },
 
     ]
   },
@@ -678,20 +678,20 @@ export const constantRouterMap = [
       }
     ]
   },
-  { path: '/ruleCenter',
-    redirect : '/ruleCenter/index',
-    component : Layout,
-    // meta: { title: '特卖商城', icon: 'center' },
-    hidden: true,
-    children :[
-      {
-        path: '/ruleCenter/index',
-        name: 'RuleCenter',
-        component: () => import('@/views/ruleCenter/index'),
-
-      }
-    ]
-  },
+  // { path: '/ruleCenter',
+  //   redirect : '/ruleCenter/index',
+  //   component : Layout,
+  //   // meta: { title: '特卖商城', icon: 'center' },
+  //   hidden: true,
+  //   children :[
+  //     {
+  //       path: '/ruleCenter/index',
+  //       name: 'RuleCenter',
+  //       component: () => import('@/views/ruleCenter/index'),
+  //
+  //     }
+  //   ]
+  // },
   // { path: '/a',
   //   // name: 'Test',
   //   component : Layout,

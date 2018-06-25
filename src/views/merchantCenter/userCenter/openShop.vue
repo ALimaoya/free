@@ -1,30 +1,49 @@
 <template>
   <div class="openShop">
     <h1>我要开店</h1>
-    <el-form :model="form" ref="form" label-position="right" >
+    <el-form :model="form" ref="form" :rules="formRule" label-position="right" >
       <!--<h2>账户表单</h2>-->
       <el-form-item  labelWidth="130px" label="店铺名称"  prop="name">
         <el-input class="inputInfo" :maxLength="20" size="small" v-model.trim="form.name" placeholder="店铺名称" :disabled="readOnly"></el-input>
       </el-form-item>
-      <el-form-item  labelWidth="130px" label="店铺LOGO" prop="logo">
-        <div class="imgWrap">
-          <span class="img_Title">LOGO</span>
-          <img  v-if="form.src !== undefined" @click="bigImg(index,form.src)" :src="form.src" alt="" />
-          <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
-          <!--</dl>-->
-        </div>
-      </el-form-item>
-      <el-form-item   labelWidth="130px"  label="主营" prop="main">
-        <el-input type="textarea" class="inputInfo"  :rows="4" size="small" v-model.trim="form.main" :disabled="readOnly" placeholder="主营"></el-input>
-      </el-form-item>
-      <el-form-item  labelWidth="130px" label="类型" prop="type">
-        <el-input class="inputInfo" size="small" v-model.trim="form.type" :disabled="readOnly" placeholder="类型"></el-input>
-      </el-form-item>
-      <el-form-item  labelWidth="130px" label="描述" prop="intro">
-        <el-input class="inputInfo" size="small" type="textarea"  :rows="4" v-model.trim="form.intro" :disabled="readOnly" placeholder="描述"></el-input>
-      </el-form-item>
+      <el-form-item labelWidth="130px" class="imgWrap" prop="logoImage" v-if="!readOnly" label="店铺LOGO">
+        <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logoImage"
+                    :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeImgUpload">
+          <img v-if="form.logoImage" :src="imageDomain + form.logoImage" class="avatar">
+          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+        </el-upload>
+        <span class="imgWarn tips_warn" v-if="goodsImgWarn">请上传店铺LOGO</span>
 
+      </el-form-item>
+      <el-form-item labelWidth="130px" class="imgWrap" v-else-if="readOnly" prop="logoImage" label="店铺LOGO">
+        <!--<dl  @click="dialogVisible = true;"  >-->
+          <!--<dt>店铺LOGO</dt>-->
+          <!--<dd>-->
+            <img v-if="form.logoImage !== ''" :src="form.logoImage" alt="" />
+            <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
+          <!--</dd>-->
+        <!--</dl>-->
+      </el-form-item>
+      <el-form-item   labelWidth="130px"  label="主营" prop="mainBusiness">
+        <el-input type="textarea" class="inputInfo"  :rows="4" size="small" v-model.trim="form.mainBusiness" :disabled="readOnly" placeholder="主营"></el-input>
+      </el-form-item>
+      <el-form-item labelWidth="130px" label="类型" prop="type">
+        <el-select  size="small" clearable v-model="form.type" :disabled="readOnly" filterable placeholder="请选择店铺类型">
+          <el-option
+            v-for="item in typeList"
+            :key="item.value"
+            :label="item.name"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item  labelWidth="130px" label="描述" prop="describes">
+        <el-input class="inputInfo" size="small" type="textarea"  :rows="4" v-model.trim="form.describes" :disabled="readOnly" placeholder="描述"></el-input>
+      </el-form-item>
+      <el-form-item labelWidth="130px" >
+        <el-button v-if="!readOnly" type="primary" size="small" @click="submit('form')">{{ handleType}}</el-button>
 
+      </el-form-item>
     </el-form>
     <el-dialog title="店铺LOGO" :visible.sync="dialogVisible" width="60%" center>
       <div class="wrap">
@@ -32,34 +51,243 @@
         <img src="../../../assets/imgs/logo.png" />
       </div>
     </el-dialog>
+    <el-dialog title="提示" :visible.sync="infoTip" width="60%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+      <!--<img :src="ImgSrc" alt="" />-->
+      <p class="tips" v-if="infoStatus === '0'">您还未上传资质信息，请先前往上传资质信息</p>
+      <p class="tips" v-else-if="infoStatus === '1'">您上传的资质信息正在审核中，审核通过后即可绑定店铺</p>
+
+      <div slot="footer">
+        <el-button plain @click="goUpload" >前往资质上传</el-button>
+
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-    export default {
+  import {  getToken } from '@/utils/auth'
+  import { uploadImage  } from "@/api/activity"
+  import { shopInfo, getShop,getInfo } from "@/api/merchant"
+
+  export default {
         name: "open-shop",
       data(){
         return{
           form : {
-
+            id: '',
+            name : '',
+            mainBusiness: '',
+            describes:'',
+            logoImage: '',
+            type: '',
+            status : ''
           },
-          readOnly : true,
-          ImgSrc : '',
+          formRule: {
+            name: [
+              {
+                required: true ,trigger:'blur',message: '请输入店铺名称'
+              }
+            ],
+            mainBusiness:[
+              {
+                required : true ,trigger : 'blur',message : '请输入店铺主营类目'
+              }
+            ],
+            type: [
+              {
+                required: true ,trigger: 'change',message : '请选择店铺类型'
+              }
+            ],
+            describes: [
+              {
+                required : true ,trigger: 'blur',message : '请填写店铺相关描述'
+              }
+            ]
+          },
+          typeList: [
+
+            {
+              value: '1',
+              name : '旗舰店'
+            },
+            {
+              value : '2',
+              name : '专卖店'
+            },
+            {
+              value : '3',
+              name: '专营店'
+            }
+          ],
+          readOnly : false ,
+          imgTitle : '',
           dialogVisible: false,
+          token : getToken() ,
+          autoUpload : true ,
+          imgUrl : process.env.BASE_API+'/tryout/file/upload',
+          goodsImgWarn : false ,
+          imageDomain : process.env.IMAGE_DOMAIN ,
+          handleType: '提交',
+          infoStatus: '0',
+          infoTip: true ,
         }
       },
       mounted(){
-        this.getInfo();
+        this.getAccountInfo();
       },
       methods : {
+          getAccountInfo(){
+            getInfo().then( res =>{
+              if(res.data.status === '000000000'){
+                this.infoStatus = res.data.data.status;
+                if(this.infoStatus === '0'|| this.infoStatus === '1'){
+                  this.infoTip = true;
+                }else{
+                  this.getShopInfo();
+                  this.infoTip = false;
+
+                }
+              }else{
+                this.$message({
+                  message : res.data.message ,
+                  type : 'error',
+                  center : true
+                })
+              }
+            }).catch( err => {
+
+            })
+          },
         //获取信息
-        getInfo(){
-          // ths.form =
+        getShopInfo(){
+
+          getShop().then( res => {
+            if(res.data.status === '000000000'){
+              this.form = res.data.data ;
+              this.status = res.data.data.status ;
+              if(this.status === '1' || this.status === '2'){
+                this.readOnly = true ;
+              }else{
+                this.readOnly = false ;
+                if(this.status === '0'){
+                  this.handleType = '提交'
+                }else{
+                  if(this.status === '3'){
+                    this.handleType = '修改'
+                  }
+                }
+              }
+            }else{
+              this.$message({
+                message : res.data.message ,
+                type : 'error',
+                center : true
+              })
+            }
+          }).catch( err => {
+
+          })
+
         },
-        bigImg(index,src){
-          // this.ImgSrc = src ;
-          this.dialogVisible = true ;
+
+
+        // 上传图片
+        beforeImgUpload(file) {
+          let reader = new FileReader();
+          let ret = [];
+          let _this = this;
+          reader.onload = (e) => {
+            let image = new Image();
+            image.onload = function () {
+              const isHeight = this.height;
+              const isWidth = this.width;
+              if (isWidth > 800 || isHeight > 800) {
+                _this.$message.error('图片尺寸过大，请重新选择后上传');
+                return false;
+
+              } else {
+                let formData = new FormData();
+                formData.append('image', file);
+                uploadImage(formData,_this.token).then(res => {
+                  if (res.data.status === '000000000') {
+                    _this.form.logo = res.data.data.fileName ;
+
+                    // console.log(_this.form.imgList)
+                    _this.goodsImgWarn = false;
+                  } else {
+                    _this.$message({
+                      message: res.data.message,
+                      center: true,
+                      type: 'error'
+                    });
+                    _this.goodsImgWarn = true;
+
+                  }
+                }).catch(err => {
+                  // console.log(err) ;
+                  _this.goodsImgWarn = true;
+
+                })
+              }
+            };
+
+            image.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        },
+
+        //提交表单
+        submit(formName){
+          console.log(this.form);
+
+
+          if(this.form.logoImage === ''){
+            this.goodsImgWarn = true ;
+          }
+
+
+          this.$refs[formName].validate((valid) => {
+            if(valid&&!this.goodsImgWarn){
+              //  判断资质信息是否已通过审核
+              // if(this.infoStatus !== '2' ){
+              //   this.$message({
+              //     message : '您上传的资质信息尚未通过，请通过后再进行店铺申请',
+              //     type : 'error',
+              //     center : true
+              //   })
+              // }else {
+                //  提交表单
+                shopInfo(this.form).then( res => {
+                  if(res.data.status === '000000000'){
+                    this.$message({
+                      message : '您的店铺信息已提交，通过审核后即可添加商品' ,
+                      type : 'success',
+                      center : true,
+                      duration : 2000
+                    });
+                    window.location.reload();
+
+                  }else{
+                    this.$message({
+                      message : res.data.message ,
+                      type : 'error',
+                      center : true
+                    })
+                  }
+                }).catch( err => {
+
+                })
+              }
+            // }else{
+            //
+            // }
+          })
+        },
+
+        goUpload(){
+          this.$router.push('/merchantCenter/userCenter/infoUpload')
         }
+
       }
     }
 </script>
@@ -76,17 +304,38 @@
 
   }
   .el-form{
-    margin-top : 0.5rem ;
+    margin : 0.5rem auto;
   }
     .el-form-item{
-      width : 60%!important; ;
+      width : 60%!important;
+      margin : 0.5rem auto;
+
+      .upload{
+        img{
+          width: 100% ;
+        }
+      }
     }
     .imgWrap{
-      width : 150px ;
+      width : 1.5rem ;
       float : left ;
-      span,img{
-        width : 100% ;
-      }
+      /*span,img{*/
+        /*width : 100% ;*/
+      /*}*/
+      /*dl{*/
+        /*width: 20% ;*/
+        /*margin-left : 0!important;*/
+        /*height : auto!important;*/
+      /*}*/
 
+    }
+  .el-dialog{
+    /*height : 50%!important;*/
+    p{
+      height : 10vh;
+      font-size : 0.3rem ;
+      text-align : center ;
+      line-height : 10vh ;
+    }
   }
 </style>

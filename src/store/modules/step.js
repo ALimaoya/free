@@ -2,17 +2,33 @@ const step = {
 
   state : {
     // user : '',
-    userInfo : {
+    uploadInfo : {
+      name : '',
+      email : '',
+      cardId : '',
+      enterpriseName : '',
+      businessImage : '',
+      authorizeImage:'',
+      cardFaceImage:'',
+      cardBackImage:'',
 
+    },
+    shopInfo: {
+      account:'',
+      verify:'',
+      shopName: '',
+      main:'',
+      type:'1',
+      intro:'',
+      logo: ''
     }
   },
   mutations : {
-    // USER : state=> {
-    //   state.user = ''
-    // },
+
     GET_USERINFO : (state,userInfo) => {
       state.userInfo = userInfo ;
-    }
+    },
+
   },
 
   actions : {

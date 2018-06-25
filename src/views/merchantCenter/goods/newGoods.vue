@@ -105,6 +105,13 @@
           <el-button type="primary" size="mini" @click="confirmBrand">选择</el-button>
         </div>
       </el-dialog>
+      <el-dialog class="shop_dialog" title="提示" top="20%" :visible.sync="hasShop" width="30%" center
+                  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+        <p>您还未申请店铺，请先前往申请店铺</p>
+        <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="applyShop">申请店铺</el-button>
+      </span>
+      </el-dialog>
     </div>
 </template>
 
@@ -275,7 +282,8 @@
               },
               dialogVisible: false,
               // currentRow : null,
-              inputName : ''
+              inputName : '',
+              hasShop : true ,
             }
         },
         mounted(){
@@ -586,6 +594,10 @@
 
               }
             })
+          },
+        //  跳转到申请店铺
+          applyShop(){
+            this.$router.push('/merchantCenter/userCenter/openShop')
           }
         }
     }
@@ -649,6 +661,14 @@
     margin-bottom : 0.3rem ;
     .el-button {
       margin-left : 0.12rem ;
+    }
+  }
+  .shop_dialog{
+    p{
+      height : 10vh;
+      font-size : 0.3rem ;
+      text-align : center ;
+      line-height : 10vh ;
     }
   }
 </style>
