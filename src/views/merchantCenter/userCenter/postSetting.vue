@@ -13,7 +13,7 @@
             运费<el-input class="inputInfo" :maxLength="3" size="small" type="number" v-model.number="item.money" ></el-input>元
           </el-form-item>
           <el-form-item class="btnWrap">
-            <el-button  type="primary" size="mini" @click="deleteRule(item)">删除</el-button>
+            <el-button  type="primary" size="mini" @click="deleteRule(item.id)">删除</el-button>
           </el-form-item>
         </li>
       </ul>
@@ -26,7 +26,7 @@
 
 <script>
     import ElFormItem from "element-ui/packages/form/src/form-item";
-
+    import { deleteCarriage,  } from "@/api/userCenter"
     export default {
       components: {ElFormItem},
       name: "post-setting",
@@ -86,6 +86,19 @@
           if (index !== -1 && this.form.post.length > 1) {
             this.form.post.splice(index, 1)
           }
+          deleteCarriage(item).then( res => {
+            if(res.data.message === '000000000'){
+
+            }else{
+              this.$message({
+                message : res.data.message ,
+                center : true ,
+                type : 'error'
+              })
+            }
+          }).catch(err => {
+
+          })
         }
       }
     }

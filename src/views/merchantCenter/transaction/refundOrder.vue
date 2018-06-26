@@ -57,7 +57,7 @@
 <script>
   import ElForm from "element-ui/packages/form/src/form";
   import ElFormItem from "element-ui/packages/form/src/form-item";
-
+  import { refuseOrder } from "@/api/merchant"
   export default {
     components: {
       ElFormItem,
@@ -66,6 +66,7 @@
     data() {
       return {
         form : {
+
           status : '1'
         },
         status:[
@@ -90,8 +91,20 @@
     },
     methods: {
       getDetail(){
-        var order = this.$route.params.id ;
-        console.log(order) ;
+        let order = this.$route.params.id ;
+        refuseOrder(order).then( res => {
+          if(res.data.message === '000000000'){
+            this.form = res.data.data ;
+          }else{
+            this.$message({
+              message : res.data.message ,
+              center : true ,
+              type : 'error'
+            })
+          }
+        }).catch(err => {
+
+        });
         // this.form =
       },
       goBack(){

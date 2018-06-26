@@ -56,7 +56,7 @@
 <script>
   import {  getToken } from '@/utils/auth'
   import { uploadImage  } from "@/api/activity"
-  import { shopInfo, getShop } from "@/api/merchant"
+  import { shopInfo, getShop } from "@/api/userCenter"
     export default {
       name: "step4",
       props : ['step4Status'],

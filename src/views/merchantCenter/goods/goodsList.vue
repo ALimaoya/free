@@ -2,30 +2,30 @@
   <div class="goodsList activityTable">
     <h1>商品清单</h1>
     <div class="search">
-      <el-input size="small" :maxlength="20" v-model.trim="account.name" placeholder="商品编号"></el-input>
-      <el-input size="small" :maxlength="20" v-model.trim="account.code" placeholder="商品名称"></el-input>
-      <el-select  size="small" clearable v-model="account.firstType" @change="getSecondList(account.firstType)" filterable placeholder="请选择一级分类">
+      <el-input size="small" :maxlength="20" v-model.trim="account.EQ_code" placeholder="商品编号"></el-input>
+      <el-input size="small" :maxlength="20" v-model.trim="account.LIKE_productName" placeholder="商品名称"></el-input>
+      <el-select  size="small" clearable v-model="firstType" @change="getSecondList(firstType)" filterable placeholder="请选择一级分类">
         <el-option
           v-for="item in firstTypeList"
-          :key="item.value"
+          :key="item.id"
           :label="item.name"
-          :value="item.value">
+          :value="item.id">
         </el-option>
       </el-select>
-      <el-select size="small" clearable v-model="account.secondType" @change="getThirdList(account.secondType)" filterable placeholder="请选择二级分类">
+      <el-select size="small" clearable v-model="secondType" @change="getThirdList(secondType)" filterable placeholder="请选择二级分类">
         <el-option
           v-for="item in secondTypeList"
-          :key="item.value"
+          :key="item.id"
           :label="item.name"
-          :value="item.value">
+          :value="item.id">
         </el-option>
       </el-select>
-      <el-select  size="small" clearable v-model="account.thirdType" filterable placeholder="请选择三级分类">
+      <el-select  size="small" clearable v-model="thirdType" filterable placeholder="请选择三级分类">
         <el-option
           v-for="item in thirdTypeList"
-          :key="item.value"
+          :key="item.id"
           :label="item.name"
-          :value="item.value">
+          :value="item.id">
         </el-option>
       </el-select>
       <el-select  size="small" clearable v-model="account.status" filterable placeholder="请选择审核状态">
@@ -45,12 +45,12 @@
 
     </div>
     <el-table  :data="tableData"  border fit>
-      <el-table-column prop="orderId" label="商品序号"></el-table-column>
-      <el-table-column prop="goodsId" label="商品编号" ></el-table-column>
+      <el-table-column prop="id" label="商品序号"></el-table-column>
+      <el-table-column prop="code" label="商品编号" ></el-table-column>
       <el-table-column prop="shop" label="所属店铺" ></el-table-column>
-      <el-table-column prop="goodsName" label="商品名称" ></el-table-column>
+      <el-table-column prop="productName" label="商品名称" ></el-table-column>
       <el-table-column prop="brand" label="商品品牌" ></el-table-column>
-      <el-table-column prop="type" label="分类" ></el-table-column>
+      <el-table-column prop="category" label="分类" ></el-table-column>
       <el-table-column label="规格" width="160" show-overflow-tooltip>
         <template slot-scope="scope">
           <!--<el-table :data="scope.row.size"  border fit :header-row-class-name="thColor" :row-style="tbColor">-->
@@ -69,8 +69,9 @@
       <el-table-column prop="status" label="状态" ></el-table-column>
       <el-table-column label="操作" >
         <template slot-scope="scope">
-          <el-button size="mini" type="warning"  @click="handleOff(scope.$index,scope.row.goodsId)">下架</el-button>
-          <el-button size="mini" type="primary"  @click="editor(scope.$index,scope.row.goodsId)">修改</el-button>
+          <el-button size="mini" type="warning"  @click="handleShelves(scope.$index,scope.row.id,0)">下架</el-button>
+          <el-button size="mini" type="warning"  @click="handleShelves(scope.$index,scope.row.id,1)">上架</el-button>
+          <el-button size="mini" type="primary"  @click="editor(scope.$index,scope.row.id)">修改</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -90,18 +91,16 @@
 </template>
 
 <script>
-    import { getGoodsList } from "@/api/merchant"
+    import { getGoodsList,firstList,secondList,thirdList,changeStatus ,changeGoods} from "@/api/merchant"
     export default {
         name: "goods-list",
       data(){
           return{
             account : {
-              name: '',
-              code: '',
-              firstType: '',
-              secondType: '',
-              thirdType: '',
-              status: ''
+              naEQ_codeme: '',
+              LIKE_productName: '',
+              'EQ_category.level':  '',
+              EQ_status: ''
             },
             firstTypeList : [],
             secondTypeList : [],
@@ -131,6 +130,9 @@
             totalElements : 0,
             currentPage : 1,
             pageSize : 10,
+            firstType: '',
+            secondType: '',
+            thirdType: '2'
           }
       },
       mounted(){
@@ -140,8 +142,30 @@
       methods : {
         //  获取商品列表
         getList(){
-          getGoodsList().then( res => {
+          if(this.thirdType!== ''){
+            this.account['EQ_category.level'] = this.thirdType ;
+          }else if( this.secondType !== ''){
+            this.account['EQ_category.level'] = this.secondType ;
+          }else if(this.firstType !== ''){
+            this.account['EQ_category.level'] = this.firstType ;
 
+          }
+          let data = { ... this.account };
+          data.currentPage = this.currentPage;
+          data.pageSize = this.pageSize;
+          console.log(data);
+          getGoodsList(this.account).then( res => {
+            if(res.data.status === '000000000') {
+              this.tableData = res.data.data;
+              this.totalPages = res.data.totalPages ;
+              this.totalElements = res.data.totalElements ;
+            }else{
+              this.$message({
+                message : res.data.message,
+                center: true ,
+                type : 'error'
+              })
+            }
           }).catch( err => {
 
           });
@@ -169,30 +193,96 @@
 
         },
         //  获取一级分类
-        getFirstList(type){
-          // this.firstTypeList =
+        getFirstList(){
+          firstList().then(res=> {
+            if(res.data.status === '000000000'){
+              this.firstTypeList = res.data.data
+
+            }else{
+              this.$message({
+                message : res.data.message,
+                center: true ,
+                type : 'error'
+              })
+            }
+          }).catch( err => {
+
+          })
         },
         //  获取二级分类
         getSecondList(type){
-          // this.secondTypeList =
+          secondList(type).then(res=> {
+            if(res.data.status === '000000000'){
+              this.secondTypeList = res.data.data
+
+            }else{
+              this.$message({
+                message : res.data.message,
+                center: true ,
+                type : 'error'
+              })
+            }
+          }).catch( err => {
+
+          })
+
         },
         getThirdList(type){
-          // this.thirdTypeList =
+          thirdList(type).then(res=> {
+            if(res.data.status === '000000000'){
+              this.thirdTypeList = res.data.data
+
+            }else{
+              this.$message({
+                message : res.data.message,
+                center: true ,
+                type : 'error'
+              })
+            }
+          }).catch( err => {
+
+          })
+
         },
       //  查询
         search(){
+          this.getList();
 
         },
         reset(){
           this.account = {
-
-          }
+            naEQ_codeme: '',
+            LIKE_productName: '',
+            'EQ_category.level': '',
+             EQ_status: ''
+          },
+          this.getList();
         },
-        //下架操作
-        handleOff(index,order){
+        //上/下架操作
+        handleShelves(index,order,type){
+          changeStatus(order,type).then(res=> {
+            if(res.data.status === '000000000'){
+              this.$message({
+                message : '操作成功',
+                type : 'success',
+                center : true ,
+                duration : 1000
+              });
+              window.location.reload();
 
-          window.location.reload();
+            }else{
+              this.$message({
+                message : res.data.message,
+                center: true ,
+                type : 'error'
+              })
+            }
+          }).catch( err => {
+
+          })
+
         },
+
         //修改商品
         editor(index,order){
           this.$router.push({ path : '/merchantCenter/goods/newGoods',query: {'order':order}})

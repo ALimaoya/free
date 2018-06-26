@@ -1,35 +1,6 @@
 import request from '@/utils/request'
 
-//资质上传
-export function infoUpload(data){
-  return request({
-    url : '/shop/aptitudeAdd',
-    method : 'post',
-    data
-  })
-}
-//资质查询
-export function getInfo(){
-  return request({
-    url : '/aptitude/toEditOrQuery',
-    method: 'get',
 
-  })
-}
-//店铺信息查询
-export function getShop(){
-  return request({
-    url : '/shop/toEditOrQuery',
-    method : 'post'
-  })
-}
-//店铺信息上传
-export function shopInfo(){
-  return request({
-    url : '/shop/shopAdd',
-    method : 'post'
-  })
-}
 
 //商品列表
 export function getGoodsList(data){
@@ -37,5 +8,91 @@ export function getGoodsList(data){
     url : '/product/query',
     method : 'post',
     data
+  })
+}
+
+//一级分类
+export function firstList(){
+  return request({
+    url : '/category/class1List',
+    method: 'get'
+  })
+}
+
+//二级分类
+export function secondList(data){
+  return request({
+    url : '/category/class2List',
+    method: 'get',
+    params: {
+      class1Id : data
+    }
+  })
+}
+
+//三级分类
+export function thirdList(){
+  return request({
+    url : '/category/class3List',
+    method: 'get',
+    params: {
+      class2Id: data
+    }
+  })
+}
+
+//商品状态修改
+export function changeStatus(id,type){
+  return request({
+    url: '/product/updateStatus/'+ id+ '/'+type,
+    method : 'post'
+  })
+}
+
+//新增商品
+export function newGoogds(data){
+  return request({
+    url: '/product/add',
+    method : 'post',
+    data
+  })
+}
+
+//修改商品
+export function changeGoods(id){
+  return request({
+    url : '/product/toEdit/'+ id ,
+    method : 'post'
+  })
+}
+
+//品牌速查
+export function getBrand(areaId,operation){
+  return request({
+    url : '/brand/quicksearch/index/'+areaId+ '/'+ operation,
+    method: 'get'
+  })
+}
+
+//退款查询
+export function refusedList(){
+  return request({
+    url : '/refund/query',
+    method: 'post'
+  })
+}
+//退款单详情
+export function refuseOrder(refundId){
+  return request({
+    url : '/refund/detail/'+ refundId ,
+    method : 'post'
+  })
+}
+
+//历史结算列表
+export function historyList(){
+  return request({
+    url : '/settlement/history/query',
+    method : 'post'
   })
 }

@@ -108,6 +108,7 @@
 
 <script>
   import {  validPassWord } from '@/utils/validate'
+  import { refusedList } from '@/api/merchant'
 
   export default {
         name: "refund",
@@ -193,27 +194,22 @@
       },
       methods : {
         getList(){
-          this.tableData =[
-            {
-              time: '2016-05-02',
-              subOrderId : '111',
-              orderId: '王小虎',
-              address: '上海市普陀区金沙江路 1518 弄'
-            }, {
-              time: '2016-05-04',
-              orderId: '王小虎',
-              subOrderId : '4535435354',
-              address: '上海市普陀区金沙江路 1517 弄'
-            }, {
-              time: '2016-05-01',
-              orderId: '王小虎',
-              address: '上海市普陀区金沙江路 1519 弄'
-            }, {
-              time: '2016-05-03',
-              orderId: '王小虎',
-              address: '上海市普陀区金沙江路 1516 弄'
+          let data = { ... this.refund } ;
+          data.currentPage = this.currentPage ;
+          data.pageSize = this.pageSize ;
+          refusedList(data).then( res => {
+            if(res.data.message === '000000000'){
+              this.tableData = res.data.data ;
+            }else{
+              this.$message({
+                message : res.data.message ,
+                center : true ,
+                type : 'error'
+              })
             }
-          ]
+          }).catch(err => {
+
+          })
 
         },
         search(){

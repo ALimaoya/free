@@ -25,17 +25,17 @@
       <el-button  size="small" type="primary"  @click="reset()" class="searchOrder">重置</el-button>
     </div>
     <el-table :data="tableData"  border fit>
-      <el-table-column prop="order" label="结算单号"></el-table-column>
-      <el-table-column prop="time" label="结算时间" ></el-table-column>
-      <el-table-column prop="money" label="结算金额" ></el-table-column>
-      <el-table-column prop="service" label="服务费"></el-table-column>
-      <el-table-column prop="account" label="结算账号" ></el-table-column>
-      <el-table-column prop="tel" label="结算手机号" ></el-table-column>
+      <el-table-column prop="code" label="结算单号"></el-table-column>
+      <el-table-column prop="settlementTime" label="结算时间" ></el-table-column>
+      <el-table-column prop="settlementAmount" label="结算金额" ></el-table-column>
+      <el-table-column prop="serviceAmount" label="服务费"></el-table-column>
+      <el-table-column prop="settlementAccount" label="结算账号" ></el-table-column>
+      <el-table-column prop="settlementPhone" label="结算手机号" ></el-table-column>
       <el-table-column prop="status" label="状态">
         <template slot-scope="scope">
-          <el-button size="mini" v-if="scope.row.status === '1'" type="success">结算中</el-button>
-          <el-button size="mini" v-if="scope.row.status === '2'" type="primary">已结算</el-button>
-          <el-button size="mini" v-if="scope.row.status === '3'" type="danger">已拒绝</el-button>
+          <el-button size="mini" v-if="scope.row.status === '2'" type="success">结算中</el-button>
+          <el-button size="mini" v-if="scope.row.status === '3'" type="primary">已结算</el-button>
+          <el-button size="mini" v-if="scope.row.status === '4'" type="danger">已拒绝</el-button>
         </template>
       </el-table-column>
 
@@ -57,6 +57,7 @@
 </template>
 
 <script>
+  import { historyList } from "@/api/merchant"
     export default {
         name: "SettleHistory",
       data(){
@@ -99,6 +100,22 @@
       },
       methods : {
         getList(){
+          let data = { ... this.settlement} ;
+          data.currentPage = this.currentPage ;
+          data.pageSize = this.pageSize ;
+          historyList(data).then( res => {
+            if(res.data.message === '000000000'){
+                this.tableData = res.data.data ;
+            }else{
+              this.$message({
+                message : res.data.message ,
+                center : true ,
+                type : 'error'
+              })
+            }
+          }).catch(err => {
+
+          })
           // this.tableData =
         } ,
         search(){

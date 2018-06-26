@@ -67,7 +67,7 @@
 <script>
   import {  getToken } from '@/utils/auth'
   import { uploadImage  } from "@/api/activity"
-  import { shopInfo, getShop,getInfo } from "@/api/merchant"
+  import { shopInfo, getShop,getInfo } from "@/api/userCenter"
 
   export default {
         name: "open-shop",
@@ -129,7 +129,7 @@
           imageDomain : process.env.IMAGE_DOMAIN ,
           handleType: '提交',
           infoStatus: '0',
-          infoTip: true ,
+          infoTip: false ,
         }
       },
       mounted(){
@@ -138,6 +138,7 @@
       methods : {
           getAccountInfo(){
             getInfo().then( res =>{
+              console.log(res);
               if(res.data.status === '000000000'){
                 this.infoStatus = res.data.data.status;
                 if(this.infoStatus === '0'|| this.infoStatus === '1'){

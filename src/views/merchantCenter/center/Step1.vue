@@ -103,7 +103,7 @@
 
     import {  getToken } from '@/utils/auth'
     import { uploadImage  } from "@/api/activity"
-    import { infoUpload , getInfo } from "@/api/merchant"
+    import { infoUpload , getInfo } from "@/api/userCenter"
     import { validateEmail,validateIDCard,validName } from '@/utils/validate'
 
     export default {

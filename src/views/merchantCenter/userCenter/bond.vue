@@ -9,21 +9,28 @@
       <el-form-item  labelWidth="130px" label="身份证号：" >
         <div class="inputInfo">{{ form.id }}</div>
       </el-form-item>
+      <el-form-item  labelWidth="130px" label="缴纳方式：" >
+        <div class="inputInfo">支付宝</div>
+      </el-form-item>
       <el-form-item  labelWidth="130px" label="缴纳额度：" >
         <div class="inputInfo">{{ form.payment }}元</div>
       </el-form-item>
-      <el-form-item  labelWidth="130px" label="当前额度：" >
-        <div class="inputInfo tipWrap">
+      <div v-if="hasBond">
+        <el-form-item  labelWidth="130px" label="当前额度：" >
+          <div class="inputInfo tipWrap">
             <span>{{ form.current }}元</span>
             <span class="tips">保证金少于8000元时，所有商品下架，不可售卖</span>
+            <!--解冻审核中显示-->
+            <span class="tips" v-if="checkStatus">解冻提交时间：{{ submitTime }}  当前审核状态： {{ checkStatus }}</span>
             <el-button type="primary" size="mini" @click="dialogVisible= true;">申请解冻（{{form.bond}}元）</el-button>
-        </div>
-      </el-form-item>
-      <el-form-item  labelWidth="130px" label="缴纳时间：" >
-        <div class="inputInfo">{{ form.time }}</div>
-      </el-form-item>
-      <el-form-item  labelWidth="130px" label="缴纳方式：" >
-        <div class="inputInfo">{{ form.payWay }}</div>
+          </div>
+        </el-form-item>
+        <el-form-item  labelWidth="130px" label="缴纳时间：" >
+          <div class="inputInfo">{{ form.time }}</div>
+        </el-form-item>
+      </div>
+      <el-form-item labelWidth="130px" v-if="!hasBond">
+        <el-button type="primary" size="mini" @click="handleBond">确定缴纳</el-button>
       </el-form-item>
     </el-form>
     <el-dialog title="申请解冻保证金" :visible.sync="dialogVisible" width="60%" >
@@ -37,17 +44,18 @@
         <el-button plain size="mini" @click="dialogVisible= false;">取消</el-button>
       </div>
     </el-dialog>
-    <el-dialog class="bondDialog" title="提示" :visible.sync="isBond" width="60%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
-      <!--<img :src="ImgSrc" alt="" />-->
-      <p class="tips">您还未缴纳保证金，请先前往缴纳保证金后方可查看相关信息</p>
-      <div slot="footer">
-        <el-button plain @click="goUpload">前往缴纳保证金</el-button>
-      </div>
-    </el-dialog>
+    <!--<el-dialog class="bondDialog" title="提示" :visible.sync="isBond" width="60%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">-->
+      <!--&lt;!&ndash;<img :src="ImgSrc" alt="" />&ndash;&gt;-->
+      <!--<p class="tips">您还未缴纳保证金，请先前往缴纳保证金后方可查看相关信息</p>-->
+      <!--<div slot="footer">-->
+        <!--<el-button plain @click="goUpload">前往缴纳保证金</el-button>-->
+      <!--</div>-->
+    <!--</el-dialog>-->
   </div>
 </template>
 
 <script>
+  import { getBond, applyBond } from "@/api/userCenter"
     export default {
       name: "bond",
       data(){
@@ -65,7 +73,10 @@
             //
             // },
             dialogVisible : false ,
-            isBond: true
+            isBond: true,
+            hasBond: false ,
+            submitTime: '',
+            checkStatus: '',
           }
       },
       mounted(){
@@ -74,11 +85,45 @@
       methods : {
         //  获取保证金详情
         getForm(){
+          getBond().then( res => {
+            if(res.data.message === '000000000'){
 
+            }else{
+              this.$message({
+                message : res.data.message,
+                center : true ,
+                type : 'error'
+              })
+            }
+          }).catch( err => {
+
+          })
         },
-          //确定申请保证金解冻操作
-          confirmApply(){
+        //确定申请保证金解冻操作
+        confirmApply(){
+          applyBond().then( res => {
+            if(res.data.message === '000000000'){
+              this.$message({
+                message : '您的申请已提交，请稍后确认',
+                center : true ,
+                type : 'success',
+                duration : 1000
+              });
+              window.location.reload();
+            }else{
+              this.$message({
+                message : res.data.message,
+                center : true ,
+                type : 'error'
+              })
+            }
+          }).catch( err => {
 
+          })
+        },
+        //缴纳保证金
+        handleBond(){
+          // this.$router.push('/merchantCenter/center/index')
         }
       }
     }
