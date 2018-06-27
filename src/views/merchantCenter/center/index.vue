@@ -1,12 +1,12 @@
 <template>
     <div class="merchantCenter allWid">
       <!--<iframe src="../../../a.html" scrolling ='no' >点这里</iframe>-->
-      <div class="warn">
+      <div class="warn" :class="{ hide: close === '1' }">
         <p>温馨提示</p>
           <div>您的<span  v-if="infoStatus === '0'">资质、</span>  <span v-if="shopStatus=== '0'">店铺、</span><span>保证金</span> 信息还未提交，无法进行商品、交易、结算等相关操作，请尽快补充资料。</div>
           <div v-if="infoStatus === '1'">您的 资质 信息正在审核中，请耐心等候，审核通过后，您可进行商品、交易、结算等相关操作。</div>
           <div v-else-if="infoStatus === '3'">您的 资质 信息未通过审核，请重新编辑提交，审核通过后，您可进行商品、交易、结算等相关操作。</div>
-
+        <span class="close_icon" @click="close = '1'"></span>
       </div>
       <ul class="step allWid">
         <!--<li v-for="(item,index) in Process" :key="index" :class="{isActive:show == index }" @click="changeTabs(index)">-->
@@ -127,19 +127,23 @@
             // isRegister: '',
             // isChecking: '',
             infoStatus : '',
-            shopStatus: ''
+            shopStatus: '',
+            close: ''
             // form : {},
           }
       },
     mounted(){
-        console.log(this.user,getUser());
-
+        let step3 = this.$route.params.step3 ;
+        if( step3 ){
+          this.show = '3' ;
+          this.tabView = 'step3';
+        }
 
     },
     methods: {
       changeTabs(index){
         this.show = index ;
-        this.tabView = 'Step'+ index ;
+        this.tabView = 'step'+ index ;
       },
       getInfo(res){
         this.infoStatus = res
@@ -161,6 +165,7 @@
     background : #f8b2b2 ;
     color : #a94442 ;
     padding : 0.3rem 0.15rem ;
+    position: relativel
     p{
       font-size : 0.24rem ;
       font-weight : bold ;
@@ -170,6 +175,20 @@
       font-size : 0.14rem ;
       line-height : 0.3rem ;
     }
+    .close_icon{
+      position: absolute ;
+      right : 0.5rem ;
+      top: 1.1rem ;
+      width : 0.25rem ;
+      height : 0.25rem ;
+      display: inline-block;
+      background: url('../../../assets/imgs/close.png') no-repeat center;
+      background-size: contain ;
+    }
+
+  }
+  .hide{
+    display: none;
   }
   .allWid {
     width : 100% ;

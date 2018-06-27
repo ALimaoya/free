@@ -75,15 +75,15 @@
               },
               {
                 name : '结算中',
-                value : '1'
-              },
-              {
-                name: '已结算',
                 value : '2'
               },
               {
-                name : '已拒绝',
+                name: '已结算',
                 value : '3'
+              },
+              {
+                name : '已拒绝',
+                value : '4'
               }
 
             ],

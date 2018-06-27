@@ -1,20 +1,20 @@
 <template>
     <div class="newGoods new">
-      <h1>新增商品</h1>
+      <h1>{{ title }}</h1>
       <el-form :model="form" ref="form" :rules="formRule" label-position="right" >
         <h2>商品表单</h2>
         <el-form-item  labelWidth="130px" label="店铺" >
           <div class="inputInfo">丫贝自营</div>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="商品名称" prop="productName">
-          <el-input class="inputInfo" size="small" v-model.trim="form.productName" placeholder="商品名称"></el-input>
+          <el-input class="inputInfo" :disabled="readOnly" size="small" v-model.trim="form.productName" placeholder="商品名称"></el-input>
         </el-form-item>
         <el-form-item  labelWidth="130px" label="商品品牌" prop="brandId">
-          <el-input class="inputInfo" size="small" v-model.trim="form.brandId" disabled='disabled'></el-input>
+          <el-input class="inputInfo" :disabled="readOnly" size="small" v-model.trim="form.brandId" disabled='disabled'></el-input>
           <div class="showBrand" @click="dialogVisible = true ;"><svg-icon icon-class="brand"></svg-icon><span>品牌速查</span></div>
         </el-form-item>
         <el-form-item  labelWidth="130px" label="一级分类" prop="firstType">
-          <el-select  size="small" clearable v-model="form.firstType" @change="getSecondList(form.firstType)" filterable placeholder="请选择一级分类">
+          <el-select  size="small" :disabled="readOnly" clearable v-model="form.firstType" @change="getSecondList(form.firstType)" filterable placeholder="请选择一级分类">
             <el-option
               v-for="item in firstTypeList"
               :key="item.value"
@@ -24,7 +24,7 @@
           </el-select>
         </el-form-item>
         <el-form-item  labelWidth="130px" label="二级分类" prop="secondType">
-          <el-select  size="small" clearable v-model="form.secondType" @change="getThirdList(form.secondType)" filterable placeholder="请选择二级分类">
+          <el-select  size="small" :disabled="readOnly" clearable v-model="form.secondType" @change="getThirdList(form.secondType)" filterable placeholder="请选择二级分类">
             <el-option
               v-for="item in secondTypeList"
               :key="item.value"
@@ -33,8 +33,8 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item  labelWidth="130px" label="三级分类" prop="thirdType">
-          <el-select  size="small" clearable v-model="form.thirdType" filterable placeholder="请选择三级分类">
+        <el-form-item  labelWidth="130px" label="三级分类" prop="class3Id">
+          <el-select  size="small" :disabled="readOnly" clearable v-model="form.class3Id" filterable placeholder="请选择三级分类">
             <el-option
               v-for="item in thirdTypeList"
               :key="item.value"
@@ -82,7 +82,9 @@
           <editor :id="tinymceId" v-model="form.describes" :init="init"></editor>
         </el-form-item>
         <el-form-item>
-          <el-button class="inputInfo button" type="primary" size="small" @click="submitForm('form')">提交</el-button>
+          <el-button v-if="!readOnly" class="inputInfo button" type="primary" size="small" @click="submitForm('form')">提交</el-button>
+          <el-button v-else-if="readOnly" class="inputInfo button" type="primary" size="small" @click="changeForm('form')">修改</el-button>
+
         </el-form-item>
       </el-form>
 
@@ -118,7 +120,7 @@
 <script>
   import { uploadImage  } from "@/api/activity"
   import { newGoogds, getBrand,changeGoods } from "@/api/merchant"
-  import { getToken } from '@/utils/auth'
+  import { getToken,getMobile } from '@/utils/auth'
   import tinymce from 'tinymce/tinymce'
   import 'tinymce/themes/modern/theme'
   import 'tinymce/plugins/image'
@@ -211,7 +213,7 @@
                 brandId:'',
                 firstType : '',
                 secondType:'',
-                thirdType:'',
+                class3Id:'',
                 price:'',
                 carriage:'',
                 specifications : [{}],
@@ -241,7 +243,7 @@
 
                   }
                 ],
-                thirdType:[
+                class3Id:[
                   {
                     required : true ,trigger : 'change' ,message: '请选择三级分类'
                   }
@@ -257,6 +259,7 @@
                   }
                 ]
               },
+              title: '新增商品',
               radio : '',
               brandData: [],
               brandName : '',
@@ -264,6 +267,7 @@
               secondTypeList : [],
               thirdTypeList : [],
               token : getToken() ,
+              user: getMobile(),
               autoUpload : true ,
               imgUrl : process.env.BASE_API+'/tryout/file/upload',
               goodsImgWarn : false ,
@@ -350,6 +354,8 @@
               // currentRow : null,
               inputName : '',
               hasShop : false ,
+              readOnly : false ,
+
             }
         },
         mounted(){
@@ -357,10 +363,14 @@
           window.tinymce.init({});
           let id = this.$route.query.order ;
           console.log(this.$route.query,id);
+          //判断是新增还是修改商品
           if(id !== undefined){
+            //获取已有商品信息
             changeGoods(id).then(res=>{
               if(res.data.status === '000000000'){
                  this.form = res.data.data ;
+                 this.readOnly = true ;
+                 this.title = '修改商品'
               }else{
                 this.$message({
                   message : res.data.message ,
@@ -371,6 +381,8 @@
             }).catch( err => {
 
             })
+          }else{
+            this.title = '新增商品';
           }
           this.getBrandList();
         },
@@ -602,7 +614,7 @@
           // },
           //提交表格
           submitForm(formName){
-            console.log(this.form.images.length);
+
             this.form.images.every((i)=> {
 
               if(i === ''){
@@ -614,10 +626,78 @@
               }
             });
 
-            console.log(this.form,this.goodsImgWarn);
+
             this.$refs[formName].validate((valid) => {
               if(valid&& !this.goodsImgWarn){
+                delete this.form.firstType ;
+                delete this.form.secondType ;
+                console.log(this.form);
 
+                newGoogds(this.form,this.user).then( res => {
+                  if(res.data.status === '000000000') {
+                    this.$message({
+                      message : '您添加的商品信息已提交，请稍后确认商品状态',
+                      center: true ,
+                      type : 'success',
+                      duration: 1000
+                    });
+                    window.location.reload();
+                  }else{
+                    this.$message({
+                      message : res.data.message,
+                      center: true ,
+                      type : 'error'
+                    })
+                  }
+                }).catch( err => {
+
+                });
+              }else{
+
+              }
+            })
+          },
+
+        //  修改商品信息
+          changeForm(formName){
+
+            this.form.images.every((i)=> {
+
+              if(i === ''){
+                this.goodsImgWarn = true ;
+                return this.goodsImgWarn ;
+              }else{
+                this.goodsImgWarn = false ;
+                return this.goodsImgWarn ;
+              }
+            });
+
+
+            this.$refs[formName].validate((valid) => {
+              if(valid&& !this.goodsImgWarn){
+                delete this.form.firstType ;
+                delete this.form.secondType ;
+                console.log(this.form);
+
+                newGoogds(this.form,this.user).then( res => {
+                  if(res.data.status === '000000000') {
+                    this.$message({
+                      message : '您修改的商品信息已提交，请稍后确认商品状态',
+                      center: true ,
+                      type : 'success',
+                      duration: 1000
+                    });
+                    window.location.reload();
+                  }else{
+                    this.$message({
+                      message : res.data.message,
+                      center: true ,
+                      type : 'error'
+                    })
+                  }
+                }).catch( err => {
+
+                });
               }else{
 
               }

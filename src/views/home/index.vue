@@ -59,7 +59,7 @@
           </router-link>
         </div>
         <div class="footer">
-          <img src="../../assets/imgs/index/footer.png" width="100%" />
+          <img src="../../assets/imgs/footer.png" width="100%" />
           <div class="info">
 
             <div>Copyright © 2006-2017 yabei.com 河南年青人电子商务有限公司<a style="margin-left: .2rem;" target="_blank" href="https://v.pinpaibao.com.cn/cert/site/?site=www.yabei.shop&at=realname" ><img src="https://static.anquan.org/static/outer/image/sm_124x47.png" width="80px"></img></a></div>
@@ -167,7 +167,7 @@
       height: .8rem;
       font-size: .14rem;
       line-height: .2rem;
-      margin-top : .2rem;
+      margin : .2rem 0 .4rem;
     }
     .info>div{margin-bottom: .1rem;text-align: center;}
     .info a{margin-bottom: .2rem;text-align: center;}

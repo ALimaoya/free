@@ -6,17 +6,17 @@
       <ul>
         <li>1、平台为日结算. 每天凌晨1点进行结算；</li>
         <li>2、结算金额 = 未结算已收货订单 - 未结算已退款退货单；</li>
-        <li>3、平台服务费为交易金额的 5%；</li>
+        <li>3、平台服务费为交易金额的5% ；</li>
         <li>4、结算审批通过以后，如果退货金额大于订单金额，则从保证金中扣除；</li>
         <li>5、本次结算未审批通过时，不允许二次结算。</li>
       </ul>
     </div>
     <div class="show">
       <div>
-        <p>结算金额</p><p>100</p>
+        <p>结算金额</p><p>{{ settlementMoney }}</p>
       </div>
       <div>
-        <p>服务费</p><p>100</p>
+        <p>服务费</p><p>{{ serviceFee }}</p>
       </div>
       <el-button type="warning" size="small" @click="dialogVisible= true ">结算申请</el-button>
     </div>
@@ -41,10 +41,15 @@
         <el-table-column prop="money" label="结算金额" ></el-table-column>
         <el-table-column prop="status" label="状态" >
           <template slot-scope="scope">
-            <el-button size="mini" v-if="scope.row.status === '1'" type="success">确认收货</el-button>
-            <el-button size="mini" v-if="scope.row.status === '2'" type="primary">已退款</el-button>
-            <el-button size="mini" v-if="scope.row.status === '3'" type="error">已退款</el-button>
-
+            <!--<el-button size="mini" v-if="scope.row.status === '0'" :type="danger">未支付</el-button>-->
+            <!--<el-button size="mini" v-else-if="scope.row.status === '1'" type="success">已支付</el-button>-->
+            <!--<el-button size="mini" v-else-if="scope.row.status === '2'" type="primary">已发货</el-button>-->
+            <!--<el-button size="mini" v-else-if="scope.row.status === '3'" type="success">确认收货</el-button>-->
+            <!--<el-button size="mini" v-else-if="scope.row.status === '4'" type="primary">申请退货退款</el-button>-->
+            <!--<el-button size="mini" v-else-if="scope.row.status === '5'" type="danger">退款中</el-button>-->
+            <!--<el-button size="mini" v-else-if="scope.row.status === '6'" type="primary">已退款</el-button>-->
+            <!--<el-button size="mini" v-else-if="scope.row.status === '7'" type="danger">已取消</el-button>-->
+            <el-button v-if="scope.row.status !== ''" size="mini" :type="statusList[scope.row.status].type">{{ statusList[scope.row.status].name }}</el-button>
           </template>
         </el-table-column>
     </el-table>
@@ -65,14 +70,14 @@
         <el-form-item   labelWidth="130px"  label="结算金额：" prop="money">
           <el-input class="inputInfo" size="small" v-model.trim="form.money" disabled="disabled"></el-input>
         </el-form-item>
-        <el-form-item   labelWidth="130px"  label="服务费："  prop="service">
-          <el-input class="inputInfo" size="small" v-model.trim="form.service" disabled="disabled"></el-input>
+        <el-form-item   labelWidth="130px"  label="服务费："  prop="serviceFee">
+          <el-input class="inputInfo" size="small" v-model.trim="form.serviceFee" disabled="disabled"></el-input>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="结算方式："   prop="method">
           <div >支付宝</div>
         </el-form-item>
-        <el-form-item   labelWidth="130px"  label="结算账号："   prop="account">
-          <div >{{ form.account }}</div>
+        <el-form-item   labelWidth="130px"  label="结算账号："   prop="ybMerchantSettlementAccount">
+          <div >{{ form.ybMerchantSettlementAccount }}</div>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="确认密码：" prop="checkPsw">
           <el-input class="inputInfo" size="small" v-model.trim="form.checkPsw" placeholder="请输入登录密码"></el-input>
@@ -90,7 +95,7 @@
 <script>
     import ElForm from "element-ui/packages/form/src/form";
     import {  validPassWord } from '@/utils/validate'
-
+    import { currentSettlement , settlementApple} from "@/api/merchant"
     export default {
       components: {
         ElForm},
@@ -105,7 +110,7 @@
             }
             callback();
           }
-        }
+        };
 
         return{
 
@@ -117,8 +122,8 @@
             dialogVisible: false ,
             form: {
               money: '',
-              service: '',
-              account: '',
+              serviceFee: '',
+              ybMerchantSettlementAccount: '',
               checkPsw: '',
             },
             formRule: {
@@ -128,7 +133,52 @@
 
                 }
               ]
-            }
+            },
+            statusList: [
+              {
+                value: '0',
+                name : '未支付',
+                type: 'danger'
+              },
+              {
+                value: '1',
+                name: '已支付',
+                type: 'success'
+              },
+              {
+                value: '2',
+                name: '已发货',
+                type: 'primary'
+              },
+              {
+                value: '3',
+                name: '确认收货',
+                type: 'success'
+              },
+              {
+                value: '4',
+                name: '申请退货退款',
+                type: 'primary'
+              },
+              {
+                value: '5',
+                name: '退款中',
+                type: 'warning'
+              },
+              {
+                value: '6',
+                name: '已退款',
+                type: 'danger'
+              },
+              {
+                value: '7',
+                name: '已取消',
+                type: 'info'
+              }
+
+            ],
+            serviceFee: '',
+            settlementMoney : '',
           }
       },
       mounted(){
@@ -137,7 +187,19 @@
       },
       methods : {
         getList(){
-
+          currentSettlement().then(res => {
+            if(res.data.status === '000000000'){
+              this.tableData = res.data.data.deliveryOrders ;
+              this.serviceFee = res.data.data.serviceAmount ;
+              this.settlementMoney = res.data.data.settlementAmount ;
+            }else{
+              this.$message({
+                message : res.data.message,
+                center: true ,
+                type: 'error'
+              })
+            }
+          })
         },
 
         handleSizeChange(val) {
@@ -155,7 +217,23 @@
         confirm(formName){
           this.$refs[formName].validate((valid) => {
             if(valid){
-              this.dialogVisible = false ;
+              settlementApple(id,data).then(res => {
+                if(res.data.status === '000000000'){
+                  this.$message({
+                    message : '您的申请已提交，请稍后确认结算进度',
+                    center: true ,
+                    type: 'success'
+                  });
+                  this.dialogVisible = false ;
+
+                }else{
+                  this.$message({
+                    message : res.data.message,
+                    center: true ,
+                    type: 'error'
+                  })
+                }
+              });
 
             }else{
 

@@ -66,13 +66,17 @@
       </el-table-column>
       <el-table-column prop="price" label="价格" ></el-table-column>
       <el-table-column prop="createTime" label="创建时间" ></el-table-column>
-      <el-table-column prop="status" label="状态" ></el-table-column>
+      <el-table-column  label="状态" >
+        <template slot-scope="scope">
+          <!--<span>{{ statusList[scope.row.status].name }}</span>-->
+        </template>
+      </el-table-column>
       <el-table-column label="操作" >
         <template slot-scope="scope">
-          <el-button size="mini" type="warning"  @click="handleShelves(scope.$index,scope.row.id,0)">下架</el-button>
-          <el-button size="mini" type="warning"  @click="handleShelves(scope.$index,scope.row.id,1)">上架</el-button>
-          <el-button size="mini" type="primary"  @click="editor(scope.$index,scope.row.id)">修改</el-button>
-        </template>
+        <el-button size="mini" type="warning" v-if="scope.row.createTime<= time&&scope.row.status === '2'"  @click="handleShelves(scope.$index,scope.row.id,0)">下架</el-button>
+        <el-button size="mini" type="warning" v-if="scope.row.createTime > time && scope.row.status === '2'" @click="handleShelves(scope.$index,scope.row.id,1)">上架</el-button>
+        <el-button size="mini" type="primary" v-if="scope.row.status === '1'|| scope.row.status === '3'" @click="editor(scope.$index,scope.row.id)">修改</el-button>
+      </template>
       </el-table-column>
     </el-table>
     <div class="block2">
@@ -91,13 +95,14 @@
 </template>
 
 <script>
-    import { getGoodsList,firstList,secondList,thirdList,changeStatus ,changeGoods} from "@/api/merchant"
+  import { parseTime } from "@/utils"
+  import { getGoodsList,firstList,secondList,thirdList,changeStatus ,changeGoods} from "@/api/merchant"
     export default {
         name: "goods-list",
       data(){
           return{
             account : {
-              naEQ_codeme: '',
+              EQ_code: '',
               LIKE_productName: '',
               'EQ_category.level':  '',
               EQ_status: ''
@@ -132,12 +137,14 @@
             pageSize : 10,
             firstType: '',
             secondType: '',
-            thirdType: '2'
+            thirdType: '',
+            time: '',
           }
       },
       mounted(){
-          this.getList();
-          this.getFirstList();
+        this.time = parseTime(new Date());
+        this.getList();
+          // this.getFirstList();
       },
       methods : {
         //  获取商品列表
@@ -153,12 +160,13 @@
           let data = { ... this.account };
           data.currentPage = this.currentPage;
           data.pageSize = this.pageSize;
-          console.log(data);
-          getGoodsList(this.account).then( res => {
+          getGoodsList(data).then( res => {
             if(res.data.status === '000000000') {
               this.tableData = res.data.data;
               this.totalPages = res.data.totalPages ;
               this.totalElements = res.data.totalElements ;
+              console.log(this.tableData);
+
             }else{
               this.$message({
                 message : res.data.message,
@@ -169,27 +177,6 @@
           }).catch( err => {
 
           });
-          this.tableData = [
-            {
-              time: '2016-05-02',
-              subOrderId : '111',
-              orderId: '王小虎',
-              address: '上海市普陀区金沙江路 1518 弄'
-            }, {
-              time: '2016-05-04',
-              orderId: '王小虎',
-              subOrderId : '4535435354',
-              address: '上海市普陀区金沙江路 1517 弄'
-            }, {
-              time: '2016-05-01',
-              orderId: '王小虎',
-              address: '上海市普陀区金沙江路 1519 弄'
-            }, {
-              time: '2016-05-03',
-              orderId: '王小虎',
-              address: '上海市普陀区金沙江路 1516 弄'
-            }
-          ]
 
         },
         //  获取一级分类

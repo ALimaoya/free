@@ -61,15 +61,17 @@
       <el-table-column prop="time" label="交易时间" width="100"></el-table-column>
       <el-table-column label="状态" width="100">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.status ==='1'" type='warning' size="mini">未支付</el-button>
-          <el-button v-else-if="scope.row.status ==='2'"  type='primary' size="mini">已支付</el-button>
-          <el-button v-else-if="scope.row.status ==='3'" type='primary' size="mini">已发货</el-button>
-          <el-button v-else-if="scope.row.status ==='4'"  type='success' size="mini">确认收货</el-button>
-          <el-button v-else-if="scope.row.status ==='5'" type='warning' size="mini">退款中</el-button>
-          <el-button v-else-if="scope.row.status ==='6'" type='danger' size="mini">已退款</el-button>
-          <el-button v-else-if="scope.row.status ==='7'" type='info' size="mini">已取消</el-button>
-          <el-button v-else-if="scope.row.status ==='8'" type='warning' size="mini">退款已拒绝</el-button>
-          <el-button v-else="scope.row.status ==='9'" type='info' size="mini">已删除</el-button>
+          <el-button v-if="scope.row.status !== ''" size="mini" :type="statusList[scope.row.status].type">{{ statusList[scope.row.status].name }}</el-button>
+
+          <!--<el-button v-if="scope.row.status ==='1'" type='warning' size="mini">未支付</el-button>-->
+          <!--<el-button v-else-if="scope.row.status ==='2'"  type='primary' size="mini">已支付</el-button>-->
+          <!--<el-button v-else-if="scope.row.status ==='3'" type='primary' size="mini">已发货</el-button>-->
+          <!--<el-button v-else-if="scope.row.status ==='4'"  type='success' size="mini">确认收货</el-button>-->
+          <!--<el-button v-else-if="scope.row.status ==='5'" type='warning' size="mini">退款中</el-button>-->
+          <!--<el-button v-else-if="scope.row.status ==='6'" type='danger' size="mini">已退款</el-button>-->
+          <!--<el-button v-else-if="scope.row.status ==='7'" type='info' size="mini">已取消</el-button>-->
+          <!--<el-button v-else-if="scope.row.status ==='8'" type='warning' size="mini">退款已拒绝</el-button>-->
+          <!--<el-button v-else="scope.row.status ==='9'" type='info' size="mini">已删除</el-button>-->
         </template>
       </el-table-column>
       <el-table-column prop="action" label="操作" width="100">
@@ -169,35 +171,56 @@
               },
               {
                 name : '未支付',
-                value : '1'
+                value : '1',
+                type:'danger'
               },
               {
                 name : '已支付',
-                value : '2'
+                value : '2',
+                type: 'success'
+
               },
               {
                 name : '已发货',
-                value : '3'
+                value : '3',
+                type: 'primary'
+
               },
               {
                 name : '确认收货',
-                value : '4'
+                value : '4',
+                type: 'success'
+
               },
               {
                 name : '退款中',
-                value : '5'
+                value : '5',
+                type: 'warning'
+
               },
               {
                 name : '已退款',
-                value : '6'
+                value : '6',
+                type: 'danger'
+
               },
               {
                 name : '已取消',
-                value : '7'
+                value : '7',
+                type: 'info'
+
               },
               {
                 name : '退款拒绝',
-                value : '8'
+                value : '8',
+                type: 'danger'
+
+              },
+              {
+                name: '已删除',
+                value:'9',
+                type: 'info'
+
               }
             ],
             // thColor : true ,

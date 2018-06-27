@@ -2,7 +2,7 @@
   <div class="bond">
     <h1>保证金详情</h1>
     <el-form :model="form" ref="form"  label-position="right" >
-      <h2>您当前已经缴纳保证金{{ form.bond }}元整</h2>
+      <h2>您当前已经缴纳保证金{{ form.deposit }}元整</h2>
       <el-form-item  labelWidth="130px" label="姓名：" >
         <div class="inputInfo">{{ form.name }}</div>
       </el-form-item>
@@ -21,7 +21,7 @@
             <span>{{ form.current }}元</span>
             <span class="tips">保证金少于8000元时，所有商品下架，不可售卖</span>
             <!--解冻审核中显示-->
-            <span class="tips" v-if="checkStatus">解冻提交时间：{{ submitTime }}  当前审核状态： {{ checkStatus }}</span>
+            <span class="tips" v-if="checkStatus==='2'">解冻提交时间：{{ submitTime }}  当前审核状态： {{ checkStatus }}</span>
             <el-button type="primary" size="mini" @click="dialogVisible= true;">申请解冻（{{form.bond}}元）</el-button>
           </div>
         </el-form-item>
@@ -44,13 +44,13 @@
         <el-button plain size="mini" @click="dialogVisible= false;">取消</el-button>
       </div>
     </el-dialog>
-    <!--<el-dialog class="bondDialog" title="提示" :visible.sync="isBond" width="60%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">-->
-      <!--&lt;!&ndash;<img :src="ImgSrc" alt="" />&ndash;&gt;-->
-      <!--<p class="tips">您还未缴纳保证金，请先前往缴纳保证金后方可查看相关信息</p>-->
-      <!--<div slot="footer">-->
-        <!--<el-button plain @click="goUpload">前往缴纳保证金</el-button>-->
-      <!--</div>-->
-    <!--</el-dialog>-->
+    <el-dialog class="bondDialog" title="提示" :visible.sync="isBond" width="60%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+      <!--<img :src="ImgSrc" alt="" />-->
+      <p class="tips">您还未缴纳保证金，请先前往缴纳保证金后方可查看相关信息</p>
+      <div slot="footer">
+        <el-button plain @click="goBond">前往缴纳保证金</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -61,7 +61,7 @@
       data(){
           return{
             form : {
-              bond : '10000',
+              deposit : '10000',
               name : '年青人',
               id : '',
               payment : '',
@@ -74,9 +74,9 @@
             // },
             dialogVisible : false ,
             isBond: true,
-            hasBond: false ,
+            hasBond: true ,
             submitTime: '',
-            checkStatus: '',
+            checkStatus: '1',
           }
       },
       mounted(){
@@ -87,7 +87,10 @@
         getForm(){
           getBond().then( res => {
             if(res.data.message === '000000000'){
-
+              this.checkStatus = res.data.data.wallet ;
+              if(res.data.data.wallet === '0'){
+                this.isBond = true ;
+              }
             }else{
               this.$message({
                 message : res.data.message,
@@ -120,6 +123,9 @@
           }).catch( err => {
 
           })
+        },
+        goBond(){
+          this.$router.push({ name : 'MerchantCenter-home',params: { 'step3' : true}})
         },
         //缴纳保证金
         handleBond(){

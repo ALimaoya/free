@@ -234,7 +234,7 @@
               }else{
                 let formData = new FormData();
                 formData.append('image',file);
-                uploadImage(formData).then( res => {
+                uploadImage(formData,_this.token).then( res => {
                   if(res.data.status === '000000000'){
                     _this.showImg = res.data.data.filePath ;
                     _this.activity.showImageUrl = res.data.data.fileName ;

@@ -558,7 +558,7 @@ export const constantRouterMap = [
             path: 'index',
             name: 'AdmissionManage',
             component: () => import('@/views/accountManage/admission/index'),
-            meta: { title: '入驻管理', icon: 'admission' },
+            meta: { title: '入驻管理', icon: 'register' },
 
           },
 

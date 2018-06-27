@@ -43,6 +43,7 @@
       <el-table-column prop="time" label="申请时间"></el-table-column>
       <el-table-column label="状态" width="100">
         <template slot-scope="scope">
+          <el-button v-if="scope.row.status ==='5'" type='primary' size="mini">待审批</el-button>
           <el-button v-if="scope.row.status ==='5'" type='warning' size="mini">退款中</el-button>
           <el-button v-else-if="scope.row.status ==='6'" type='danger' size="mini">已退款</el-button>
           <el-button v-else-if="scope.row.status ==='7'" type='info' size="mini">已取消</el-button>
@@ -119,7 +120,7 @@
             callback(new Error('请输入登录密码'))
           }else{
             if (!validPassWord(value)) {
-              callback(new Error('密码为6-12位的数字、字母组合'))
+              callback(new Error('密码为8-16位的数字、字母组合'))
             }
             callback();
           }
