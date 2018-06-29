@@ -379,7 +379,7 @@
                 type: 'success',
                 center: true
               });
-              this.$router.push('/userInfor/vip')
+              this.$router.push('/freeManage/userInfor/vip')
           } else {
 
             if(res.data.status=='013001002'&&this.chooseWay!= '1'){
@@ -407,11 +407,11 @@
       },
       //  取消选择
       cancel(formName) {
-        this.$router.push('/userInfor/vip')
+        this.$router.push('/freeManage/userInfor/vip')
       },
       finishPay() {
         this.dialogVisible = false;
-        this.$router.push("/userInfor/vip")
+        this.$router.push("/freeManage/userInfor/vip")
       },
       hasQuestion() {
         this.dialogVisible = false;

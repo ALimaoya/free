@@ -14,7 +14,7 @@
       <el-form-item label="企业名称" prop="enterpriseName">
         <el-input type="text" size="small" v-model="form.enterpriseName" :disabled="readOnly"></el-input>
       </el-form-item>
-      <el-form-item class="imgWrap" prop="imgList" v-if="!isRegister" label="资质">
+      <el-form-item class="imgWrap" v-if="!isRegister" label="资质">
         <ul class="imgList" >
           <li>
             <span class="imeTilte">营业执照</span>
@@ -23,7 +23,7 @@
               <img v-if="form.businessImage" :src="imageDomain + form.businessImage" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
-            <span class="imgWarn tips_warn" v-if="businessImageWarn">请上传相关图片</span>
+            <span class="imgWarn tips_warn" v-if="businessImageWarn">请上传营业执照</span>
           </li>
           <li>
             <span class="imeTilte">授权证书</span>
@@ -85,10 +85,12 @@
           </dd>
         </dl>
       </el-form-item>
-
+      <el-form-item>
+        <el-button v-if="isRegister" type="primary" size="small" @click="goDetail">查看</el-button>
+        <el-button v-else="!isRegister" type="primary" size="small" @click="submit('form')">提交</el-button>
+      </el-form-item>
     </el-form>
-    <el-button v-if="isRegister" type="primary" size="small" @click="goDetail">查看</el-button>
-    <el-button v-else="!isRegister" type="primary" size="small" @click="submit('form')">提交</el-button>
+
 
     <el-dialog :title="imgTitle" :visible.sync="dialogVisible" width="60%" center>
       <div class="wrap">
@@ -105,9 +107,11 @@
     import { uploadImage  } from "@/api/activity"
     import { infoUpload , getInfo } from "@/api/userCenter"
     import { validateEmail,validateIDCard,validName } from '@/utils/validate'
+    import ElFormItem from "element-ui/packages/form/src/form-item";
 
     export default {
 
+      components: {ElFormItem},
       name: "step1",
       data(){
         const validateName = (rule , value ,callback)=>{
@@ -137,6 +141,8 @@
             if(!validateIDCard(value)){
               callback(new Error('请输入正确格式的身份证号码'))
             }
+            callback();
+
           }
         };
 
@@ -319,19 +325,19 @@
 
                 that.form.cardFaceImage = res.data.data.fileName;
 
-                that.authorizeImageWarn = false;
+                that.cardFaceImageWarn = false;
               } else {
                 that.$message({
                   message: res.data.message,
                   center: true,
                   type: 'error'
                 });
-                that.authorizeImageWarn = true;
+                that.cardFaceImageWarn = true;
 
               }
             }).catch(err => {
               // console.log(err) ;
-              that.authorizeImageWarn = true;
+              that.cardFaceImageWarn = true;
 
             })
           }
@@ -366,9 +372,9 @@
 
         },
         submit(formName){
-          console.log(this.form);
           if(this.form.businessImage === ''){
-            this.businessImageWarn = true
+            this.businessImageWarn = true;
+            console.log(1234)
           }
           if(this.form.authorizeImage === ''){
             this.authorizeImageWarn = true
@@ -381,7 +387,10 @@
           }
 
           this.$refs[formName].validate((valid) => {
+            console.log(this.form,this.businessImageWarn,this.authorizeImageWarn,this.cardFaceImageWarn,this.cardBackImageWarn);
+
             if(valid&&!this.businessImageWarn&&!this.authorizeImageWarn&&!this.cardFaceImageWarn&&!this.cardBackImageWarn){
+
               infoUpload(this.form).then( res => {
                 if(res.data.status === '000000000'){
                   this.$message({

@@ -300,35 +300,35 @@ export const constantRouterMap = [
             }
           ]
       },
-      {
-        path: '/merchantCenter/base',
-        name: 'Base',
-        component: FreeManage,
-        meta: { title: '基础管理', icon: 'base' },
-        children : [
-          {
-            path: 'userManage',
-            name: 'UserManage',
-            component: () => import('@/views/merchantCenter/base/userManage'),
-            meta: { title: '用户管理', icon: 'userManage' },
-
-          },
-          {
-            path: 'newAccount',
-            name: 'NewAccount',
-            component: () => import('@/views/merchantCenter/base/newAccount'),
-            meta: { title: '新增账户', icon: 'newAccount' },
-
-          },
-          {
-            path: 'changeAccount/:user',
-            name: 'ChangeAccount',
-            component: () => import('@/views/merchantCenter/base/changeAccount'),
-            meta: { title: '修改账户', icon: 'changeAccount' },
-            hidden : true
-          },
-        ]
-      },
+      // {
+      //   path: '/merchantCenter/base',
+      //   name: 'Base',
+      //   component: FreeManage,
+      //   meta: { title: '基础管理', icon: 'base' },
+      //   children : [
+      //     {
+      //       path: 'userManage',
+      //       name: 'UserManage',
+      //       component: () => import('@/views/merchantCenter/base/userManage'),
+      //       meta: { title: '用户管理', icon: 'userManage' },
+      //
+      //     },
+      //     {
+      //       path: 'newAccount',
+      //       name: 'NewAccount',
+      //       component: () => import('@/views/merchantCenter/base/newAccount'),
+      //       meta: { title: '新增账户', icon: 'newAccount' },
+      //
+      //     },
+      //     {
+      //       path: 'changeAccount/:user',
+      //       name: 'ChangeAccount',
+      //       component: () => import('@/views/merchantCenter/base/changeAccount'),
+      //       meta: { title: '修改账户', icon: 'changeAccount' },
+      //       hidden : true
+      //     },
+      //   ]
+      // },
       {
         path: '/merchantCenter/goods',
         name: 'Goods',

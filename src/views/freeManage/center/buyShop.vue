@@ -61,7 +61,7 @@
               for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
                 if (v.path === this.$route.path) {
                   this.$store.state.tagsView.visitedViews.splice(i, 1);
-                  this.$router.push('/checkshop');
+                  this.$router.push('/freeManage/checkshop');
 
                 }
               }
@@ -98,7 +98,7 @@
                   for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
                     if (v.path === this.$route.path) {
                       this.$store.state.tagsView.visitedViews.splice(i, 1);
-                      this.$router.push('/checkshop');
+                      this.$router.push('/freeManage/checkshop');
 
                     }
                   }
@@ -135,12 +135,12 @@
 
         //跳转到店铺管理
         goShop(){
-          this.$router.push('/shop')
+          this.$router.push('/freeManage/shop')
         },
 
         //返回修改店铺
         back(id){
-          this.$router.push({ path : '/newshop' , query : { editor : '1' ,id : this.shop.shopId }})
+          this.$router.push({ path : '/freeManage/newshop' , query : { editor : '1' ,id : this.shop.shopId }})
 
         },
 

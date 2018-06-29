@@ -215,7 +215,7 @@
 
       //查看订单详情
       goDetail(index,order){
-        this.$router.push('/order/flowDetail/'+ order) ;
+        this.$router.push('/freeManage/order/flowDetail/'+ order) ;
 
       },
 

@@ -399,7 +399,7 @@
         getDetail(order).then( res =>{
           if(res.data.status === '000000000'){
             this.activityDetail = res.data.data ;
-            this.$router.push({ path : '/publish/tryout_step1' ,query : { editor : '2', order : order }})
+            this.$router.push({ path : '/freeManage/publish/tryout_step1' ,query : { editor : '2', order : order }})
 
           }
 
@@ -410,7 +410,7 @@
 
       //修改指定试用发布内容
       editor(index ,order ,payStatus){
-            this.$router.push({ path : '/publish/tryout_step1' ,query : { editor : '1', order : order ,payStatus : payStatus }});
+            this.$router.push({ path : '/freeManage/publish/tryout_step1' ,query : { editor : '1', order : order ,payStatus : payStatus }});
         // console.log(order) ;
 
       },
@@ -641,7 +641,7 @@
 
       //克隆活动
       publish(index ,id){
-        this.$router.push({ path : '/publish/tryout_step1' , query : { order : id } });
+        this.$router.push({ path : '/freeManage/publish/tryout_step1' , query : { order : id } });
 
       },
 

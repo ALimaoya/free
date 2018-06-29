@@ -3,7 +3,7 @@ import request from '@/utils/request'
 //发布试用活动
 export function publishActivity(data){
   return request({
-    url: '/tryout/activity/add',
+    url: '/activity/add',
     method: 'post',
     data : data
   })
@@ -12,7 +12,7 @@ export function publishActivity(data){
 //修改发布活动
 export function changeDetail(data){
   return request({
-    url: '/tryout/activity/update',
+    url: '/activity/update',
     method: 'post',
     data: data ,
     // headers : {
@@ -24,7 +24,7 @@ export function changeDetail(data){
 //取消发布活动
 export function cancelActivity(data){
   return request({
-    url : `/tryout/activity/cancel/${data}` ,
+    url : `/activity/cancel/${data}` ,
     method : 'post',
     headers : {
       'Content-Type' : 'application/json'
@@ -35,7 +35,7 @@ export function cancelActivity(data){
 //获取试用活动支付详情
 export function getPayDetail(order){
   return request({
-    url : '/tryout/activity/payParams',
+    url : '/activity/payParams',
     method : 'get',
     params : {
       activityId : order
@@ -46,7 +46,7 @@ export function getPayDetail(order){
 //试用活动支付
 export function activityPay(data){
   return request({
-    url : '/tryout/activity/pay',
+    url : '/activity/pay',
     method : 'post',
     data : data ,
     headers : {
@@ -58,7 +58,7 @@ export function activityPay(data){
 //获取试用商品分类列表
 export function getCategory(){
   return request({
-    url : '/tryout/category/select/list',
+    url : '/category/select/list',
     method : 'get',
     headers : {
       'Content-Type' : 'multipart/form-data'
@@ -69,8 +69,8 @@ export function getCategory(){
 //获取试用店铺列表
 export function getShopList(data){
   return request({
-    url : '/tryout/shop/select/list',
-    // url : '/tryout/select/'+data+'/list',
+    url : '/shop/select/list',
+    // url : '/select/'+data+'/list',
     method : 'get',
     params : {
       platform : data
@@ -84,8 +84,8 @@ export function getShopList(data){
 //获取试用搜索类型列表
 export function searchTypeList(data){
   return request({
-    // url : '/GET/tryout/search/select/{platform}/list',
-    url : `/tryout/search/select/${data}/list`  ,
+    // url : '/GET/search/select/{platform}/list',
+    url : `/search/select/${data}/list`  ,
     method : 'get'
   })
 }
@@ -94,7 +94,7 @@ export function searchTypeList(data){
 export function getActivity(data) {
   return request({
     // url: '/POST/activity/list',
-    url : '/tryout/activity/list',
+    url : '/activity/list',
     method: 'post',
     data : data ,
     // headers : {
@@ -106,7 +106,7 @@ export function getActivity(data) {
 //查看活动详情
 export function getDetail(data) {
   return request({
-    url: `/tryout/activity/detail/${data}`,
+    url: `/activity/detail/${data}`,
     method: 'get',
 
   })
@@ -115,7 +115,7 @@ export function getDetail(data) {
 //修改试用活动状态
 export function changeStatus(data) {
   return request({
-    url: '/tryout/activity/updateStatus',
+    url: '/activity/updateStatus',
     method: 'post',
     data : data
   })
@@ -124,7 +124,7 @@ export function changeStatus(data) {
 //申请结算
 export function applyPay(id){
   return request({
-    url : '/tryout/settlement/apply/'+ id ,
+    url : '/settlement/apply/'+ id ,
     method : 'post'
   })
 }
@@ -132,7 +132,7 @@ export function applyPay(id){
 //取消结算
 export function cancelPay(id){
   return request({
-    url : '/tryout/settlement/cancel/' + id ,
+    url : '/settlement/cancel/' + id ,
     method : 'post'
   })
 }
@@ -140,7 +140,7 @@ export function cancelPay(id){
 //获取订单列表
 export function getOrderList(data) {
   return request({
-    url: '/tryout/order/list',
+    url: '/order/list',
     method: 'post',
     data : data
   })
@@ -149,7 +149,7 @@ export function getOrderList(data) {
 //订单详情
 export function orderDetail(data) {
   return request({
-    url: `/tryout/order/detail/${ data }`,
+    url: `/order/detail/${ data }`,
     method: 'get',
     headers : {
       'Content-Type' : 'application/json'
@@ -160,7 +160,7 @@ export function orderDetail(data) {
 //订单审核
 export function checkOrder(data){
   return request({
-    url : '/tryout/order/updateStatus',
+    url : '/order/updateStatus',
     method : 'post' ,
     data ,
 
@@ -186,7 +186,7 @@ export function checkOrder(data){
 //上传图片
 export function uploadImage(file,token){
   return request({
-    url : "/tryout/file/upload" ,
+    url : "/file/upload" ,
     method : 'post' ,
     data : file ,
     headers : {
@@ -198,7 +198,7 @@ export function uploadImage(file,token){
 //获取京东平台下的商品详情
 export function getJDetail(url){
   return request({
-    url : '/tryout/thirdProduct/detail/jd',
+    url : '/thirdProduct/detail/jd',
     method : 'get',
     params : {
       productUrl : url
@@ -209,7 +209,7 @@ export function getJDetail(url){
 //修改活动关键词
 export function updateKeyword(data){
   return request({
-    url : '/tryout/activity/updateKeyword',
+    url : '/activity/updateKeyword',
     method : 'post',
     data
   })
@@ -218,7 +218,7 @@ export function updateKeyword(data){
 //获取活动佣金
 export function getCommission(){
   return request({
-    url : '/tryout/activity/getCommission',
+    url : '/activity/getCommission',
     method : 'post'
   })
 }

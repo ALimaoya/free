@@ -11,7 +11,7 @@
       name: "checkShop",
       methods : {
         goShopList(){
-            this.$router.push('/shop')
+            this.$router.push('/freeManage/shop')
           }
       }
     }

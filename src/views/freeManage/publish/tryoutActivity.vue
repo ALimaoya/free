@@ -1527,12 +1527,12 @@
 
       //绑定店铺
         goNewShop(){
-          this.$router.push('/newshop')
+          this.$router.push('/freeManage/newshop')
         },
 
       //  购买会员
         buyVip(){
-          this.$router.push('/userInfor/buyVip')
+          this.$router.push('/freeManage/userInfor/buyVip')
 
         },
 

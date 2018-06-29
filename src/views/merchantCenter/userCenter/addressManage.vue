@@ -1,6 +1,6 @@
 <template>
   <div class="addressManage">
-    <h1 class="h_title">{{title }}</h1>
+    <h1 class="h_title">{{this.title }}</h1>
     <div v-if="isNew==='0'|| isNew === '1'" class="formWrap">
        <el-form :model="form" ref="form" label-position="right" :rules="formRule" >
         <!--<h2>账户表单</h2>-->
@@ -8,12 +8,12 @@
             <el-input class="inputInfo" :maxLength="20" size="small" v-model.trim="form.userName" placeholder="请填写联系人" ></el-input>
           </el-form-item>
           <el-form-item   labelWidth="130px"  label="省份" prop="province">
-            <el-select  size="small" clearable v-model="form.province" filterable placeholder="请选择省份">
+            <el-select  size="small" clearable v-model="form.province"  filterable placeholder="请选择省份">
               <el-option
                 v-for="item in provinceList"
-                :key="item.value"
+                :key="item.id"
                 :label="item.name"
-                :value="item.value">
+                :value="item.id">
               </el-option>
             </el-select>
           </el-form-item>
@@ -47,15 +47,15 @@
         <el-table-column prop="mobile" label="联系电话" ></el-table-column>
         <el-table-column prop="type" label="类型" >
           <template slot-scope="scope">
-            <sapn>{{ typeName[scope.row.type]}}</sapn>
+            <span>{{ typeName[scope.row.type]}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="action" label="操作" >
           <template slot-scope="scope">
-            <el-button class="check" style="padding : 0 ;" type="primary"  @click="editorAddr(scope.$index,scope.row.addressId)">修改</el-button>
-            <el-button class="check" style="padding : 0 ;" type="warning"  @click="deleteAddr(scope.$index,scope.row.addressId)">删除</el-button>
-            <el-button class="check" v-if="scope.row.type === ''||scope.row.type === '1'" style="padding : 0 ;" type="warning"  @click="changeType(scope.$index,scope.row.addressId,'0')">设为发货地址</el-button>
-            <el-button class="check" v-if="scope.row.type === ''||scope.row.type === '0'" style="padding : 0 ;" type="warning"  @click="changeType(scope.$index,scope.row.addressId,'1')">设为收货地址</el-button>
+            <el-button class="check" size="mini" type="text"  @click="editorAddr(scope.$index,scope.row.id)">修改</el-button>
+            <!--<el-button class="check" size="mini" type="text"  @click="deleteAddr(scope.$index,scope.row.id)">删除</el-button>-->
+            <el-button class="check" size="mini" v-if="scope.row.type !== '0'"  type="text"  @click="changeType(scope.$index,scope.row.id,'0')">设为发货地址</el-button>
+            <el-button class="check" size="mini" v-if="scope.row.type !== '1'"  type="text"  @click="changeType(scope.$index,scope.row.id,'1')">设为收货地址</el-button>
 
           </template>
         </el-table-column>
@@ -63,21 +63,21 @@
       </el-table>
     </div>
     <el-dialog class="shop_dialog" title="提示" top="20%" :visible.sync="changeDialog" width="30%" center
-               :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
-      <p v-if="setType === '0'">确定将该地址设为发货地址吗？</p>
-      <p v-else-if="setType === '1'">确定将该地址设为收货地址吗？</p>
-      <span slot="footer" class="dialog-footer">
+                           :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+    <p v-if="setType === '0'">确定将该地址设为发货地址吗？</p>
+    <p v-else-if="setType === '1'">确定将该地址设为收货地址吗？</p>
+    <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="confirmChange">确定</el-button>
         <el-button plain @click="changeDialog = false ">取消</el-button>
 
       </span>
-    </el-dialog>
+  </el-dialog>
   </div>
 </template>
 
 <script>
   import  { validatePhone , validateZipCode} from '@/utils/validate';
-  import { getAddress,changeAddrStatus, newAddress, changeAddress } from "@/api/userCenter"
+  import { getAddress,getAddrDetail, changeAddrStatus, newAddress, changeAddress, getProvinceList } from "@/api/userCenter"
     export default {
         name: "addressManage",
       data(){
@@ -118,7 +118,7 @@
               ],
               province:[
                 {
-                  required : true , trigger : 'change', message : '请选择省份'
+                  required : false , trigger : 'change', message : '请选择省份'
 
                 }
               ],
@@ -168,7 +168,7 @@
           getAddressList(){
             getAddress().then( res => {
               if(res.data.status === '000000000'){
-                // this.tableData = res.data.data
+                this.tableData = res.data.data
 
               }else{
                  this.$message({
@@ -182,7 +182,7 @@
             })
           },
         //修改地址类型
-        changeType(id,type){
+        changeType(index,id,type){
 
           this.setType = type ;
           this.changeDialog = true ;
@@ -197,12 +197,18 @@
           changeAddrStatus(this.changeData).then( res => {
             if(res.data.status === '000000000'){
               this.$message({
-                message : res.data.message ,
+                message : '操作成功，请稍后确认' ,
                 center: true ,
                 type : 'success',
                 duration: 1000
               });
-              window.location.reload();
+              setTimeout(()=>{
+
+                this.isNew = '' ;
+                this.getAddressList();
+
+              },2000)
+
             }else{
               this.$message({
                 message : res.data.message ,
@@ -216,11 +222,23 @@
         },
         //获取省份列表
         getProvince(){
+          getProvinceList().then( res => {
+            if(res.data.status === '000000000') {
+              this.provinceList = res.data.data ;
+            }
+          }).catch( err => {
 
+          });
         },
         editorAddr(index,id){
           this.isNew = '1' ;
+          getAddrDetail(id).then( res => {
+            if(res.data.status === '000000000') {
+                this.form = res.data.data ;
+            }
+          }).catch( err => {
 
+          });
         },
         deleteAddr(index,id){
 
@@ -235,8 +253,15 @@
                   this.$message({
                     message : '提交成功，请稍后确认' ,
                     center: true ,
-                    type : 'success'
-                  })
+                    type : 'success',
+                    duration: 1000
+                  });
+
+                  setTimeout(()=>{
+                    this.isNew = '' ;
+                    this.getAddressList();
+                  },2000)
+
                 }else{
                   this.$message({
                     message : res.data.message ,
@@ -247,8 +272,7 @@
               }).catch( err => {
 
               });
-            this.isNew = false ;
-            this.getAddressList();
+
             }else{
 
             }
@@ -264,8 +288,14 @@
                   this.$message({
                     message : '修改成功，请稍后确认' ,
                     center: true ,
-                    type : 'success'
-                  })
+                    type : 'success',
+                    duration: 1000
+                  });
+                  setTimeout(()=>{
+                    this.isNew = '' ;
+                    this.getAddressList();
+                  },2000)
+
                 }else{
                   this.$message({
                     message : res.data.message ,
@@ -276,8 +306,7 @@
               }).catch( err => {
 
               });
-              this.isNew = '' ;
-              this.getAddressList();
+
             }else{
 
             }
@@ -318,6 +347,18 @@
       border-radius: 0.05rem ;
       width : 95% ;
       margin : 0 auto ;
+      .el-button{
+        width: 100% ;
+        text-align: center;
+        margin: 0;
+      }
+    }
+  }
+  .el-dialog{
+    p{
+      text-align: center ;
+      font-size : 0.26rem ;
+      color : #333 ;
     }
   }
 

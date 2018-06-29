@@ -275,7 +275,7 @@
         getDetail(order).then( res =>{
           if(res.data.status === '000000000'){
             this.activityDetail = res.data.data ;
-            this.$router.push({ path : '/publish/flow_step1' ,query : { editor : '2', order : order }})
+            this.$router.push({ path : '/freeManage/publish/flow_step1' ,query : { editor : '2', order : order }})
 
           }
 
@@ -436,7 +436,7 @@
 
       //修改指定试用发布内容
       editor(index ,order ,payStatus){
-        this.$router.push({ path : '/publish/flow_step1' ,query : { editor : '1', order : order ,payStatus : payStatus }});
+        this.$router.push({ path : '/freeManage/publish/flow_step1' ,query : { editor : '1', order : order ,payStatus : payStatus }});
         // console.log(order) ;
 
       },

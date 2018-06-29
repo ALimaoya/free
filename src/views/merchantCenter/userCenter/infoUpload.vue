@@ -5,31 +5,31 @@
       <el-form-item  :labelWidth="labelWidth" label="店铺负责人："  prop="name">
         <el-input class="inputInfo" type="text" size="small" :disabled="isRegister" v-model.trim="form.name" placeholder="店铺负责人" ></el-input>
       </el-form-item>
-      <el-form-item   :labelWidth="labelWidth"  label="身份证号：" prop="id">
-        <el-input class="inputInfo" :maxLength="18" size="small" :disabled="isRegister" v-model.trim="form.id"  placeholder="144242342"></el-input>
+      <el-form-item   :labelWidth="labelWidth"  label="身份证号：" prop="cardId">
+        <el-input class="inputInfo" :maxLength="18" size="small" :disabled="isRegister" v-model.trim="form.cardId"  placeholder="身份证号"></el-input>
       </el-form-item>
-      <el-form-item  :labelWidth="labelWidth" label="企业名称：" prop="enterprise">
-        <el-input class="inputInfo" size="small" :disabled="isRegister" v-model.trim="form.enterprise"  placeholder="企业名称"></el-input>
+      <el-form-item  :labelWidth="labelWidth" label="企业名称：" prop="enterpriseName">
+        <el-input class="inputInfo" size="small" :disabled="isRegister" v-model.trim="form.enterpriseName"  placeholder="企业名称"></el-input>
       </el-form-item>
       <el-form-item  :labelWidth="labelWidth" label="邮箱：" prop="email">
         <el-input class="inputInfo" size="small" :disabled="isRegister" v-model.trim="form.email" placeholder="邮箱"></el-input>
       </el-form-item>
-      <el-form-item :labelWidth="labelWidth" class="imgWrap" label="资质：" prop="imgList" v-if="!isRegister">
+      <el-form-item :labelWidth="labelWidth" class="imgWrap" label="资质：" v-if="!isRegister">
         <ul class="imgList" >
           <li>
             <span class="imeTilte">营业执照</span>
             <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.businessImage"
                         :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeBusinessUpload">
-              <img v-if="form.businessImage" :src="imageDomain + businessImage" class="avatar">
+              <img v-if="form.businessImage" :src="imageDomain + form.businessImage" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
-            <span class="imgWarn tips_warn" v-if="businessImageWarn">请上传相关图片</span>
+            <span class="imgWarn tips_warn" v-if="businessImageWarn">请上传营业执照</span>
           </li>
           <li>
             <span class="imeTilte">授权证书</span>
             <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.authorizeImage"
                         :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeAuthorizeUpload">
-              <img v-if="form.authorizeImage" :src="imageDomain + authorizeImage" class="avatar">
+              <img v-if="form.authorizeImage" :src="imageDomain + form.authorizeImage" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
             <span class="imgWarn tips_warn" v-if="authorizeImageWarn">请上传授权证书</span>
@@ -38,7 +38,7 @@
             <span class="imeTilte">身份证正面</span>
             <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.cardFaceImage"
                         :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeCardFaceImgUpload">
-              <img v-if="form.cardFaceImage" :src="imageDomain + cardFaceImage" class="avatar">
+              <img v-if="form.cardFaceImage" :src="imageDomain + form.cardFaceImage" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
             <span class="imgWarn tips_warn" v-if="cardFaceImageWarn">请上传身份证正面照</span>
@@ -47,7 +47,7 @@
             <span class="imeTilte">身份证反面</span>
             <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.cardBackImage"
                         :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeCardBackImgUpload">
-              <img v-if="form.cardBackImage" :src="imageDomain + cardBackImage" class="avatar">
+              <img v-if="form.cardBackImage" :src="imageDomain + form.cardBackImage" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
             <span class="imgWarn tips_warn" v-if="cardBackImageWarn">请上传身份证反面照</span>
@@ -136,6 +136,8 @@
             if(!validateIDCard(value)){
               callback(new Error('请输入正确格式的身份证号码'))
             }
+            callback();
+
           }
         };
           return{
@@ -312,19 +314,19 @@
 
                 that.form.cardFaceImage = res.data.data.fileName;
 
-                that.authorizeImageWarn = false;
+                that.cardFaceImageWarn = false;
               } else {
                 that.$message({
                   message: res.data.message,
                   center: true,
                   type: 'error'
                 });
-                that.authorizeImageWarn = true;
+                that.cardFaceImageWarn = true;
 
               }
             }).catch(err => {
               // console.log(err) ;
-              that.authorizeImageWarn = true;
+              that.cardFaceImageWarn = true;
 
             })
           }
@@ -359,7 +361,6 @@
 
         },
         submit(formName){
-          console.log(this.form);
           if(this.form.businessImage === ''){
             this.businessImageWarn = true
           }
@@ -374,6 +375,9 @@
           }
 
           this.$refs[formName].validate((valid) => {
+            console.log(this.form,this.businessImageWarn,this.authorizeImageWarn,this.cardFaceImageWarn,this.cardBackImageWarn);
+
+
             if(valid&&!this.businessImageWarn&&!this.authorizeImageWarn&&!this.cardFaceImageWarn&&!this.cardBackImageWarn){
               infoUpload(this.form).then( res => {
                 if(res.data.status === '000000000'){
@@ -437,7 +441,8 @@
           .upload{
             width: 100%;
             img{
-              width : 100% ;
+              max-width : 100% ;
+              max-height: 100%;
             }
           }
           dl{

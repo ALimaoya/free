@@ -1031,7 +1031,7 @@
 
         //提交试用信息
         onSubmit(formName,index){
-          console.log(this.form.activityCalendar,this.form.activityStartTime);
+          // console.log(this.form.activityCalendar,this.form.activityStartTime);
 
 
           if(this.form.mainImageUrl === ''){
@@ -1124,18 +1124,18 @@
 
         //绑定店铺
         goNewShop(){
-          this.$router.push('/newshop')
+          this.$router.push('/freeManage/newshop')
         },
 
         //  购买会员
         buyVip(){
-          this.$router.push('/userInfor/buyVip')
+          this.$router.push('/freeManage/userInfor/buyVip')
 
         },
 
         // 跳转到试用管理
         goTryout(){
-          this.$router.push('/activity/flow')
+          this.$router.push('/freeManage/activity/flow')
         }
       }
 

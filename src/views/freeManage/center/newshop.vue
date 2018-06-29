@@ -298,7 +298,7 @@
                     center : true ,
                     duration : 500
                   })
-                  this.$router.push('/shop')
+                  this.$router.push('/freeManage/shop')
                 }else{
                   this.$message({
                     type : 'error' ,
@@ -320,7 +320,7 @@
                     duration : 500
 
                   })
-                  this.$router.push('/shop')
+                  this.$router.push('/freeManage/shop')
                 }else{
                   this.$message({
                     type : 'error' ,

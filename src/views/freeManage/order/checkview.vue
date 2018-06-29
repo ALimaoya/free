@@ -194,7 +194,7 @@
       },
       //查看订单详情
       goDetail(index,order){
-        this.$router.push('/order/tryoutDetail/'+ order) ;
+        this.$router.push('/freeManage/order/tryoutDetail/'+ order) ;
 
       },
 

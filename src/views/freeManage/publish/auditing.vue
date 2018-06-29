@@ -21,7 +21,7 @@
       },
       methods : {
           goCenter(){
-            this.$router.push('/index' )
+            this.$router.push('/freeManage/index' )
           }
       }
     }

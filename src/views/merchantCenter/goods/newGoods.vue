@@ -10,7 +10,7 @@
           <el-input class="inputInfo" :disabled="readOnly" size="small" v-model.trim="form.productName" placeholder="商品名称"></el-input>
         </el-form-item>
         <el-form-item  labelWidth="130px" label="商品品牌" prop="brandId">
-          <el-input class="inputInfo" :disabled="readOnly" size="small" v-model.trim="form.brandId" disabled='disabled'></el-input>
+          <el-input class="inputInfo" :disabled="readOnly" size="small" v-model.trim="brandName" disabled='disabled'></el-input>
           <div class="showBrand" @click="dialogVisible = true ;"><svg-icon icon-class="brand"></svg-icon><span>品牌速查</span></div>
         </el-form-item>
         <el-form-item  labelWidth="130px" label="一级分类" prop="firstType">
@@ -88,21 +88,34 @@
         </el-form-item>
       </el-form>
 
-      <el-dialog title="品牌速查" :visible.sync="dialogVisible" width="60%" >
+      <el-dialog class="tableBox" title="品牌速查" :visible.sync="dialogVisible" width="60%" >
         <div class="dialogTop">
-          <span>品牌名称：</span><el-input type="text" class="middleInput" v-model.trim="inputName" size="small"></el-input>
-          <el-button type="primary" size="small" @click="searchBrand(inputName)">查询</el-button>
+          <span>品牌名称：</span><el-input type="text" class="middleInput" v-model.trim="brandName" size="small"></el-input>
+          <el-button type="primary" size="small" @click="searchBrand(brandName)">查询</el-button>
         </div>
         <el-table :data="brandData" border stripe highlight-current-row fit >
           <el-table-column  width="32" >
             <template slot-scope="scope">
-              <el-radio :label="scope.$index" v-model="radio" @change.native="handleCurrentChange(scope.$index,scope.row.areaId)"></el-radio>
+              <el-radio :label="scope.$index" v-model="radio" @change.native="handleBrand(scope.$index,scope.row.id,scope.row.brandCnName)"></el-radio>
             </template>
           </el-table-column>
           <el-table-column prop="id" label="品牌ID"></el-table-column>
           <el-table-column prop="brandCnName" label="品牌名称"></el-table-column>
           <el-table-column prop="brandEnName" label="英文名称"></el-table-column>
         </el-table>
+        <div class="block2">
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="currentPage"
+            :page-sizes="[10, 15, 20]"
+            :page-size="pageSize"
+            layout=" sizes, prev, pager, next, jumper"
+            :total="totalElements">
+          </el-pagination>
+          <span class="totalItems">共{{totalPages }}页，{{ totalElements }}条记录</span>
+        </div>
+
         <div slot="footer" class="dialog-footer" >
           <el-button type="primary" size="mini" @click="confirmBrand">选择</el-button>
         </div>
@@ -119,7 +132,7 @@
 
 <script>
   import { uploadImage  } from "@/api/activity"
-  import { newGoogds, getBrand,changeGoods } from "@/api/merchant"
+  import { newGoogds, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo} from "@/api/merchant"
   import { getToken,getMobile } from '@/utils/auth'
   import tinymce from 'tinymce/tinymce'
   import 'tinymce/themes/modern/theme'
@@ -228,7 +241,7 @@
                 ],
                 brandId: [
                   {
-                    required : true  ,message: '请选择商品品牌'
+                    required : true  ,trigger : 'change',message: '请选择商品品牌'
                   }
                 ],
                 firstType: [
@@ -352,39 +365,45 @@
               },
               dialogVisible: false,
               // currentRow : null,
-              inputName : '',
               hasShop : false ,
               readOnly : false ,
-
+              totalPages : '',
+              totalElements : 0,
+              currentPage : 1,
+              pageSize : 10,
             }
         },
         mounted(){
           this.getFirstList();
           window.tinymce.init({});
           let id = this.$route.query.order ;
-          console.log(this.$route.query,id);
-          //判断是新增还是修改商品
-          if(id !== undefined){
-            //获取已有商品信息
-            changeGoods(id).then(res=>{
-              if(res.data.status === '000000000'){
-                 this.form = res.data.data ;
-                 this.readOnly = true ;
-                 this.title = '修改商品'
-              }else{
-                this.$message({
-                  message : res.data.message ,
-                  center : true ,
-                  type : 'error'
-                })
-              }
-            }).catch( err => {
+          if(this.getShop()){
+            //判断是新增还是修改商品
+            if(id !== undefined){
+              //获取已有商品信息
+              changeGoods(id).then(res=>{
+                if(res.data.status === '000000000'){
+                  this.form = res.data.data ;
+                  this.readOnly = true ;
+                  this.title = '修改商品'
+                }else{
+                  this.$message({
+                    message : res.data.message ,
+                    center : true ,
+                    type : 'error'
+                  })
+                }
+              }).catch( err => {
 
-            })
+              })
+            }else{
+              this.title = '新增商品';
+            }
+            this.getBrandList();
           }else{
-            this.title = '新增商品';
+            // this.hasShop = true ;
           }
-          this.getBrandList();
+
         },
 
         // computed:{
@@ -395,29 +414,39 @@
         //
         // },
         methods: {
-          getBrandList(){
-            getBrand().then(res => {
+          //判断是否已有店铺
+          getShop(){
+            getShopInfo().then(res=> {
               if(res.data.status === '000000000'){
-                this.brandData = [
-                  {
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                  }, {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1517 弄'
-                  }, {
-                    date: '2016-05-01',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1519 弄'
-                  }, {
-                    date: '2016-05-03',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1516 弄'
-                  }
-                ]
-                // this.brandData = res.data.data ;
+                if(res.data.data.status !== '2'){
+                  return false;
+                }else{
+                  return true
+                }
+
+              }else{
+                this.$message({
+                  message : res.data.message,
+                  center: true ,
+                  type : 'error'
+                })
+              }
+            }).catch( err => {
+
+            })
+          },
+          getBrandList(){
+            let data = {};
+            if(this.brandName !== '' ){
+             data = {
+                brandName : this.brandName
+             }
+            }
+
+            getBrand(data).then(res => {
+              if(res.data.status === '000000000'){
+                // this.brandData =
+                this.brandData = res.data.data ;
               }
             }).catch( err => {
 
@@ -426,87 +455,77 @@
           },
           //查询品牌
           searchBrand(key){
-            // this.brandData =
+            this.getBrandList(key);
+
           },
           //选择品牌
-          handleCurrentChange(index,val) {
-            this.brandName = val;
+          handleBrand(index,val,name) {
+            this.brandName = name;
             this.radio = index ;
-            console.log(index,val)
           },
           //确认选择的品牌
           confirmBrand(){
-            this.form.brandId = this.brandName ;
+            this.form.brandId = this.brandData[this.radio] ;
             this.dialogVisible = false;
-            console.log(this.form.brandId)
 
 
           },
           //  获取一级分类
-          getFirstList(type) {
-            this.firstTypeList =[
-              {
-                value: '选项1',
-                name: '黄金糕'
-              }, {
-                value: '选项2',
-                name: '双皮奶',
-                disabled: true
-              }, {
-                value: '选项3',
-                name: '蚵仔煎'
-              }, {
-                value: '选项4',
-                name: '龙须面'
-              }, {
-                value: '选项5',
-                name: '北京烤鸭'
+          getFirstList(){
+            firstList().then(res=> {
+              if(res.data.status === '000000000'){
+                this.firstTypeList = res.data.data
+
+              }else{
+                this.$message({
+                  message : res.data.message,
+                  center: true ,
+                  type : 'error'
+                })
               }
-            ]
+            }).catch( err => {
+
+            })
           },
           //  获取二级分类
-          getSecondList(type) {
-            this.secondTypeList = [
-              {
-                value: '选项d1',
-                name: '黄金糕'
-              }, {
-                value: '选项dd2',
-                name: '双皮奶',
-                disabled: true
-              }, {
-                value: '选项dd3',
-                name: '蚵仔煎'
-              }, {
-                value: '选项dd4',
-                name: '龙须面'
-              }, {
-                value: 'dd',
-                name: '北京烤鸭'
+          getSecondList(type){
+            console.log(type);
+            secondList(type).then(res=> {
+              if(res.data.status === '000000000'){
+                this.secondTypeList = res.data.data
+
+              }else{
+                this.$message({
+                  message : res.data.message,
+                  center: true ,
+                  type : 'error'
+                })
               }
-            ]
+            }).catch( err => {
+
+            })
+
           },
-          getThirdList(type) {
-            this.thirdTypeList = [
-              {
-                value: '选项11',
-                name: '黄金糕'
-              }, {
-                value: '选项12',
-                name: '双皮奶',
-                disabled: true
-              }, {
-                value: '选项13',
-                name: '蚵仔煎'
-              }, {
-                value: '选项14',
-                name: '龙须面'
-              }, {
-                value: '选项15',
-                name: '北京烤鸭'
+          //获取三级分类
+          getThirdList(type){
+            thirdList(type).then(res=> {
+              if(res.data.status === '000000000'){
+                this.thirdTypeList = res.data.data
+
+              }else{
+                this.$message({
+                  message : res.data.message,
+                  center: true ,
+                  type : 'error'
+                })
               }
-            ]
+            }).catch( err => {
+              console.log(err);
+
+            })
+
           },
+
           getImg(index){
             this.imgIndex = index ;
           },
@@ -706,13 +725,26 @@
         //  跳转到申请店铺
           applyShop(){
             this.$router.push('/merchantCenter/userCenter/openShop')
-          }
+          },
+          handleSizeChange(val) {
+
+            this.pageSize = val ;
+            this.getBrandList();
+          },
+
+          handleCurrentChange(val) {
+
+            this.currentPage = val ;
+            this.getBrandList();
+          },
         }
     }
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
   @import '../../../styles/new';
+  @import '../../../styles/table';
+
   .el-form{
     width  : 90%!important;
     .showBrand{
@@ -778,7 +810,8 @@
     }
   }
   .dialogTop{
-    margin-bottom : 0.3rem ;
+    margin : 0 auto 0.3rem ;
+    width: 90% ;
     .el-button {
       margin-left : 0.12rem ;
     }
