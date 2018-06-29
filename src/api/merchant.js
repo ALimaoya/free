@@ -85,10 +85,11 @@ export function getBrand(data){
 }
 
 //退款查询
-export function refusedList(){
+export function refusedList(data){
   return request({
     url : '/center/refund/query',
     method: 'post'
+
   })
 }
 //退款单详情
@@ -96,14 +97,16 @@ export function refuseOrder(refundId){
   return request({
     url : '/center/refund/detail/'+ refundId ,
     method : 'post'
+
   })
 }
 
 //历史结算列表
-export function historyList(){
+export function historyList(data){
   return request({
     url : '/center/settlement/history/query',
     method : 'post'
+
   })
 }
 //当前结算列表

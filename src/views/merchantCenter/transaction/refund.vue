@@ -25,35 +25,46 @@
       <el-button type="primary" size="mini" @click="search">查询</el-button>
     </div>
     <el-table :data="tableData"  border  align="center" fit>
-      <el-table-column prop="orderId" label="退款单号"></el-table-column>
-      <el-table-column prop="subOrder" label="子订单" ></el-table-column>
+      <el-table-column prop="code" label="退款单号"></el-table-column>
+      <el-table-column prop="deliveryOrderCode" label="子订单" ></el-table-column>
       <el-table-column label="商品" >
         <template slot-scope="scope">
-          <span>{{ scope.row.goods }}</span>
-          <span class="subOrder">({{ scope.row.subOrderId }})</span>
+          <span>{{ scope.row.productName }}</span>
+          <span class="subOrder">({{ scope.row.productCode }})</span>
 
         </template>
       </el-table-column>
-      <el-table-column prop="brand" label="品牌" ></el-table-column>
-      <el-table-column prop="type" label="分类" ></el-table-column>
+      <!-- <el-table-column prop="brandEnName" label="商品" >
+
+      </el-table-column> -->
+      <el-table-column prop="brandCnName" label="品牌" ></el-table-column>
+      <el-table-column prop="type" label="分类" >
+        <template slot-scope="scope">
+          <!-- <span>{{ scope.row.categoryMap.categoryName1 }}/{{ scope.row.categoryMap.categoryName2 }}/{{ scope.row.categoryMap.categoryName3 }}</span> -->
+
+          <span v-if="scope.row.categoryMap.categoryName1">{{scope.row.categoryMap.categoryName1}}</span>/
+          <span v-if="scope.row.categoryMap.categoryName2">{{scope.row.categoryMap.categoryName2}}</span>/
+          <span v-if="scope.row.categoryMap.categoryName3">{{scope.row.categoryMap.categoryName3}}</span>/
+          <span v-if="scope.row.categoryMap.categoryName4">{{scope.row.categoryMap.categoryName4}}</span>
+        </template> 
+      </el-table-column>
       <el-table-column prop="size" label="规格" ></el-table-column>
-      <el-table-column prop="num" label="数量" ></el-table-column>
+      <el-table-column prop="returnAmount" label="数量" ></el-table-column>
       <el-table-column prop="price" label="单价" ></el-table-column>
-      <el-table-column prop="money" label="退款金额" ></el-table-column>
-      <el-table-column prop="time" label="申请时间"></el-table-column>
+      <el-table-column prop="returnAmount" label="退款金额" ></el-table-column>
+      <el-table-column prop="createTime" label="申请时间"></el-table-column>
       <el-table-column label="状态" width="100">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.status ==='5'" type='primary' size="mini">待审批</el-button>
-          <el-button v-if="scope.row.status ==='5'" type='warning' size="mini">退款中</el-button>
-          <el-button v-else-if="scope.row.status ==='6'" type='danger' size="mini">已退款</el-button>
-          <el-button v-else-if="scope.row.status ==='7'" type='info' size="mini">已取消</el-button>
-          <el-button v-else-if="scope.row.status ==='8'" type='warning' size="mini">已拒绝</el-button>
+          <el-button v-if="scope.row.status ==='0'" type='warning' size="mini">退款中</el-button>
+          <el-button v-else-if="scope.row.status ==='1'" type='danger' size="mini">已退款</el-button>
+          <el-button v-else-if="scope.row.status ==='2'" type='info' size="mini">已取消</el-button>
+          <el-button v-else-if="scope.row.status ==='3'" type='warning' size="mini">已拒绝</el-button>
         </template>
       </el-table-column>
       <el-table-column prop="action" label="操作" width="100">
         <template slot-scope="scope">
-          <el-button type='primary' @click="goDetail(scope.$index,scope.row.orderId)" size="mini">详情</el-button>
-          <el-button type='warning' @click="handleCheck(scope.$index,scope.row.orderId)" size="mini">审核</el-button>
+          <el-button type='primary' @click="goDetail(scope.$index,scope.row.id)" size="mini">详情</el-button>
+          <el-button type='warning' @click="handleCheck(scope.$index,scope.row)" size="mini">审核</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -195,12 +206,15 @@
       },
       methods : {
         getList(){
-          let data = { ... this.refund } ;
-          data.currentPage = this.currentPage ;
-          data.pageSize = this.pageSize ;
-          refusedList(data).then( res => {
-            if(res.data.message === '000000000'){
+          let formData = new FormData();
+          formData.append('currentPage', this.currentPage);
+          formData.append('pageSize', this.pageSize);
+          refusedList(formData).then( res => {
+            console.log('data',res)
+            if(res.data.status === "000000000"){
               this.tableData = res.data.data ;
+              this.totalPages = res.data.totalPages ;
+              this.totalElements = res.data.totalElements ;
             }else{
               this.$message({
                 message : res.data.message ,
@@ -216,12 +230,15 @@
         search(){
 
         },
-        goDetail(index,order){
-          this.$router.push('/merchantCenter/transaction/refundOrder/'+ 1)
+        goDetail(index,id){
+          // console.log('index',index)
+          // console.log('order',order)
+          this.$router.push('/merchantCenter/transaction/refundOrder/'+ id)
 
         },
         //审核订单
-        handleCheck(index,order){
+        handleCheck(index,row){
+          console.log('row',row)
           this.dialogVisible = true ;
         },
         //  确认退款相关操作
