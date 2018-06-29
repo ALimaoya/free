@@ -100,10 +100,11 @@
       },
       methods : {
         getList(){
-          let data = { ... this.settlement} ;
-          data.currentPage = this.currentPage ;
-          data.pageSize = this.pageSize ;
-          historyList(data).then( res => {
+          let formData = new FormData();
+          formData.append('currentPage', this.currentPage);
+          formData.append('pageSize', this.pageSize);
+          historyList(formData).then( res => {
+            // console.log('data',res)
             if(res.data.message === '000000000'){
                 this.tableData = res.data.data ;
             }else{

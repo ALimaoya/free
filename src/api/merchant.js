@@ -75,25 +75,27 @@ export function getBrand(areaId,operation){
 }
 
 //退款查询
-export function refusedList(){
+export function refusedList(data){
   return request({
     url : '/tryout/center/refund/query',
-    method: 'post'
+    method: 'post',
+    data
   })
 }
 //退款单详情
 export function refuseOrder(refundId){
   return request({
     url : '/tryout/center/refund/detail/'+ refundId ,
-    method : 'post'
+    method : 'get'
   })
 }
 
 //历史结算列表
-export function historyList(){
+export function historyList(data){
   return request({
     url : '/tryout/center/settlement/history/query',
-    method : 'post'
+    method : 'post',
+    data
   })
 }
 //当前结算列表
