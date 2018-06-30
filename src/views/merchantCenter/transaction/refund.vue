@@ -41,15 +41,17 @@
       <el-table-column prop="type" label="分类" >
         <template slot-scope="scope">
           <!-- <span>{{ scope.row.categoryMap.categoryName1 }}/{{ scope.row.categoryMap.categoryName2 }}/{{ scope.row.categoryMap.categoryName3 }}</span> -->
-
-          <span v-if="scope.row.categoryMap.categoryName1">{{scope.row.categoryMap.categoryName1}}</span>/
+          <span v-if="scope.row.categoryMap != undefined">
+            <span v-if="scope.row.categoryMap.categoryName1">{{scope.row.categoryMap.categoryName1}}</span>/
           <span v-if="scope.row.categoryMap.categoryName2">{{scope.row.categoryMap.categoryName2}}</span>/
           <span v-if="scope.row.categoryMap.categoryName3">{{scope.row.categoryMap.categoryName3}}</span>/
           <span v-if="scope.row.categoryMap.categoryName4">{{scope.row.categoryMap.categoryName4}}</span>
-        </template> 
+          </span>
+
+        </template>
       </el-table-column>
       <el-table-column prop="size" label="规格" ></el-table-column>
-      <el-table-column prop="returnAmount" label="数量" ></el-table-column>
+      <el-table-column prop="quality" label="数量" ></el-table-column>
       <el-table-column prop="price" label="单价" ></el-table-column>
       <el-table-column prop="returnAmount" label="退款金额" ></el-table-column>
       <el-table-column prop="createTime" label="申请时间"></el-table-column>
@@ -64,6 +66,7 @@
       <el-table-column prop="action" label="操作" width="100">
         <template slot-scope="scope">
           <el-button type='primary' @click="goDetail(scope.$index,scope.row.id)" size="mini">详情</el-button>
+          <!-- <el-button v-if="scope.row.status ==='0'" type='warning' @click="handleCheck(scope.$index,scope.row)" size="mini">审核</el-button> -->
           <el-button type='warning' @click="handleCheck(scope.$index,scope.row)" size="mini">审核</el-button>
         </template>
       </el-table-column>
@@ -80,7 +83,7 @@
       </el-pagination>
       <span class="totalItems">共{{totalPages }}页，{{ totalElements }}条记录</span>
     </div>
-    <el-dialog title="确认退款" :visible.sync="dialogVisible" width="50%" center >
+    <el-dialog title="确认退款" :visible.sync="dialogVisible" width="50%" center :before-close="close2">
       <div class="tips">
         <h3>注意：</h3>
         <p>确认退款后退款金额回退到买家支付账户中。</p>
@@ -96,14 +99,17 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item   labelWidth="130px"  label="商品名称：" prop="expressOrder">
-          <el-input class="inputInfo" size="small" v-model.trim="form.expressOrder" disabled="disabled"></el-input>
+        <el-form-item   labelWidth="130px"  label="商品名称：" prop="productName">
+          <el-input class="inputInfo" size="small" v-model.trim="form.productName" disabled="disabled"></el-input>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="商品数量："  prop="goodsNum">
           <el-input class="inputInfo" size="small" v-model.trim="form.goodsNum" disabled="disabled"></el-input>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="退款金额："   prop="refund">
           <el-input class="inputInfo" size="small" v-model.trim="form.refund" disabled="disabled"></el-input>
+        </el-form-item>
+        <el-form-item   labelWidth="130px"  label="退款原因：" prop="reason">
+          <el-input class="inputInfo" size="small" v-model.trim="form.reason" placeholder="请输入退款原因"></el-input>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="确认密码：" prop="checkPsw">
           <el-input class="inputInfo" size="small" v-model.trim="form.checkPsw" placeholder="请输入登录密码"></el-input>
@@ -120,7 +126,7 @@
 
 <script>
   import {  validPassWord } from '@/utils/validate'
-  import { refusedList } from '@/api/merchant'
+  import { refusedList , refusedAffirm} from '@/api/merchant'
 
   export default {
         name: "refund",
@@ -175,10 +181,21 @@
           dialogVisible: false ,
           form : {
             result: '1',
-            expressOrder:'',
+            productName:'',
             goodsNum: '',
             refund: '',
-            checkPsw: ''
+            reason:'',
+            checkPsw: '',
+            id: ''
+          },
+          formModel : {
+            result: '1',
+            productName:'',
+            goodsNum: '',
+            refund: '',
+            reason:'',
+            checkPsw: '',
+            id: ''
           },
           formRule : {
 
@@ -195,7 +212,7 @@
               name : '通过并退款'
             },
             {
-              value : '2',
+              value : '3',
               name : '拒绝'
             }
           ]
@@ -231,8 +248,6 @@
 
         },
         goDetail(index,id){
-          // console.log('index',index)
-          // console.log('order',order)
           this.$router.push('/merchantCenter/transaction/refundOrder/'+ id)
 
         },
@@ -240,13 +255,38 @@
         handleCheck(index,row){
           console.log('row',row)
           this.dialogVisible = true ;
+          this.form.productName = row.productName
+          this.form.goodsNum = row.quality
+          this.form.refund = row.returnAmount
+          this.form.id = row.id
         },
         //  确认退款相关操作
         confirm(formName){
           this.$refs[formName].validate((valid) => {
             if(valid){
               this.dialogVisible = false ;
+              this.form = Object.assign({}, this.formModel);
+              let formData = new FormData();
+              formData.append('refundId', this.form.id);
+              formData.append('confirmPwd', this.form.checkPsw);
+              formData.append('status', this.form.result);
+              formData.append('refuseReason', this.form.reason);
+              refusedAffirm(formData).then( res =>{
+                if(res.data.status === "000000000"){
+                this.$message({
+                  message : res.data.message ,
+                  center : true ,
+                  type : 'success'
+                })
+                }else{
+                  this.$message({
+                    message : res.data.message ,
+                    center : true ,
+                    type : 'error'
+                })
+              }
 
+              })
             }else{
 
             }
@@ -256,6 +296,11 @@
         close(formName){
           this.dialogVisible = false ;
           this.$refs[formName].resetFields();
+        },
+        //叉号关闭弹窗
+        close2(){
+          this.dialogVisible = false ;
+          this.form = Object.assign({}, this.formModel);
         },
         handleSizeChange(val) {
 

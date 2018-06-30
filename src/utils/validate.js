@@ -122,3 +122,8 @@ export function validCreditCode(value){
   const reg = /[^_IOZSVa-z\W]{2}\d{6}[^_IOZSVa-z\W]{10}$/ ;
   return reg.test(value);
 }
+/*验证大于0的整数*/
+export function int(value){
+  const reg = /^\+?[1-9]\d*$/;
+  return reg.test(value);
+}

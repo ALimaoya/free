@@ -3,73 +3,121 @@
     <!--<div class="top">-->
       <h1 class="h_title">运费设置<el-button type="primary" size="mini" @click="newRule">新增运费规则</el-button></h1>
     <!--</div>-->
-    <el-form :model="form" ref="form" label-position="left" :rules="formRule" >
+    <el-form :model="carriageForm" ref="carriageForm" label-position="left">
       <ul >
-        <li v-for="(item ,index) in form.post" :key="index">
-          <el-form-item    label="" prop="goodsNum">
-            满<el-input class="inputInfo"  size="small" :maxLength="10" type="number" v-model.number="item.goodsNum"  ></el-input>件，
+        <li v-for="(item ,index) in carriageForm.regulation" :key="index">
+          
+          <el-form-item :prop="'regulation.' + index + '.reachQuantity'"
+                          :rules="{
+                                    required: true, message: '件数不能为空', trigger: 'blur'
+                                  }">
+              满<el-input class="inputInfo" size="small" type="number" v-model="item.reachQuantity"></el-input>件
           </el-form-item>
-          <el-form-item     label="" prop="money">
-            运费<el-input class="inputInfo" :maxLength="3" size="small" type="number" v-model.number="item.money" ></el-input>元
+
+          <el-form-item :prop="'regulation.' + index + '.carriageAmount'"
+                          :rules="{
+                                    required: true, message: '运费不能为空', trigger: 'blur'
+                                  }">
+              运费<el-input class="inputInfo" size="small" type="number" v-model="item.carriageAmount"></el-input>元
           </el-form-item>
+
           <el-form-item class="btnWrap">
             <el-button  type="primary" size="mini" @click="deleteRule(item.id)">删除</el-button>
           </el-form-item>
         </li>
       </ul>
       <el-form-item class="btnWrap">
-        <el-button  type="primary" size="mini" @click="submitForm('form')">确定</el-button>
+        <el-button  type="primary" size="mini" @click="submitForm('carriageForm')">确定</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script>
+    import {  int } from '@/utils/validate'
     import ElFormItem from "element-ui/packages/form/src/form-item";
-    import { deleteCarriage,  } from "@/api/userCenter"
+    import { carriageList , deleteCarriage,  addCarriage } from "@/api/userCenter"
     export default {
       components: {ElFormItem},
       name: "post-setting",
       data(){
-        return{
-          form : {
-            post : [
-              {
-                goodsNum : '',
-                money: ''
-              }
-            ]
-          },
-          formRule : {
-            goodsNum : [
-              {
-                required : true ,trigger : 'blur',message : '请填写满足商品件数'
-              }
-            ],
-            money : [
-              {
-                required : true ,trigger : 'blur',message : '请填写运费'
-              }
-            ],
+        const int = ( rule,value,callback) => {
+          if(value === ''){
+            callback(new Error('请输入运送货物的件数'))
+          }else{
+            console.log('valur',value)
+            let reg = /^[1-9][0-9]*$/
+            if (!reg.test(value)) {
+              callback(new Error('货物件数只能为大于0的整数'))
+            }
+            callback();
           }
         }
+        const int1 = ( rule,value,callback) => {
+          if(value === ''){
+            callback(new Error('请输入运费'))
+          }else{
+            if (!/^[1-9][0-9]*$/.test(value)) {
+              callback(new Error('运费为大于0的整数'))
+            }
+            callback();
+          }
+        }
+        return{
+          carriageForm : {
+            regulation:[
+              {id:'',reachQuantity:'',carriageAmount:''}
+            ]
+
+
+          }
+            
+          
+        }
+      },
+      mounted(){
+        this.getCarriage();
       },
       methods : {
+        getCarriage(){
+          carriageList().then( res => {
+            console.log('data',res)
+            if(res.data.status === "000000000"){
+              if(res.data.data.length >0){
+                this.carriageForm.regulation= res.data.data
+              }
+            }
+          })
+        },
         submitForm(formName){
-          console.log(this.form)
+          // console.log(this.carriageForm)
           this.$refs[formName].validate((valid) => {
             if(valid){
-
+              addCarriage(this.carriageForm.regulation).then( res => {
+                console.log(res)
+                if(res.data.status == "000000000"){
+                  this.$message({
+                    message: res.data.message,
+                    center: true,
+                    type: 'success'
+                  })
+                }
+              })
             }else{
-
+                this.$message({
+                    message: res.data.message,
+                    center: true,
+                    type: 'error'
+                  })
             }
           })
         },
         newRule(){
-          if (this.form.post.length < 5) {
-            this.form.post.push({
-              'goodsNum': '',
-              'money': '',
+          if (this.carriageForm.regulation.length < 5) {
+            this.carriageForm.regulation.push({
+              'id':'',
+              'reachQuantity': '',
+              'carriageAmount': '',
 
             })
 
@@ -82,9 +130,10 @@
           }
         },
         deleteRule(item){
-          let index = this.form.post.indexOf(item);
-          if (index !== -1 && this.form.post.length > 1) {
-            this.form.post.splice(index, 1)
+          console.log(item)
+          let index = this.carriageForm.indexOf(item);
+          if (index !== -1 && this.carriageForm.post.length > 1) {
+            this.carriageForm.splice(index, 1)
           }
           deleteCarriage(item).then( res => {
             if(res.data.message === '000000000'){
@@ -134,7 +183,7 @@
         flex-direction: row;
         flex-wrap: nowrap;
         .el-form-item{
-          width :30% ;
+          width :20% ;
 
           /*justify-content: center;*/
           margin-left : 0.6rem ;

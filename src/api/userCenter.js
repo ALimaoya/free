@@ -46,6 +46,21 @@ export function changeShop(data){
     data
   })
 }
+//运费查询列表
+export function carriageList(){
+  return request({
+    url : '/center/merchant/carriage/query',
+    method :'get'
+  })
+}
+//新增运费规则
+export function addCarriage(data){
+  return request({
+    url : '/center/merchant/carriage/update',
+    method : 'post',
+    data
+  })
+}
 //运费删除
 export function deleteCarriage(id){
   return request({
