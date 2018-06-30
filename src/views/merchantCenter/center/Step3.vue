@@ -6,7 +6,7 @@
         <el-input type="text" size="small" :disabled="readOnly" placeholder="支付宝"></el-input>
       </el-form-item>
       <el-form-item  label="额度" >
-        <el-input type="text" size="small" :disabled="readOnly" v-model="bond" placeholder=""></el-input>
+        <el-input type="text" size="small" :disabled="readOnly" v-model="form.depositLowest" placeholder=""></el-input>
       </el-form-item>
 
     </el-form>
@@ -18,6 +18,7 @@
 </template>
 
 <script>
+  import { getBond } from "@/api/userCenter"
     export default {
       name: "step3",
       data(){
@@ -29,11 +30,21 @@
         }
       },
       mounted(){
-        this.form = this.$store.state.step.userInfo ;
-        // this.getBond =
+        this.getBondDetail();
       },
       methods : {
-        getBond(){
+        getBondDetail(){
+          getBond().then( res => {
+            if( res.data.status === '000000000'){
+              this.form = res.data.data ;
+            }else{
+              this.$message({
+                message: res.data.message,
+                type: 'error',
+                center: true
+              })
+            }
+          })
           // this.bond =
         },
         goDetail(){

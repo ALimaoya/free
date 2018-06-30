@@ -31,10 +31,19 @@ export function getShop(){
   })
 }
 //店铺信息上传
-export function shopInfo(){
+export function shopInfo(data){
   return request({
     url : '/center/shop/add',
-    method : 'post'
+    method : 'post',
+    data
+  })
+}
+//店铺信息修改
+export function changeShop(data){
+  return request({
+    url : '/center/shop/edit',
+    method : 'post',
+    data
   })
 }
 //运费删除

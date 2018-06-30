@@ -19,7 +19,7 @@
         <!--<dl  @click="dialogVisible = true;"  >-->
           <!--<dt>店铺LOGO</dt>-->
           <!--<dd>-->
-            <img v-if="form.logoImage !== ''" :src="form.logoImage" alt="" />
+            <img v-if="form.logoImage !== ''" :src="imageDomain+ form.logoImage" alt="" />
             <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
           <!--</dd>-->
         <!--</dl>-->
@@ -41,14 +41,14 @@
         <el-input class="inputInfo" size="small" type="textarea"  :rows="4" v-model.trim="form.describes" :disabled="readOnly" placeholder="描述"></el-input>
       </el-form-item>
       <el-form-item labelWidth="130px" >
-        <el-button v-if="!readOnly" type="primary" size="small" @click="submit('form')">{{ handleType}}</el-button>
+        <el-button v-if="!readOnly" type="primary" size="small" @click="submit('form',handleType)">{{ handleType}}</el-button>
 
       </el-form-item>
     </el-form>
     <el-dialog title="店铺LOGO" :visible.sync="dialogVisible" width="60%" center>
       <div class="wrap">
-        <!--<img :src="ImgSrc" alt="" />-->
-        <img src="../../../assets/imgs/logo.png" />
+        <img :src="imageDomain+ form.logoImage" alt="" />
+        <!--<img src="../../../assets/imgs/logo.png" />-->
       </div>
     </el-dialog>
     <el-dialog title="提示" :visible.sync="infoTip" width="60%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
@@ -67,7 +67,7 @@
 <script>
   import {  getToken } from '@/utils/auth'
   import { uploadImage  } from "@/api/activity"
-  import { shopInfo, getShop,getInfo } from "@/api/userCenter"
+  import { shopInfo, getShop,getInfo, changeShop } from "@/api/userCenter"
 
   export default {
         name: "open-shop",
@@ -107,15 +107,15 @@
           typeList: [
 
             {
-              value: '1',
+              value: '0',
               name : '旗舰店'
             },
             {
-              value : '2',
+              value : '1',
               name : '专卖店'
             },
             {
-              value : '3',
+              value : '2',
               name: '专营店'
             }
           ],
@@ -124,7 +124,7 @@
           dialogVisible: false,
           token : getToken() ,
           autoUpload : true ,
-          imgUrl : process.env.BASE_API+'/tryout/file/upload',
+          imgUrl : process.env.BASE_API+'/file/upload',
           goodsImgWarn : false ,
           imageDomain : process.env.IMAGE_DOMAIN ,
           handleType: '提交',
@@ -238,7 +238,7 @@
         },
 
         //提交表单
-        submit(formName){
+        submit(formName,type){
           console.log(this.form);
 
 
@@ -250,38 +250,68 @@
           this.$refs[formName].validate((valid) => {
             if(valid&&!this.goodsImgWarn){
               //  判断资质信息是否已通过审核
-              // if(this.infoStatus !== '2' ){
-              //   this.$message({
-              //     message : '您上传的资质信息尚未通过，请通过后再进行店铺申请',
-              //     type : 'error',
-              //     center : true
-              //   })
-              // }else {
-                //  提交表单
-                shopInfo(this.form).then( res => {
-                  if(res.data.status === '000000000'){
-                    this.$message({
-                      message : '您的店铺信息已提交，通过审核后即可添加商品' ,
-                      type : 'success',
-                      center : true,
-                      duration : 2000
-                    });
-                    window.location.reload();
-
-                  }else{
-                    this.$message({
-                      message : res.data.message ,
-                      type : 'error',
-                      center : true
-                    })
-                  }
-                }).catch( err => {
-
+              if(this.infoStatus === '1'|| this.infoStatus === '-1' ){
+                this.$message({
+                  message : '您上传的资质信息尚未通过，请通过后再进行店铺申请',
+                  type : 'error',
+                  center : true
                 })
+              }else {
+               if(type === '提交'){
+                 //  提交表单
+                 shopInfo(this.form).then( res => {
+                   if(res.data.status === '000000000'){
+                     this.$message({
+                       message : '您的店铺信息已提交，通过审核后即可添加商品' ,
+                       type : 'success',
+                       center : true,
+                       duration : 1500
+                     });
+                     setTimeout(() => {
+                       window.location.reload();
+
+                     },2000)
+
+                   }else{
+                     this.$message({
+                       message : res.data.message ,
+                       type : 'error',
+                       center : true
+                     })
+                   }
+                 }).catch( err => {
+
+                 })
+               }else if( type === '修改'){
+                 //  提交表单
+                 changeShop(this.form).then( res => {
+                   if(res.data.status === '000000000'){
+                     this.$message({
+                       message : '您的店铺信息已修改，通过审核后即可添加商品' ,
+                       type : 'success',
+                       center : true,
+                       duration : 1500
+                     });
+                     setTimeout(() => {
+                       window.location.reload();
+
+                     },2000)
+
+                   }else{
+                     this.$message({
+                       message : res.data.message ,
+                       type : 'error',
+                       center : true
+                     })
+                   }
+                 }).catch( err => {
+
+                 })
+               }
               }
-            // }else{
-            //
-            // }
+            }else{
+
+            }
           })
         },
 
@@ -320,6 +350,10 @@
     .imgWrap{
       width : 1.5rem ;
       float : left ;
+      img{
+        max-width: 1.5rem ;
+        max-height: 1.5rem;
+      }
       /*span,img{*/
         /*width : 100% ;*/
       /*}*/

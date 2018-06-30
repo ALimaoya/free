@@ -103,7 +103,7 @@
                 grantTime: ''
               },
               imageDomain : process.env.IMAGE_DOMAIN , //获取图片的外链域名
-              imgUrl: process.env.BASE_API+'/tryout/file/upload',   // 上传图片的域名
+              imgUrl: process.env.BASE_API+'/file/upload',   // 上传图片的域名
               imgType: [],
               tableData: [],
               dialogVisible: false ,

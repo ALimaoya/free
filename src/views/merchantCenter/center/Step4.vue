@@ -22,7 +22,7 @@
         <el-input type="textarea" :rows="4" size="small" v-model="form.describes" :disabled="readOnly"></el-input>
       </el-form-item>
       <el-form-item class="imgWrap" prop="logoImage" v-if="!readOnly" label="店铺LOGO">
-            <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logoImage"
+            <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logoImageImage"
                         :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeImgUpload">
               <img v-if="form.logoImage" :src="imageDomain + form.logoImage" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -34,18 +34,18 @@
        <dl @click="dialogVisible = true;" v-else-if="readOnly" >
           <dt>店铺LOGO</dt>
           <dd>
-            <img v-if="form.logo !== undefined" :src="form.logo" alt="" />
+            <img v-if="form.logoImage !== undefined" :src="imageDomain +form.logoImage" alt="" />
             <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
           </dd>
         </dl>
       <!--</el-form-item>-->
     </el-form>
     <el-button v-if="readOnly" type="primary" size="small" @click="goDetail">查看</el-button>
-    <el-button v-if="!readOnly" type="primary" size="small" @click="submit('form')">{{ handleType}}</el-button>
+    <el-button v-if="!readOnly" type="primary" size="small" @click="submit('form',handleType)">{{ handleType}}</el-button>
 
     <el-dialog title="店铺LOGO" :visible.sync="dialogVisible" width="60%" center>
       <div class="wrap">
-        <img :src="form.logo" alt="" />
+        <img :src="imageDomain + form.logoImage" alt="" />
         <!--<img src="../../../assets/imgs/logo.png" />-->
       </div>
     </el-dialog>
@@ -56,7 +56,7 @@
 <script>
   import {  getToken } from '@/utils/auth'
   import { uploadImage  } from "@/api/activity"
-  import { shopInfo, getShop } from "@/api/userCenter"
+  import { shopInfo, getShop, changeShop } from "@/api/userCenter"
     export default {
       name: "step4",
       props : ['step4Status'],
@@ -96,15 +96,15 @@
           typeList: [
 
             {
-              value: '1',
+              value: '0',
               name : '旗舰店'
             },
             {
-              value : '2',
+              value : '1',
               name : '专卖店'
             },
             {
-              value : '3',
+              value : '2',
               name: '专营店'
             }
           ],
@@ -112,7 +112,7 @@
           dialogVisible: false,
           token : getToken() ,
           autoUpload : true ,
-          imgUrl : process.env.BASE_API+'/tryout/file/upload',
+          imgUrl : process.env.BASE_API+'/file/upload',
           goodsImgWarn : false ,
           imageDomain : process.env.IMAGE_DOMAIN ,
           status: '0',
@@ -127,25 +127,27 @@
       },
       methods : {
         getShopInfo(){
-          // this.$emit('shop','2');
 
           getShop().then( res => {
             if(res.data.status === '000000000'){
-              this.form = res.data.data ;
-              this.status = res.data.data.status ;
-              if(this.status === '1' || this.status === '2'){
-                this.readOnly = true ;
-              }else{
-                if(this.status === '0'){
-                  this. handleType = '提交'
+              if(res.data.data !== null){
+                this.form = res.data.data ;
+                this.status = res.data.data.status ;
+                if(this.status === '1' || this.status === '2'){
+                  this.readOnly = true ;
+                }else{
+                  if(this.status === '0'){
+                    this. handleType = '提交'
 
-                }else if( this.status === '3'){
-                  this. handleType = '修改'
+                  }else if( this.status === '3'){
+                    this. handleType = '修改'
 
+                  }
+                  this.readOnly = false ;
                 }
-                this.readOnly = false ;
+              }else{
+
               }
-              // this.$emit('shop',this.status)
             }else{
               this.$message({
                 message : res.data.message ,
@@ -180,9 +182,8 @@
                 formData.append('image', file);
                 uploadImage(formData,_this.token).then(res => {
                   if (res.data.status === '000000000') {
-                      _this.form.logoImage = res.data.data.fileName ;
+                      _this.form.logoImageImage = res.data.data.fileName ;
 
-                    // console.log(_this.form.imgList)
                     _this.goodsImgWarn = false;
                   } else {
                     _this.$message({
@@ -205,11 +206,11 @@
           };
           reader.readAsDataURL(file);
         },
-        submit(formName){
-          console.log(this.form);
+        submit(formName,type){
+          console.log(this.form,this.step4Status );
 
 
-            if(this.form.logoImage === ''){
+            if(this.form.logoImageImage === ''){
               this.goodsImgWarn = true ;
             }
 
@@ -217,35 +218,73 @@
           this.$refs[formName].validate((valid) => {
             if(valid&&!this.goodsImgWarn){
             //  判断资质信息是否已通过审核
-              if(this.step4Status !== '2' ){
+              if(this.step4Status === '1'|| this.step4Status === '-1' ){
                 this.$message({
                   message : '您上传的资质信息尚未通过，请通过后再进行店铺申请',
                   type : 'error',
                   center : true
                 })
-              }else {
-            //  提交表单
-              shopInfo(this.form).then( res => {
-                if(res.data.status === '000000000'){
-                  this.$message({
-                    message : '您的店铺信息已提交，通过审核后即可添加商品' ,
-                    type : 'success',
-                    center : true,
-                    duration : 2000
-                  });
-                  window.location.reload();
+              }else if(this.step4Status === '0'){
+                this.$message({
+                  message : '您还未上传资质信息，请先上传资质信息后方可进行店铺申请',
+                  type : 'error',
+                  center : true
+                })
+              }
+              else {
+                if(type === '提交'){
+                  //  提交表单
+                  shopInfo(this.form).then( res => {
+                    if(res.data.status === '000000000'){
+                      this.$message({
+                        message : '您的店铺信息已提交，通过审核后即可添加商品' ,
+                        type : 'success',
+                        center : true,
+                        duration : 1500
+                      });
+                      setTimeout(() => {
+                        window.location.reload();
 
-                }else{
-                  this.$message({
-                    message : res.data.message ,
-                    type : 'error',
-                    center : true
+                      },2000)
+
+                    }else{
+                      this.$message({
+                        message : res.data.message ,
+                        type : 'error',
+                        center : true
+                      })
+                    }
+                  }).catch( err => {
+
+                  })
+                }else if( type === '修改'){
+                  //  修改表单
+                  changeShop(this.form).then( res => {
+                    if(res.data.status === '000000000'){
+                      this.$message({
+                        message : '您的店铺信息已修改，通过审核后即可添加商品' ,
+                        type : 'success',
+                        center : true,
+                        duration : 1500
+                      });
+                      setTimeout(() => {
+                        window.location.reload();
+
+                      },2000)
+
+                    }else{
+                      this.$message({
+                        message : res.data.message ,
+                        type : 'error',
+                        center : true
+                      })
+                    }
+                  }).catch( err => {
+
                   })
                 }
-                }).catch( err => {
 
-              })
-            }
+              }
             }else{
 
             }
@@ -257,6 +296,9 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
   @import '../../../styles/step';
+  .el-form{
+    margin-bottom: 0.3rem;
+  }
   .el-select{
     width : 100% ;
   }

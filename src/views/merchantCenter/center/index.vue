@@ -100,7 +100,6 @@
             user : getUser(),
             statusTag: {},
             close: ''
-            // form : {},
           }
       },
     mounted(){
@@ -118,6 +117,9 @@
             if(res.data.status === '000000000'){
               this.statusTag = res.data.data;
               console.log(res.data.data);
+              if(this.statusTag.aptitudeStatus=== '9'&& this.statusTag.isBundle === '1'&& this.statusTag.shopStatus === '9'&&this.statusTag.wallet === '1'){
+                this.close = '';
+              }
 
             }else{
               this.$message({
@@ -135,12 +137,6 @@
         this.show = index ;
         this.tabView = 'step'+ index ;
       },
-      // getInfo(res){
-      //   this.aptitudeStatus = res
-      // },
-      // getShop(res){
-      //   this.shopStatus = res ;
-      // }
 
     }
     }

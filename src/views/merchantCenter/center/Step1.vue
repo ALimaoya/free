@@ -190,7 +190,7 @@
             isRegister: false,
             token : getToken() ,
             autoUpload : true ,
-            imgUrl : process.env.BASE_API+'/tryout/file/upload',
+            imgUrl : process.env.BASE_API+'/file/upload',
             businessImageWarn : false ,
             authorizeImageWarn: false ,
             cardFaceImageWarn: false ,

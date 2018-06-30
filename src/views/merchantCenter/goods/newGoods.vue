@@ -11,7 +11,7 @@
         </el-form-item>
         <el-form-item  labelWidth="130px" label="商品品牌" prop="brandId">
           <el-input class="inputInfo" :disabled="readOnly" size="small" v-model.trim="brandName" disabled='disabled'></el-input>
-          <div class="showBrand" @click="dialogVisible = true ;"><svg-icon icon-class="brand"></svg-icon><span>品牌速查</span></div>
+          <div class="showBrand" @click="searchBrand()"><svg-icon icon-class="brand"></svg-icon><span>品牌速查</span></div>
         </el-form-item>
         <el-form-item  labelWidth="130px" label="一级分类" prop="firstType">
           <el-select  size="small" :disabled="readOnly" clearable v-model="form.firstType" @change="getSecondList(form.firstType)" filterable placeholder="请选择一级分类">
@@ -91,7 +91,7 @@
       <el-dialog class="tableBox" title="品牌速查" :visible.sync="dialogVisible" width="60%" >
         <div class="dialogTop">
           <span>品牌名称：</span><el-input type="text" class="middleInput" v-model.trim="brandName" size="small"></el-input>
-          <el-button type="primary" size="small" @click="searchBrand(brandName)">查询</el-button>
+          <el-button type="primary" size="small" @click="getBrandList()">查询</el-button>
         </div>
         <el-table :data="brandData" border stripe highlight-current-row fit >
           <el-table-column  width="32" >
@@ -120,9 +120,9 @@
           <el-button type="primary" size="mini" @click="confirmBrand">选择</el-button>
         </div>
       </el-dialog>
-      <el-dialog class="shop_dialog" title="提示" top="20%" :visible.sync="hasShop" width="30%" center
+      <el-dialog class="shop_dialog" title="提示" top="20%" :visible.sync="hasShop" width="40%" center
                   :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
-        <p>您还未申请店铺，请先前往申请店铺</p>
+        <p>{{ tips }}</p>
         <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="applyShop">申请店铺</el-button>
       </span>
@@ -189,6 +189,7 @@
     //
     // },
         data() {
+
         const validGoodsName = (rule,value,callback) => {
           if(value === ''){
             callback(new Error('请输入商品名称'))
@@ -199,6 +200,12 @@
             callback();
           }
 
+        };
+        const validBrand = ( rule, value , callback ) => {
+          if(value === ''){
+            callback( new Error('请选择商品品牌'))
+          }
+          callback();
         };
         const validPrice = (rule,value,callback) => {
           if(value === ''){
@@ -241,7 +248,7 @@
                 ],
                 brandId: [
                   {
-                    required : true  ,trigger : 'change',message: '请选择商品品牌'
+                    required : true  ,trigger : 'change',validator: validBrand
                   }
                 ],
                 firstType: [
@@ -282,7 +289,7 @@
               token : getToken() ,
               user: getMobile(),
               autoUpload : true ,
-              imgUrl : process.env.BASE_API+'/tryout/file/upload',
+              imgUrl : process.env.BASE_API+'/file/upload',
               goodsImgWarn : false ,
               imageDomain : process.env.IMAGE_DOMAIN ,
               imgIndex : '',
@@ -311,7 +318,7 @@
                 // image_advtab: true, //开启图片上传的高级选项功能
                 imagetools_toolbar: 'watermark',
                 images_upload_base_path: process.env.BASE_API, // 图片上传的基本路径
-                images_upload_url: process.env.BASE_API + '/tryout/file/upload', // 图片上传的具体地址，该选项一定需要设置，才会出现图片上传选项
+                images_upload_url: process.env.BASE_API + '/file/upload', // 图片上传的具体地址，该选项一定需要设置，才会出现图片上传选项
                 images_upload_handler: function (blobInfo, success, failure) {
                   let file = blobInfo.blob();
                   if (blobInfo.blob().size > self.maxSize) {
@@ -371,13 +378,15 @@
               totalElements : 0,
               currentPage : 1,
               pageSize : 10,
+              tips: ''
             }
         },
         mounted(){
           this.getFirstList();
           window.tinymce.init({});
           let id = this.$route.query.order ;
-          if(this.getShop()){
+          this.getShop();
+          if(!this.hasShop){
             //判断是新增还是修改商品
             if(id !== undefined){
               //获取已有商品信息
@@ -399,9 +408,6 @@
             }else{
               this.title = '新增商品';
             }
-            this.getBrandList();
-          }else{
-            this.hasShop = true ;
           }
 
         },
@@ -418,8 +424,9 @@
           getShop(){
             getShopInfo().then(res=> {
               if(res.data.status === '000000000'){
+                this.hasShop = false ;
 
-                  return true
+                  return true ;
 
 
               }else{
@@ -428,35 +435,41 @@
                   center: true ,
                   type : 'error'
                 });
-                return false
+                this.tips = res.data.message;
+                this.hasShop = true ;
+
 
               }
             }).catch( err => {
 
             })
           },
+
           getBrandList(){
             let data = {};
-            if(this.brandName !== '' ){
+            // if(this.brandName !== '' ){
              data = {
                 brandName : this.brandName
              }
-            }
+            // }
 
             getBrand(data).then(res => {
               if(res.data.status === '000000000'){
                 // this.brandData =
                 this.brandData = res.data.data ;
+                this.totalPages = res.data.totalPages ;
+                this.totalElements = res.data.totalElements ;
               }
             }).catch( err => {
 
             });
 
           },
-          //查询品牌
-          searchBrand(key){
-            this.getBrandList(key);
 
+          //查询品牌
+          searchBrand(){
+            this.dialogVisible = true ;
+            this.getBrandList();
           },
           //选择品牌
           handleBrand(index,val,name) {
