@@ -401,7 +401,7 @@
             }
             this.getBrandList();
           }else{
-            // this.hasShop = true ;
+            this.hasShop = true ;
           }
 
         },
@@ -418,18 +418,18 @@
           getShop(){
             getShopInfo().then(res=> {
               if(res.data.status === '000000000'){
-                if(res.data.data.status !== '2'){
-                  return false;
-                }else{
+
                   return true
-                }
+
 
               }else{
                 this.$message({
                   message : res.data.message,
                   center: true ,
                   type : 'error'
-                })
+                });
+                return false
+
               }
             }).catch( err => {
 

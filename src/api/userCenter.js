@@ -1,9 +1,16 @@
 import request from '@/utils/request'
 
+//首页状态
+export function getStatus(){
+  return request({
+    url: '/center/index/merchant/status',
+    method: 'get'
+  })
+}
 //资质上传
 export function infoUpload(data){
   return request({
-    url : '/center/shop/aptitudeAdd',
+    url : '/center/aptitude/add',
     method : 'post',
     data
   })
@@ -11,7 +18,7 @@ export function infoUpload(data){
 //资质查询
 export function getInfo(){
   return request({
-    url : '/center/aptitude/toEditOrQuery',
+    url : '/center/aptitude/detail',
     method: 'get',
 
   })
@@ -19,14 +26,14 @@ export function getInfo(){
 //店铺信息查询
 export function getShop(){
   return request({
-    url : '/center/shop/toEditOrQuery',
-    method : 'post'
+    url : '/center/shop/detail',
+    method : 'get'
   })
 }
 //店铺信息上传
 export function shopInfo(){
   return request({
-    url : '/center/shop/shopAdd',
+    url : '/center/shop/add',
     method : 'post'
   })
 }
@@ -89,7 +96,7 @@ export function getProvinceList(){
 //保证金查询
 export function getBond(){
   return request({
-    url : '/center/merchant/wallet/index',
+    url : '/center/merchant/wallet/query',
     method : 'get'
   })
 }

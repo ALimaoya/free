@@ -21,7 +21,10 @@ h1{
   }
   .imgWrap{
     width : 80%;
-    .imeTilte{
+    //display: flex;
+    //flex-direction: row;
+    //flex-wrap: wrap;
+    .imeTitle{
       width : 1.5rem;
       height: 0.4rem ;
       line-height : 0.4rem ;
@@ -31,10 +34,14 @@ h1{
       text-align : center ;
       display: inline-block;
     }
+
+
   }
   dl{
-    width : 60%;
-    height : 3rem ;
+    width : 20%;
+    float:left;
+
+    //height : 3rem ;
     margin : auto ;
     dt{
       height : 0.4rem;
@@ -50,7 +57,6 @@ h1{
       }
     }
   }
-
 
 
 }

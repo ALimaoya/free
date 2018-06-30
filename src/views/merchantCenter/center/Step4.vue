@@ -127,7 +127,7 @@
       },
       methods : {
         getShopInfo(){
-          this.$emit('shop','2');
+          // this.$emit('shop','2');
 
           getShop().then( res => {
             if(res.data.status === '000000000'){
@@ -145,7 +145,7 @@
                 }
                 this.readOnly = false ;
               }
-              this.$emit('shop',this.status)
+              // this.$emit('shop',this.status)
             }else{
               this.$message({
                 message : res.data.message ,

@@ -3,9 +3,9 @@
       <!--<iframe src="../../../a.html" scrolling ='no' >点这里</iframe>-->
       <div class="warn" :class="{ hide: close === '1' }">
         <p>温馨提示</p>
-          <div>您的<span  v-if="infoStatus === '0'">资质、</span>  <span v-if="shopStatus=== '0'">店铺、</span><span>保证金</span> 信息还未提交，无法进行商品、交易、结算等相关操作，请尽快补充资料。</div>
-          <div v-if="infoStatus === '1'">您的 资质 信息正在审核中，请耐心等候，审核通过后，您可进行商品、交易、结算等相关操作。</div>
-          <div v-else-if="infoStatus === '3'">您的 资质 信息未通过审核，请重新编辑提交，审核通过后，您可进行商品、交易、结算等相关操作。</div>
+          <div>您的<span  v-if="statusTag.aptitudeStatus === '0'">资质、</span>  <span v-if="statusTag.shopStatus=== '0'">店铺、</span><span v-if="statusTag.wallet === '0'">保证金</span> 信息还未提交，无法进行商品、交易、结算等相关操作，请尽快补充资料。</div>
+          <div v-if="statusTag.aptitudeStatus === '1'">您的 资质 信息正在审核中，请耐心等候，审核通过后，您可进行商品、交易、结算等相关操作。</div>
+          <div v-else-if="statusTag.aptitudeStatus === '-1'">您的 资质 信息未通过审核，请重新编辑提交，审核通过后，您可进行商品、交易、结算等相关操作。</div>
         <span class="close_icon" @click="close = '1'"></span>
       </div>
       <ul class="step allWid">
@@ -24,10 +24,10 @@
           <!--<a href="#" >-->
           <span>1</span>
           <dl><dt>资质上传</dt>
-            <dd v-if="infoStatus === '1'"> 您的相关资质正在审核 </dd>
-            <dd v-else-if="infoStatus === '2'">您的相关资质已审核通过</dd>
-            <dd v-else-if="infoStatus === '3'">您的相关资质未审核通过，请重新上传</dd>
-
+            <dd v-if="statusTag.aptitudeStatus === '0'">您的相关资质还未提交</dd>
+            <dd v-else-if="statusTag.aptitudeStatus === '1'"> 您的相关资质正在审核 </dd>
+            <dd v-else-if="statusTag.aptitudeStatus === '-1'">您的相关资质未审核通过，请重新上传</dd>
+            <dd v-else>您的相关资质已审核通过</dd>
           </dl>
           <!--</a>-->
         </li>
@@ -35,8 +35,8 @@
           <!--<a href="#" >-->
           <span>2</span>
           <dl><dt>绑定账号</dt>
-            <dd v-if="infoStatus === '1'"> 您还未绑定结算账号 </dd>
-            <dd v-else-if="infoStatus === '2'">您已绑定结算账号</dd>
+            <dd v-if="statusTag.isBundle === '0'"> 您还未绑定结算账号 </dd>
+            <dd v-else>您已绑定结算账号</dd>
           </dl>
           <!--</a>-->
         </li>
@@ -44,8 +44,8 @@
           <!--<a href="#" >-->
           <span>3</span>
           <dl><dt>缴纳保证金</dt>
-            <dd v-if="infoStatus === '1'"> 您还未缴纳保证金 </dd>
-            <dd v-else-if="infoStatus === '2'">您的保证金已缴纳</dd>
+            <dd v-if="statusTag.wallet === '0'"> 您还未缴纳保证金 </dd>
+            <dd v-else>您的保证金已缴纳</dd>
 
           </dl>
           <!--</a>-->
@@ -55,10 +55,11 @@
           <span>4</span>
           <dl>
             <dt>我要开店</dt>
-            <dd v-if="shopStatus === '0'"> 您还未提交店铺信息 </dd>
-            <dd v-else-if="shopStatus === '1'"> 您提交的店铺信息正在审核中 </dd>
-            <dd v-else-if="shopStatus === '2'">您的店铺信息已审核通过</dd>
-            <dd v-else-if="shopStatus === '3'"> 您提交的店铺信息未通过审核，请修改后重新提交 </dd>
+            <dd v-if="statusTag.shopStatus === '0'"> 您还未提交店铺信息 </dd>
+            <dd v-else-if="statusTag.shopStatus === '1'"> 您提交的店铺信息正在审核中 </dd>
+            <dd v-else-if="statusTag.shopStatus === '-1'"> 您提交的店铺信息未通过审核，请修改后重新提交 </dd>
+            <dd v-else>您的店铺信息已审核通过</dd>
+
           </dl>
           <!--</a>-->
         </li>
@@ -67,7 +68,7 @@
       <div class="wrap allWid" >
 
 
-        <component  :is="tabView " @info="getInfo" @shop="getShop" :step4Status="infoStatus"></component>
+        <component  :is="tabView "  :step4Status="statusTag.aptitudeStatus"></component>
 
         <!--<step-wrap></step-wrap>-->
       </div>
@@ -80,7 +81,7 @@
   import Step2 from "@/views/merchantCenter/center/Step2"
   import Step3 from "@/views/merchantCenter/center/Step3"
   import Step4 from "@/views/merchantCenter/center/Step4"
-
+  import { getStatus } from "@/api/userCenter"
   export default {
       name: "MerchantCenter-home",
       components: {
@@ -92,42 +93,12 @@
       },
       data(){
           return{
-            Process : [
-              {
-                title : '资质上传',
-                intro1 : '您的相关资质已审核通过',
-                intro2: '您的相关资质还未提交',
-                intro: '您的相关资质正在审核',
-                path : 'step1',
-                status : this.infoStatus
-              },
-              {
-                title : '绑定账号',
-                intro1 : '已绑定结算账号',
-                intro2 : '您还未绑定结算账号',
-                path : 'step2'
-              },
-              {
-                title : '缴纳保证金',
-                intro1 : '保证金已缴纳',
-                intro2 : '您还未缴纳保证金',
-                path : 'step3'
-              },
-              {
-                title : '我要开店',
-                intro1 : '您的店铺信息已审核通过',
-                intro2 : '您还未提交店铺信息',
-                path : 'step4'
-              }
-            ],
+
             show : '1',
             isActive : false,
             tabView : 'step1',
             user : getUser(),
-            // isRegister: '',
-            // isChecking: '',
-            infoStatus : '',
-            shopStatus: '',
+            statusTag: {},
             close: ''
             // form : {},
           }
@@ -137,20 +108,39 @@
         if( step3 ){
           this.show = '3' ;
           this.tabView = 'step3';
-        }
+        };
+        this.getStatusType();
 
     },
     methods: {
+        getStatusType(){
+          getStatus().then(res=> {
+            if(res.data.status === '000000000'){
+              this.statusTag = res.data.data;
+              console.log(res.data.data);
+
+            }else{
+              this.$message({
+                message : res.data.message,
+                center: true ,
+                type : 'error'
+              });
+
+            }
+          }).catch( err => {
+
+          })
+        },
       changeTabs(index){
         this.show = index ;
         this.tabView = 'step'+ index ;
       },
-      getInfo(res){
-        this.infoStatus = res
-      },
-      getShop(res){
-        this.shopStatus = res ;
-      }
+      // getInfo(res){
+      //   this.aptitudeStatus = res
+      // },
+      // getShop(res){
+      //   this.shopStatus = res ;
+      // }
 
     }
     }
