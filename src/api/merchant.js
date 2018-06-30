@@ -88,8 +88,8 @@ export function getBrand(data){
 export function refusedList(data){
   return request({
     url : '/center/refund/query',
-    method: 'post'
-
+    method: 'post',
+    data
   })
 }
 //退款单详情
@@ -98,6 +98,14 @@ export function refuseOrder(refundId){
     url : '/center/refund/detail/'+ refundId ,
     method : 'post'
 
+  })
+}
+//确认退款
+export function refusedAffirm(data){
+  return request({
+    url :  '/center/refund/confirm',
+    method : 'post',
+    data
   })
 }
 
