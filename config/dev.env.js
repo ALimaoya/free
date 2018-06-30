@@ -4,7 +4,11 @@ const prodEnv = require('./prod.env');
 
 module.exports = merge(prodEnv, {
   NODE_ENV: '"development"',
+<<<<<<< HEAD
   //  BASE_API: '"http://192.168.0.205:8087/tryout"',
+=======
+   // BASE_API: '"http://192.168.0.205:8087/tryout"',
+>>>>>>> ece47f236566f1bb4603ea9d868f515d1241705d
   // BASE_API: '"http://192.168.0.80:8087/tryout"',
   // BASE_API: '"https://sksj-api.yabei.shop/tryout"',
   // BASE_API: '"http://120.27.12.205:8005/tryout"',

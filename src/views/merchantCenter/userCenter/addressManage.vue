@@ -205,6 +205,7 @@
               setTimeout(()=>{
 
                 this.isNew = '' ;
+                this.changeDialog = false ;
                 this.getAddressList();
 
               },2000)

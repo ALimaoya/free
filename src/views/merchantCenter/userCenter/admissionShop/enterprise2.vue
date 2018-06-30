@@ -282,7 +282,7 @@
             imgVisible: false ,
             proviceList: [],
             autoUpload : true ,
-            imgUrl : process.env.BASE_API+'/tryout/file/upload',
+            imgUrl : process.env.BASE_API+'/file/upload',
             imageDomain : process.env.IMAGE_DOMAIN ,
             licenseWarn : false ,
             permitWarn: false ,

@@ -3,21 +3,21 @@
     <h1>资质上传</h1>
     <el-form ref="form" :model="form" :rules="formRule" center label-position="top">
       <el-form-item label="店铺负责人"  prop="name">
-        <el-input type="text" size="small" v-model="form.name" :disabled="readOnly"></el-input>
+        <el-input type="text" size="small" v-model="form.name" :disabled="isRegister"></el-input>
       </el-form-item>
       <el-form-item label="Email" prop="email">
-        <el-input type="text" size="small" :disabled="readOnly" v-model="form.email"></el-input>
+        <el-input type="text" size="small" :disabled="isRegister" v-model="form.email"></el-input>
       </el-form-item>
       <el-form-item label="身份证号" prop="cardId">
-        <el-input type="text" size="small" v-model="form.cardId" :disabled="readOnly"></el-input>
+        <el-input type="text" size="small" v-model="form.cardId" :disabled="isRegister"></el-input>
       </el-form-item>
       <el-form-item label="企业名称" prop="enterpriseName">
-        <el-input type="text" size="small" v-model="form.enterpriseName" :disabled="readOnly"></el-input>
+        <el-input type="text" size="small" v-model="form.enterpriseName" :disabled="isRegister"></el-input>
       </el-form-item>
       <el-form-item class="imgWrap" v-if="!isRegister" label="资质">
         <ul class="imgList" >
           <li>
-            <span class="imeTilte">营业执照</span>
+            <span class="imeTitle">营业执照</span>
             <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.businessImage"
                         :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeBusinessUpload">
               <img v-if="form.businessImage" :src="imageDomain + form.businessImage" class="avatar">
@@ -26,7 +26,7 @@
             <span class="imgWarn tips_warn" v-if="businessImageWarn">请上传营业执照</span>
           </li>
           <li>
-            <span class="imeTilte">授权证书</span>
+            <span class="imeTitle">授权证书</span>
             <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.authorizeImage"
                         :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeAuthorizeUpload">
               <img v-if="form.authorizeImage" :src="imageDomain + form.authorizeImage" class="avatar">
@@ -35,7 +35,7 @@
             <span class="imgWarn tips_warn" v-if="authorizeImageWarn">请上传授权证书</span>
           </li>
           <li>
-            <span class="imeTilte">身份证正面</span>
+            <span class="imeTitle">身份证正面</span>
             <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.cardFaceImage"
                         :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeCardFaceImgUpload">
               <img v-if="form.cardFaceImage" :src="imageDomain + form.cardFaceImage" class="avatar">
@@ -44,7 +44,7 @@
             <span class="imgWarn tips_warn" v-if="cardFaceImageWarn">请上传身份证正面照</span>
           </li>
           <li>
-            <span class="imeTilte">身份证反面</span>
+            <span class="imeTitle">身份证反面</span>
             <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.cardBackImage"
                         :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeCardBackImgUpload">
               <img v-if="form.cardBackImage" :src="imageDomain + form.cardBackImage" class="avatar">
@@ -55,39 +55,43 @@
         </ul>
 
       </el-form-item>
-      <el-form-item class="imgWrap" v-else="isRegister">
-        <dl @click="bigImg(index,form.businessImage)"  >
-          <dt>{{ imgType[index] }}</dt>
-          <dd>
-            <img v-if="form.businessImage !== ''" :src="form.businessImage" alt="" />
-            <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
-          </dd>
-        </dl>
-        <dl @click="bigImg(index,form.authorizeImage)"  >
-          <dt>{{ imgType[index] }}</dt>
-          <dd>
-            <img v-if="form.authorizeImage !== ''" :src="form.authorizeImage" alt="" />
-            <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
-          </dd>
-        </dl>
-        <dl @click="bigImg(index,form.cardFaceImage)"  >
-          <dt>{{ imgType[index] }}</dt>
-          <dd>
-            <img v-if="form.cardFaceImage !== ''" :src="form.cardFaceImage" alt="" />
-            <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
-          </dd>
-        </dl>
-        <dl @click="bigImg(index,form.cardBackImage)"  >
-          <dt>{{ imgType[index] }}</dt>
-          <dd>
-            <img v-if="form.cardBackImage !== ''" :src="form.cardBackImage" alt="" />
-            <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
-          </dd>
-        </dl>
+      <el-form-item class="imgItem" v-else="isRegister" label="资质">
+        <div  class="showImage">
+          <dl @click="bigImg(0,form.businessImage)"  >
+            <dt>{{ imgType[0] }}</dt>
+            <dd>
+              <img v-if="form.businessImage !== ''" :src="imageDomain + form.businessImage" alt="" />
+              <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
+            </dd>
+          </dl>
+          <dl @click="bigImg(1,form.authorizeImage)"  >
+            <dt>{{ imgType[1] }}</dt>
+            <dd>
+              <img v-if="form.authorizeImage !== ''" :src="imageDomain + form.authorizeImage" alt="" />
+              <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
+            </dd>
+          </dl>
+          <dl @click="bigImg(2,form.cardFaceImage)"  >
+            <dt>{{ imgType[2] }}</dt>
+            <dd>
+              <img v-if="form.cardFaceImage !== ''" :src="imageDomain + form.cardFaceImage" alt="" />
+              <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
+            </dd>
+          </dl>
+          <dl @click="bigImg(3,form.cardBackImage)"  >
+            <dt>{{ imgType[3] }}</dt>
+            <dd>
+              <img v-if="form.cardBackImage !== ''" :src="imageDomain + form.cardBackImage" alt="" />
+              <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
+            </dd>
+          </dl>
+        </div>
       </el-form-item>
+      <div class="tips_warn refuse" v-if="status==='3'">审核未通过原因：{{ form.reason }}</div>
       <el-form-item>
         <el-button v-if="isRegister" type="primary" size="small" @click="goDetail">查看</el-button>
-        <el-button v-else="!isRegister" type="primary" size="small" @click="submit('form')">提交</el-button>
+        <el-button v-else-if="!isRegister&&status === '0'" type="primary" size="small" @click="submit('form')">提交</el-button>
+        <el-button v-else-if="!isRegister&&status === '3'" type="primary" size="small" @click="submit('form')">修改</el-button>
       </el-form-item>
     </el-form>
 
@@ -95,7 +99,6 @@
     <el-dialog :title="imgTitle" :visible.sync="dialogVisible" width="60%" center>
       <div class="wrap">
         <img :src=" imageDomain + imgSrc" alt="" />
-        <img src="../../../assets/imgs/logo.png" />
       </div>
     </el-dialog>
   </div>
@@ -156,6 +159,7 @@
               authorizeImage:'',
               cardFaceImage:'',
               cardBackImage:'',
+              id: ''
             },
             formRule: {
               name : [
@@ -180,14 +184,13 @@
               ],
 
             },
-            readOnly : false,
             imgType : ['营业执照','授权证书','身份证（正面）','身份证（反面）'],
             imgTitle : '',
             dialogVisible: false,
             isRegister: false,
             token : getToken() ,
             autoUpload : true ,
-            imgUrl : process.env.BASE_API+'/tryout/file/upload',
+            imgUrl : process.env.BASE_API+'/file/upload',
             businessImageWarn : false ,
             authorizeImageWarn: false ,
             cardFaceImageWarn: false ,
@@ -204,12 +207,18 @@
       methods: {
         getUserInfo(){
 
-          this.$emit('info','1');
           getInfo().then( res =>{
             if(res.data.status === '000000000'){
-              this.form = res.data.status ;
-              this.status = res.data.data.status ;
-              this.$emit('info',this.status)
+              if(res.data.data !== null){
+                this.form = res.data.data ;
+                this.status = res.data.data.status ;
+                if(this.status === '2'|| this.status === '1'){
+                  this.isRegister = true ;
+                }
+              }else{
+                this.status = '0';
+
+              }
             }else{
               this.$message({
                 message : res.data.message ,
@@ -374,7 +383,6 @@
         submit(formName){
           if(this.form.businessImage === ''){
             this.businessImageWarn = true;
-            console.log(1234)
           }
           if(this.form.authorizeImage === ''){
             this.authorizeImageWarn = true
@@ -435,5 +443,25 @@
 
       }
     }
+  }
+  .showImage{
+    display : flex ;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    width: 80%!important;
+
+  }
+  .imgItem, .imgItem .imgWrap{
+    width: 100%!important;
+
+  }
+
+  .refuse{
+    text-align: left ;
+    font-size: 0.24rem ;
+    width: 100% ;
+    height: 0.8rem ;
+    line-height: 0.8rem ;
+    text-indent: 0.2rem ;
   }
 </style>

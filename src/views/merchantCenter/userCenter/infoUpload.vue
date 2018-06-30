@@ -1,7 +1,7 @@
 <template>
   <div class="infoUpload">
     <h1>资质上传</h1>
-    <el-form ref="form" :model="form" :rules="formRule" center label-position="right">
+    <el-form :model="form" ref="form"  :rules="formRule" center label-position="right">
       <el-form-item  :labelWidth="labelWidth" label="店铺负责人："  prop="name">
         <el-input class="inputInfo" type="text" size="small" :disabled="isRegister" v-model.trim="form.name" placeholder="店铺负责人" ></el-input>
       </el-form-item>
@@ -54,59 +54,59 @@
           </li>
         </ul>
       </el-form-item>
-      <el-form-item :labelWidth="labelWidth" class="imgWrap" label="资质" v-else="isRegister">
-        <dl @click="bigImg(index,form.businessImage)"  >
-          <dt>{{ imgType[index] }}</dt>
-          <dd>
-            <img v-if="form.businessImage !== ''" :src="form.businessImage" alt="" />
-            <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
-          </dd>
-        </dl>
-        <dl @click="bigImg(index,form.authorizeImage)"  >
-          <dt>{{ imgType[index] }}</dt>
-          <dd>
-            <img v-if="form.authorizeImage !== ''" :src="form.authorizeImage" alt="" />
-            <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
-          </dd>
-        </dl>
-        <dl @click="bigImg(index,form.cardFaceImage)"  >
-          <dt>{{ imgType[index] }}</dt>
-          <dd>
-            <img v-if="form.cardFaceImage !== ''" :src="form.cardFaceImage" alt="" />
-            <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
-          </dd>
-        </dl>
-        <dl @click="bigImg(index,form.cardBackImage)"  >
-          <dt>{{ imgType[index] }}</dt>
-          <dd>
-            <img v-if="form.cardBackImage !== ''" :src="form.cardBackImage" alt="" />
-            <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
-          </dd>
-        </dl>
-
+      <el-form-item :labelWidth="labelWidth" class="imgWrap" label="资质：" v-else="isRegister">
+        <div  class="showImage">
+          <dl @click="bigImg(0,form.businessImage)"  >
+            <dt>{{ imgType[0] }}</dt>
+            <dd>
+              <img v-if="form.businessImage !== ''" :src="imageDomain+form.businessImage" alt="" />
+              <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
+            </dd>
+          </dl>
+          <dl @click="bigImg(1,form.authorizeImage)"  >
+            <dt>{{ imgType[1] }}</dt>
+            <dd>
+              <img v-if="form.authorizeImage !== ''" :src="imageDomain+form.authorizeImage" alt="" />
+              <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
+            </dd>
+          </dl>
+          <dl @click="bigImg(2,form.cardFaceImage)"  >
+            <dt>{{ imgType[2] }}</dt>
+            <dd>
+              <img v-if="form.cardFaceImage !== ''" :src="imageDomain+form.cardFaceImage" alt="" />
+              <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
+            </dd>
+          </dl>
+          <dl @click="bigImg(3,form.cardBackImage)"  >
+            <dt>{{ imgType[3] }}</dt>
+            <dd>
+              <img v-if="form.cardBackImage !== ''" :src="imageDomain+form.cardBackImage" alt="" />
+              <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
+            </dd>
+          </dl>
+        </div>
       </el-form-item>
       <el-form-item class="btnWrap">
-        <el-button v-if="!isRegister" type="primary" size="small" @click="submit('form')">提交审核</el-button>
+        <el-button v-if="!isRegister&&this.status === '3'" type="primary" size="small" @click="submit('form')">修改</el-button>
+        <el-button v-if="!isRegister&&this.status === '0'" type="primary" size="small" @click="submit('form')">提交审核</el-button>
       </el-form-item>
     </el-form>
 
     <el-dialog :title="imgTitle" :visible.sync="dialogVisible" width="60%" center>
       <div class="wrap">
-        <!--<img :src="ImgSrc" alt="" />-->
-        <img src="../../../assets/imgs/logo.png" />
+        <img :src="imageDomain+ imgSrc" alt="" />
+        <!--<img src="../../../assets/imgs/logo.png" />-->
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-    import ElFormItem from "element-ui/packages/form/src/form-item";
     import {  getToken } from '@/utils/auth'
     import { uploadImage  } from "@/api/activity"
     import { infoUpload , getInfo } from "@/api/userCenter"
     import { validateEmail,validateIDCard,validName } from '@/utils/validate'
     export default {
-      components: {ElFormItem},
       name: "info-upload",
       data(){
         const validateName = (rule , value ,callback)=>{
@@ -150,6 +150,7 @@
               authorizeImage:'',
               cardFaceImage:'',
               cardBackImage:'',
+              id: ''
             },
             formRule: {
               name : [
@@ -181,7 +182,7 @@
             isRegister: false,
             token : getToken() ,
             autoUpload : true ,
-            imgUrl : process.env.BASE_API+'/tryout/file/upload',
+            imgUrl : process.env.BASE_API+'/file/upload',
             businessImageWarn : false ,
             authorizeImageWarn: false ,
             cardFaceImageWarn: false ,
@@ -189,6 +190,7 @@
             imageDomain : process.env.IMAGE_DOMAIN ,
             imgSrc:'',
             labelWidth: '150px',
+            status: '',
           }
       },
       mounted(){
@@ -198,9 +200,17 @@
         getUserInfo(){
           getInfo().then( res =>{
             if(res.data.status === '000000000'){
-              this.form = res.data.status ;
-              this.status = res.data.data.status ;
-              this.$emit('info',this.status)
+              if(res.data.data !== null){
+                this.form = res.data.data ;
+                this.status = res.data.data.status ;
+                if(this.status === '2'|| this.status === '1'){
+                  this.isRegister = true ;
+                }
+              }else{
+                this.status = '0';
+
+              }
+
             }else{
               this.$message({
                 message : res.data.message ,
@@ -385,9 +395,12 @@
                     message : '您的资质信息已上传成功，通过审核后即可进行相关操作' ,
                     type : 'success',
                     center : true,
-                    duration: 2000,
+                    duration: 1500,
                   });
-                  window.location.reload();
+                  setTimeout(() => {
+                    window.location.reload();
+
+                  },2000)
                 }else{
                   this.$message({
                     message : res.data.message ,
@@ -402,13 +415,13 @@
 
             }
           })
-        }
+        },
+
       }
     }
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  @import '../../../styles/step';
   h1{
     margin : 0 ;
     padding : 0.2rem  0.4rem ;
@@ -419,7 +432,7 @@
 
   }
   .el-form{
-    margin-top : 0.5rem ;
+    margin-top : 1rem ;
     justify-content: flex-start;
     .el-form-item{
       width : 60% ;
@@ -436,7 +449,7 @@
         justify-content: space-around;
         align-items: center;
         li{
-          width : 24% ;
+          flex: 1 ;
 
           .upload{
             width: 100%;
@@ -452,9 +465,47 @@
         }
       }
     }
-    .btnWrap{
+    .showImage{
+      display : flex ;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      /*width: 80%!important;*/
+      dl{
+        width : 20%;
+        /*float:left;*/
+
+        //height : 3rem ;
+        margin : auto ;
+        dt{
+          height : 0.4rem;
+          text-align : center ;
+          line-height : 0.4rem ;
+          background : #eee ;
+        }
+        dd{
+          flex : 1 ;
+          img{
+            width : 100% ;
+            height : 100% ;
+          }
+        }
+      }
+
+    }
+  .btnWrap{
       text-align: center;
     }
   }
+  .wrap{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    img{
+      max-width: 80% ;
+      max-height: 80% ;
+      margin: auto ;
+    }
+  }
+
 </style>
 
