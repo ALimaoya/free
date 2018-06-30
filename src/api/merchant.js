@@ -74,12 +74,14 @@ export function getShopInfo(){
 }
 
 //品牌速查
-export function getBrand(data){
+export function getBrand(brandName,currentPage,pageSize){
   return request({
     url : '/center/brand/query',
     method: 'get',
     params: {
-      data
+      brandName,
+      currentPage,
+      pageSize
     }
   })
 }

@@ -10,16 +10,16 @@
           <el-input class="inputInfo" :disabled="readOnly" size="small" v-model.trim="form.productName" placeholder="商品名称"></el-input>
         </el-form-item>
         <el-form-item  labelWidth="130px" label="商品品牌" prop="brandId">
-          <el-input class="inputInfo" :disabled="readOnly" size="small" v-model.trim="brandName" disabled='disabled'></el-input>
+          <el-input class="inputInfo" :disabled="readOnly" size="small" v-model.trim="brandCnName" disabled='disabled'></el-input>
           <div class="showBrand" @click="searchBrand()"><svg-icon icon-class="brand"></svg-icon><span>品牌速查</span></div>
         </el-form-item>
         <el-form-item  labelWidth="130px" label="一级分类" prop="firstType">
           <el-select  size="small" :disabled="readOnly" clearable v-model="form.firstType" @change="getSecondList(form.firstType)" filterable placeholder="请选择一级分类">
             <el-option
               v-for="item in firstTypeList"
-              :key="item.value"
+              :key="item.id"
               :label="item.name"
-              :value="item.value">
+              :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
@@ -27,9 +27,9 @@
           <el-select  size="small" :disabled="readOnly" clearable v-model="form.secondType" @change="getThirdList(form.secondType)" filterable placeholder="请选择二级分类">
             <el-option
               v-for="item in secondTypeList"
-              :key="item.value"
+              :key="item.id"
               :label="item.name"
-              :value="item.value">
+              :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
@@ -37,27 +37,47 @@
           <el-select  size="small" :disabled="readOnly" clearable v-model="form.class3Id" filterable placeholder="请选择三级分类">
             <el-option
               v-for="item in thirdTypeList"
-              :key="item.value"
+              :key="item.id"
               :label="item.name"
-              :value="item.value">
+              :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item class="size"  label="商品规格"
-                      labelWidth="130px" prop="specifications[0]" :rule="{ color :{ message : '请输入商品规格大小', trigger : 'blur' , required : true },
-                      size : { message : '请输入商品颜色', trigger : 'blur' , required : true }, stock : { message : '请输入商品库存', trigger : 'blur' , required : true }}">
-          <ul class="sizeList">
-            <li v-for="(item,index) in form.specifications" :key="index" :prop="'keyword.'+ index + '.size'" >
+        <!--<el-form-item class="size"  label="商品规格" labelWidth="130px" prop="'specifications'">-->
+          <!--<ul class="sizeList">-->
+            <!--<li v-for="(item,index) in form.specifications" :key="index">-->
+              <!--<el-input class="key" placeholder="大小" :rule="{ message : '请输入商品规格大小', trigger : 'blur' , required: true }"-->
+                        <!--:maxlength="40"  v-model.trim="item.size" size="small" ></el-input>-->
+              <!--<el-input  class="key" placeholder="颜色" :rule="{  message : '请输入商品颜色', trigger : 'blur' , required : true }"-->
+                        <!--:maxlength="40"  v-model.trim="item.color" size="small" ></el-input>-->
+              <!--<el-input  class="key" placeholder="库存量" type="number" :rule="{ message : '请输入商品库存', trigger : 'blur' , required : true }"-->
+                        <!--:maxlength="40"  v-model.number="item.stock" size="small" ></el-input>-->
+              <!--<el-button slot type="primary" size="mini" @click="addSize">添加</el-button>-->
+              <!--<el-button  slot plain size="mini" @click="deleteSize(item)">删除</el-button>-->
+            <!--</li>-->
+          <!--</ul>-->
+
+        <!--</el-form-item>-->
+        <el-form-item class="size"  label="商品规格" labelWidth="130px" :prop="'specifications.'+0+'.size'" >
               <el-input class="key" placeholder="大小"
-                        :maxlength="40"  v-model.trim="item.size" size="small" ></el-input>
+                        :maxlength="40"  v-model.trim="form.specifications[0].size" size="small" ></el-input>
               <el-input  class="key" placeholder="颜色"
-                        :maxlength="40"  v-model.trim="item.color" size="small" ></el-input>
+                         :maxlength="40"  v-model.trim="form.specifications[0].color" size="small" ></el-input>
               <el-input  class="key" placeholder="库存量" type="number"
-                        :maxlength="40"  v-model.number="item.stock" size="small" ></el-input>
+                         :maxlength="40"  v-model.number="form.specifications[0].stock" size="small" ></el-input>
               <el-button slot type="primary" size="mini" @click="addSize">添加</el-button>
               <el-button  slot plain size="mini" @click="deleteSize(item)">删除</el-button>
-            </li>
-          </ul>
+
+        </el-form-item>
+        <el-form-item  class="size" v-for="(item,index) in form.specifications" v-if="index>0" label="" labelWidth="130px" :prop="'specifications.'+ index+ '.size'" :key="index">
+            <el-input class="key" placeholder="大小"
+                      :maxlength="40"  v-model.trim="item.size" size="small" ></el-input>
+            <el-input  class="key" placeholder="颜色"
+                       :maxlength="40"  v-model.trim="item.color" size="small" ></el-input>
+            <el-input  class="key" placeholder="库存量" type="number"
+                       :maxlength="40"  v-model.number="item.stock" size="small" ></el-input>
+            <el-button slot type="primary" size="mini" @click="addSize">添加</el-button>
+            <el-button  slot plain size="mini" @click="deleteSize(item)">删除</el-button>
 
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="价格" prop="price">
@@ -88,9 +108,9 @@
         </el-form-item>
       </el-form>
 
-      <el-dialog class="tableBox" title="品牌速查" :visible.sync="dialogVisible" width="60%" >
+      <el-dialog class="tableBox" title="品牌速查" :visible.sync="dialogVisible" width="70%" >
         <div class="dialogTop">
-          <span>品牌名称：</span><el-input type="text" class="middleInput" v-model.trim="brandName" size="small"></el-input>
+          <span>品牌名称：</span><el-input type="text" class="middleInput" v-model.trim="brandName" size="small" @keyup.enter.native="getBrandList()"></el-input>
           <el-button type="primary" size="small" @click="getBrandList()">查询</el-button>
         </div>
         <el-table :data="brandData" border stripe highlight-current-row fit >
@@ -214,6 +234,7 @@
             if(!(/^[1-9][0-9]{0,8}$/).test(value)){
               callback(new Error('商品价格应大于0且不超过9位数，请重新输入'))
             }
+            callback();
 
           }
         };
@@ -227,6 +248,12 @@
 
           }
         };
+        const validSize = (rule,value,callback) => {
+          console.log(value)
+          // if(this.form.specifications){
+          //   callback(new Error('请输入商品规格大小'))
+          // }
+        }
             return {
               form : {
                 productName:'',
@@ -277,12 +304,20 @@
                   {
                     required : true ,trigger : 'blur' ,validator : validPost
                   }
-                ]
+                ],
+
+                // specifications: {
+                //   color :[{ message : '请输入商品规格大小', trigger : 'blur' , required : true }],
+                //   size : [{ message : '请输入商品颜色', trigger : 'blur' , required : true }],
+                //   stock : [{ message : '请输入商品库存', trigger : 'blur' , required : true }]
+                // },
               },
+
               title: '新增商品',
               radio : '',
               brandData: [],
               brandName : '',
+              brandCnName: '',
               firstTypeList : [],
               secondTypeList : [],
               thirdTypeList : [],
@@ -446,14 +481,8 @@
           },
 
           getBrandList(){
-            let data = {};
-            // if(this.brandName !== '' ){
-             data = {
-                brandName : this.brandName
-             }
-            // }
 
-            getBrand(data).then(res => {
+            getBrand(this.brandName, this.currentPage ,this.pageSize).then(res => {
               if(res.data.status === '000000000'){
                 // this.brandData =
                 this.brandData = res.data.data ;
@@ -468,6 +497,9 @@
 
           //查询品牌
           searchBrand(){
+            this.radio = '';
+            this.brandName = '';
+            this.currentPage = 1 ;
             this.dialogVisible = true ;
             this.getBrandList();
           },
@@ -478,7 +510,8 @@
           },
           //确认选择的品牌
           confirmBrand(){
-            this.form.brandId = this.brandData[this.radio] ;
+            this.form.brandId = this.brandData[this.radio].id ;
+            this.brandCnName = this.brandData[this.radio].brandCnName ;
             this.dialogVisible = false;
 
 
@@ -502,8 +535,10 @@
           },
           //  获取二级分类
           getSecondList(type){
-            console.log(type);
+            this.form.secondType = '';
+
             secondList(type).then(res=> {
+
               if(res.data.status === '000000000'){
                 this.secondTypeList = res.data.data
 
@@ -521,6 +556,8 @@
           },
           //获取三级分类
           getThirdList(type){
+            this.form.thirdType = '';
+
             thirdList(type).then(res=> {
               if(res.data.status === '000000000'){
                 this.thirdTypeList = res.data.data
@@ -647,20 +684,21 @@
           //提交表格
           submitForm(formName){
 
-            this.form.images.every((i)=> {
-
-              if(i === ''){
-                this.goodsImgWarn = true ;
-                return this.goodsImgWarn ;
-              }else{
-                this.goodsImgWarn = false ;
-                return this.goodsImgWarn ;
-              }
-            });
+            // this.form.images.every((i)=> {
+            //
+            //   if(i === ''){
+            //     this.goodsImgWarn = true ;
+            //     return this.goodsImgWarn ;
+            //   }else{
+            //     this.goodsImgWarn = false ;
+            //     return this.goodsImgWarn ;
+            //   }
+            // });
+            console.log(this.form);
 
 
             this.$refs[formName].validate((valid) => {
-              if(valid&& !this.goodsImgWarn){
+              if(valid){
                 delete this.form.firstType ;
                 delete this.form.secondType ;
                 console.log(this.form);
@@ -740,13 +778,13 @@
             this.$router.push('/merchantCenter/userCenter/openShop')
           },
           handleSizeChange(val) {
-
+            this.radio = '';
             this.pageSize = val ;
             this.getBrandList();
           },
 
           handleCurrentChange(val) {
-
+            this.radio = '';
             this.currentPage = val ;
             this.getBrandList();
           },
@@ -776,6 +814,12 @@
         display : inline-block;
         line-height : 41px;
         height : 41px;
+      }
+    }
+    .size{
+      .el-input{
+
+        width : 25% ;
       }
     }
     .sizeList{
