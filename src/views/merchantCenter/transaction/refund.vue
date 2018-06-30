@@ -38,7 +38,7 @@
 
       </el-table-column> -->
       <el-table-column prop="brandCnName" label="品牌" ></el-table-column>
-      <el-table-column prop="type" label="分类" >
+      <el-table-column  label="分类" >
         <template slot-scope="scope">
           <!-- <span>{{ scope.row.categoryMap.categoryName1 }}/{{ scope.row.categoryMap.categoryName2 }}/{{ scope.row.categoryMap.categoryName3 }}</span> -->
           <span v-if="scope.row.categoryMap != undefined">
