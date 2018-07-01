@@ -43,43 +43,28 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <!--<el-form-item class="size"  label="商品规格" labelWidth="130px" prop="'specifications'">-->
-          <!--<ul class="sizeList">-->
-            <!--<li v-for="(item,index) in form.specifications" :key="index">-->
-              <!--<el-input class="key" placeholder="大小" :rule="{ message : '请输入商品规格大小', trigger : 'blur' , required: true }"-->
-                        <!--:maxlength="40"  v-model.trim="item.size" size="small" ></el-input>-->
-              <!--<el-input  class="key" placeholder="颜色" :rule="{  message : '请输入商品颜色', trigger : 'blur' , required : true }"-->
-                        <!--:maxlength="40"  v-model.trim="item.color" size="small" ></el-input>-->
-              <!--<el-input  class="key" placeholder="库存量" type="number" :rule="{ message : '请输入商品库存', trigger : 'blur' , required : true }"-->
-                        <!--:maxlength="40"  v-model.number="item.stock" size="small" ></el-input>-->
-              <!--<el-button slot type="primary" size="mini" @click="addSize">添加</el-button>-->
-              <!--<el-button  slot plain size="mini" @click="deleteSize(item)">删除</el-button>-->
-            <!--</li>-->
-          <!--</ul>-->
+        <div class="wrap">
+          <label class="tag">商品规格</label>
+          <div class="size">
+            <div class="itemContent"  v-for="(item,index) in form.sizeList" :key="index">
+              <el-form-item class="subItem"   :prop="'sizeList.'+index+'.size'" :rules="{ message : '请输入商品规格大小', trigger : 'blur' , required: true }">
+                <el-input class="key" placeholder="大小"
+                          :maxlength="40"  v-model.trim="item.size" size="small" ></el-input>
+              </el-form-item>
+              <el-form-item class="subItem"  :prop="'sizeList.'+ index + '.color'" :rules="{  message : '请输入商品颜色', trigger : 'blur' , required : true }">
+                <el-input  class="key" placeholder="颜色"
+                           :maxlength="40"  v-model.trim="item.color" size="small" ></el-input>
+              </el-form-item>
+              <el-form-item class="subItem" :prop="'sizeList.'+ index + '.stock'" :rules="{ message : '请输入商品库存', trigger : 'blur' , required : true }">
+                <el-input  class="key" placeholder="库存量" type="number"
+                           :maxlength="40"  v-model.number="item.stock" size="small" ></el-input>
+                <el-button slot type="primary" size="mini" @click="addSize">添加</el-button>
+                <el-button  slot plain size="mini" @click="deleteSize(item)">删除</el-button>
+              </el-form-item>
+            </div>
+          </div>
+        </div>
 
-        <!--</el-form-item>-->
-        <el-form-item class="size"  label="商品规格" labelWidth="130px" :prop="'specifications.'+0+'.size'" >
-              <el-input class="key" placeholder="大小"
-                        :maxlength="40"  v-model.trim="form.specifications[0].size" size="small" ></el-input>
-              <el-input  class="key" placeholder="颜色"
-                         :maxlength="40"  v-model.trim="form.specifications[0].color" size="small" ></el-input>
-              <el-input  class="key" placeholder="库存量" type="number"
-                         :maxlength="40"  v-model.number="form.specifications[0].stock" size="small" ></el-input>
-              <el-button slot type="primary" size="mini" @click="addSize">添加</el-button>
-              <el-button  slot plain size="mini" @click="deleteSize(item)">删除</el-button>
-
-        </el-form-item>
-        <el-form-item  class="size" v-for="(item,index) in form.specifications" v-if="index>0" label="" labelWidth="130px" :prop="'specifications.'+ index+ '.size'" :key="index">
-            <el-input class="key" placeholder="大小"
-                      :maxlength="40"  v-model.trim="item.size" size="small" ></el-input>
-            <el-input  class="key" placeholder="颜色"
-                       :maxlength="40"  v-model.trim="item.color" size="small" ></el-input>
-            <el-input  class="key" placeholder="库存量" type="number"
-                       :maxlength="40"  v-model.number="item.stock" size="small" ></el-input>
-            <el-button slot type="primary" size="mini" @click="addSize">添加</el-button>
-            <el-button  slot plain size="mini" @click="deleteSize(item)">删除</el-button>
-
-        </el-form-item>
         <el-form-item   labelWidth="130px"  label="价格" prop="price">
           <el-input class="inputInfo" :maxLength="20" size="small" v-model.trim="form.price" placeholder="价格"></el-input>
         </el-form-item>
@@ -167,13 +152,15 @@
   import 'tinymce/plugins/textcolor'
   import Editor from '@tinymce/tinymce-vue'
   // import ElFormItem from "element-ui/packages/form/src/form-item";
-  import SvgIcon from "../../../components/SvgIcon/index";
-  import ElButton from "element-ui/packages/button/src/button";
+  // import SvgIcon from "../../../components/SvgIcon/index";
+  // import ElButton from "element-ui/packages/button/src/button";
+  // import ElFormItem from "element-ui/packages/form/src/form-item";
   export default {
     components: {
-      ElButton,
+      // ElFormItem,
+      // ElButton,
       // ElTable,
-      SvgIcon,
+      // SvgIcon,
       // ElFormItem,
       Editor},
     name: "new-goods",
@@ -245,15 +232,11 @@
             if(!(/^[0-9]{1,9}$/).test(value)){
               callback(new Error('运费应不小于0且不超过9位数，请重新输入'))
             }
+            callback();
 
           }
         };
-        const validSize = (rule,value,callback) => {
-          console.log(value)
-          // if(this.form.specifications){
-          //   callback(new Error('请输入商品规格大小'))
-          // }
-        }
+
             return {
               form : {
                 productName:'',
@@ -263,7 +246,8 @@
                 class3Id:'',
                 price:'',
                 carriage:'',
-                specifications : [{}],
+                specifications : '',
+                sizeList : [{ size: '', color : '', stock: ''}],
                 images : ['','','','',''],
                 describes: '',
               },
@@ -306,11 +290,7 @@
                   }
                 ],
 
-                // specifications: {
-                //   color :[{ message : '请输入商品规格大小', trigger : 'blur' , required : true }],
-                //   size : [{ message : '请输入商品颜色', trigger : 'blur' , required : true }],
-                //   stock : [{ message : '请输入商品库存', trigger : 'blur' , required : true }]
-                // },
+
               },
 
               title: '新增商品',
@@ -536,6 +516,7 @@
           //  获取二级分类
           getSecondList(type){
             this.form.secondType = '';
+            this.form.class3Id = '';
 
             secondList(type).then(res=> {
 
@@ -556,7 +537,7 @@
           },
           //获取三级分类
           getThirdList(type){
-            this.form.thirdType = '';
+            this.form.class3Id = '';
 
             thirdList(type).then(res=> {
               if(res.data.status === '000000000'){
@@ -626,9 +607,9 @@
           },
           //删除商品规格
           deleteSize(item) {
-            let index = this.form.specifications.indexOf(item);
-            if (index !== -1 && this.form.specifications.length > 1) {
-              this.form.specifications.splice(index, 1)
+            let index = this.form.sizeList.indexOf(item);
+            if (index !== -1 && this.form.sizeList.length > 1) {
+              this.form.sizeList.splice(index, 1)
             }
 
 
@@ -636,8 +617,8 @@
 
           //添加商品规格
           addSize() {
-            if (this.form.specifications.length < 5) {
-              this.form.specifications.push({
+            if (this.form.sizeList.length < 5) {
+              this.form.sizeList.push({
                 'size': '',
                 'color': '',
                 'stock': '',
@@ -696,12 +677,37 @@
             // });
             console.log(this.form);
 
-
             this.$refs[formName].validate((valid) => {
               if(valid){
                 delete this.form.firstType ;
                 delete this.form.secondType ;
+                let item = [];
+                this.form.sizeList.map( i => {
+                  let arr = [];
+                  for(let k in i){
+                    arr.push(i[k]);
+
+                  }
+                  item.push(arr);
+                });
+                item = item.join(';');
+                this.form.specifications = item ;
+                console.log(item,this.form.specifications);
+                let imgList = [];
+                this.form.images.map( i => {
+                  if( i !== ''){
+                    imgList.push(i);
+                  }
+                });
+                if(imgList.length > 0){
+                  this.form.images = imgList.join(',');
+
+                }else{
+                  this.form.images = '';
+                }
+
                 console.log(this.form);
+                delete this.form.sizeList ;
 
                 newGoogds(this.form,this.user).then( res => {
                   if(res.data.status === '000000000') {
@@ -711,7 +717,10 @@
                       type : 'success',
                       duration: 1000
                     });
-                    window.location.reload();
+                    setTimeout(()=>{
+                      window.location.reload();
+
+                    },2000)
                   }else{
                     this.$message({
                       message : res.data.message,
@@ -816,30 +825,68 @@
         height : 41px;
       }
     }
-    .size{
-      .el-input{
-
-        width : 25% ;
-      }
-    }
-    .sizeList{
+    .wrap{
+      width: 70%;
+      margin: 0.3rem auto;
       display: flex;
-      flex-direction: column;
-      li{
-        width : 100% ;
+      flex-wrap: nowrap;
+      flex-direction: row;
+      .tag{
+        width: 130px;
+        height: 40px;
+        line-height: 40px;
+        display: inline-block;
+        padding-right: 0.3rem;
+        text-align: right;
+        font-size: 14px;
+        color: #606266;
+        position: absolute ;
+        /*box-sizing: border-box;*/
+      }
+      .tag:before{
+        content: '*';
+        color: #f56c6c;
+        margin-right: 4px;
+      }
+      .size{
         display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        .el-input{
+        flex-direction: column;
+        /*justify-content: flex-start;*/
+        position: relative;
+        .itemContent{
+          width: 100% ;
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-start;
+          margin-left: 130px!important;
 
-          width : 25% ;
+          .el-form-item{
+
+            width : 20% ;
+            margin: 0 0.2rem 0 0!important;
+            .el-input{
+
+              /*width : 85% ;*/
+            }
+            .el-button {
+              height : 30px;
+              margin : 2px 0!important;
+            }
+          }
+
+          .el-form-item:nth-child(3){
+            width: 60%;
+            .el-input{
+              width: 50%;
+              margin-right: 0.1rem ;
+            }
+          }
         }
-        .el-button {
-          height : 30px;
-          margin : 2px 0!important;
-        }
+
       }
     }
+
+
     .imgList{
       display : flex ;
       flex-direction: row;

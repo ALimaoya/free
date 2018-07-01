@@ -246,7 +246,7 @@ export const constantRouterMap = [
 
           },
           {
-            path: '/fund/history',
+            path: '/freeManage/fund/history',
             name: 'History',
             component: () => import('@/views/fund/history/index'),
             meta: { title: '资金明细', icon: 'history' },

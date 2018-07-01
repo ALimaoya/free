@@ -117,11 +117,18 @@ export function getProvinceList(){
   })
 }
 
-//保证金查询
+//保证金状态查询
 export function getBond(){
   return request({
     url : '/center/merchant/wallet/query',
     method : 'get'
+  })
+}
+//保证金详情查询
+export function getBondDetail(){
+  return request({
+    url: '/center/recharge/query',
+    method: 'get'
   })
 }
 //保证金相关操作

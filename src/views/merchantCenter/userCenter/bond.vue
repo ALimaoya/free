@@ -4,7 +4,7 @@
     <el-form :model="form" ref="form"  label-position="right" >
       <h2>您当前已经缴纳保证金{{ form.deposit }}元整</h2>
       <el-form-item  labelWidth="130px" label="姓名：" >
-        <div class="inputInfo">{{ form.name }}</div>
+        <div class="inputInfo">{{ form.operator }}</div>
       </el-form-item>
       <el-form-item  labelWidth="130px" label="身份证号：" >
         <div class="inputInfo">{{ form.id }}</div>
@@ -13,20 +13,20 @@
         <div class="inputInfo">支付宝</div>
       </el-form-item>
       <el-form-item  labelWidth="130px" label="缴纳额度：" >
-        <div class="inputInfo">{{ form.payment }}元</div>
+        <div class="inputInfo">{{ form.deposit }}元</div>
       </el-form-item>
       <div v-if="hasBond">
         <el-form-item  labelWidth="130px" label="当前额度：" >
           <div class="inputInfo tipWrap">
-            <span>{{ form.current }}元</span>
+            <span>{{ form.deposit }}元</span>
             <span class="tips">保证金少于8000元时，所有商品下架，不可售卖</span>
             <!--解冻审核中显示-->
-            <span class="tips" v-if="checkStatus==='2'">解冻提交时间：{{ submitTime }}  当前审核状态： {{ checkStatus }}</span>
-            <el-button type="primary" size="mini" @click="dialogVisible= true;">申请解冻（{{form.bond}}元）</el-button>
+            <span class="tips" v-if="form.status==='2'">解冻提交时间：{{ form.updateTime }}  当前审核状态： {{ typeList[form.status-1] }}</span>
+            <el-button type="primary" size="mini" @click="dialogVisible= true;">申请解冻（{{form.deposit}}元）</el-button>
           </div>
         </el-form-item>
         <el-form-item  labelWidth="130px" label="缴纳时间：" >
-          <div class="inputInfo">{{ form.time }}</div>
+          <div class="inputInfo">{{ form.createTime }}</div>
         </el-form-item>
       </div>
       <el-form-item labelWidth="130px" v-if="!hasBond">
@@ -55,19 +55,18 @@
 </template>
 
 <script>
-  import { getBond, applyBond } from "@/api/userCenter"
+  import { getBond, applyBond ,getBondDetail } from "@/api/userCenter"
     export default {
       name: "bond",
       data(){
           return{
             form : {
-              deposit : '10000',
-              name : '年青人',
+              operator : '年青人',
               id : '',
-              payment : '',
-              current: '',
-              time: '',
-              payWay: ''
+              deposit : '',
+              createTime: '',
+              updateTime: '',
+              status : ''
             },
             // formRule : {
             //
@@ -75,8 +74,7 @@
             dialogVisible : false ,
             isBond: true,
             hasBond: true ,
-            submitTime: '',
-            checkStatus: '1',
+            typeList: ['已缴纳','解冻中','已解冻']
           }
       },
       mounted(){
@@ -85,11 +83,13 @@
       methods : {
         //  获取保证金详情
         getForm(){
-          getBond().then( res => {
+          getBondDetail().then( res => {
             if(res.data.message === '000000000'){
-              this.checkStatus = res.data.data.wallet ;
-              if(res.data.data.wallet === '0'){
+              this.form = res.data.data ;
+
+              if(this.form.status === '0'){
                 this.isBond = true ;
+              }else{
               }
             }else{
               this.$message({

@@ -2,14 +2,14 @@
   <div class="menu-wrapper">
     <template v-for="item in routes" v-if="!item.hidden&&item.children">
       <!--一级目录没有子菜单-->
-      <!--<router-link v-if="item.children.length===1 && !item.children[0].children && !item.alwaysShow" :to="item.path+'/'+item.children[0].path" :key="item.children[0].name">-->
-        <!--<el-menu-item :index="item.path+'/'+item.children[0].path" :class="{'submenu-title-noDropdown':!isNest}">-->
-          <!--<svg-icon v-if="item.children[0].meta&&item.children[0].meta.icon" :icon-class="item.children[0].meta.icon"></svg-icon>-->
-          <!--<span v-if="item.children[0].meta&&item.children[0].meta.title">{{item.children[0].meta.title}}</span>-->
-        <!--</el-menu-item>-->
-      <!--</router-link>-->
+      <router-link v-if="item.children.length===1 && !item.children[0].children && !item.alwaysShow" :to="item.path+'/'+item.children[0].path" :key="item.children[0].name">
+        <el-menu-item :index="item.path+'/'+item.children[0].path" :class="{'submenu-title-noDropdown':!isNest}">
+          <svg-icon v-if="item.children[0].meta&&item.children[0].meta.icon" :icon-class="item.children[0].meta.icon"></svg-icon>
+          <span v-if="item.children[0].meta&&item.children[0].meta.title">{{item.children[0].meta.title}}</span>
+        </el-menu-item>
+      </router-link>
       <!--一级目录有子菜单-->
-      <el-submenu v-if :index="item.name||item.path" :key="item.name">
+      <el-submenu :index="item.name||item.path" :key="item.name" v-else>
         <!--有内容的一级目录-->
 
         <!--空内容的一级目录-->
@@ -19,7 +19,9 @@
         </template>
         <!--二级目录-->
         <template v-if="!child.hidden" v-for="child in item.children" >
+          <!--有三级目录-->
           <sidebar-item :is-nest="true" class="nest-menu" v-if="child.children&&child.children.length>0" :routes="[child]" :key="child.path"></sidebar-item>
+
 
           <!--首页-->
           <router-link v-else-if="child.name==='CenterHome'||child.name==='Shop'||child.name==='Newshop'" :to="child.path" :key="child.name">
@@ -54,6 +56,7 @@ export default {
       type: Boolean,
       default: false
     }
-  }
+  },
+
 }
 </script>

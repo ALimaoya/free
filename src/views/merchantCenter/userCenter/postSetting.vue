@@ -6,23 +6,17 @@
     <el-form :model="carriageForm" ref="carriageForm" label-position="left">
       <ul >
         <li v-for="(item ,index) in carriageForm.regulation" :key="index">
-          
           <el-form-item :prop="'regulation.' + index + '.reachQuantity'"
-                          :rules="{
-                                    required: true, message: '件数不能为空', trigger: 'blur'
-                                  }">
+                          :rules="rule.reachQuantity">
               满<el-input class="inputInfo" size="small" type="number" v-model="item.reachQuantity"></el-input>件
           </el-form-item>
-
           <el-form-item :prop="'regulation.' + index + '.carriageAmount'"
-                          :rules="{
-                                    required: true, message: '运费不能为空', trigger: 'blur'
-                                  }">
+                          :rules="rule.carriageAmount">
               运费<el-input class="inputInfo" size="small" type="number" v-model="item.carriageAmount"></el-input>元
           </el-form-item>
 
           <el-form-item class="btnWrap">
-            <el-button  type="primary" size="mini" @click="deleteRule(item.id)">删除</el-button>
+            <el-button  type="danger" size="mini" @click="deleteRule(item)">删除</el-button>
           </el-form-item>
         </li>
       </ul>
@@ -34,31 +28,30 @@
 </template>
 
 <script>
-    import {  int } from '@/utils/validate'
+    // import {  int } from '@/utils/validate'
     import ElFormItem from "element-ui/packages/form/src/form-item";
     import { carriageList , deleteCarriage,  addCarriage } from "@/api/userCenter"
     export default {
       components: {ElFormItem},
       name: "post-setting",
       data(){
-        const int = ( rule,value,callback) => {
+        const validQuantity = ( rule,value,callback) => {
           if(value === ''){
             callback(new Error('请输入运送货物的件数'))
           }else{
-            console.log('valur',value)
-            let reg = /^[1-9][0-9]*$/
+            let reg = /^[1-9]*$/
             if (!reg.test(value)) {
               callback(new Error('货物件数只能为大于0的整数'))
             }
             callback();
           }
         }
-        const int1 = ( rule,value,callback) => {
+        const validCarrage = ( rule,value,callback) => {
           if(value === ''){
             callback(new Error('请输入运费'))
           }else{
-            if (!/^[1-9][0-9]*$/.test(value)) {
-              callback(new Error('运费为大于0的整数'))
+            if (!/^[1-9]*$/.test(value)) {
+              callback(new Error('运费应为大于0的整数'))
             }
             callback();
           }
@@ -68,11 +61,15 @@
             regulation:[
               {id:'',reachQuantity:'',carriageAmount:''}
             ]
-
-
+          },
+          rule: {
+            reachQuantity : [
+              { required: true, validator: validQuantity , trigger: 'blur' }
+            ],
+            carriageAmount: [
+              { required: true, validator: validCarrage , trigger: 'blur' }
+            ]
           }
-            
-          
         }
       },
       mounted(){
@@ -81,7 +78,6 @@
       methods : {
         getCarriage(){
           carriageList().then( res => {
-            console.log('data',res)
             if(res.data.status === "000000000"){
               if(res.data.data.length >0){
                 this.carriageForm.regulation= res.data.data
@@ -94,21 +90,26 @@
           this.$refs[formName].validate((valid) => {
             if(valid){
               addCarriage(this.carriageForm.regulation).then( res => {
-                console.log(res)
-                if(res.data.status == "000000000"){
+                console.log(this.carriageForm.regulation)
+                if(res.data.status === "000000000"){
                   this.$message({
-                    message: res.data.message,
+                    message: '您新增运费规则已提交，请稍后确认',
                     center: true,
                     type: 'success'
-                  })
-                }
-              })
-            }else{
-                this.$message({
+                  });
+                  setTimeout(() => {
+                    window.location.reload();
+                  },1500)
+                }else{
+                  this.$message({
                     message: res.data.message,
                     center: true,
                     type: 'error'
                   })
+                }
+              })
+            }else{
+
             }
           })
         },
@@ -130,24 +131,28 @@
           }
         },
         deleteRule(item){
-          console.log(item)
-          let index = this.carriageForm.indexOf(item);
-          if (index !== -1 && this.carriageForm.post.length > 1) {
-            this.carriageForm.splice(index, 1)
+          let index = this.carriageForm.regulation.indexOf(item);
+          if (index !== -1 && this.carriageForm.regulation.length > 1) {
+            this.carriageForm.regulation.splice(index, 1)
           }
-          deleteCarriage(item).then( res => {
-            if(res.data.message === '000000000'){
+          console.log(index,this.carriageForm.regulation)
 
-            }else{
-              this.$message({
-                message : res.data.message ,
-                center : true ,
-                type : 'error'
-              })
-            }
-          }).catch(err => {
+          if(item.id  !==  ''){
+            deleteCarriage(item.id).then( res => {
+              if(res.data.message === '000000000'){
 
-          })
+              }else{
+                this.$message({
+                  message : res.data.message ,
+                  center : true ,
+                  type : 'error'
+                })
+              }
+            }).catch(err => {
+
+            })
+
+          }
         }
       }
     }
@@ -161,7 +166,7 @@
   /*.top{*/
     /*border-bottom*/
     h1{
-      height : 0.7rem ;
+      height : 50px ;
       .el-button{
         float : right ;
 
@@ -170,7 +175,7 @@
 
   /*}*/
   .el-form{
-    width : 60% ;
+    width : 80% ;
     margin-top : 0.5rem ;
 
     ul{
@@ -183,7 +188,7 @@
         flex-direction: row;
         flex-wrap: nowrap;
         .el-form-item{
-          width :20% ;
+          width :50% ;
 
           /*justify-content: center;*/
           margin-left : 0.6rem ;

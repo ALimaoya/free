@@ -59,7 +59,7 @@
 <script>
     import ElForm from "element-ui/packages/form/src/form";
     import ElFormItem from "element-ui/packages/form/src/form-item";
-
+    import { getOrderDetail } from "@/api/merchant"
     export default {
       components: {
         ElFormItem,
@@ -105,9 +105,20 @@
         },
         methods: {
           getDetail(){
-            var order = this.$route.params.id ;
-            console.log(transitionOrder) ;
-            // this.form =
+            let order = this.$route.params.id ;
+            getOrderDetail(order).then( res => {
+              if( res.data.status === '000000000'){
+                this.form = res.data.data ;
+              }else{
+                this.$message({
+                  message: res.data.message ,
+                  center : true ,
+                  type: 'error'
+                })
+              }
+            }).catch( err => {
+              alert('服务器开小差啦，请稍等~')
+            })
           },
           goBack(){
             window.history.go(-1);

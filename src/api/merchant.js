@@ -52,7 +52,7 @@ export function changeStatus(id,type,name){
 //新增商品
 export function newGoogds(data,user){
   return request({
-    url: '/center/product/add'+ user,
+    url: '/center/product/add/'+ user,
     method : 'post',
     data
   })
@@ -132,5 +132,43 @@ export function settlementApple(id){
   return request({
     url: '/settlement/apply/'+ id,
     method: 'post'
+  })
+}
+//获取交易列表
+export function getOrderList(data){
+  return request({
+    url: '/center/order/query',
+    method: 'post',
+    data
+  })
+}
+//交易详情
+export function getOrderDetail(id){
+  return request({
+    url: '/center/order/detail/'+id,
+    method: 'get',
+  })
+}
+//确认发货
+export function confirmDeliver(data){
+  return request({
+    url: '/center/order/deliver',
+    method: 'post',
+    data
+  })
+}
+//导入发货列表
+export function importDeliver(data){
+  return request({
+    url: '/center/order/importDeliver',
+    method: 'post',
+    data
+  })
+}
+//模板下载
+export function deliverDemo(){
+  return request({
+    url: 'center/order/download/deliverTemplate',
+    method: 'get'
   })
 }

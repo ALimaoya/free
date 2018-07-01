@@ -11,13 +11,11 @@
         <div class="inputWrap">
         <div class="block">
           <span class="demonstration">交易开始时间：</span>
-          <el-date-picker size="small" v-model="transition.startDate" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择交易开始时间">
-          </el-date-picker>
+          <el-date-picker size="small" v-model="transition.startDate" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="开始时间"></el-date-picker>
         </div>
         <div class="block">
           <span class="demonstration">交易结束时间：</span>
-          <el-date-picker size="small" v-model="transition.endDate" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择结束时间">
-          </el-date-picker>
+          <el-date-picker size="small" v-model="transition.endDate" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="结束时间"></el-date-picker>
         </div>
         <el-select  size="small" clearable v-model="transition.status" filterable placeholder="订单状态">
           <el-option
@@ -31,7 +29,7 @@
         <div class="inputWrap">
           <el-button  size="mini" type="primary"  @click="search()" class="searchOrder">查询</el-button>
           <el-button  size="mini" type="primary"  @click="exportOrder()" class="searchOrder">导出</el-button>
-          <el-button  size="mini" type="primary" style="padding: 0;text-align: center;height : 28px;"  @click="importOrder()" class="searchOrder">导入发货</el-button>
+          <el-button  size="mini" type="primary" style="padding: 0;text-align: center;height : 28px;"  @click="deliverDialog= true;" class="searchOrder">导入发货</el-button>
           <el-button  size="mini" type="primary"  @click="reset()" class="searchOrder">重置</el-button>
         </div>
       </div>
@@ -61,7 +59,7 @@
       <el-table-column prop="time" label="交易时间" width="100"></el-table-column>
       <el-table-column label="状态" width="100">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.status !== ''" size="mini" :type="statusList[scope.row.status].type">{{ statusList[scope.row.status].name }}</el-button>
+          <el-button v-if="scope.row.status !== ''" size="mini" :type="statusList[scope.row.status*1].type">{{ statusList[scope.row.status*1].name }}</el-button>
 
           <!--<el-button v-if="scope.row.status ==='1'" type='warning' size="mini">未支付</el-button>-->
           <!--<el-button v-else-if="scope.row.status ==='2'"  type='primary' size="mini">已支付</el-button>-->
@@ -96,8 +94,8 @@
     </div>
     <el-dialog title="填写快递信息" :visible.sync="dialogVisible" width="60%" >
       <el-form :model="expressForm" ref="expressForm" :rules="expressFormRule" label-position="right" class="expForm">
-        <el-form-item  labelWidth="130px" label="快递公司：" prop="expressType">
-          <el-select  size="small" clearable v-model="expressForm.expressType" filterable placeholder="快递公司">
+        <el-form-item  labelWidth="130px" label="快递公司：" prop="expressName">
+          <el-select  size="small" clearable v-model="expressForm.expressName" filterable placeholder="快递公司">
             <el-option
               v-for="item in deliverList"
               :key="item.value"
@@ -106,11 +104,15 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item   labelWidth="130px"  label="快递单号：" prop="expressOrder">
-          <el-input class="inputInfo" size="small" v-model.trim="expressForm.expressOrder" placeholder="快递单号"></el-input>
+        <el-form-item   labelWidth="130px"  label="快递单号：" prop="expressNumber">
+          <el-input class="inputInfo" size="small" v-model.trim="expressForm.expressNumber" placeholder="快递单号"></el-input>
         </el-form-item>
-        <el-form-item   labelWidth="130px"  label="确认密码：" prop="checkPsw">
-          <el-input class="inputInfo" size="small" v-model.trim="expressForm.checkPsw" placeholder="请输入登录密码"></el-input>
+        <el-form-item   labelWidth="130px"  label="确认密码：" prop="confirmPwd">
+          <el-input class="inputInfo" size="small" :type="pwdType" v-model.trim="expressForm.confirmPwd" placeholder="请输入登录密码"></el-input>
+          <span class="show-pwd" @click="showPwd">
+          <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
+          <svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>
+        </span>
         </el-form-item>
       </el-form>
 
@@ -120,15 +122,37 @@
 
       </div>
     </el-dialog>
-
+    <el-dialog class="file_dialog" title="导入发货信息" top="20%" :visible.sync="deliverDialog" width="60%" center
+               :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+      <el-button type="text" class="demo_btn" @click="downloadDemo">模板下载</el-button>
+      <el-form  :model="deliverFile" ref="deliverFile" :rules="fileRule" label-position="right">
+        <el-form-item   labelWidth="130px"  label="上传Excel：" prop="sourceFile">
+          <el-button type="primary" size="mini" @click="handelFile">选择文件</el-button>
+          <input id="openFile" class="hideFile" type="file" accept=".xlsx, .xls"  @change="handkeFileChange"></input>
+          <input  class="hideFile" v-model.trim="deliverFile.sourceFile"/>
+        </el-form-item>
+        <el-form-item   labelWidth="130px"  label="确认密码：" prop="confirmPassword">
+          <el-input class="inputInfo" size="small" :type="pwdType" v-model.trim="deliverFile.confirmPassword" placeholder="请输入登录密码"></el-input>
+          <span class="show-pwd" @click="showPwd">
+          <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
+          <svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>
+        </span>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" size="small" @click="importOrder('deliverFile')">确定</el-button>
+        <el-button plain size="small" @click="cancelFile('deliverFile')">取消</el-button>
+      </span>
+    </el-dialog>
   </div>
 
 
 </template>
 
 <script>
+  // import XLSX from 'xlsx'
   import {  validPassWord } from '@/utils/validate'
-
+  import { getOrderList,confirmDeliver,importDeliver,deliverDemo } from "@/api/merchant"
     export default {
       name: "search",
       data(){
@@ -149,7 +173,7 @@
             callback(new Error('请输入登录密码'))
           }else{
             if (!validPassWord(value)) {
-              callback(new Error('密码为6-12位的数字、字母组合'))
+              callback(new Error('密码为8-16位的数字、字母组合'))
             }
             callback();
           }
@@ -232,22 +256,39 @@
             pageSize : 10,
             dialogVisible : false ,
             expressForm :{
-              expressType: '',
-              expressOrder: '',
-              checkPsw: '',
+              expressName: '',
+              expressNumber: '',
+              confirmPwd: '',
             },
             expressFormRule : {
-              expressType : [
+              expressName : [
                 {
                   required : true ,trigger : 'change',message : '请选择快递公司'
                 }
               ],
-              expressOrder : [
+              expressNumber : [
                 {
                   required : true ,trigger : 'blur',validator : validOrder
                 }
               ],
-              checkPsw: [
+              confirmPwd: [
+                {
+                  required : true ,trigger : 'blur',validator : validPassword
+
+                }
+              ]
+            },
+            deliverFile:{
+              sourceFile: '',
+              confirmPassword:''
+            },
+            fileRule:{
+              sourceFile: [
+                {
+                  required : true ,trigger : 'change',message: '请上传文件'
+                }
+              ],
+              confirmPassword: [
                 {
                   required : true ,trigger : 'blur',validator : validPassword
 
@@ -257,6 +298,12 @@
             deliverList : [],
             changeExpress : '',
             expressType : '',
+            deliverDialog: false ,
+            excelData: {
+              header: null,
+              results: null
+            },
+            pwdType: 'password'
           }
       },
       mounted(){
@@ -266,27 +313,26 @@
       methods: {
         //  获取交易列表
         getList(){
-          this.tableData =[
-            {
-              time: '2016-05-02',
-              subOrderId : '111',
-              orderId: '王小虎',
-              address: '上海市普陀区金沙江路 1518 弄'
-            }, {
-              time: '2016-05-04',
-              orderId: '王小虎',
-              subOrderId : '4535435354',
-              address: '上海市普陀区金沙江路 1517 弄'
-            }, {
-              time: '2016-05-01',
-              orderId: '王小虎',
-              address: '上海市普陀区金沙江路 1519 弄'
-            }, {
-              time: '2016-05-03',
-              orderId: '王小虎',
-              address: '上海市普陀区金沙江路 1516 弄'
+          let formData = new FormData();
+          formData.append('currentPage',this.currentPage);
+          formData.append('pageSize',this.pageSize);
+          getOrderList().then( res => {
+            if( res.data.status === '000000000'){
+              this.tableData = res.data.data ;
+              this.totalElements = res.data.totalElements;
+              this.totalPages = res.data.totalPages;
+            }else{
+              this.$message({
+                message: res.data.message ,
+                center : true ,
+                type: 'error'
+              })
             }
-          ]
+          }).catch( err => {
+            alert('服务器开小差啦，请稍等~')
+
+          })
+
         },
         //获取快递列表
         getExpressList(){
@@ -298,12 +344,161 @@
           // this.transition =
           // this.tableData =
         },
+        //导出订单列表
         exportOrder(){
 
         },
-        importOrder(){
+        //选择文件
+        handelFile(){
+          document.getElementById('openFile').click()
 
         },
+        handkeFileChange(e) {
+          console.log(e)
+          const files = e.target.files
+          const itemFile = files[0] // only use files[0]
+          let _this = this;
+          // let inputDOM = this.$refs.inputer;
+          // 通过DOM取文件数据
+          // itemFile = event.currentTarget.files[0];
+          var rABS = false; //是否将文件读取为二进制字符串
+          var f = itemFile;
+          var reader = new FileReader();
+          //if (!FileReader.prototype.readAsBinaryString) {
+          FileReader.prototype.readAsBinaryString = function(f) {
+            var binary = "";
+            var rABS = false; //是否将文件读取为二进制字符串
+            var pt = this;
+            var wb; //读取完成的数据
+            var outdata;
+            var reader = new FileReader();
+            reader.onload = function(e) {
+              var bytes = new Uint8Array(reader.result);
+              var length = bytes.byteLength;
+              for(var i = 0; i < length; i++) {
+                binary += String.fromCharCode(bytes[i]);
+              }
+              var XLSX = require('xlsx');
+              if(rABS) {
+                wb = XLSX.read(btoa(fixdata(binary)), { //手动转化
+                  type: 'base64'
+                });
+              } else {
+                wb = XLSX.read(binary, {
+                  type: 'binary'
+                });
+              }
+              outdata = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);//outdata就是你想要的东西
+              console.log(_this.deliverFile,outdata)
+              _this.deliverFile.sourceFile = outdata;
+            }
+            reader.readAsArrayBuffer(f);
+          }
+          if(rABS) {
+            reader.readAsArrayBuffer(f);
+          } else {
+            reader.readAsBinaryString(f);
+          }
+          // this.readerData(itemFile)
+        },
+        // generateDate({ header, results }) {
+        //   this.excelData.header = header
+        //   this.excelData.results = results
+        //   this.deliverFile.sourceFile = results ;
+        // },
+        // readerData(itemFile) {
+        //   const reader = new FileReader()
+        //   reader.onload = e => {
+        //     const data = e.target.result
+        //     const fixedData = this.fixdata(data)
+        //     const workbook = XLSX.read(btoa(fixedData), { type: 'base64' })
+        //     const firstSheetName = workbook.SheetNames[0]
+        //     const worksheet = workbook.Sheets[firstSheetName]
+        //     const header = this.get_header_row(worksheet)
+        //     const results = XLSX.utils.sheet_to_json(worksheet)
+        //     this.generateDate({ header, results })
+        //   }
+        //   reader.readAsArrayBuffer(itemFile)
+        // },
+        // fixdata(data) {
+        //   let o = ''
+        //   let l = 0
+        //   const w = 10240
+        //   for (; l < data.byteLength / w; ++l) o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w, l * w + w)))
+        //   o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w)))
+        //   return o
+        // },
+        // get_header_row(sheet) {
+        //   const headers = []
+        //   const range = XLSX.utils.decode_range(sheet['!ref'])
+        //   let C
+        //   const R = range.s.r /* start in the first row */
+        //   for (C = range.s.c; C <= range.e.c; ++C) { /* walk every column in the range */
+        //     var cell = sheet[XLSX.utils.encode_cell({ c: C, r: R })] /* find the cell in the first row */
+        //     var hdr = 'UNKNOWN ' + C // <-- replace with your desired default
+        //     if (cell && cell.t) hdr = XLSX.utils.format_cell(cell)
+        //     headers.push(hdr)
+        //   }
+        //   return headers
+        // },
+
+        //导入发货列表
+        importOrder(formName){
+          this.$refs[formName].validate( valid => {
+            if(valid){
+              let formData = new FormData();
+
+              formData.append('sourceFile',this.deliverFile.sourceFile);
+              formData.append('confirmPassword',this.deliverFile.confirmPassword);
+
+              importDeliver().then( res => {
+                if( res.data.status === '000000000'){
+                  this.$message({
+                    message: '导入发货列表成功' ,
+                    center : true ,
+                    type: 'success'
+                  })
+                  this.deliverDialog = false ;
+
+                }else{
+                  this.$message({
+                    message: res.data.message ,
+                    center : true ,
+                    type: 'error'
+                  })
+                }
+              }).catch( err => {
+                alert('服务器开小差啦，请稍等~')
+
+              })
+
+            }else{
+            }
+          })
+        },
+        //取消导入
+        cancelFile(formName){
+          this.$refs[formName].resetFields();
+          this.deliverDialog = false ;
+        },
+        //模板下载
+        downloadDemo(){
+          deliverDemo().then( res => {
+            if( res.data.status === '000000000'){
+              location.href = res.data.data ;
+            }else{
+              this.$message({
+                message: res.data.message ,
+                center : true ,
+                type: 'error'
+              })
+            }
+          }).catch( err => {
+            alert('服务器开小差啦，请稍等~')
+
+          })
+        },
+        //重置搜索条件
         reset(){
           this.transition = {
             orderId: '',
@@ -313,7 +508,9 @@
             startDate: '',
             endDate: '',
             status: '',
-          }
+          };
+          this.currentPage = 1 ;
+          this.pageSize = 10 ;
         },
         //查看订单详情
         goDetail(index,order){
@@ -337,11 +534,39 @@
         confirm(formName){
           this.$refs[formName].validate((valid) => {
             if(valid){
+              confirmDeliver(this.expressForm).then( res => {
+                if( res.data.status === '000000000'){
+                  this.$message({
+                    message: '操作成功，请稍后确认' ,
+                    center : true ,
+                    type: 'error'
+                  });
+                  setTimeout(() => {
+                    window.location.reload();
+                  },2000)
 
+                }else{
+                  this.$message({
+                    message: res.data.message ,
+                    center : true ,
+                    type: 'error'
+                  })
+                }
+              }).catch( err => {
+                alert('服务器开小差啦，请稍等~')
+
+              })
             }else{
 
             }
           })
+        },
+        showPwd() {
+          if (this.pwdType === 'password') {
+            this.pwdType = ''
+          } else {
+            this.pwdType = 'password'
+          }
         },
       //关闭弹窗
         close(formName){
@@ -414,6 +639,26 @@
       width : 50% ;
       margin : 0.2rem auto ;
     }
+  }
+  .file_dialog{
+    .demo_btn{
+      margin-left: 130px;
+    }
+    .el-input{
+      width: 50% ;
+    }
+    .hideFile{
+      display:none ;
+    }
+  }
+  .el-form-item{
+    position: relative;
+
+  }
+  .show-pwd{
+    position: absolute ;
+    right : 51% ;
+    top: 0;
   }
 
 </style>
