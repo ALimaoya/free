@@ -58,11 +58,19 @@ export function newGoogds(data,user){
   })
 }
 
-//修改商品
-export function changeGoods(id){
+//获取已有商品信息
+export function getGoodsDetail(id){
   return request({
     url : '/center/product/getInfo/'+ id ,
-    method : 'post'
+    method : 'get'
+  })
+}
+//修改商品
+export function changeGoods(data,id){
+  return request({
+    url: '/center/product/edit/'+ id ,
+    method: 'post',
+    data
   })
 }
 //获取店铺状态
@@ -115,7 +123,7 @@ export function refusedAffirm(data){
 export function historyList(data){
   return request({
     url : '/center/settlement/history/query',
-    method : 'post'
+    method : 'get'
 
   })
 }
@@ -123,7 +131,7 @@ export function historyList(data){
 export function currentSettlement(){
   return request({
     url : '/center/settlement/query',
-    method: 'post'
+    method: 'get'
   })
 }
 

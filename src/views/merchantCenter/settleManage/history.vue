@@ -74,6 +74,10 @@
                 value : ''
               },
               {
+                name : '申请结算',
+                value : '1'
+              },
+              {
                 name : '结算中',
                 value : '2'
               },
@@ -82,7 +86,7 @@
                 value : '3'
               },
               {
-                name : '已拒绝',
+                name : '审核未通过',
                 value : '4'
               }
 
@@ -107,6 +111,7 @@
             // console.log('data',res)
             if(res.data.message === '000000000'){
                 this.tableData = res.data.data ;
+
             }else{
               this.$message({
                 message : res.data.message ,
@@ -115,9 +120,9 @@
               })
             }
           }).catch(err => {
+            alert('服务器开小差啦，请稍等~')
 
           })
-          // this.tableData =
         } ,
         search(){
 

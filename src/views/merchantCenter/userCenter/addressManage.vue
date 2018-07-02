@@ -118,7 +118,7 @@
               ],
               province:[
                 {
-                  required : false , trigger : 'change', message : '请选择省份'
+                  required : true , trigger : 'change', message : '请选择省份'
 
                 }
               ],

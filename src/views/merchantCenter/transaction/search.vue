@@ -317,6 +317,7 @@
           formData.append('currentPage',this.currentPage);
           formData.append('pageSize',this.pageSize);
           getOrderList().then( res => {
+            console.log(res.data)
             if( res.data.status === '000000000'){
               this.tableData = res.data.data ;
               this.totalElements = res.data.totalElements;

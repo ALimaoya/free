@@ -46,16 +46,16 @@
         <div class="wrap">
           <label class="tag">商品规格</label>
           <div class="size">
-            <div class="itemContent"  v-for="(item,index) in form.sizeList" :key="index">
-              <el-form-item class="subItem"   :prop="'sizeList.'+index+'.size'" :rules="{ message : '请输入商品规格大小', trigger : 'blur' , required: true }">
+            <div class="itemContent"  v-for="(item,index) in form.specifications" :key="index">
+              <el-form-item class="subItem"   :prop="'specifications.'+index+'.size'" :rules="{ message : '请输入商品规格大小', trigger : 'blur' , required: true }">
                 <el-input class="key" placeholder="大小"
                           :maxlength="40"  v-model.trim="item.size" size="small" ></el-input>
               </el-form-item>
-              <el-form-item class="subItem"  :prop="'sizeList.'+ index + '.color'" :rules="{  message : '请输入商品颜色', trigger : 'blur' , required : true }">
+              <el-form-item class="subItem"  :prop="'specifications.'+ index + '.color'" :rules="{  message : '请输入商品颜色', trigger : 'blur' , required : true }">
                 <el-input  class="key" placeholder="颜色"
                            :maxlength="40"  v-model.trim="item.color" size="small" ></el-input>
               </el-form-item>
-              <el-form-item class="subItem" :prop="'sizeList.'+ index + '.stock'" :rules="{ message : '请输入商品库存', trigger : 'blur' , required : true }">
+              <el-form-item class="subItem" :prop="'specifications.'+ index + '.stock'" :rules="{ message : '请输入商品库存', trigger : 'blur' , required : true }">
                 <el-input  class="key" placeholder="库存量" type="number"
                            :maxlength="40"  v-model.number="item.stock" size="small" ></el-input>
                 <el-button slot type="primary" size="mini" @click="addSize">添加</el-button>
@@ -137,7 +137,7 @@
 
 <script>
   import { uploadImage  } from "@/api/activity"
-  import { newGoogds, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo} from "@/api/merchant"
+  import { newGoogds,getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo} from "@/api/merchant"
   import { getToken,getMobile } from '@/utils/auth'
   import tinymce from 'tinymce/tinymce'
   import 'tinymce/themes/modern/theme'
@@ -246,8 +246,8 @@
                 class3Id:'',
                 price:'',
                 carriage:'',
-                specifications : '',
-                sizeList : [{ size: '', color : '', stock: ''}],
+                specifications : [{ size: '', color : '', stock: ''}],
+                // sizeList : [{ size: '', color : '', stock: ''}],
                 images : ['','','','',''],
                 describes: '',
               },
@@ -292,7 +292,7 @@
 
 
               },
-
+              thirdName: '',
               title: '新增商品',
               radio : '',
               brandData: [],
@@ -405,9 +405,26 @@
             //判断是新增还是修改商品
             if(id !== undefined){
               //获取已有商品信息
-              changeGoods(id).then(res=>{
+              getGoodsDetail(id).then(res=>{
                 if(res.data.status === '000000000'){
                   this.form = res.data.data ;
+                  this.form.images = res.data.data.productImages ;
+                  if(this.form.images.length < 5){
+                    if(this.form.images.length === 0){
+                      this.form.images =   ['','','','','']
+
+                    }else {
+                      for(let i = this.form.images.length ; i<= 5;i++){
+                        this.form.images.push('');
+                      }
+                    }
+                  }
+                  this.form.specifications = res.data.data.productItems ;
+                  this.brandCnName = res.data.data.brandCnName ;
+                  this.form.firstType =res.data.data.cateGoryMap.categoryName1;
+                  this.form.secondType =res.data.data.cateGoryMap.categoryName2;
+                  this.form.class3Id =res.data.data.cateGoryMap.categoryName3;
+                  this.thirdName = this.thirdName;
                   this.readOnly = true ;
                   this.title = '修改商品'
                 }else{
@@ -582,7 +599,7 @@
 
 
                           _this.$set(_this.form.images,_this.imgIndex,  res.data.data.fileName);
-                          // console.log(_this.form.images)
+                          console.log(_this.form.images,_this.imgIndex, )
                       // _this.goodsImgWarn = false;
                     } else {
                       _this.$message({
@@ -607,9 +624,9 @@
           },
           //删除商品规格
           deleteSize(item) {
-            let index = this.form.sizeList.indexOf(item);
-            if (index !== -1 && this.form.sizeList.length > 1) {
-              this.form.sizeList.splice(index, 1)
+            let index = this.form.specifications.indexOf(item);
+            if (index !== -1 && this.form.specifications.length > 1) {
+              this.form.specifications.splice(index, 1)
             }
 
 
@@ -617,8 +634,8 @@
 
           //添加商品规格
           addSize() {
-            if (this.form.sizeList.length < 5) {
-              this.form.sizeList.push({
+            if (this.form.specifications.length < 5) {
+              this.form.specifications.push({
                 'size': '',
                 'color': '',
                 'stock': '',
@@ -681,33 +698,33 @@
               if(valid){
                 delete this.form.firstType ;
                 delete this.form.secondType ;
-                let item = [];
-                this.form.sizeList.map( i => {
-                  let arr = [];
-                  for(let k in i){
-                    arr.push(i[k]);
-
-                  }
-                  item.push(arr);
-                });
-                item = item.join(';');
-                this.form.specifications = item ;
-                console.log(item,this.form.specifications);
-                let imgList = [];
-                this.form.images.map( i => {
-                  if( i !== ''){
-                    imgList.push(i);
-                  }
-                });
-                if(imgList.length > 0){
-                  this.form.images = imgList.join(',');
-
-                }else{
-                  this.form.images = '';
-                }
+                // let item = [];
+                // this.form.specifications.map( i => {
+                //   let arr = [];
+                //   for(let k in i){
+                //     arr.push(i[k]);
+                //
+                //   }
+                //   item.push(arr);
+                // });
+                // item = item.join(';');
+                // this.form.specifications = item ;
+                // console.log(item,this.form.specifications);
+                // let imgList = [];
+                // this.form.images.map( i => {
+                //   if( i !== ''){
+                //     imgList.push(i);
+                //   }
+                // });
+                // if(imgList.length > 0){
+                //   this.form.images = imgList.join(',');
+                //
+                // }else{
+                //   this.form.images = '';
+                // }
 
                 console.log(this.form);
-                delete this.form.sizeList ;
+                // delete this.form.specifications ;
 
                 newGoogds(this.form,this.user).then( res => {
                   if(res.data.status === '000000000') {
@@ -729,6 +746,7 @@
                     })
                   }
                 }).catch( err => {
+                  alert('服务器开小差啦，请稍等~')
 
                 });
               }else{
@@ -750,6 +768,7 @@
                 return this.goodsImgWarn ;
               }
             });
+            console.log(this.form);
 
 
             this.$refs[formName].validate((valid) => {
@@ -757,8 +776,9 @@
                 delete this.form.firstType ;
                 delete this.form.secondType ;
                 console.log(this.form);
+                this.form.class3Id = res.data.data.cateGoryMap.categoryId3;
 
-                newGoogds(this.form,this.user).then( res => {
+                changeGoods(this.form,this.user).then( res => {
                   if(res.data.status === '000000000') {
                     this.$message({
                       message : '您修改的商品信息已提交，请稍后确认商品状态',
@@ -775,6 +795,7 @@
                     })
                   }
                 }).catch( err => {
+                  alert('服务器开小差啦，请稍等~')
 
                 });
               }else{
