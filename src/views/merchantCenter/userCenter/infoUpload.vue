@@ -14,7 +14,7 @@
       <el-form-item  :labelWidth="labelWidth" label="邮箱：" prop="email">
         <el-input class="inputInfo" size="small" :disabled="isRegister" v-model.trim="form.email" placeholder="邮箱"></el-input>
       </el-form-item>
-      <el-form-item :labelWidth="labelWidth" class="imgWrap" label="资质：" v-if="!isRegister">
+      <el-form-item :labelWidth="labelWidth" class="imgWrap" label="资质：" v-if="!isRegister" prop="businessImage">
         <ul class="imgList" >
           <li>
             <span class="imeTilte">营业执照</span>
@@ -54,7 +54,7 @@
           </li>
         </ul>
       </el-form-item>
-      <el-form-item :labelWidth="labelWidth" class="imgWrap" label="资质：" v-else="isRegister">
+      <el-form-item :labelWidth="labelWidth" class="imgWrap" label="资质：" v-else="isRegister" prop="businessImage">
         <div  class="showImage">
           <dl @click="bigImg(0,form.businessImage)"  >
             <dt>{{ imgType[0] }}</dt>
@@ -173,6 +173,11 @@
                   required : true ,trigger : 'blur' ,message : '请填写企业名称'
                 }
               ],
+              businessImage: [
+                {
+                  required: true ,trigger: 'change'
+                }
+              ]
 
             },
             // readOnly : false,
@@ -437,6 +442,7 @@
     .el-form-item{
       width : 60% ;
       margin: 0.5rem auto ;
+
     }
     .imgWrap{
       /*width : 90% ;*/

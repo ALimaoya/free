@@ -6,7 +6,7 @@
         <el-input type="text" size="small" :disabled="readOnly" placeholder="支付宝"></el-input>
       </el-form-item>
       <el-form-item  label="额度" >
-        <el-input type="text" size="small" :disabled="readOnly" v-model="form.depositLowest" placeholder=""></el-input>
+        <el-input type="text" size="small" :disabled="readOnly" v-model="this.deposit" placeholder=""></el-input>
       </el-form-item>
 
     </el-form>
@@ -18,9 +18,10 @@
 </template>
 
 <script>
-  import { getBond } from "@/api/userCenter"
+  import { rechargeBond } from "@/api/userCenter"
     export default {
       name: "step3",
+      props: ['deposit','step3Status'],
       data(){
         return {
           form : {},
@@ -30,28 +31,36 @@
         }
       },
       mounted(){
-        this.getBondDetail();
+        if(this.step3Status === '0'){
+          this.isBond = false ;
+
+        }else{
+          this.isBond = true ;
+
+        }
       },
       methods : {
-        getBondDetail(){
-          getBond().then( res => {
-            if( res.data.status === '000000000'){
-              this.form = res.data.data ;
-            }else{
-              this.$message({
-                message: res.data.message,
-                type: 'error',
-                center: true
-              })
-            }
-          })
-          // this.bond =
-        },
+
         goDetail(){
           this.$router.push('/merchantCenter/userCenter/bond') ;
         },
         handleBond(){
+          rechargeBond().then(res=> {
+            if(res.data.status === '000000000'){
+                console.log(res);
 
+            }else{
+              this.$message({
+                message : res.data.message,
+                center: true ,
+                type : 'error'
+              });
+
+            }
+          }).catch( err => {
+            alert('服务器开小差啦，请稍等~')
+
+          })
         }
       }
     }

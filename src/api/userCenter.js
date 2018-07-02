@@ -103,16 +103,17 @@ export function newAddress(data){
 
 }
 //修改商户地址
-export function changeAddress(){
+export function changeAddress(data){
   return request({
     url : '/center/merchant/address/edit',
-    method : 'post'
+    method : 'post',
+    data
   })
 }
 //获取省份列表
 export function getProvinceList(){
   return request({
-    url: '/center/province/query',
+    url: '/center/merchant/address/provinces',
     method: 'get'
   })
 }
@@ -129,6 +130,13 @@ export function getBondDetail(){
   return request({
     url: '/center/recharge/query',
     method: 'get'
+  })
+}
+//保证金缴纳
+export function rechargeBond(){
+  return request({
+    url: '/center/recharge/deposit',
+    method: 'post'
   })
 }
 //保证金相关操作

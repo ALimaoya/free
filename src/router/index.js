@@ -343,12 +343,19 @@ export const constantRouterMap = [
 
           },
           {
-            path: 'newGoods',
-            name: 'NewGoods',
-            component: () => import('@/views/merchantCenter/goods/newGoods'),
-            meta: { title: '新增商品', icon: 'newGoods' },
+            path: 'goodsDetail',
+            name: 'Goods',
+            component: () => import('@/views/merchantCenter/goods/goodsDetail'),
+            meta: { title: '新增商品', icon: 'goodsDetail' },
 
           },
+          // {
+          //   path: 'changeGoods/:order',
+          //   name: 'ChangeGoods',
+          //   component: () => import('@/views/merchantCenter/goods/changeGoods'),
+          //   meta: { title: '修改商品', icon: 'newGoods' },
+          //   hidden: true
+          // },
         ]
       },
       {

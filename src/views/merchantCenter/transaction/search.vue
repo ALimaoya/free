@@ -150,7 +150,7 @@
 </template>
 
 <script>
-  // import XLSX from 'xlsx'
+  import XLSX from 'xlsx'
   import {  validPassWord } from '@/utils/validate'
   import { getOrderList,confirmDeliver,importDeliver,deliverDemo } from "@/api/merchant"
     export default {
@@ -308,7 +308,6 @@
       },
       mounted(){
         this.getList();
-        this.getExpressList();
       },
       methods: {
         //  获取交易列表
@@ -319,9 +318,10 @@
           getOrderList().then( res => {
             console.log(res.data)
             if( res.data.status === '000000000'){
-              this.tableData = res.data.data ;
+              // this.tableData = res.data.data ;
               this.totalElements = res.data.totalElements;
               this.totalPages = res.data.totalPages;
+              this.deliverList=  res.data.data.tExpressResDtos ;
             }else{
               this.$message({
                 message: res.data.message ,
@@ -335,11 +335,7 @@
           })
 
         },
-        //获取快递列表
-        getExpressList(){
-          this.deliverList= [];
 
-        },
         //  查询交易
         search(){
           // this.transition =
@@ -379,7 +375,7 @@
               for(var i = 0; i < length; i++) {
                 binary += String.fromCharCode(bytes[i]);
               }
-              var XLSX = require('xlsx');
+              // var XLSX = require('xlsx');
               if(rABS) {
                 wb = XLSX.read(btoa(fixdata(binary)), { //手动转化
                   type: 'base64'

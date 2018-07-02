@@ -49,7 +49,7 @@
       <el-table-column prop="code" label="商品编号" ></el-table-column>
       <el-table-column prop="shopName" label="所属店铺" ></el-table-column>
       <el-table-column prop="productName" label="商品名称" ></el-table-column>
-      <el-table-column prop="brandName" label="商品品牌" ></el-table-column>
+      <el-table-column prop="brandCnName" label="商品品牌" ></el-table-column>
       <el-table-column label="分类" width="190">
         <template slot-scope="scope">
           <span style="font-size: 0.12rem ;" v-if="scope.row.cateGoryMap!== {}">{{ scope.row.cateGoryMap.categoryName1}}>{{ scope.row.cateGoryMap.categoryName2}}>{{ scope.row.cateGoryMap.categoryName3}} </span>
@@ -315,7 +315,7 @@
         },
         //修改商品
         editor(index,order){
-          this.$router.push({ path : '/merchantCenter/goods/newGoods',query: {'order':order}})
+          this.$router.push({ path : '/merchantCenter/goods/goodsDetail',query: {'order':order}})
 
         },
         //新增商品

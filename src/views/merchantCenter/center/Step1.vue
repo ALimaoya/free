@@ -14,7 +14,7 @@
       <el-form-item label="企业名称" prop="enterpriseName">
         <el-input type="text" size="small" v-model="form.enterpriseName" :disabled="isRegister"></el-input>
       </el-form-item>
-      <el-form-item class="imgWrap" v-if="!isRegister" label="资质">
+      <el-form-item class="imgWrap" v-if="!isRegister" label="资质" prop="businessImage">
         <ul class="imgList" >
           <li>
             <span class="imeTitle">营业执照</span>
@@ -55,7 +55,7 @@
         </ul>
 
       </el-form-item>
-      <el-form-item class="imgItem" v-else="isRegister" label="资质">
+      <el-form-item class="imgItem" v-else="isRegister" label="资质" prop="businessImage">
         <div  class="showImage">
           <dl @click="bigImg(0,form.businessImage)"  >
             <dt>{{ imgType[0] }}</dt>
@@ -182,6 +182,11 @@
                   required : true ,trigger : 'blur' ,message : '请填写企业名称'
                 }
               ],
+              businessImage: [
+                {
+                  required: true ,trigger: 'change'
+                }
+              ]
 
             },
             imgType : ['营业执照','授权证书','身份证（正面）','身份证（反面）'],

@@ -11,9 +11,9 @@
             <el-select  size="small" clearable v-model="form.province"  filterable placeholder="请选择省份">
               <el-option
                 v-for="item in provinceList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
+                :key="item"
+                :label="item"
+                :value="item">
               </el-option>
             </el-select>
           </el-form-item>
@@ -27,16 +27,16 @@
            <el-input class="inputInfo" size="small" v-model.trim="form.mobile" placeholder="电话"></el-input>
          </el-form-item>
          <el-form-item class="btnWrap">
-           <el-button v-if="this.isNew = '0'" type="primary" size="mini" @click="submitFrom('form')">确定</el-button>
-           <el-button v-else-if="this.isNew = '1'" type="primary" size="mini" @click="changeFrom('form')">修改</el-button>
+           <el-button v-if="this.isNew === '0'" type="primary" size="mini" @click="submitFrom('form')">确定</el-button>
+           <el-button v-else-if="this.isNew === '1'" type="primary" size="mini" @click="changeFrom('form')">修改</el-button>
            <el-button plain size="mini" @click="cancel('form')">取消</el-button>
          </el-form-item>
        </el-form>
     </div>
     <div class="addressList" v-else >
       <div class="tableTitle">
-        <h2>地址列表</h2>
-        <el-button type="primary" size="mini" @click="isNew = '0';">新增</el-button>
+        <h2>地址列表</h2>isNew
+        <el-button type="primary" size="mini" @click="newAddr">新增</el-button>
       </div>
 
       <el-table :data="tableData" border fit>
@@ -149,7 +149,7 @@
           }
       },
       computed : {
-        title(){
+        title: function(){
           if(this.isNew=== '0'){
             return '添加地址'
           }else if(this.isNew === '1'){
@@ -178,6 +178,7 @@
                  })
               }
             }).catch( err => {
+              alert('服务器开小差啦，请稍等~')
 
             })
           },
@@ -218,6 +219,7 @@
               })
             }
           }).catch( err => {
+            alert('服务器开小差啦，请稍等~')
 
           })
         },
@@ -226,18 +228,35 @@
           getProvinceList().then( res => {
             if(res.data.status === '000000000') {
               this.provinceList = res.data.data ;
+            }else{
+              this.$message({
+                message : res.data.message ,
+                center: true ,
+                type : 'error'
+              })
             }
           }).catch( err => {
+            alert('服务器开小差啦，请稍等~')
 
           });
         },
         editorAddr(index,id){
-          this.isNew = '1' ;
           getAddrDetail(id).then( res => {
             if(res.data.status === '000000000') {
-                this.form = res.data.data ;
+              this.form = res.data.data ;
+              this.isNew = '1' ;
+
+              console.log(1,this.isNew)
+
+            }else{
+              this.$message({
+                message : res.data.message ,
+                center: true ,
+                type : 'error'
+              })
             }
           }).catch( err => {
+            alert('服务器开小差啦，请稍等~')
 
           });
         },
@@ -271,6 +290,7 @@
                   })
                 }
               }).catch( err => {
+                alert('服务器开小差啦，请稍等~')
 
               });
 
@@ -305,6 +325,7 @@
                   })
                 }
               }).catch( err => {
+                alert('服务器开小差啦，请稍等~')
 
               });
 
@@ -312,6 +333,16 @@
 
             }
           })
+        },
+        newAddr(){
+          this.isNew = '0' ;
+          this.form = {
+            userName : '',
+              province : '',
+              detailAddress: '',
+              zipCode: '',
+              mobile: ''
+          }
         },
         // 取消新增
         cancel(formName){

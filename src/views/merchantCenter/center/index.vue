@@ -68,7 +68,7 @@
       <div class="wrap allWid" >
 
 
-        <component  :is="tabView "  :step4Status="statusTag.aptitudeStatus"></component>
+        <component  :is="tabView " :deposit="statusTag.deposit" :step3Status="statusTag.wallet" :step4Status="statusTag.aptitudeStatus"></component>
 
         <!--<step-wrap></step-wrap>-->
       </div>
@@ -103,10 +103,12 @@
           }
       },
     mounted(){
+        //跳转到缴纳保证金步骤
         let step3 = this.$route.params.step3 ;
         if( step3 ){
           this.show = '3' ;
           this.tabView = 'step3';
+          this.statusTag.wallet = '0';
         };
         this.getStatusType();
 
@@ -116,7 +118,6 @@
           getStatus().then(res=> {
             if(res.data.status === '000000000'){
               this.statusTag = res.data.data;
-              console.log(res.data.data);
               if(this.statusTag.aptitudeStatus=== '9'&& this.statusTag.isBundle === '1'&& this.statusTag.shopStatus === '9'&&this.statusTag.wallet === '1'){
                 this.close = '';
               }
@@ -130,6 +131,7 @@
 
             }
           }).catch( err => {
+            alert('服务器开小差啦，请稍等~')
 
           })
         },

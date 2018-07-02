@@ -156,6 +156,7 @@
               })
             }
           }).catch( err => {
+            alert('服务器开小差啦，请稍等~')
 
           })
 
@@ -197,6 +198,7 @@
                 }).catch(err => {
                   // console.log(err) ;
                   _this.goodsImgWarn = true;
+                  alert('服务器开小差啦，请稍等~')
 
                 })
               }
@@ -255,6 +257,7 @@
                       })
                     }
                   }).catch( err => {
+                    alert('服务器开小差啦，请稍等~')
 
                   })
                 }else if( type === '修改'){
@@ -280,6 +283,7 @@
                       })
                     }
                   }).catch( err => {
+                    alert('服务器开小差啦，请稍等~')
 
                   })
                 }
