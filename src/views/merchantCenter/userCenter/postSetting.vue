@@ -107,6 +107,9 @@
                     type: 'error'
                   })
                 }
+              }).catch( err => {
+                alert('服务器开小差啦，请稍等~')
+
               })
             }else{
 
@@ -140,7 +143,11 @@
           if(item.id  !==  ''){
             deleteCarriage(item.id).then( res => {
               if(res.data.message === '000000000'){
-
+                this.$message({
+                  message : '您已删除成功，请稍后确认' ,
+                  center : true ,
+                  type : 'success'
+                })
               }else{
                 this.$message({
                   message : res.data.message ,
@@ -149,6 +156,7 @@
                 })
               }
             }).catch(err => {
+              alert('服务器开小差啦，请稍等~')
 
             })
 

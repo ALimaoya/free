@@ -87,8 +87,8 @@ export function changeAddrStatus(data){
   return request({
     url : '/center/merchant/address/set/'+data.addressId,
     method: 'post',
-    data: {
-      addressType: data.addressType
+    params:{
+      addressType : data.addressType
     }
   })
 }
