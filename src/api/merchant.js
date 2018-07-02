@@ -98,7 +98,7 @@ export function refusedList(data){
 export function refuseOrder(refundId){
   return request({
     url : '/center/refund/detail/'+ refundId ,
-    method : 'post'
+    method : 'get'
 
   })
 }

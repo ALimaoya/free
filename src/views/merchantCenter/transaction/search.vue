@@ -37,46 +37,66 @@
         <h2>交易列表列表</h2>
       </div>
     <el-table  :data="tableData"  border  align="center" fit>
-      <el-table-column prop="orderId" label="订单/子订单"  width="200">
+      <el-table-column label="订单/子订单"  width="200">
         <template slot-scope="scope">
-          <span>{{ scope.row.orderId}}</span>
-          <span class="subOrder">({{ scope.row.subOrderId }})</span>
+          <span>{{ scope.row.orderCode}}</span>
+          <span class="subOrder">({{ scope.row.code }})</span>
         </template>
       </el-table-column>
-      <el-table-column  label="商品" class="goodsInfo" show-overflow-tooltip>
+      <el-table-column  label="商品" class="goodsInfo">
         <template slot-scope="scope">
           <table class="tableC">
             <tr class="thColor">
               <th>商品编号</th><th>商品名称</th><th>品牌</th>
               <th>分类</th><th>规格</th><th>价格</th><th>数量</th>
             </tr>
-            <tr class="tbColor"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <!-- <template slot-scope="scope" > -->
+            <tr class="tbColor" v-for="(item , index) in scope.row.orderProducts" :key="index">
+                  <!-- <template> -->
+                  <td>{{item.productItem.code}}</td>
+                  <td>{{item.productItem.productName}}</td>
+                  <td>{{item.productItem.brandCnName}}</td>
+                  <td>
+                    <span v-if="item.productItem.cateGoryMap != ''">
+                      <span v-if="item.productItem.cateGoryMap.categoryName1">{{item.productItem.cateGoryMap.categoryName1}}</span>/
+                      <span v-if="item.productItem.cateGoryMap.categoryName2">{{item.productItem.cateGoryMap.categoryName2}}</span>/
+                      <span v-if="item.productItem.cateGoryMap.categoryName3">{{item.productItem.cateGoryMap.categoryName3}}</span>/
+                      <span v-if="item.productItem.cateGoryMap.categoryName4">{{item.productItem.cateGoryMap.categoryName4}}</span>
+                    </span>
+                  
+                  </td>
+                  <td><span>{{item.productItem.size}}</span><span class="subOrder">{{item.productItem.color}}</span></td>
+                  <td>{{item.price}}</td>
+                  <td>{{item.quantity}}</td>
+                <!-- </template> -->
+              
+            </tr>
+            <!-- </template> -->
           </table>
         </template>
       </el-table-column>
-      <el-table-column prop="num" label="总数量" width="100"></el-table-column>
-      <el-table-column prop="price" label="总价" width="100"></el-table-column>
-      <el-table-column prop="time" label="交易时间" width="100"></el-table-column>
+      <el-table-column prop="totalNum" label="总数量" width="100"></el-table-column>
+      <el-table-column prop="totalMoney" label="总价" width="100"></el-table-column>
+      <el-table-column prop="createTime" label="交易时间" width="100"></el-table-column>
       <el-table-column label="状态" width="100">
         <template slot-scope="scope">
           <el-button v-if="scope.row.status !== ''" size="mini" :type="statusList[scope.row.status*1].type">{{ statusList[scope.row.status*1].name }}</el-button>
 
-          <!--<el-button v-if="scope.row.status ==='1'" type='warning' size="mini">未支付</el-button>-->
-          <!--<el-button v-else-if="scope.row.status ==='2'"  type='primary' size="mini">已支付</el-button>-->
-          <!--<el-button v-else-if="scope.row.status ==='3'" type='primary' size="mini">已发货</el-button>-->
-          <!--<el-button v-else-if="scope.row.status ==='4'"  type='success' size="mini">确认收货</el-button>-->
-          <!--<el-button v-else-if="scope.row.status ==='5'" type='warning' size="mini">退款中</el-button>-->
-          <!--<el-button v-else-if="scope.row.status ==='6'" type='danger' size="mini">已退款</el-button>-->
-          <!--<el-button v-else-if="scope.row.status ==='7'" type='info' size="mini">已取消</el-button>-->
-          <!--<el-button v-else-if="scope.row.status ==='8'" type='warning' size="mini">退款已拒绝</el-button>-->
-          <!--<el-button v-else="scope.row.status ==='9'" type='info' size="mini">已删除</el-button>-->
+          <!-- <el-button v-if="scope.row.status ==='0'" type='warning' size="mini">未支付</el-button>
+          <el-button v-else-if="scope.row.status ==='1'"  type='primary' size="mini">已支付</el-button>
+          <el-button v-else-if="scope.row.status ==='2'" type='primary' size="mini">已发货</el-button>
+          <el-button v-else-if="scope.row.status ==='3'"  type='success' size="mini">确认收货</el-button>
+          <el-button v-else-if="scope.row.status ==='4'" type='warning' size="mini">申请退货退款</el-button>
+          <el-button v-else-if="scope.row.status ==='5'" type='danger' size="mini">退款中</el-button>
+          <el-button v-else-if="scope.row.status ==='6'" type='primary' size="mini">已退款</el-button>
+          <el-button v-else-if="scope.row.status ==='7'" type='info' size="mini">已取消</el-button> -->
         </template>
       </el-table-column>
       <el-table-column prop="action" label="操作" width="100">
         <template slot-scope="scope">
-          <el-button type='primary' @click="goDetail(scope.$index,scope.row.orderId)" size="mini">详情</el-button>
-          <el-button type="warning" @click="deliver(scope.$index,scope.row.orderId)" size="mini">发货</el-button>
-          <el-button type='warning' @click="changeWay(scope.$index,scope.row.orderId)" size="mini">修改快递</el-button>
+          <el-button type='primary' @click="goDetail(scope.$index,scope.row.id)" size="mini">详情</el-button>
+          <el-button type="warning" @click="deliver(scope.$index,scope.row.id)" size="mini">发货</el-button>
+          <el-button type='warning' @click="changeWay(scope.$index,scope.row.id)" size="mini">修改快递</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -190,60 +210,50 @@
             },
             statusList:[
               {
-                name : '全部状态',
-                value : ''
-              },
-              {
                 name : '未支付',
-                value : '1',
+                value : '0',
                 type:'danger'
               },
               {
                 name : '已支付',
-                value : '2',
+                value : '1',
                 type: 'success'
 
               },
               {
                 name : '已发货',
-                value : '3',
+                value : '2',
                 type: 'primary'
 
               },
               {
                 name : '确认收货',
-                value : '4',
+                value : '3',
                 type: 'success'
+
+              },
+              {
+                name : '申请退货退款',
+                value : '4',
+                type: 'warning'
 
               },
               {
                 name : '退款中',
                 value : '5',
-                type: 'warning'
+                type: 'danger'
 
               },
               {
                 name : '已退款',
                 value : '6',
-                type: 'danger'
+                type: 'info'
 
               },
               {
                 name : '已取消',
                 value : '7',
-                type: 'info'
-
-              },
-              {
-                name : '退款拒绝',
-                value : '8',
                 type: 'danger'
-
-              },
-              {
-                name: '已删除',
-                value:'9',
-                type: 'info'
 
               }
             ],
@@ -316,11 +326,12 @@
           let formData = new FormData();
           formData.append('currentPage',this.currentPage);
           formData.append('pageSize',this.pageSize);
-          getOrderList().then( res => {
+          getOrderList(formData).then( res => {
+            console.log('res',res)
             if( res.data.status === '000000000'){
-              this.tableData = res.data.data ;
-              this.totalElements = res.data.totalElements;
-              this.totalPages = res.data.totalPages;
+              this.tableData = res.data.data.pageResultDto.data ;
+              this.totalElements = res.data.data.pageResultDto.totalElements;
+              this.totalPages = res.data.data.pageResultDto.totalPages;
             }else{
               this.$message({
                 message: res.data.message ,
@@ -513,8 +524,8 @@
           this.pageSize = 10 ;
         },
         //查看订单详情
-        goDetail(index,order){
-          this.$router.push('/merchantCenter/transaction/transitionOrder/'+ 1)
+        goDetail(index,id){
+          this.$router.push('/merchantCenter/transaction/transitionOrder/'+ id)
         },
         //发货
         deliver(index,order){

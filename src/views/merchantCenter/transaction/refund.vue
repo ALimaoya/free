@@ -264,8 +264,6 @@
         confirm(formName){
           this.$refs[formName].validate((valid) => {
             if(valid){
-              this.dialogVisible = false ;
-              this.form = Object.assign({}, this.formModel);
               let formData = new FormData();
               formData.append('refundId', this.form.id);
               formData.append('confirmPwd', this.form.checkPsw);
@@ -290,6 +288,8 @@
             }else{
 
             }
+            this.dialogVisible = false ;
+            this.form = Object.assign({}, this.formModel);
           })
         },
         //关闭弹窗
