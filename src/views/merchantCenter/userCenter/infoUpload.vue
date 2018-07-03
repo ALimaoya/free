@@ -3,13 +3,13 @@
     <h1>资质上传</h1>
     <el-form :model="form" ref="form"  :rules="formRule" center label-position="right">
       <el-form-item  :labelWidth="labelWidth" label="店铺负责人："  prop="name">
-        <el-input class="inputInfo" type="text" size="small" :disabled="isRegister" v-model.trim="form.name" placeholder="店铺负责人" ></el-input>
+        <el-input class="inputInfo" type="text" size="small" :maxLength="40" :disabled="isRegister" v-model.trim="form.name" placeholder="店铺负责人" ></el-input>
       </el-form-item>
       <el-form-item   :labelWidth="labelWidth"  label="身份证号：" prop="cardId">
         <el-input class="inputInfo" :maxLength="18" size="small" :disabled="isRegister" v-model.trim="form.cardId"  placeholder="身份证号"></el-input>
       </el-form-item>
       <el-form-item  :labelWidth="labelWidth" label="企业名称：" prop="enterpriseName">
-        <el-input class="inputInfo" size="small" :disabled="isRegister" v-model.trim="form.enterpriseName"  placeholder="企业名称"></el-input>
+        <el-input class="inputInfo" size="small" :maxLength="40"  :disabled="isRegister" v-model.trim="form.enterpriseName"  placeholder="企业名称"></el-input>
       </el-form-item>
       <el-form-item  :labelWidth="labelWidth" label="邮箱：" prop="email">
         <el-input class="inputInfo" size="small" :disabled="isRegister" v-model.trim="form.email" placeholder="邮箱"></el-input>

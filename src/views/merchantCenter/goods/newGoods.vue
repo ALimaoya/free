@@ -1,6 +1,6 @@
 <template>
     <div class="newGoods new">
-      <h1>{{ title }}</h1>
+      <h1>新增商品</h1>
       <el-form :model="form" ref="form" :rules="formRule" label-position="right" >
         <h2>商品表单</h2>
         <el-form-item  labelWidth="130px" label="店铺" >
@@ -88,7 +88,6 @@
         </el-form-item>
         <el-form-item>
           <el-button v-if="!readOnly" class="inputInfo button" type="primary" size="small" @click="submitForm('form')">提交</el-button>
-          <el-button v-else-if="readOnly" class="inputInfo button" type="primary" size="small" @click="changeForm('form')">修改</el-button>
 
         </el-form-item>
       </el-form>
@@ -151,50 +150,13 @@
   import 'tinymce/plugins/colorpicker'
   import 'tinymce/plugins/textcolor'
   import Editor from '@tinymce/tinymce-vue'
-  // import ElFormItem from "element-ui/packages/form/src/form-item";
-  // import SvgIcon from "../../../components/SvgIcon/index";
-  // import ElButton from "element-ui/packages/button/src/button";
-  // import ElFormItem from "element-ui/packages/form/src/form-item";
+
   export default {
     components: {
-      // ElFormItem,
-      // ElButton,
-      // ElTable,
-      // SvgIcon,
-      // ElFormItem,
+
       Editor},
     name: "new-goods",
-    // props: {
-    //   id: {
-    //     type: String
-    //   },
-    //   value: {
-    //     type: String,
-    //     default: ''
-    //   },
-    //   toolbar: {
-    //     type: Array,
-    //     required: false,
-    //     default() {
-    //       return ['bold italic underline strikethrough | fontsizeselect | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent blockquote | undo redo | link unlink image media | removeformat']
-    //     }
-    //   },
-    //   // menubar: {
-    //   //   default: ''
-    //   // },
-    //   height: {
-    //     type: Number,
-    //     required: false,
-    //     default: 560
-    //   },
-    //   // language:{
-    //   //   default : '/static/tinymce/zh_CN.js'
-    //   // },
-    //   // skin : {
-    //   //   default : '/static/tinymce/skins/lightgray'
-    //   // }
-    //
-    // },
+
         data() {
 
         const validGoodsName = (rule,value,callback) => {
@@ -294,7 +256,7 @@
 
               },
               thirdName: '',
-              title: '新增商品',
+              // title: '新增商品',
               radio : '',
               brandData: [],
               brandName : '',
@@ -403,7 +365,7 @@
           this.getFirstList();
           window.tinymce.init({});
           this.getShop();
-          this.isNewGoods();
+          // this.isNewGoods();
 
 
         },
@@ -441,59 +403,7 @@
 
             })
           },
-          isNewGoods(){
-            let id = this.$route.query.order ;
 
-            if(!this.hasShop){
-              //判断是新增还是修改商品
-              if(id !== undefined){
-                //获取已有商品信息
-                getGoodsDetail(id).then(res=>{
-                  if(res.data.status === '000000000'){
-                    this.form = {
-                      id: res.data.data.id,
-                      productName: res.data.data.productName ,
-                      brandId:res.data.data.brandId,
-                      firstType : res.data.data.cateGoryMap.categoryName1,
-                      secondType:res.data.data.cateGoryMap.categoryName2,
-                      class3Id:res.data.data.cateGoryMap.categoryName3,
-                      price:res.data.data.price,
-                      carriage:res.data.data.carriage,
-                      ybProductItemReqDto : res.data.data.productItems,
-                      // sizeList : [{ size: '', color : '', stock: ''}],
-                      imagesList : res.data.data.productImages,
-                      describes: res.data.data.describes,
-                    }  ;
-                    if(this.form.imagesList.length < 5){
-                      if(this.form.imagesList.length === 0){
-                        this.form.imagesList =   ['','','','','']
-
-                      }else {
-                        for(let i = this.form.imagesList.length ; i< 5;i++){
-                          this.form.imagesList.push('');
-                        }
-                      }
-                    }
-                    this.thirdName = res.data.data.cateGoryMap.categoryId3;
-                    this.brandCnName = res.data.data.brandCnName ;
-                    this.readOnly = true ;
-                    this.title = '修改商品'
-                  }else{
-                    this.$message({
-                      message : res.data.message ,
-                      center : true ,
-                      type : 'error'
-                    })
-                  }
-                }).catch( err => {
-                  alert('服务器开小差啦，请稍等~')
-
-                })
-              }else{
-                this.title = '新增商品';
-              }
-            }
-          },
           getBrandList(){
 
             getBrand(this.brandName, this.currentPage ,this.pageSize).then(res => {
@@ -525,9 +435,19 @@
           },
           //确认选择的品牌
           confirmBrand(){
-            this.form.brandId = this.brandData[this.radio].id ;
-            this.brandCnName = this.brandData[this.radio].brandCnName ;
-            this.dialogVisible = false;
+            if(this.brandData[this.radio].id  !== undefined){
+              this.form.brandId = this.brandData[this.radio].id ;
+              this.brandCnName = this.brandData[this.radio].brandCnName ;
+              this.dialogVisible = false;
+            }else{
+              this.$message({
+                message: '请选择品牌',
+                type: 'error',
+                center: true
+              })
+            }
+
+
 
 
           },
@@ -600,6 +520,7 @@
           },
           // 上传图片
           beforeImgUpload(file) {
+            console.log(file)
             let reader = new FileReader();
             let ret = [];
             let _this = this;
@@ -653,13 +574,7 @@
           //添加商品规格
           addSize() {
             if (this.form.ybProductItemReqDto.length < 5) {
-              // let index = this.form.ybProductItemReqDto.length ;
-              // this.$set(this.form.ybProductItemReqDto,index,{
-              //   'size': '',
-              //   'color': '',
-              //   'stock': '',
-              //
-              // })
+
               this.form.ybProductItemReqDto.push({
                 'size': '',
                 'color': '',
@@ -677,83 +592,30 @@
             }
           },
 
-          // //  富文本
-          // initTinymce() { // editor组件传过来的值赋给content
-          //   const _this = this ;
-          //   window.tinymce.init({
-          //     ..._this.init,
-          //   selector: `#${_this.tinymceId}`,
-          //     // setup: (editor)=> {
-          //
-          //
-          //   })
-          //   // console.log(content)
-          // },
-          // setContent(val){
-          //   console.log(val);
-          //   if(val.indexOf('/tryout/images')!== -1){
-          //     val = this.imageDomain+ val
-          //   }
-          //
-          //   window.tinymce.get(this.tinymceId).setContent(val)
-          // },
-          // getContent(){
-          //   window.tinymce.get(this.tinymceId).getContent()
-          // },
-          // destroyTinymce() {
-          //   if (window.tinymce.get(this.tinymceId)) {
-          //     window.tinymce.get(this.tinymceId).destroy()
-          //   }
-          // },
+
           //提交表格
           submitForm(formName){
 
-            // this.form.images.every((i)=> {
-            //
-            //   if(i === ''){
-            //     this.goodsImgWarn = true ;
-            //     return this.goodsImgWarn ;
-            //   }else{
-            //     this.goodsImgWarn = false ;
-            //     return this.goodsImgWarn ;
-            //   }
-            // });
             console.log(this.form);
 
             this.$refs[formName].validate((valid) => {
               if(valid){
-                delete this.form.firstType ;
-                delete this.form.secondType ;
-
-                // let item = [];
-                // this.form.ybProductItemReqDto.map( i => {
-                //   let arr = [];
-                //   for(let k in i){
-                //     arr.push(i[k]);
-                //
-                //   }
-                //   item.push(arr);
-                // });
-                // item = item.join(';');
-                // this.form.ybProductItemReqDto = item ;
-                // console.log(item,this.form.ybProductItemReqDto);
-                // let imgList = [];
-                // this.form.images.map( i => {
-                //   if( i !== ''){
-                //     imgList.push(i);
-                //   }
-                // });
-                // if(imgList.length > 0){
-                //   this.form.images = imgList.join(',');
-                //
-                // }else{
-                //   this.form.images = '';
-                // }
+                // delete this.form.firstType ;
+                // delete this.form.secondType ;
+                let formData = new FormData();
+                formData.append('id',this.form.id);
+                formData.append('productName',this.form.productName);
+                formData.append('brandId',this.form.brandId);
+                formData.append('class3Id',this.form.class3Id);
+                formData.append('price',this.form.price);
+                formData.append('carriage',this.form.carriage);
+                formData.append('describes',this.form.describes);
+                formData.append('specifications',this.form.specifications);
+                formData.append('images',this.form.images);
 
                 console.log(this.form);
-                // delete this.form.ybProductItemReqDto ;
 
-                newGoogds(this.form,this.user).then( res => {
+                newGoogds(formData,this.user).then( res => {
                   if(res.data.status === '000000000') {
                     this.$message({
                       message : '您添加的商品信息已提交，请稍后确认商品状态',
@@ -782,54 +644,7 @@
             })
           },
 
-        //  修改商品信息
-          changeForm(formName){
 
-            // this.form.images.every((i)=> {
-            //
-            //   if(i === ''){
-            //     this.goodsImgWarn = true ;
-            //     return this.goodsImgWarn ;
-            //   }else{
-            //     this.goodsImgWarn = false ;
-            //     return this.goodsImgWarn ;
-            //   }
-            // });
-            console.log(this.form);
-
-
-            this.$refs[formName].validate((valid) => {
-              if(valid&& !this.goodsImgWarn){
-                delete this.form.firstType ;
-                delete this.form.secondType ;
-                console.log(this.form);
-                this.form.class3Id = this.thirdName;
-
-                changeGoods(this.form,this.user).then( res => {
-                  if(res.data.status === '000000000') {
-                    this.$message({
-                      message : '您修改的商品信息已提交，请稍后确认商品状态',
-                      center: true ,
-                      type : 'success',
-                      duration: 1000
-                    });
-                    window.location.reload();
-                  }else{
-                    this.$message({
-                      message : res.data.message,
-                      center: true ,
-                      type : 'error'
-                    })
-                  }
-                }).catch( err => {
-                  alert('服务器开小差啦，请稍等~')
-
-                });
-              }else{
-
-              }
-            })
-          },
         //  跳转到申请店铺
           applyShop(){
             this.$router.push('/merchantCenter/userCenter/openShop')

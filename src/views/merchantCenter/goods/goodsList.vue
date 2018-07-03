@@ -40,7 +40,7 @@
       <el-button  size="small" type="primary"  @click="reset()" class="searchOrder">重置</el-button>
     </div>
     <div class="tableTitle">
-      <h2>账户列表</h2>
+      <h2>商品列表</h2>
       <el-button  size="mini" type="primary" style="padding : 0 5px;text-align : center ;height : 30px;line-height : 30px;" @click="newGoods()" class="searchOrder">新增商品</el-button>
 
     </div>
@@ -315,7 +315,7 @@
         },
         //修改商品
         editor(index,order){
-          this.$router.push({ path : '/merchantCenter/goods/goodsDetail',query: {'order':order}})
+          this.$router.push({ path : '/merchantCenter/goods/changeGoods',query: {'order':order}})
 
         },
         //新增商品

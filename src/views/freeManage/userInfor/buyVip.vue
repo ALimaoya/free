@@ -309,7 +309,7 @@
       goApilyPay(_data){
         let _this=this;
         $.ajax({
-              url: process.env.BASE_API+"/tryout/vip/buy",
+              url: process.env.BASE_API+"/vip/buy",
               type: 'POST',
               data: JSON.stringify({
                 payType: this.chooseWay ,
@@ -328,11 +328,11 @@
                 }
                 if (res.status === '000000000') {
                 var _div = document.createElement('div');
-                _div.setAttribute('id', 'myForm');
-                _div.innerHTML = res.data;
-                document.body.appendChild(_div);
-                document.getElementById('myForm').getElementsByTagName("form")[0].setAttribute('target',
-                  "_blank");
+                  _div.setAttribute('id', 'myForm');
+                  _div.innerHTML = res.data;
+                  document.body.appendChild(_div);
+                  document.getElementById('myForm').getElementsByTagName("form")[0].setAttribute('target',
+                    "_blank");
                 _this.depositStatus = true;
                 }else{
                   _this.depositStatus = false;

@@ -73,7 +73,7 @@
     methods: {
       //购买vip
       handleVip() {
-        this.$router.push('/userInfor/buyVip');
+        this.$router.push('/freeManage/userInfor/buyVip');
       },
       getVipInfo() {
         getMember().then(res => {

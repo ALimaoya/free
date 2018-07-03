@@ -5,7 +5,7 @@
        <el-form :model="form" ref="form" label-position="right" :rules="formRule" >
         <!--<h2>账户表单</h2>-->
           <el-form-item  labelWidth="130px" label="联系人"  prop="userName">
-            <el-input class="inputInfo" :maxLength="20" size="small" v-model.trim="form.userName" placeholder="请填写联系人" ></el-input>
+            <el-input class="inputInfo" :maxLength="40" size="small" v-model.trim="form.userName" placeholder="请填写联系人" ></el-input>
           </el-form-item>
           <el-form-item   labelWidth="130px"  label="省份" prop="province">
             <el-select  size="small" clearable v-model="form.province"  filterable placeholder="请选择省份">

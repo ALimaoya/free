@@ -31,18 +31,18 @@
           </dl>
           <!--</a>-->
         </li>
+        <!--<li :class="{isActive:show === '2' }" @click="changeTabs('2')">-->
+          <!--&lt;!&ndash;<a href="#" >&ndash;&gt;-->
+          <!--<span>2</span>-->
+          <!--<dl><dt>绑定账号</dt>-->
+            <!--<dd v-if="statusTag.isBundle === '0'"> 您还未绑定结算账号 </dd>-->
+            <!--<dd v-else>您已绑定结算账号</dd>-->
+          <!--</dl>-->
+          <!--&lt;!&ndash;</a>&ndash;&gt;-->
+        <!--</li>-->
         <li :class="{isActive:show === '2' }" @click="changeTabs('2')">
           <!--<a href="#" >-->
           <span>2</span>
-          <dl><dt>绑定账号</dt>
-            <dd v-if="statusTag.isBundle === '0'"> 您还未绑定结算账号 </dd>
-            <dd v-else>您已绑定结算账号</dd>
-          </dl>
-          <!--</a>-->
-        </li>
-        <li :class="{isActive:show === '3' }" @click="changeTabs('3')">
-          <!--<a href="#" >-->
-          <span>3</span>
           <dl><dt>缴纳保证金</dt>
             <dd v-if="statusTag.wallet === '0'"> 您还未缴纳保证金 </dd>
             <dd v-else>您的保证金已缴纳</dd>
@@ -50,7 +50,7 @@
           </dl>
           <!--</a>-->
         </li>
-        <li :class="{isActive:show === '4' }" @click="changeTabs('4')">
+        <li :class="{isActive:show === '3' }" @click="changeTabs('3')">
           <!--<a href="#" >-->
           <span>4</span>
           <dl>
@@ -78,7 +78,7 @@
 <script>
   import {  getUser,getToken } from '@/utils/auth'
   import Step1 from "@/views/merchantCenter/center/Step1"
-  import Step2 from "@/views/merchantCenter/center/Step2"
+  // import Step2 from "@/views/merchantCenter/center/Step2"
   import Step3 from "@/views/merchantCenter/center/Step3"
   import Step4 from "@/views/merchantCenter/center/Step4"
   import { getStatus } from "@/api/userCenter"
@@ -86,7 +86,7 @@
       name: "MerchantCenter-home",
       components: {
         Step1,
-        Step2,
+        // Step2,
         Step3,
         Step4
 
@@ -106,7 +106,7 @@
         //跳转到缴纳保证金步骤
         let step3 = this.$route.params.step3 ;
         if( step3 ){
-          this.show = '3' ;
+          this.show = '2' ;
           this.tabView = 'step3';
           this.statusTag.wallet = '0';
         };
@@ -137,7 +137,16 @@
         },
       changeTabs(index){
         this.show = index ;
-        this.tabView = 'step'+ index ;
+        if(index === '1'){
+          this.tabView = 'step1' ;
+
+        }else if( index === '2'){
+          this.tabView = 'step3' ;
+
+        }else if(index === '3'){
+          this.tabView = 'step4' ;
+
+        }
       },
 
     }

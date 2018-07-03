@@ -343,19 +343,19 @@ export const constantRouterMap = [
 
           },
           {
-            path: 'goodsDetail',
-            name: 'Goods',
-            component: () => import('@/views/merchantCenter/goods/goodsDetail'),
-            meta: { title: '新增商品', icon: 'goodsDetail' },
+            path: 'newGoods',
+            name: 'NewGoods',
+            component: () => import('@/views/merchantCenter/goods/newGoods'),
+            meta: { title: '新增商品', icon: 'newGoods' },
 
           },
-          // {
-          //   path: 'changeGoods/:order',
-          //   name: 'ChangeGoods',
-          //   component: () => import('@/views/merchantCenter/goods/changeGoods'),
-          //   meta: { title: '修改商品', icon: 'newGoods' },
-          //   hidden: true
-          // },
+          {
+            path: 'changeGoods',
+            name: 'ChangeGoods',
+            component: () => import('@/views/merchantCenter/goods/changeGoods'),
+            meta: { title: '修改商品', icon: 'changeGoods' },
+            hidden: true
+          },
         ]
       },
       {
@@ -557,7 +557,7 @@ export const constantRouterMap = [
       {
         path: '/accountManage/admission',
         redirect : '/accountManage/admission/index',
-        // name: 'AdmissionManage',
+        name: 'Admission',
         component: FreeManage ,
         meta: { title: '账号管理', icon: 'admission' },
         children:[

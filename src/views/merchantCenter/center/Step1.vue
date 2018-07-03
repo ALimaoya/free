@@ -3,16 +3,16 @@
     <h1>资质上传</h1>
     <el-form ref="form" :model="form" :rules="formRule" center label-position="top">
       <el-form-item label="店铺负责人"  prop="name">
-        <el-input type="text" size="small" v-model="form.name" :disabled="isRegister"></el-input>
+        <el-input type="text" size="small" :maxLength="40"  v-model="form.name" :disabled="isRegister"></el-input>
       </el-form-item>
       <el-form-item label="Email" prop="email">
         <el-input type="text" size="small" :disabled="isRegister" v-model="form.email"></el-input>
       </el-form-item>
       <el-form-item label="身份证号" prop="cardId">
-        <el-input type="text" size="small" v-model="form.cardId" :disabled="isRegister"></el-input>
+        <el-input type="text" size="small" :maxLength="18"  v-model="form.cardId" :disabled="isRegister"></el-input>
       </el-form-item>
       <el-form-item label="企业名称" prop="enterpriseName">
-        <el-input type="text" size="small" v-model="form.enterpriseName" :disabled="isRegister"></el-input>
+        <el-input type="text" size="small" :maxLength="40"  v-model="form.enterpriseName" :disabled="isRegister"></el-input>
       </el-form-item>
       <el-form-item class="imgWrap" v-if="!isRegister" label="资质" prop="businessImage">
         <ul class="imgList" >

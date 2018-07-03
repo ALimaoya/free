@@ -133,10 +133,11 @@ export function getBondDetail(){
   })
 }
 //保证金缴纳
-export function rechargeBond(){
+export function rechargeBond(data){
   return request({
     url: '/center/recharge/deposit',
-    method: 'post'
+    method: 'post',
+    data
   })
 }
 //保证金相关操作
@@ -144,5 +145,13 @@ export function applyBond(){
   return request({
     url : '/center/merchant/wallet/free',
     method : 'get'
+  })
+}
+//保证金相关操作
+export function addBond(data){
+  return request({
+    url : '/center/recharge/addDeposit',
+    method : 'post',
+    data
   })
 }

@@ -3,10 +3,10 @@
     <h1>我要开店</h1>
     <el-form ref="form" :model="form" :rules="formRule" center label-position="top">
       <el-form-item label="店铺名称"  prop="name">
-        <el-input type="text" size="small" v-model="form.name" :disabled="readOnly"></el-input>
+        <el-input type="text" :maxLength="40" size="small" v-model="form.name" :disabled="readOnly"></el-input>
       </el-form-item>
       <el-form-item label="主营" prop="mainBusiness">
-        <el-input type="text" size="small" :disabled="readOnly" v-model="form.mainBusiness"></el-input>
+        <el-input type="text" :maxLength="40" size="small" :disabled="readOnly" v-model="form.mainBusiness"></el-input>
       </el-form-item>
       <el-form-item label="类型" prop="type">
         <el-select  size="small" clearable v-model="form.type" :disabled="readOnly" filterable placeholder="请选择店铺类型">
@@ -19,7 +19,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="描述" prop="describes">
-        <el-input type="textarea" :rows="4" size="small" v-model="form.describes" :disabled="readOnly"></el-input>
+        <el-input type="textarea" :rows="4" :maxLength="200" size="small" v-model="form.describes" :disabled="readOnly"></el-input>
       </el-form-item>
       <el-form-item class="imgWrap" prop="logoImage" v-if="!readOnly" label="店铺LOGO">
             <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logoImageImage"

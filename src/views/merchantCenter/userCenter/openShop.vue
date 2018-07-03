@@ -4,7 +4,7 @@
     <el-form :model="form" ref="form" :rules="formRule" label-position="right" >
       <!--<h2>账户表单</h2>-->
       <el-form-item  labelWidth="130px" label="店铺名称"  prop="name">
-        <el-input class="inputInfo" :maxLength="20" size="small" v-model.trim="form.name" placeholder="店铺名称" :disabled="readOnly"></el-input>
+        <el-input class="inputInfo" :maxLength="40" size="small" v-model.trim="form.name" placeholder="店铺名称" :disabled="readOnly"></el-input>
       </el-form-item>
       <el-form-item labelWidth="130px" class="imgWrap" prop="logoImage" v-if="!readOnly" label="店铺LOGO">
         <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logoImage"
@@ -25,7 +25,7 @@
         <!--</dl>-->
       </el-form-item>
       <el-form-item   labelWidth="130px"  label="主营" prop="mainBusiness">
-        <el-input type="textarea" class="inputInfo"  :rows="4" size="small" v-model.trim="form.mainBusiness" :disabled="readOnly" placeholder="主营"></el-input>
+        <el-input type="textarea" class="inputInfo" :maxLength="40" :rows="4" size="small" v-model.trim="form.mainBusiness" :disabled="readOnly" placeholder="主营"></el-input>
       </el-form-item>
       <el-form-item labelWidth="130px" label="类型" prop="type">
         <el-select  size="small" clearable v-model="form.type" :disabled="readOnly" filterable placeholder="请选择店铺类型">
@@ -38,7 +38,7 @@
         </el-select>
       </el-form-item>
       <el-form-item  labelWidth="130px" label="描述" prop="describes">
-        <el-input class="inputInfo" size="small" type="textarea"  :rows="4" v-model.trim="form.describes" :disabled="readOnly" placeholder="描述"></el-input>
+        <el-input class="inputInfo" :maxLength="200" size="small" type="textarea"  :rows="4" v-model.trim="form.describes" :disabled="readOnly" placeholder="描述"></el-input>
       </el-form-item>
       <el-form-item labelWidth="130px" >
         <el-button v-if="!readOnly" type="primary" size="small" @click="submit('form',handleType)">{{ handleType}}</el-button>

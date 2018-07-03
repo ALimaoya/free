@@ -180,3 +180,29 @@ export function deliverDemo(){
     method: 'get'
   })
 }
+//导出错误列表
+export function wrongDemo(data){
+  return request({
+    url: '/center/order/download/errorFile',
+    method: 'get',
+    params: {
+      fileAddress : data
+    }
+  })
+}
+//导出订单列表
+export function exportList(data){
+  return request({
+    url: '/center/order/export',
+    method: 'post',
+    data
+  })
+}
+//test
+export function test(){
+  return request({
+    url: 'center/test/xss',
+    method: 'post',
+
+  })
+}

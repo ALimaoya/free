@@ -1,6 +1,6 @@
 <template>
-  <div class="newGoods new">
-    <h1>{{ title }}</h1>
+  <div class="changeGoods new">
+    <h1>修改商品</h1>
     <el-form :model="form" ref="form" :rules="formRule" label-position="right" >
       <h2>商品表单</h2>
       <el-form-item  labelWidth="130px" label="店铺" >
@@ -11,7 +11,6 @@
       </el-form-item>
       <el-form-item  labelWidth="130px" label="商品品牌" prop="brandId">
         <el-input class="inputInfo" :disabled="readOnly" size="small" v-model.trim="brandCnName" disabled='disabled'></el-input>
-        <div class="showBrand" @click="searchBrand()"><svg-icon icon-class="brand"></svg-icon><span>品牌速查</span></div>
       </el-form-item>
       <el-form-item  labelWidth="130px" label="一级分类" prop="firstType">
         <el-select  size="small" :disabled="readOnly" clearable v-model="form.firstType" @change="getSecondList(form.firstType)" filterable placeholder="请选择一级分类">
@@ -87,44 +86,12 @@
         <editor :id="tinymceId" v-model="form.describes" :init="init"></editor>
       </el-form-item>
       <el-form-item>
-        <!--<el-button v-if="!readOnly" class="inputInfo button" type="primary" size="small" @click="submitForm('form')">提交</el-button>-->
         <el-button class="inputInfo button" type="primary" size="small" @click="changeForm('form')">修改</el-button>
 
       </el-form-item>
     </el-form>
 
-    <el-dialog class="tableBox" title="品牌速查" :visible.sync="dialogVisible" width="70%" >
-      <div class="dialogTop">
-        <span>品牌名称：</span><el-input type="text" class="middleInput" v-model.trim="brandName" size="small" @keyup.enter.native="getBrandList()"></el-input>
-        <el-button type="primary" size="small" @click="getBrandList()">查询</el-button>
-      </div>
-      <el-table :data="brandData" border stripe highlight-current-row fit >
-        <el-table-column  width="32" >
-          <template slot-scope="scope">
-            <el-radio :label="scope.$index" v-model="radio" @change.native="handleBrand(scope.$index,scope.row.id,scope.row.brandCnName)"></el-radio>
-          </template>
-        </el-table-column>
-        <el-table-column prop="id" label="品牌ID"></el-table-column>
-        <el-table-column prop="brandCnName" label="品牌名称"></el-table-column>
-        <el-table-column prop="brandEnName" label="英文名称"></el-table-column>
-      </el-table>
-      <div class="block2">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page.sync="currentPage"
-          :page-sizes="[10, 15, 20]"
-          :page-size="pageSize"
-          layout=" sizes, prev, pager, next, jumper"
-          :total="totalElements">
-        </el-pagination>
-        <span class="totalItems">共{{totalPages }}页，{{ totalElements }}条记录</span>
-      </div>
 
-      <div slot="footer" class="dialog-footer" >
-        <el-button type="primary" size="mini" @click="confirmBrand">选择</el-button>
-      </div>
-    </el-dialog>
     <el-dialog class="shop_dialog" title="提示" top="20%" :visible.sync="hasShop" width="40%" center
                :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
       <p>{{ tips }}</p>
@@ -151,7 +118,6 @@
   import 'tinymce/plugins/colorpicker'
   import 'tinymce/plugins/textcolor'
   import Editor from '@tinymce/tinymce-vue'
-  import Vue from 'vue'
   export default {
     components: {
       // ElFormItem,
@@ -160,7 +126,7 @@
       // SvgIcon,
       // ElFormItem,
       Editor},
-    name: "new-goods",
+    name: "change-goods",
 
     data() {
 
@@ -260,7 +226,7 @@
 
         },
         thirdName: '',
-        title: '新增商品',
+        // title: '新增商品',
         radio : '',
         brandData: [],
         brandName : '',
@@ -406,9 +372,8 @@
         })
       },
       isNewGoods(){
-        let id = this.$route.params.order ;
+        let id = this.$route.query.order ;
         if(!this.hasShop){
-          //判断是新增还是修改商品
           if(id !== undefined){
             //获取已有商品信息
             getGoodsDetail(id).then(res=>{
@@ -425,8 +390,8 @@
                     // sizeList : [{ size: '', color : '', stock: ''}],
                     imagesList : res.data.data.productImages,
                     describes: res.data.data.describes,
+                    id: res.data.data.id
                 }  ;
-                // this.form.imagesList = res.data.data.productImages ;
                 if(this.form.imagesList.length < 5){
                   if(this.form.imagesList.length === 0){
                     this.form.imagesList =   ['','','','','']
@@ -437,21 +402,26 @@
                     }
                   }
                 }
-                // res.data.data.productItems.map( i =>{
-                //   this.form.ybProductItemReqDto.push({
-                //     'size' : i.size ,
-                //     'color': i.color,
-                //     'stock': i.stock
-                //   })
-                // });
-                // this.form.ybProductItemReqDto = res.data.data.productItems ;
+               if(this.form.describes.length !== 0){
+                 this.form.describes = this.form.describes.replace(/&amp;/g,"&");
+                 this.form.describes = this.form.describes.replace(/&lt;/g,"<");
+                 this.form.describes = this.form.describes.replace(/&gt;/g,">");
+                 this.form.describes = this.form.describes.replace(/&nbsp;/g," ");
+                 this.form.describes = this.form.describes.replace(/&#39;/g,"\'");
+                 this.form.describes = this.form.describes.replace(/&quot;/g,"\"");
+                 this.form.describes = this.form.describes.replace(/\"/g,'"');
+                 this.form.describes = this.form.describes.replace(/\\/g," \ ");
+                 this.form.describes = this.form.describes.replace(/\\p\\n/g,"<br>");
+               }
+                // this.form.describes = this.form.describes.replace(reg,'\w+');
+
                 this.brandCnName = res.data.data.brandCnName ;
                 // this.form.firstType =res.data.data.cateGoryMap.categoryName1;
                 // this.form.secondType =res.data.data.cateGoryMap.categoryName2;
                 // this.form.class3Id =res.data.data.cateGoryMap.categoryName3;
                 this.thirdName = res.data.data.cateGoryMap.categoryId3;
                 this.readOnly = true ;
-                this.title = '修改商品'
+                // this.title = '修改商品'
               }else{
                 this.$message({
                   message : res.data.message ,
@@ -464,7 +434,7 @@
 
             })
           }else{
-            this.title = '新增商品';
+            // this.title = '新增商品';
           }
         }
       },
@@ -484,27 +454,6 @@
 
       },
 
-      //查询品牌
-      searchBrand(){
-        this.radio = '';
-        this.brandName = '';
-        this.currentPage = 1 ;
-        this.dialogVisible = true ;
-        this.getBrandList();
-      },
-      //选择品牌
-      handleBrand(index,val,name) {
-        this.brandName = name;
-        this.radio = index ;
-      },
-      //确认选择的品牌
-      confirmBrand(){
-        this.form.brandId = this.brandData[this.radio].id ;
-        this.brandCnName = this.brandData[this.radio].brandCnName ;
-        this.dialogVisible = false;
-
-
-      },
       //  获取一级分类
       getFirstList(){
         firstList().then(res=> {
@@ -655,135 +604,32 @@
         }
       },
 
-      // //  富文本
-      // initTinymce() { // editor组件传过来的值赋给content
-      //   const _this = this ;
-      //   window.tinymce.init({
-      //     ..._this.init,
-      //   selector: `#${_this.tinymceId}`,
-      //     // setup: (editor)=> {
-      //
-      //
-      //   })
-      //   // console.log(content)
-      // },
-      // setContent(val){
-      //   console.log(val);
-      //   if(val.indexOf('/tryout/images')!== -1){
-      //     val = this.imageDomain+ val
-      //   }
-      //
-      //   window.tinymce.get(this.tinymceId).setContent(val)
-      // },
-      // getContent(){
-      //   window.tinymce.get(this.tinymceId).getContent()
-      // },
-      // destroyTinymce() {
-      //   if (window.tinymce.get(this.tinymceId)) {
-      //     window.tinymce.get(this.tinymceId).destroy()
-      //   }
-      // },
-      //提交表格
-      // submitForm(formName){
-      //
-      //   // this.form.images.every((i)=> {
-      //   //
-      //   //   if(i === ''){
-      //   //     this.goodsImgWarn = true ;
-      //   //     return this.goodsImgWarn ;
-      //   //   }else{
-      //   //     this.goodsImgWarn = false ;
-      //   //     return this.goodsImgWarn ;
-      //   //   }
-      //   // });
-      //   console.log(this.form);
-      //
-      //   this.$refs[formName].validate((valid) => {
-      //     if(valid){
-      //       delete this.form.firstType ;
-      //       delete this.form.secondType ;
-      //       // let item = [];
-      //       // this.form.ybProductItemReqDto.map( i => {
-      //       //   let arr = [];
-      //       //   for(let k in i){
-      //       //     arr.push(i[k]);
-      //       //
-      //       //   }
-      //       //   item.push(arr);
-      //       // });
-      //       // item = item.join(';');
-      //       // this.form.ybProductItemReqDto = item ;
-      //       // console.log(item,this.form.ybProductItemReqDto);
-      //       // let imgList = [];
-      //       // this.form.images.map( i => {
-      //       //   if( i !== ''){
-      //       //     imgList.push(i);
-      //       //   }
-      //       // });
-      //       // if(imgList.length > 0){
-      //       //   this.form.images = imgList.join(',');
-      //       //
-      //       // }else{
-      //       //   this.form.images = '';
-      //       // }
-      //
-      //       console.log(this.form);
-      //       // delete this.form.ybProductItemReqDto ;
-      //
-      //       newGoogds(this.form,this.user).then( res => {
-      //         if(res.data.status === '000000000') {
-      //           this.$message({
-      //             message : '您添加的商品信息已提交，请稍后确认商品状态',
-      //             center: true ,
-      //             type : 'success',
-      //             duration: 1000
-      //           });
-      //           setTimeout(()=>{
-      //             window.location.reload();
-      //
-      //           },2000)
-      //         }else{
-      //           this.$message({
-      //             message : res.data.message,
-      //             center: true ,
-      //             type : 'error'
-      //           })
-      //         }
-      //       }).catch( err => {
-      //         alert('服务器开小差啦，请稍等~')
-      //
-      //       });
-      //     }else{
-      //
-      //     }
-      //   })
-      // },
+
 
       //  修改商品信息
       changeForm(formName){
-        console.log(this.form.ybProductItemReqDto,123)
 
-        // this.form.images.every((i)=> {
-        //
-        //   if(i === ''){
-        //     this.goodsImgWarn = true ;
-        //     return this.goodsImgWarn ;
-        //   }else{
-        //     this.goodsImgWarn = false ;
-        //     return this.goodsImgWarn ;
-        //   }
-        // });
         console.log(this.form);
 
 
         this.$refs[formName].validate((valid) => {
           if(valid&& !this.goodsImgWarn){
-            delete this.form.firstType ;
-            delete this.form.secondType ;
+            // delete this.form.firstType ;
+            // delete this.form.secondType ;
             console.log(this.form);
-            this.form.class3Id = this.thirdName;
+            let formData = new FormData();
+            formData.append('id',this.form.id);
+            formData.append('productName',this.form.productName);
+            formData.append('brandId',this.form.brandId);
+            formData.append('class3Id',this.thirdName);
+            formData.append('price',this.form.price);
+            formData.append('carriage',this.form.carriage);
+            formData.append('describes',this.form.describes);
+            formData.append('specifications',this.form.specifications);
+            formData.append('images',this.form.images);
+            // this.form.class3Id = this.thirdName;
 
-            changeGoods(this.form,this.user).then( res => {
+            changeGoods(formData,this.user).then( res => {
               if(res.data.status === '000000000') {
                 this.$message({
                   message : '您修改的商品信息已提交，请稍后确认商品状态',

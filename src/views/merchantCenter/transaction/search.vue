@@ -3,21 +3,21 @@
       <h1>交易管理</h1>
       <div class="search">
         <div class="inputWrap">
-          <el-input size="small" :maxlength="20" v-model.trim="transition.orderId" placeholder="订单号"></el-input>
-          <el-input size="small" :maxlength="20" v-model.trim="transition.subOrderId" placeholder="子订单号"></el-input>
-          <el-input size="small" :maxlength="20" v-model.trim="transition.code" placeholder="商品编号"></el-input>
-          <el-input size="small" :maxlength="20" v-model.trim="transition.buyAccount" placeholder="买方账号"></el-input>
+          <el-input size="small" :maxlength="20" v-model.trim="transition.EQ_payOrder" placeholder="订单号"></el-input>
+          <el-input size="small" :maxlength="20" v-model.trim="transition.EQ_code" placeholder="子订单号"></el-input>
+          <el-input size="small" :maxlength="20" v-model.trim="transition.productCode" placeholder="商品编号"></el-input>
+          <el-input size="small" :maxlength="20" v-model.trim="transition.LIKE_payOrder" placeholder="买方账号"></el-input>
         </div>
         <div class="inputWrap">
         <div class="block">
           <span class="demonstration">交易开始时间：</span>
-          <el-date-picker size="small" v-model="transition.startDate" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="开始时间"></el-date-picker>
+          <el-date-picker size="small" v-model="transition.GT_createTime" value-format="yyyy-MM-dd" type="date" placeholder="开始时间"></el-date-picker>
         </div>
         <div class="block">
           <span class="demonstration">交易结束时间：</span>
-          <el-date-picker size="small" v-model="transition.endDate" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="结束时间"></el-date-picker>
+          <el-date-picker size="small" v-model="transition.LT_createTime" value-format="yyyy-MM-dd" type="date" placeholder="结束时间"></el-date-picker>
         </div>
-        <el-select  size="small" clearable v-model="transition.status" filterable placeholder="订单状态">
+        <el-select  size="small" clearable v-model="transition.EQ_status" filterable placeholder="订单状态">
           <el-option
             v-for="item in statusList"
             :key="item.value"
@@ -29,21 +29,22 @@
         <div class="inputWrap">
           <el-button  size="mini" type="primary"  @click="search()" class="searchOrder">查询</el-button>
           <el-button  size="mini" type="primary"  @click="exportOrder()" class="searchOrder">导出</el-button>
-          <el-button  size="mini" type="primary" style="padding: 0;text-align: center;height : 28px;"  @click="deliverDialog= true;" class="searchOrder">导入发货</el-button>
+          <a style="display: none" id="orderFile"  :href="baseUrl+'/center/order/export?merchantId='+ merchantId+'&EQ_payOrder.code='+ transition.EQ_payOrder +'&EQ_code='+ transition.EQ_code+'&productCode='+ transition.productCode+'&LIKE_payOrder.user.accountName='+transition.LIKE_payOrder+ '&GT_createTime='+transition.GT_createTime+ '&LT_createTime='+transition.LT_createTime+ '&EQ_status='+transition.EQ_status"></a>
+          <el-button  size="mini" type="primary" style="padding: 0;text-align: center;height : 28px;"  @click="deliverDialog= true;excelTitle = '';" class="searchOrder">导入发货</el-button>
           <el-button  size="mini" type="primary"  @click="reset()" class="searchOrder">重置</el-button>
         </div>
       </div>
       <div class="tableTitle">
-        <h2>交易列表列表</h2>
+        <h2>交易列表</h2>
       </div>
-    <el-table  :data="tableData"  border  align="center" fit>
-      <el-table-column label="订单/子订单"  width="200">
+    <el-table  :data="tableData"  border  align="center" >
+      <el-table-column label="订单/子订单"  width="135">
         <template slot-scope="scope">
           <span>{{ scope.row.orderCode}}</span>
           <span class="subOrder">({{ scope.row.code }})</span>
         </template>
       </el-table-column>
-      <el-table-column  label="商品" class="goodsInfo">
+      <el-table-column  label="商品" class="goodsInfo" width="550">
         <template slot-scope="scope">
           <table class="tableC">
             <tr class="thColor">
@@ -75,12 +76,14 @@
           </table>
         </template>
       </el-table-column>
-      <el-table-column prop="totalNum" label="总数量" width="100"></el-table-column>
-      <el-table-column prop="totalMoney" label="总价" width="100"></el-table-column>
-      <el-table-column prop="createTime" label="交易时间" width="100"></el-table-column>
+      <el-table-column prop="totalNum" label="总数量" width="70"></el-table-column>
+      <el-table-column prop="totalMoney" label="总价" width="70"></el-table-column>
+      <el-table-column prop="createTime" label="交易时间" ></el-table-column>
       <el-table-column label="状态" width="100">
         <template slot-scope="scope">
           <el-button v-if="scope.row.status !== ''" size="mini" :type="statusList[scope.row.status*1].type">{{ statusList[scope.row.status*1].name }}</el-button>
+          <el-button v-else-if="scope.row.status === '9'" size="mini" :type="statusList[scope.row.status-1].type">{{ statusList[scope.row.status*1-1].name }}</el-button>
+          <el-button v-else size="mini" :type="statusList[0].type">{{ statusList[0].name }}</el-button>
 
           <!-- <el-button v-if="scope.row.status ==='0'" type='warning' size="mini">未支付</el-button>
           <el-button v-else-if="scope.row.status ==='1'"  type='primary' size="mini">已支付</el-button>
@@ -94,9 +97,9 @@
       </el-table-column>
       <el-table-column prop="action" label="操作" width="100">
         <template slot-scope="scope">
-          <el-button type='primary' @click="goDetail(scope.$index,scope.row.id)" size="mini">详情</el-button>
-          <el-button type="warning" @click="deliver(scope.$index,scope.row.id)" size="mini">发货</el-button>
-          <el-button type='warning' @click="changeWay(scope.$index,scope.row.id)" size="mini">修改快递</el-button>
+          <el-button type='primary'  @click="goDetail(scope.$index,scope.row.id)" size="mini">详情</el-button>
+          <el-button type="warning" v-if="scope.row.status === '1'" @click="deliver(scope.$index,scope.row.id)" size="mini">发货</el-button>
+          <el-button type='warning' v-if="scope.row.status === '2'" @click="changeWay(scope.$index,scope.row.id)" size="mini">修改快递</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -127,13 +130,13 @@
         <el-form-item   labelWidth="130px"  label="快递单号：" prop="expressNumber">
           <el-input class="inputInfo" size="small" v-model.trim="expressForm.expressNumber" placeholder="快递单号"></el-input>
         </el-form-item>
-        <el-form-item   labelWidth="130px"  label="确认密码：" prop="confirmPwd">
-          <el-input class="inputInfo" size="small" :type="pwdType" v-model.trim="expressForm.confirmPwd" placeholder="请输入登录密码"></el-input>
-          <span class="show-pwd" @click="showPwd">
-          <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
-          <svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>
-        </span>
-        </el-form-item>
+        <!--<el-form-item   labelWidth="130px"  label="确认密码：" prop="confirmPwd">-->
+          <!--<el-input class="inputInfo" size="small" :type="pwdType" v-model.trim="expressForm.confirmPwd" placeholder="请输入登录密码"></el-input>-->
+          <!--<span class="show-pwd" @click="showPwd">-->
+          <!--<svg-icon icon-class="eyeopen" v-if="pwdType===''" />-->
+          <!--<svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>-->
+        <!--</span>-->
+        <!--</el-form-item>-->
       </el-form>
 
       <div slot="footer" class="dialog-footer" >
@@ -144,35 +147,45 @@
     </el-dialog>
     <el-dialog class="file_dialog" title="导入发货信息" top="20%" :visible.sync="deliverDialog" width="60%" center
                :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
-      <el-button type="text" class="demo_btn" @click="downloadDemo">模板下载</el-button>
+      <a class="downTag" :href="baseUrl+ '/center/order/download/deliverTemplate'">模板下载</a>
       <el-form  :model="deliverFile" ref="deliverFile" :rules="fileRule" label-position="right">
         <el-form-item   labelWidth="130px"  label="上传Excel：" prop="sourceFile">
           <el-button type="primary" size="mini" @click="handelFile">选择文件</el-button>
+          <span class="fileName">{{ excelTitle }}</span>
           <input id="openFile" class="hideFile" type="file" accept=".xlsx, .xls"  @change="handkeFileChange"></input>
-          <input  class="hideFile" v-model.trim="deliverFile.sourceFile"/>
+          <!--<input  class="hideFile" v-model.trim="deliverFile.sourceFile"/>-->
         </el-form-item>
-        <el-form-item   labelWidth="130px"  label="确认密码：" prop="confirmPassword">
-          <el-input class="inputInfo" size="small" :type="pwdType" v-model.trim="deliverFile.confirmPassword" placeholder="请输入登录密码"></el-input>
-          <span class="show-pwd" @click="showPwd">
-          <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
-          <svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>
-        </span>
-        </el-form-item>
+        <!--<el-form-item   labelWidth="130px"  label="确认密码：" prop="confirmPassword">-->
+          <!--<el-input class="inputInfo" size="small" :type="pwdType" v-model.trim="deliverFile.confirmPassword" placeholder="请输入登录密码"></el-input>-->
+          <!--<span class="show-pwd" @click="showPwd">-->
+          <!--<svg-icon icon-class="eyeopen" v-if="pwdType===''" />-->
+          <!--<svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>-->
+        <!--</span>-->
+        <!--</el-form-item>-->
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" size="small" @click="importOrder('deliverFile')">确定</el-button>
         <el-button plain size="small" @click="cancelFile('deliverFile')">取消</el-button>
       </span>
     </el-dialog>
+    <el-dialog class="file_dialog" title="提示" top="20%" :visible.sync="wrongDialog" width="60%" center
+               :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+        <p>您导入的文件数据有问题，请下载查看错误信息并修改以后再上传！</p>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" size="small" @click="importWrong">下载</el-button>
+          <a style="display: none" id="wrongFile"  :href="baseUrl+'/center/order/download/errorFile?fileAddress='+wrongPath"></a>
+        <el-button plain size="small" @click="wrongDialog= false ;">取消</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 
 
 </template>
 
 <script>
-  import XLSX from 'xlsx'
   import {  validPassWord } from '@/utils/validate'
-  import { getOrderList,confirmDeliver,importDeliver,deliverDemo } from "@/api/merchant"
+  import { getOrderList,confirmDeliver,importDeliver,deliverDemo,wrongDemo,exportList } from "@/api/merchant"
     export default {
       name: "search",
       data(){
@@ -188,25 +201,25 @@
             callback();
           }
         }
-        const validPassword = ( rule,value,callback) => {
-          if(value === ''){
-            callback(new Error('请输入登录密码'))
-          }else{
-            if (!validPassWord(value)) {
-              callback(new Error('密码为8-16位的数字、字母组合'))
-            }
-            callback();
-          }
-        }
+        // const validPassword = ( rule,value,callback) => {
+        //   if(value === ''){
+        //     callback(new Error('请输入登录密码'))
+        //   }else{
+        //     if (!validPassWord(value)) {
+        //       callback(new Error('密码为8-16位的数字、字母组合'))
+        //     }
+        //     callback();
+        //   }
+        // }
           return{
             transition: {
-              orderId: '',
-              subOrderId: '',
-              code: '',
-              buyAccount: '',
-              startDate: '',
-              endDate: '',
-              status: '',
+              EQ_payOrder: '',
+              EQ_code: '',
+              productCode: '',
+              LIKE_payOrder: '',
+              GT_createTime: '',
+              LT_createTime: '',
+              EQ_status: '',
             },
             statusList:[
               {
@@ -232,30 +245,37 @@
                 type: 'success'
 
               },
-              {
-                name : '申请退货退款',
-                value : '4',
-                type: 'warning'
 
-              },
               {
                 name : '退款中',
-                value : '5',
+                value : '4',
                 type: 'danger'
 
               },
               {
                 name : '已退款',
-                value : '6',
+                value : '5',
                 type: 'info'
 
               },
               {
                 name : '已取消',
-                value : '7',
+                value : '6',
                 type: 'danger'
 
-              }
+              },
+              {
+                name : '退款拒绝',
+                value : '7',
+                type: 'warning'
+
+              },
+              {
+                name : '已删除',
+                value : '9',
+                type: 'info'
+
+              },
             ],
             // thColor : true ,
             // tbColor : true,
@@ -281,12 +301,12 @@
                   required : true ,trigger : 'blur',validator : validOrder
                 }
               ],
-              confirmPwd: [
-                {
-                  required : true ,trigger : 'blur',validator : validPassword
-
-                }
-              ]
+              // confirmPwd: [
+              //   {
+              //     required : true ,trigger : 'blur',validator : validPassword
+              //
+              //   }
+              // ]
             },
             deliverFile:{
               sourceFile: '',
@@ -298,12 +318,12 @@
                   required : true ,trigger : 'change',message: '请上传文件'
                 }
               ],
-              confirmPassword: [
-                {
-                  required : true ,trigger : 'blur',validator : validPassword
-
-                }
-              ]
+              // confirmPassword: [
+              //   {
+              //     required : true ,trigger : 'blur',validator : validPassword
+              //
+              //   }
+              // ]
             },
             deliverList : [],
             changeExpress : '',
@@ -313,7 +333,13 @@
               header: null,
               results: null
             },
-            pwdType: 'password'
+            baseUrl: process.env.BASE_API ,
+            wrongDialog: false ,
+            wrongPath : '',
+            excelTitle: '',
+            merchantId: ''
+
+            // pwdType: 'password'
           }
       },
       mounted(){
@@ -325,14 +351,22 @@
           let formData = new FormData();
           formData.append('currentPage',this.currentPage);
           formData.append('pageSize',this.pageSize);
+          formData.append('EQ_payOrder.code',this.transition.EQ_payOrder);
+          formData.append('EQ_code',this.transition.EQ_code);
+          formData.append('productCode',this.transition.productCode);
+          formData.append('LIKE_payOrder.user.accountName',this.transition.LIKE_payOrder);
+          formData.append('GT_createTime',this.transition.GT_createTime);
+          formData.append('LT_createTime',this.transition.LT_createTime);
+          formData.append('EQ_status',this.transition.EQ_status);
+
           getOrderList(formData).then( res => {
-            console.log('res',res)
             if( res.data.status === '000000000'){
 
               this.deliverList=  res.data.data.tExpressResDtos ;
               this.tableData = res.data.data.pageResultDto.data ;
               this.totalElements = res.data.data.pageResultDto.totalElements;
-              this.totalPages = res.data.data.pageResultDto.totalPages;
+              this.totalPages = res.data.data.pageResultDto.totalPages
+              this.merchantId = res.data.data.merchantId;
             }else{
               this.$message({
                 message: res.data.message ,
@@ -349,12 +383,39 @@
 
         //  查询交易
         search(){
-          // this.transition =
-          // this.tableData =
+          this.getList();
         },
         //导出订单列表
         exportOrder(){
+          document.getElementById('orderFile').click()
 
+          // let formData = new FormData();
+          //
+          // formData.append('EQ_payOrder.code',this.transition.EQ_payOrder);
+          // formData.append('EQ_code',this.transition.EQ_code);
+          // formData.append('productCode',this.transition.productCode);
+          // formData.append('LIKE_payOrder.user.accountName',this.transition.LIKE_payOrder);
+          // formData.append('GT_createTime',this.transition.GT_createTime);
+          // formData.append('LT_createTime',this.transition.LT_createTime);
+          // formData.append('EQ_status',this.transition.EQ_status);
+          // // data.pageSize = this.pageSize ;
+          // // data.currentPage = this.currentPage
+          // exportList(formData).then( res => {
+          //
+          //   if( res.data.status === '000000000'){
+          //
+          //
+          //   }else{
+          //     this.$message({
+          //       message: res.data.message ,
+          //       center : true ,
+          //       type: 'error'
+          //     })
+          //   }
+          // }).catch( err => {
+          //   alert('服务器开小差啦，请稍等~')
+          //
+          // })
         },
         //选择文件
         handelFile(){
@@ -362,93 +423,10 @@
 
         },
         handkeFileChange(e) {
-          console.log(e)
-          const files = e.target.files
-          const itemFile = files[0] // only use files[0]
-          let _this = this;
-          // let inputDOM = this.$refs.inputer;
-          // 通过DOM取文件数据
-          // itemFile = event.currentTarget.files[0];
-          var rABS = false; //是否将文件读取为二进制字符串
-          var f = itemFile;
-          var reader = new FileReader();
-          //if (!FileReader.prototype.readAsBinaryString) {
-          FileReader.prototype.readAsBinaryString = function(f) {
-            var binary = "";
-            var rABS = false; //是否将文件读取为二进制字符串
-            var pt = this;
-            var wb; //读取完成的数据
-            var outdata;
-            var reader = new FileReader();
-            reader.onload = function(e) {
-              var bytes = new Uint8Array(reader.result);
-              var length = bytes.byteLength;
-              for(var i = 0; i < length; i++) {
-                binary += String.fromCharCode(bytes[i]);
-              }
-              // var XLSX = require('xlsx');
-              if(rABS) {
-                wb = XLSX.read(btoa(fixdata(binary)), { //手动转化
-                  type: 'base64'
-                });
-              } else {
-                wb = XLSX.read(binary, {
-                  type: 'binary'
-                });
-              }
-              outdata = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);//outdata就是你想要的东西
-              console.log(_this.deliverFile,outdata)
-              _this.deliverFile.sourceFile = outdata;
-            }
-            reader.readAsArrayBuffer(f);
-          }
-          if(rABS) {
-            reader.readAsArrayBuffer(f);
-          } else {
-            reader.readAsBinaryString(f);
-          }
-          // this.readerData(itemFile)
+          this.deliverFile.sourceFile = e.target.files[0];
+          this.excelTitle = e.target.files[0].name ;
         },
-        // generateDate({ header, results }) {
-        //   this.excelData.header = header
-        //   this.excelData.results = results
-        //   this.deliverFile.sourceFile = results ;
-        // },
-        // readerData(itemFile) {
-        //   const reader = new FileReader()
-        //   reader.onload = e => {
-        //     const data = e.target.result
-        //     const fixedData = this.fixdata(data)
-        //     const workbook = XLSX.read(btoa(fixedData), { type: 'base64' })
-        //     const firstSheetName = workbook.SheetNames[0]
-        //     const worksheet = workbook.Sheets[firstSheetName]
-        //     const header = this.get_header_row(worksheet)
-        //     const results = XLSX.utils.sheet_to_json(worksheet)
-        //     this.generateDate({ header, results })
-        //   }
-        //   reader.readAsArrayBuffer(itemFile)
-        // },
-        // fixdata(data) {
-        //   let o = ''
-        //   let l = 0
-        //   const w = 10240
-        //   for (; l < data.byteLength / w; ++l) o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w, l * w + w)))
-        //   o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w)))
-        //   return o
-        // },
-        // get_header_row(sheet) {
-        //   const headers = []
-        //   const range = XLSX.utils.decode_range(sheet['!ref'])
-        //   let C
-        //   const R = range.s.r /* start in the first row */
-        //   for (C = range.s.c; C <= range.e.c; ++C) { /* walk every column in the range */
-        //     var cell = sheet[XLSX.utils.encode_cell({ c: C, r: R })] /* find the cell in the first row */
-        //     var hdr = 'UNKNOWN ' + C // <-- replace with your desired default
-        //     if (cell && cell.t) hdr = XLSX.utils.format_cell(cell)
-        //     headers.push(hdr)
-        //   }
-        //   return headers
-        // },
+
 
         //导入发货列表
         importOrder(formName){
@@ -457,23 +435,31 @@
               let formData = new FormData();
 
               formData.append('sourceFile',this.deliverFile.sourceFile);
-              formData.append('confirmPassword',this.deliverFile.confirmPassword);
+              // formData.append('confirmPassword','123456');
+              console.log(this.deliverFile)
 
-              importDeliver().then( res => {
-                if( res.data.status === '000000000'){
+              importDeliver(formData).then( res => {
+
+                if( res.data.status === '015005002' ){
                   this.$message({
                     message: '导入发货列表成功' ,
                     center : true ,
                     type: 'success'
                   })
                   this.deliverDialog = false ;
-
+                  this.getList();
                 }else{
-                  this.$message({
-                    message: res.data.message ,
-                    center : true ,
-                    type: 'error'
-                  })
+                  if(res.data.status == '015005003'){
+                    this.$message({
+                      message: res.data.message ,
+                      center : true ,
+                      type: 'error'
+                    })
+                  }else if( res.data.status === 'error'){
+                    this.wrongDialog = true ;
+                    this.wrongPath  = res.data.message ;
+                  }
+
                 }
               }).catch( err => {
                 alert('服务器开小差啦，请稍等~')
@@ -489,33 +475,38 @@
           this.$refs[formName].resetFields();
           this.deliverDialog = false ;
         },
-        //模板下载
-        downloadDemo(){
-          deliverDemo().then( res => {
-            if( res.data.status === '000000000'){
-              location.href = res.data.data ;
-            }else{
-              this.$message({
-                message: res.data.message ,
-                center : true ,
-                type: 'error'
-              })
-            }
-          }).catch( err => {
-            alert('服务器开小差啦，请稍等~')
-
-          })
+        //下载错误列表
+        importWrong(){
+          document.getElementById('wrongFile').click()
+          // let formData = new FormData();
+          // formData.append('fileAddress',this.wrongPath)
+          // console.log(this.wrongPath)
+          // wrongDemo(this.wrongPath).then( res => {
+          //         if( res.data.status === '000000000'){
+          //           // window.location.href = res.data.data
+          //         }else{
+          //           this.$message({
+          //             message: res.data.message ,
+          //             center : true ,
+          //             type: 'error'
+          //           })
+          //         }
+          //       }).catch( err => {
+          //         alert('服务器开小差啦，请稍等~')
+          //
+          //       })
         },
+
         //重置搜索条件
         reset(){
           this.transition = {
-            orderId: '',
-            subOrderId: '',
-            code: '',
-            buyAccount: '',
-            startDate: '',
-            endDate: '',
-            status: '',
+            EQ_payOrder: '',
+            EQ_code: '',
+            productCode: '',
+            LIKE_payOrder: '',
+            GT_createTime: '',
+            LT_createTime: '',
+            EQ_status: '',
           };
           this.currentPage = 1 ;
           this.pageSize = 10 ;
@@ -569,13 +560,13 @@
             }
           })
         },
-        showPwd() {
-          if (this.pwdType === 'password') {
-            this.pwdType = ''
-          } else {
-            this.pwdType = 'password'
-          }
-        },
+        // showPwd() {
+        //   if (this.pwdType === 'password') {
+        //     this.pwdType = ''
+        //   } else {
+        //     this.pwdType = 'password'
+        //   }
+        // },
       //关闭弹窗
         close(formName){
           this.dialogVisible = false ;
@@ -602,7 +593,7 @@
 
   .search{
     padding-bottom : 0!important;
-    height : 160px!important;
+    height : 170px!important;
     .inputWrap{
       width : 100% ;
       height: 32px;
@@ -610,7 +601,6 @@
       .el-input{
         margin-left : 0!important;
         margin-bottom : 0!important;
-
         width : 160px!important;
       }
     }
@@ -620,9 +610,14 @@
     .block{
       width : auto!important;
       .demonstration{
-        width : 85px!important ;
+        width : 165px!important ;
         line-height : 32px!important;
         margin : 0 0 0 0.2rem!important ;
+
+      }
+      .el-date-editor{
+        margin-right : 0.25rem!important ;
+
       }
       .el-input{
         width : 160px!important;
@@ -649,8 +644,16 @@
     }
   }
   .file_dialog{
-    .demo_btn{
-      margin-left: 130px;
+    .downTag{
+      color : rgb(64, 158, 255);
+      font-size: 0.14rem ;
+      margin-left : 130px;
+    }
+    .fileName{
+      width: 100% ;
+      display: inline-block;
+      font-size : 0.14rem ;
+      color: #666 ;
     }
     .el-input{
       width: 50% ;
@@ -668,5 +671,6 @@
     right : 51% ;
     top: 0;
   }
+
 
 </style>
