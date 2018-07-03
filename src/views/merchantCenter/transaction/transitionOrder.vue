@@ -45,11 +45,14 @@
               <td>{{item.productItem.brandCnName}}</td>
               <td>
                 <span v-if="item.productItem.categoryMap != ''">
-                      <span v-if="item.productItem.cateGoryMap.categoryName1">{{item.productItem.cateGoryMap.categoryName1}}</span>/
-                      <span v-if="item.productItem.cateGoryMap.categoryName2">{{item.productItem.cateGoryMap.categoryName2}}</span>/
-                      <span v-if="item.productItem.cateGoryMap.categoryName3">{{item.productItem.cateGoryMap.categoryName3}}</span>/
-                      <span v-if="item.productItem.cateGoryMap.categoryName4">{{item.productItem.cateGoryMap.categoryName4}}</span>
-                    </span>
+                  <!-- <span v-for="(item1,index) in item.productItem.categoryMap " :key="index">
+                    <span>{{item.categoryName1}}</span>
+                  </span> -->
+                  <span v-if="item.productItem.cateGoryMap.categoryName1">{{item.productItem.cateGoryMap.categoryName1}}</span>/
+                  <span v-if="item.productItem.cateGoryMap.categoryName2">{{item.productItem.cateGoryMap.categoryName2}}</span>/
+                  <span v-if="item.productItem.cateGoryMap.categoryName3">{{item.productItem.cateGoryMap.categoryName3}}</span>/
+                  <span v-if="item.productItem.cateGoryMap.categoryName4">{{item.productItem.cateGoryMap.categoryName4}}</span>
+                </span>
               </td>
               <td><span>{{item.productItem.size}}</span><span class="subOrder">{{item.productItem.color}}</span></td>
               <td>{{item.quantity}}</td>
@@ -65,7 +68,7 @@
             <tr class="thColor">
               <th>订单金额</th><th>下单时间</th>
             </tr>
-            <tr class="tbColor"><td>{{form.deliverOrder.payAmount}}</td><td>{{form.deliverOrder.createTime}}</td></tr>
+            <tr class="tbColor"><td>{{form.price}}</td><td>{{form.deliverOrder.createTime}}</td></tr>
           </table>
         </el-form-item>
         <el-form-item>
@@ -82,11 +85,43 @@
     export default {
       components: {
         ElFormItem,
-        ElForm},
+        ElForm
+        },
       name: "transitionOrder",
         data() {
             return {
               form : {
+                city:'',
+                deliverOrder:{
+                  orderCode:'',
+                  code:'',
+                  buyAccountName:'',
+                  buyRealName:'',
+                  status:'',
+                  createTime:'',
+                  payType:'',
+                  payTime:'',
+                  orderProducts:[    
+                    {
+                      productItem:{
+                        code:'',
+                        productName:'',
+                        brandCnName:'',
+                        cateGoryMap:{},
+                        size:'',
+                        color:'',
+                        status:''
+                      },
+                      quantity:'',
+                      price:'',
+                    }
+                  ],
+                  createTime:''
+                },
+
+                province:'',
+                region:'',
+                street:''
               },
               statusList:[
                 {
