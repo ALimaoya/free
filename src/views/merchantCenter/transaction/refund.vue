@@ -42,7 +42,7 @@
         <template slot-scope="scope">
           <!-- <span>{{ scope.row.categoryMap.categoryName1 }}/{{ scope.row.categoryMap.categoryName2 }}/{{ scope.row.categoryMap.categoryName3 }}</span> -->
           <span v-if="scope.row.categoryMap != undefined">
-            <span v-if="scope.row.categoryMap.categoryName1">{{scope.row.categoryMap.categoryName1}}</span>/
+          <span v-if="scope.row.categoryMap.categoryName1">{{scope.row.categoryMap.categoryName1}}</span>/
           <span v-if="scope.row.categoryMap.categoryName2">{{scope.row.categoryMap.categoryName2}}</span>/
           <span v-if="scope.row.categoryMap.categoryName3">{{scope.row.categoryMap.categoryName3}}</span>/
           <span v-if="scope.row.categoryMap.categoryName4">{{scope.row.categoryMap.categoryName4}}</span>
@@ -66,8 +66,8 @@
       <el-table-column prop="action" label="操作" width="100">
         <template slot-scope="scope">
           <el-button type='primary' @click="goDetail(scope.$index,scope.row.id)" size="mini">详情</el-button>
-          <!-- <el-button v-if="scope.row.status ==='0'" type='warning' @click="handleCheck(scope.$index,scope.row)" size="mini">审核</el-button> -->
-          <el-button type='warning' @click="handleCheck(scope.$index,scope.row)" size="mini">审核</el-button>
+          <el-button v-if="scope.row.status ==='0'" type='warning' @click="handleCheck(scope.$index,scope.row)" size="mini">审核</el-button>
+          <!-- <el-button type='warning' @click="handleCheck(scope.$index,scope.row)" size="mini">审核</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -158,19 +158,19 @@
             },
             {
               name : '退款中',
-              value : '1'
+              value : '0'
             },
             {
               name : '已退款',
+              value : '1'
+            },
+            {
+              name : '已取消',
               value : '2'
             },
             {
               name : '已拒绝',
               value : '3'
-            },
-            {
-              name : '已取消',
-              value : '4'
             },
           ],
           tableData : [],
@@ -226,6 +226,11 @@
           let formData = new FormData();
           formData.append('currentPage', this.currentPage);
           formData.append('pageSize', this.pageSize);
+          formData.append('LIKE_code', this.refund.orderId);
+          formData.append('EQ_ybDeliveryProduct.deliveryOrder.code',this.refund.subOrderId);
+          formData.append('EQ_status',this.refund.status)
+          formData.append('GT_createTime',this.refund.startDate)
+          formData.append('LT_createTime',this.refund.endDate)
           refusedList(formData).then( res => {
             console.log('data',res)
             if(res.data.status === "000000000"){
@@ -245,7 +250,7 @@
 
         },
         search(){
-
+            this.getList();
         },
         goDetail(index,id){
           this.$router.push('/merchantCenter/transaction/refundOrder/'+ id)

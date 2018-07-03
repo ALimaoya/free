@@ -123,8 +123,8 @@ export function refusedAffirm(data){
 export function historyList(data){
   return request({
     url : '/center/settlement/history/query',
-    method : 'get'
-
+    method : 'post',
+    data
   })
 }
 //当前结算列表
