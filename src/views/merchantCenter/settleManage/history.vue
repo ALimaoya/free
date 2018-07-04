@@ -108,7 +108,7 @@
           formData.append('currentPage', this.currentPage);
           formData.append('pageSize', this.pageSize);
           historyList(formData).then( res => {
-            // console.log('data',res)
+            console.log('data',res)
             if(res.data.message === '000000000'){
                 this.tableData = res.data.data ;
 

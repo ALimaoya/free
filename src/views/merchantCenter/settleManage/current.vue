@@ -22,10 +22,17 @@
     </div>
     <h3 class="p_title">未结算列表</h3>
     <el-table :data="tableData"  border fit>
-        <el-table-column prop="type" label="订单类型"></el-table-column>
-        <el-table-column prop="orderId" label="订单号/退款单号" ></el-table-column>
-        <el-table-column prop="subOrderId" label="子订单" ></el-table-column>
-        <el-table-column prop="goods" label="商品" show-overflow-tooltip>
+        <el-table-column label="订单类型" width="150">
+          <template slot-scope="scope">
+            <span v-if="scope.row.orderType != ''">
+              <span v-if="scope.row.orderType == '1'">发货单</span>
+              <span v-if="scope.row.orderType == '2'">退货单</span>
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column  prop="orderCode" label="订单号/退款单号" width="100"></el-table-column>
+        <el-table-column prop="payOrderCode" label="子订单" width="180"></el-table-column>
+        <el-table-column prop="goods" label="商品" >
           <template slot-scope="scope">
             <!--<el-table :data="scope.row.size"  border fit :header-row-class-name="thColor" :row-style="tbColor">-->
             <!--<el-table-column prop="size" label="尺码" ></el-table-column>-->
@@ -34,26 +41,42 @@
             <!--</el-table>-->
             <table class="tableC">
               <tr class="thColor"><th>商品编号</th><th>商品名称</th><th>品牌</th><th>分类</th><th>规格</th><th>价格</th><th>数量</th></tr>
-              <tr class="tbColor"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+              <tr class="tbColor" v-for="(item,index) in scope.row.ybProductResDtos" :key="index">
+                <td>{{item.code}}</td>
+                <td>{{item.productName}}</td>
+                <td>{{item.brandCnName}}</td>
+                <td>
+                  <span v-if="item.cateGoryMap != ''">
+                    <span v-if="item.cateGoryMap.categoryName1">{{item.cateGoryMap.categoryName1}}</span>/
+                    <span v-if="item.cateGoryMap.categoryName2">{{item.cateGoryMap.categoryName2}}</span>/
+                    <span v-if="item.cateGoryMap.categoryName3">{{item.cateGoryMap.categoryName3}}</span>/
+                    <span v-if="item.cateGoryMap.categoryName4">{{item.cateGoryMap.categoryName4}}</span>
+                  </span>
+                </td>
+                <td><span>{{item.productItems[0].size}}</span><span class="subOrder">{{item.productItems[0].color}}</span></td>
+                <td>{{item.price}}</td>
+                <td>{{item.quantity}}</td>
+              </tr>
             </table>
           </template>
         </el-table-column>
-        <el-table-column prop="money" label="结算金额" ></el-table-column>
-        <el-table-column prop="status" label="状态" >
+        <el-table-column prop="amount" label="结算金额"  width="100"></el-table-column>
+        <el-table-column label="状态"  width="100">
           <template slot-scope="scope">
-            <!--<el-button size="mini" v-if="scope.row.status === '0'" :type="danger">未支付</el-button>-->
-            <!--<el-button size="mini" v-else-if="scope.row.status === '1'" type="success">已支付</el-button>-->
-            <!--<el-button size="mini" v-else-if="scope.row.status === '2'" type="primary">已发货</el-button>-->
-            <!--<el-button size="mini" v-else-if="scope.row.status === '3'" type="success">确认收货</el-button>-->
-            <!--<el-button size="mini" v-else-if="scope.row.status === '4'" type="primary">申请退货退款</el-button>-->
-            <!--<el-button size="mini" v-else-if="scope.row.status === '5'" type="danger">退款中</el-button>-->
-            <!--<el-button size="mini" v-else-if="scope.row.status === '6'" type="primary">已退款</el-button>-->
-            <!--<el-button size="mini" v-else-if="scope.row.status === '7'" type="danger">已取消</el-button>-->
-            <el-button v-if="scope.row.status !== ''" size="mini" :type="statusList[scope.row.status].type">{{ statusList[scope.row.status].name }}</el-button>
+            <!-- <el-button size="mini" v-if="scope.row.status === '1'" type="success">已支付</el-button>
+            <el-button size="mini" v-else-if="scope.row.status === '2'" type="primary">已发货</el-button>
+            <el-button size="mini" v-else-if="scope.row.status === '3'" type="success">确认收货</el-button>
+            <el-button size="mini" v-else-if="scope.row.status === '4'" type="danger">退款中</el-button>
+            <el-button size="mini" v-else-if="scope.row.status === '5'" type="primary">已退款</el-button>
+            <el-button size="mini" v-else-if="scope.row.status === '6'" type="danger">已取消</el-button>
+            <el-button size="mini" v-else-if="scope.row.status === '7'" type="warning">退款已拒绝</el-button>
+            <el-button size="mini" v-else-if="scope.row.status === '9'" type="warning">已删除</el-button>
+            <el-button size="mini" v-else :type="danger">未支付</el-button> -->
+            <el-button v-if="scope.row.status !== ''" size="mini" :type="statusList[scope.row.status-0].type" class="paddingButton">{{ statusList[scope.row.status-0].name }}</el-button>
           </template>
         </el-table-column>
     </el-table>
-    <div class="block2">
+    <!-- <div class="block2">
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -64,9 +87,9 @@
         :total="totalElements">
       </el-pagination>
       <span class="totalItems">共{{totalPages }}页，{{ totalElements }}条记录</span>
-    </div>
+    </div> -->
     <el-dialog title="结算申请" :visible.sync="dialogVisible" width="50%" center>
-      <el-form :model="form" ref="form" :rules="formRule" label-position="right" class="expForm">
+      <el-form :model="form" ref="form" label-position="right" class="expForm">
         <el-form-item   labelWidth="130px"  label="结算金额：" prop="money">
           <el-input class="inputInfo" size="small" v-model.trim="form.money" disabled="disabled"></el-input>
         </el-form-item>
@@ -79,9 +102,9 @@
         <el-form-item   labelWidth="130px"  label="结算账号："   prop="ybMerchantSettlementAccount">
           <div >{{ form.ybMerchantSettlementAccount }}</div>
         </el-form-item>
-        <el-form-item   labelWidth="130px"  label="确认密码：" prop="checkPsw">
+        <!-- <el-form-item   labelWidth="130px"  label="确认密码：" prop="checkPsw">
           <el-input class="inputInfo" size="small" v-model.trim="form.checkPsw" placeholder="请输入登录密码"></el-input>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer" >
         <el-button type="primary" size="small" @click="confirm('form')">确认</el-button>
@@ -93,6 +116,7 @@
 </template>
 
 <script>
+    import { getMobile } from '@/utils/auth'
     import ElForm from "element-ui/packages/form/src/form";
     import {  validPassWord } from '@/utils/validate'
     import { currentSettlement , settlementApple} from "@/api/merchant"
@@ -113,8 +137,32 @@
         };
 
         return{
-
-            tableData : [],
+            Mobile : getMobile() ,
+            tableData : [
+              {
+                orderType:'',
+                orderCode:'',
+                payOrderCode:'',
+                ybProductResDtos:[
+                  {
+                    code:'',
+                    productName:'',
+                    brandCnName:'',
+                    cateGoryMap:'',
+                    productItems:[
+                      {
+                        size:'',
+                        color:''
+                      }
+                    ],
+                    price:'',
+                    quantity:''
+                  }
+                ],
+                amount:'',
+                status:''
+              }
+            ],
             totalPages : '',
             totalElements : 0,
             currentPage : 1,
@@ -126,14 +174,14 @@
               ybMerchantSettlementAccount: '',
               checkPsw: '',
             },
-            formRule: {
-              checkPsw: [
-                {
-                  required : true ,trigger : 'blur',validator : validPassword
+            // formRule: {
+            //   checkPsw: [
+            //     {
+            //       required : true ,trigger : 'blur',validator : validPassword
 
-                }
-              ]
-            },
+            //     }
+            //   ]
+            // },
             statusList: [
               {
                 value: '0',
@@ -157,24 +205,29 @@
               },
               {
                 value: '4',
-                name: '申请退货退款',
-                type: 'primary'
-              },
-              {
-                value: '5',
                 name: '退款中',
                 type: 'warning'
               },
               {
-                value: '6',
+                value: '5',
                 name: '已退款',
                 type: 'danger'
               },
               {
-                value: '7',
+                value: '6',
                 name: '已取消',
                 type: 'info'
-              }
+              },
+              {
+                value: '7',
+                name: '退款已拒绝',
+                type: 'primary'
+              },
+              {
+                value: '9',
+                name: '已删除',
+                type: 'primary'
+              },
 
             ],
             serviceFee: '',
@@ -183,15 +236,19 @@
       },
       mounted(){
         this.getList();
-
+        console.log(this.Mobile)
       },
       methods : {
         getList(){
           currentSettlement().then(res => {
+            console.log('data',res)
             if(res.data.status === '000000000'){
               this.tableData = res.data.data.deliveryOrders ;
               this.serviceFee = res.data.data.serviceAmount ;
               this.settlementMoney = res.data.data.settlementAmount ;
+              this.form.serviceFee = res.data.data.serviceAmount ;
+              this.form.money = res.data.data.settlementAmount ;
+              this.form.ybMerchantSettlementAccount = this.Mobile ;
             }else{
               this.$message({
                 message : res.data.message,
@@ -199,6 +256,8 @@
                 type: 'error'
               })
             }
+          }).catch( err =>{
+             alert('服务器开小差啦，请稍等~')
           })
         },
 
@@ -215,9 +274,15 @@
         },
         //  结算相关操作
         confirm(formName){
-          this.$refs[formName].validate((valid) => {
-            if(valid){
-              settlementApple(id,data).then(res => {
+              if( this.form.money == '0'){
+                this.$message({
+                    message : '结算金额为0,无需进行结算申请',
+                    center: true ,
+                    type: 'error'
+                  })
+              }else{
+                settlementApple().then(res => {
+                console.log('data',res)
                 if(res.data.status === '000000000'){
                   this.$message({
                     message : '您的申请已提交，请稍后确认结算进度',
@@ -232,13 +297,14 @@
                     center: true ,
                     type: 'error'
                   })
+                  this.dialogVisible = false ;
                 }
+              }).catch( err =>{
+                   alert('服务器开小差啦，请稍等~')
               });
+              }
+              
 
-            }else{
-
-            }
-          })
         },
         //关闭弹窗
         close(formName){
@@ -324,5 +390,8 @@
   .el-form-item{
     width : 80% ;
     margin : 0.2rem auto ;
+  }
+  .paddingButton{
+    padding: 0.08rem 0.12rem !important;
   }
 </style>
