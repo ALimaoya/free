@@ -19,7 +19,7 @@
             <td>{{form.returnAmount}}</td>
             <td>{{form.returnTime}}</td>
             <td>
-              <el-button size="mini" disabled="disabled">{{ statusList[form.status-0].name1 }}</el-button>
+              <el-button size="mini"  :type="statusList[form.status-0].type">{{ statusList[form.status-0].name }}</el-button>
             </td>
           </tr>
         </table>
@@ -100,16 +100,20 @@ export default {
       },
       statusList: [
         {
-          name1: "退款中"
+          name: "退款中",
+          type: 'primary'
         },
         {
-          name1: "已退款"
+          name: "已退款",
+          type: 'success'
         },
         {
-          name1: "已取消"
+          name: "已取消",
+          type: 'info'
         },
         {
-          name1: "退款已拒绝"
+          name: "退款已拒绝",
+          type: 'danger'
         }
       ],
       productStatus:[

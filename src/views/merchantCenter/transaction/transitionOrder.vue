@@ -101,7 +101,7 @@
                   createTime:'',
                   payType:'',
                   payTime:'',
-                  orderProducts:[    
+                  orderProducts:[
                     {
                       productItem:{
                         code:'',
@@ -116,7 +116,6 @@
                       price:'',
                     }
                   ],
-                  createTime:''
                 },
 
                 province:'',

@@ -2,8 +2,8 @@
   <div class="goodsList activityTable">
     <h1>商品清单</h1>
     <div class="search">
-      <el-input size="small" :maxlength="20" v-model.trim="account.EQ_code" placeholder="商品编号"></el-input>
-      <el-input size="small" :maxlength="20" v-model.trim="account.LIKE_productName" placeholder="商品名称"></el-input>
+      <el-input size="small" :maxlength="40" v-model.trim="account.EQ_code" placeholder="商品编号"></el-input>
+      <el-input size="small" :maxlength="100" v-model.trim="account.LIKE_productName" placeholder="商品名称"></el-input>
       <el-select  size="small" clearable v-model="firstType" @change="getSecondList(firstType)" filterable placeholder="请选择一级分类">
         <el-option
           v-for="item in firstTypeList"
@@ -315,7 +315,7 @@
         },
         //修改商品
         editor(index,order){
-          this.$router.push({ path : '/merchantCenter/goods/changeGoods',query: {'order':order}})
+          this.$router.push('/merchantCenter/goods/changeGoods?order='+order)
 
         },
         //新增商品

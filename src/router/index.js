@@ -407,13 +407,13 @@ export const constantRouterMap = [
             meta: { title: '我要开店', icon: 'OpenShop' },
 
           },
-          {
-            path: 'settlement',
-            name: 'Settlement',
-            component: () => import('@/views/merchantCenter/userCenter/settlement'),
-            meta: { title: '结算账户', icon: 'settlement' },
-
-          },
+          // {
+          //   path: 'settlement',
+          //   name: 'Settlement',
+          //   component: () => import('@/views/merchantCenter/userCenter/settlement'),
+          //   meta: { title: '结算账户', icon: 'settlement' },
+          //
+          // },
           {
             path: 'postSetting',
             name: 'PostSetting',

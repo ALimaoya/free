@@ -7,10 +7,10 @@
         <div class="inputInfo">丫贝自营</div>
       </el-form-item>
       <el-form-item   labelWidth="130px"  label="商品名称" prop="productName">
-        <el-input class="inputInfo" :disabled="readOnly" size="small" v-model.trim="form.productName" placeholder="商品名称"></el-input>
+        <el-input class="inputInfo" :maxlength="100" :disabled="readOnly" size="small" v-model.trim="form.productName" placeholder="商品名称"></el-input>
       </el-form-item>
       <el-form-item  labelWidth="130px" label="商品品牌" prop="brandId">
-        <el-input class="inputInfo" :disabled="readOnly" size="small" v-model.trim="brandCnName" disabled='disabled'></el-input>
+        <el-input class="inputInfo"  :disabled="readOnly" size="small" v-model.trim="brandCnName" disabled='disabled'></el-input>
       </el-form-item>
       <el-form-item  labelWidth="130px" label="一级分类" prop="firstType">
         <el-select  size="small" :disabled="readOnly" clearable v-model="form.firstType" @change="getSecondList(form.firstType)" filterable placeholder="请选择一级分类">
@@ -56,7 +56,7 @@
             </el-form-item>
             <el-form-item class="subItem" :prop="'ybProductItemReqDto.'+ index + '.stock'" :rules="{ message : '请输入商品库存', trigger : 'blur' , required : true }">
               <el-input  class="key" placeholder="库存量" type="number"
-                         :maxlength="40"  v-model.number="item.stock" size="small" ></el-input>
+                         :maxlength="11"  v-model.number="item.stock" size="small" ></el-input>
               <el-button slot type="primary" size="mini" @click="addSize">添加</el-button>
               <el-button  slot plain size="mini" @click="deleteSize(item)">删除</el-button>
             </el-form-item>
@@ -65,10 +65,10 @@
       </div>
 
       <el-form-item   labelWidth="130px"  label="价格" prop="price">
-        <el-input class="inputInfo" :maxLength="20" size="small" v-model.trim="form.price" placeholder="价格"></el-input>
+        <el-input class="inputInfo" :maxLength="15" size="small" v-model.trim="form.price" placeholder="价格"></el-input>
       </el-form-item>
       <el-form-item   labelWidth="130px"  label="运费" prop="carriage">
-        <el-input class="inputInfo" :maxLength="20" size="small" v-model.trim="form.carriage" placeholder="运费"></el-input>
+        <el-input class="inputInfo" :maxLength="2" size="small" v-model.trim="form.carriage" placeholder="运费"></el-input>
       </el-form-item>
       <el-form-item labelWidth="130px" label="图片" prop="imagesList">
         <ul class="imgList">
@@ -83,7 +83,9 @@
         </ul>
       </el-form-item>
       <el-form-item   labelWidth="130px"  label="描述" prop="describes">
-        <editor :id="tinymceId" v-model="form.describes" :init="init"></editor>
+        <wangeditor :catchData="catchData" :getData="form.describes"></wangeditor>
+
+        <!--<editor :id="tinymceId" v-model="form.describes" :init="init"></editor>-->
       </el-form-item>
       <el-form-item>
         <el-button class="inputInfo button" type="primary" size="small" @click="changeForm('form')">修改</el-button>
@@ -106,26 +108,13 @@
   import { uploadImage  } from "@/api/activity"
   import { newGoogds,getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo} from "@/api/merchant"
   import { getToken,getMobile } from '@/utils/auth'
-  import tinymce from 'tinymce/tinymce'
-  import 'tinymce/themes/modern/theme'
-  import 'tinymce/plugins/image'
-  import 'tinymce/plugins/link'
-  import 'tinymce/plugins/media'
-  import 'tinymce/plugins/table'
-  import 'tinymce/plugins/lists'
-  import 'tinymce/plugins/contextmenu'
-  import 'tinymce/plugins/wordcount'
-  import 'tinymce/plugins/colorpicker'
-  import 'tinymce/plugins/textcolor'
-  import Editor from '@tinymce/tinymce-vue'
+  import wangeditor from '@/components/wangeditor'
+
   export default {
     components: {
-      // ElFormItem,
-      // ElButton,
-      // ElTable,
-      // SvgIcon,
-      // ElFormItem,
-      Editor},
+
+      wangeditor
+    },
     name: "change-goods",
 
     data() {
@@ -241,83 +230,6 @@
         goodsImgWarn : false ,
         imageDomain : process.env.IMAGE_DOMAIN ,
         imgIndex : '',
-        hasInit:false,
-        hasChange:false,
-        tinymceId: this.id || 'vue-tinymce'+ Date.parse(new Date()),
-        init: {
-          language_url : '/static/tinymce/zh_CN.js',
-          language: 'zh_CN',
-          skin_url: '/static/tinymce/skins/lightgray',
-          plugins: 'link lists image media table colorpicker textcolor wordcount contextmenu',
-          toolbar: 'bold italic underline strikethrough | fontsizeselect | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent blockquote | undo redo | link unlink image media | removeformat',
-          automatic_uploads: true, //开启点击图片上传时，自动进行远程上传操作
-          // image_advtab: true, //开启图片上传的高级选项功能
-          height: 300,
-          body_class: 'panel-body ',
-          object_resizing: false,
-          branding: false,
-          media_live_embeds: true,
-          default_link_target: '_blank',
-          link_title: false,
-          menubar: "insert",
-          paste_data_images: true, // 粘贴的同时能把内容里的图片自动上传，非常强力的功能
-          paste_convert_word_fake_lists: false, // 插入word文档需要该属性
-          paste_webkit_styles: 'all',
-          // image_advtab: true, //开启图片上传的高级选项功能
-          imagetools_toolbar: 'watermark',
-          images_upload_base_path: process.env.BASE_API, // 图片上传的基本路径
-          images_upload_url: process.env.BASE_API + '/file/upload', // 图片上传的具体地址，该选项一定需要设置，才会出现图片上传选项
-          images_upload_handler: function (blobInfo, success, failure) {
-            let file = blobInfo.blob();
-            if (blobInfo.blob().size > self.maxSize) {
-              failure('文件体积过大')
-            }
-
-            if (file.type !== undefined || file.type !== '') {
-
-              let formData = new FormData();
-              let token = getToken();
-              formData.set('upload_file', file);
-              uploadImage(formData, token).then(res => {
-
-                if (res.data.status === '000000000') {
-
-                  success(res.data.data.filePath);
-
-
-                } else {
-                  this.$message({
-                    message: res.data.message,
-                    center: true,
-                    type: 'error'
-                  });
-
-                }
-              }).catch(err => {
-                // console.log(err) ;
-
-                failure('图片上传失败')
-
-              })
-            } else {
-              failure('图片格式错误')
-            }
-            //
-            //
-          },
-          init_instance_callback: editor => {
-            if (this.value) {
-              console.log(this.value);
-              editor.setContent(this.value)
-            }
-            this.hasInit = true;
-            editor.on('NodeChange Change input KeyUp', () => {
-              //change触发watch去setContent，光标变化了，
-              this.hasChange = true;
-              this.$emit('input', editor.getContent({format: 'raw'}))
-            })
-          }
-        },
         dialogVisible: false,
         // currentRow : null,
         hasShop : false ,
@@ -331,7 +243,7 @@
     },
     mounted(){
       this.getFirstList();
-      window.tinymce.init({});
+      // window.tinymce.init({});
       this.getShop();
       this.isNewGoods();
 
@@ -402,23 +314,19 @@
                     }
                   }
                 }
-               if(this.form.describes.length !== 0){
-                 this.form.describes = this.form.describes.replace(/&amp;/g,"&");
-                 this.form.describes = this.form.describes.replace(/&lt;/g,"<");
-                 this.form.describes = this.form.describes.replace(/&gt;/g,">");
-                 this.form.describes = this.form.describes.replace(/&nbsp;/g," ");
-                 this.form.describes = this.form.describes.replace(/&#39;/g,"\'");
-                 this.form.describes = this.form.describes.replace(/&quot;/g,"\"");
-                 this.form.describes = this.form.describes.replace(/\"/g,'"');
-                 this.form.describes = this.form.describes.replace(/\\/g," \ ");
-                 this.form.describes = this.form.describes.replace(/\\p\\n/g,"<br>");
-               }
-                // this.form.describes = this.form.describes.replace(reg,'\w+');
+               // if(this.form.describes.length !== 0){
+               //   this.form.describes = this.form.describes.replace(/&amp;/g,"&");
+               //   this.form.describes = this.form.describes.replace(/&lt;/g,"<");
+               //   this.form.describes = this.form.describes.replace(/&gt;/g,">");
+               //   this.form.describes = this.form.describes.replace(/&nbsp;/g," ");
+               //   this.form.describes = this.form.describes.replace(/&#39;/g,"\'");
+               //   this.form.describes = this.form.describes.replace(/&quot;/g,"\"");
+               //   this.form.describes = this.form.describes.replace(/\"/g,'"');
+               //   this.form.describes = this.form.describes.replace(/\\/g," \ ");
+               //   this.form.describes = this.form.describes.replace(/\\p\\n/g,"<br>");
+               // }
 
                 this.brandCnName = res.data.data.brandCnName ;
-                // this.form.firstType =res.data.data.cateGoryMap.categoryName1;
-                // this.form.secondType =res.data.data.cateGoryMap.categoryName2;
-                // this.form.class3Id =res.data.data.cateGoryMap.categoryName3;
                 this.thirdName = res.data.data.cateGoryMap.categoryId3;
                 this.readOnly = true ;
                 // this.title = '修改商品'
@@ -604,6 +512,10 @@
         }
       },
 
+      catchData(value){
+        console.log(value);
+        value =this.form.describes      //在这里接受子组件传过来的参数，赋值给data里的参数
+      },
 
 
       //  修改商品信息
@@ -616,20 +528,32 @@
           if(valid&& !this.goodsImgWarn){
             // delete this.form.firstType ;
             // delete this.form.secondType ;
-            console.log(this.form);
-            let formData = new FormData();
-            formData.append('id',this.form.id);
-            formData.append('productName',this.form.productName);
-            formData.append('brandId',this.form.brandId);
-            formData.append('class3Id',this.thirdName);
-            formData.append('price',this.form.price);
-            formData.append('carriage',this.form.carriage);
-            formData.append('describes',this.form.describes);
-            formData.append('specifications',this.form.specifications);
-            formData.append('images',this.form.images);
+            // console.log(this.form);
             // this.form.class3Id = this.thirdName;
-
-            changeGoods(formData,this.user).then( res => {
+            // let formData = new FormData();
+            // formData.append('id',this.form.id);
+            // formData.append('productName',this.form.productName);
+            // formData.append('brandId',this.form.brandId);
+            // formData.append('class3Id',this.thirdName);
+            // formData.append('price',this.form.price);
+            // formData.append('carriage',this.form.carriage);
+            // formData.append('describes',this.form.describes);
+            // formData.append('ybProductItemReqDto',this.form.ybProductItemReqDto);
+            // formData.append('imagesList',this.form.imagesList);
+            // this.form.class3Id = this.thirdName;
+            let data = {
+              id: this.form.id ,
+              productName:this.form.productName,
+              brandId:this.form.brandId,
+              class3Id:this.thirdName,
+              price:this.form.price,
+              carriage:this.form.carriage,
+              ybProductItemReqDto : this.form.ybProductItemReqDto,
+              imagesList : this.form.imagesList,
+              describes: this.form.describes,
+            }
+            data = JSON.stringify(data);
+            changeGoods(data,this.user).then( res => {
               if(res.data.status === '000000000') {
                 this.$message({
                   message : '您修改的商品信息已提交，请稍后确认商品状态',

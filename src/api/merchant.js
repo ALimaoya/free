@@ -54,7 +54,10 @@ export function newGoogds(data,user){
   return request({
     url: '/center/product/add/'+ user,
     method : 'post',
-    data
+    data,
+    headers: {
+      'content-type': 'application/json'
+    }
   })
 }
 

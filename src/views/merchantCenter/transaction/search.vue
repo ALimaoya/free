@@ -3,10 +3,10 @@
       <h1>交易管理</h1>
       <div class="search">
         <div class="inputWrap">
-          <el-input size="small" :maxlength="20" v-model.trim="transition.EQ_payOrder" placeholder="订单号"></el-input>
-          <el-input size="small" :maxlength="20" v-model.trim="transition.EQ_code" placeholder="子订单号"></el-input>
-          <el-input size="small" :maxlength="20" v-model.trim="transition.productCode" placeholder="商品编号"></el-input>
-          <el-input size="small" :maxlength="20" v-model.trim="transition.LIKE_payOrder" placeholder="买方账号"></el-input>
+          <el-input size="small" :maxlength="40" v-model.trim="transition.EQ_payOrder" placeholder="订单号"></el-input>
+          <el-input size="small" :maxlength="40" v-model.trim="transition.EQ_code" placeholder="子订单号"></el-input>
+          <el-input size="small" :maxlength="40" v-model.trim="transition.productCode" placeholder="商品编号"></el-input>
+          <el-input size="small" :maxlength="40" v-model.trim="transition.LIKE_payOrder" placeholder="买方账号"></el-input>
         </div>
         <div class="inputWrap">
         <div class="block">
@@ -81,8 +81,8 @@
       <el-table-column prop="createTime" label="交易时间" ></el-table-column>
       <el-table-column label="状态" width="100">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.status !== ''" size="mini" :type="statusList[scope.row.status*1].type">{{ statusList[scope.row.status*1].name }}</el-button>
-          <el-button v-else-if="scope.row.status === '9'" size="mini" :type="statusList[scope.row.status-1].type">{{ statusList[scope.row.status*1-1].name }}</el-button>
+          <el-button v-if="scope.row.status === '9'" size="mini" :type="statusList[scope.row.status-1].type">{{ statusList[scope.row.status*1-1].name }}</el-button>
+          <el-button v-else-if="scope.row.status !== ''" size="mini" :type="statusList[scope.row.status*1].type">{{ statusList[scope.row.status*1].name }}</el-button>
           <el-button v-else size="mini" :type="statusList[0].type">{{ statusList[0].name }}</el-button>
 
           <!-- <el-button v-if="scope.row.status ==='0'" type='warning' size="mini">未支付</el-button>
@@ -115,15 +115,15 @@
       </el-pagination>
       <span class="totalItems">共{{totalPages }}页，{{ totalElements }}条记录</span>
     </div>
-    <el-dialog title="填写快递信息" :visible.sync="dialogVisible" width="60%" >
+    <el-dialog title="填写快递信息" :visible.sync="dialogVisible" width="50%"  :show-close="false" center>
       <el-form :model="expressForm" ref="expressForm" :rules="expressFormRule" label-position="right" class="expForm">
         <el-form-item  labelWidth="130px" label="快递公司：" prop="expressName">
           <el-select  size="small" clearable v-model="expressForm.expressName" filterable placeholder="快递公司">
             <el-option
               v-for="item in deliverList"
-              :key="item.value"
+              :key="item.id"
               :label="item.name"
-              :value="item.value">
+              :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
@@ -193,7 +193,7 @@
           if(value === ''){
             callback(new Error('请输入快递单号'))
           }else{
-            var reg = /^d{7,20}$/;
+            var reg = /^[0-9]{7,20}$/;
             if(!reg.test(value)){
               callback(new Error('请输入正确格式的快递单号'))
 
@@ -288,7 +288,6 @@
             expressForm :{
               expressName: '',
               expressNumber: '',
-              confirmPwd: '',
             },
             expressFormRule : {
               expressName : [
@@ -326,7 +325,6 @@
               // ]
             },
             deliverList : [],
-            changeExpress : '',
             expressType : '',
             deliverDialog: false ,
             excelData: {
@@ -337,7 +335,8 @@
             wrongDialog: false ,
             wrongPath : '',
             excelTitle: '',
-            merchantId: ''
+            merchantId: '',
+            deliverOrder: '',
 
             // pwdType: 'password'
           }
@@ -517,13 +516,13 @@
         },
         //发货
         deliver(index,order){
-          this.changeExpress = order ;
+          this.deliverOrder = order ;
           this.dialogVisible = true ;
           this.expressType= '1';
         },
         //修改快递
         changeWay(index,order){
-          this.changeExpress = order ;
+          this.deliverOrder = order ;
           this.dialogVisible = true ;
           this.expressType= '2';
 
@@ -533,12 +532,14 @@
         confirm(formName){
           this.$refs[formName].validate((valid) => {
             if(valid){
-              confirmDeliver(this.expressForm).then( res => {
+              let data = { ...this.expressForm };
+              data.orderId = this.deliverOrder
+              confirmDeliver(data).then( res => {
                 if( res.data.status === '000000000'){
                   this.$message({
                     message: '操作成功，请稍后确认' ,
                     center : true ,
-                    type: 'error'
+                    type: 'success'
                   });
                   setTimeout(() => {
                     window.location.reload();

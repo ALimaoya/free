@@ -82,7 +82,8 @@ export function validateCaptcha(str){
 }
 /*登录注册密码*/
 export function validPassWord(str){
-  const reg =  /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}/;
+  // const reg =  /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}/;
+  const reg = /^(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}/
   return reg.test(str)
 }
 /*验证姓名*/

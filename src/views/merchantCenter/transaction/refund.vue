@@ -2,8 +2,8 @@
   <div class="refund activityTable">
     <h1 class="h_title">退款管理</h1>
     <div class="search">
-      <el-input size="small" :maxlength="20" v-model.trim="refund.orderId" placeholder="退货单号"></el-input>
-      <el-input size="small" :maxlength="20" v-model.trim="refund.subOrderId" placeholder="子订单号"></el-input>
+      <el-input size="small" :maxlength="40" v-model.trim="refund.orderId" placeholder="退货单号"></el-input>
+      <el-input size="small" :maxlength="40" v-model.trim="refund.subOrderId" placeholder="子订单号"></el-input>
       <el-select  size="small" clearable v-model="refund.status" filterable placeholder="退款状态">
         <el-option
           v-for="item in statusList"
@@ -14,15 +14,15 @@
       </el-select>
       <div class="block">
         <!--<span class="demonstration">退款开始时间：</span>-->
-        <el-date-picker size="small" v-model="refund.startDate" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择退款开始时间">
+        <el-date-picker size="small" v-model="refund.startDate" value-format="yyyy-MM-dd" type="date" placeholder="选择退款开始时间">
         </el-date-picker>
       </div>
       <div class="block">
         <!--<span class="demonstration">退款结束时间：</span>-->
-        <el-date-picker size="small" v-model="refund.endDate" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择退款结束时间">
+        <el-date-picker size="small" v-model="refund.endDate" value-format="yyyy-MM-dd" type="date" placeholder="选择退款结束时间">
         </el-date-picker>
       </div>
-      <el-button type="primary" size="mini" @click="search">查询</el-button>
+      <el-button type="primary" size="mini" @click="getList()">查询</el-button>
     </div>
     <el-table :data="tableData"  border  align="center" fit>
       <el-table-column prop="code" label="退款单号"></el-table-column>
@@ -57,10 +57,10 @@
       <el-table-column prop="createTime" label="申请时间"></el-table-column>
       <el-table-column label="状态" width="100">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.status ==='0'" type='warning' size="mini">退款中</el-button>
-          <el-button v-else-if="scope.row.status ==='1'" type='danger' size="mini">已退款</el-button>
-          <el-button v-else-if="scope.row.status ==='2'" type='info' size="mini">已取消</el-button>
-          <el-button v-else-if="scope.row.status ==='3'" type='warning' size="mini">已拒绝</el-button>
+          <el-button v-if="scope.row.status !==''" :type='statusList[(scope.row.status*1+1)].type' size="mini">{{ statusList[(scope.row.status*1+1)].name }}</el-button>
+          <!--<el-button v-else-if="scope.row.status ==='1'" type='danger' size="mini">已退款</el-button>-->
+          <!--<el-button v-else-if="scope.row.status ==='2'" type='info' size="mini">已取消</el-button>-->
+          <!--<el-button v-else-if="scope.row.status ==='3'" type='warning' size="mini">已拒绝</el-button>-->
         </template>
       </el-table-column>
       <el-table-column prop="action" label="操作" width="100">
@@ -88,7 +88,7 @@
         <h3>注意：</h3>
         <p>确认退款后退款金额回退到买家支付账户中。</p>
       </div>
-      <el-form :model="form" ref="form" :rules="formRule" label-position="right" class="expForm">
+      <el-form :model="form" ref="form"  label-position="right" class="expForm">
         <el-form-item  labelWidth="130px" label="审批结果：" prop="result">
           <el-select  size="small" clearable v-model="form.result" filterable>
             <el-option
@@ -100,20 +100,20 @@
           </el-select>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="商品名称：" prop="productName">
-          <el-input class="inputInfo" size="small" v-model.trim="form.productName" disabled="disabled"></el-input>
+          <el-input :maxLength="100" class="inputInfo" size="small" v-model.trim="form.productName" disabled="disabled"></el-input>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="商品数量："  prop="goodsNum">
-          <el-input class="inputInfo" size="small" v-model.trim="form.goodsNum" disabled="disabled"></el-input>
+          <el-input  class="inputInfo" size="small" v-model.trim="form.goodsNum" disabled="disabled"></el-input>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="退款金额："   prop="refund">
           <el-input class="inputInfo" size="small" v-model.trim="form.refund" disabled="disabled"></el-input>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="退款原因：" prop="reason">
-          <el-input class="inputInfo" size="small" v-model.trim="form.reason" placeholder="请输入退款原因"></el-input>
+          <el-input :maxLength="400" class="inputInfo" size="small" v-model.trim="form.reason" placeholder="请输入退款原因"></el-input>
         </el-form-item>
-        <el-form-item   labelWidth="130px"  label="确认密码：" prop="checkPsw">
-          <el-input class="inputInfo" size="small" v-model.trim="form.checkPsw" placeholder="请输入登录密码"></el-input>
-        </el-form-item>
+        <!--<el-form-item   labelWidth="130px"  label="确认密码：" prop="checkPsw">-->
+          <!--<el-input class="inputInfo" size="small" v-model.trim="form.checkPsw" placeholder="请输入登录密码"></el-input>-->
+        <!--</el-form-item>-->
       </el-form>
       <div slot="footer" class="dialog-footer" >
         <el-button type="primary" size="mini" @click="confirm('form')">确认</el-button>
@@ -154,23 +154,31 @@
           statusList : [
             {
               name : '全部状态',
-              value : ''
+              value : '',
+              type: ''
             },
             {
               name : '退款中',
-              value : '0'
+              value : '0',
+              type: 'primary'
             },
             {
               name : '已退款',
-              value : '1'
+              value : '1',
+              type: 'success'
+
             },
             {
               name : '已取消',
-              value : '2'
+              value : '2',
+              type: 'info'
+
             },
             {
               name : '已拒绝',
-              value : '3'
+              value : '3',
+              type: 'danger'
+
             },
           ],
           tableData : [],
@@ -185,7 +193,7 @@
             goodsNum: '',
             refund: '',
             reason:'',
-            checkPsw: '',
+            // checkPsw: '',
             id: ''
           },
           formModel : {
@@ -194,18 +202,18 @@
             goodsNum: '',
             refund: '',
             reason:'',
-            checkPsw: '',
+            // checkPsw: '',
             id: ''
           },
-          formRule : {
-
-            checkPsw: [
-              {
-                required : true ,trigger : 'blur',validator : validPassword
-
-              }
-            ]
-          },
+          // formRule : {
+          //
+          //   checkPsw: [
+          //     {
+          //       required : true ,trigger : 'blur',validator : validPassword
+          //
+          //     }
+          //   ]
+          // },
           checkList: [
             {
               value : '1',
@@ -249,9 +257,7 @@
           })
 
         },
-        search(){
-            this.getList();
-        },
+
         goDetail(index,id){
           this.$router.push('/merchantCenter/transaction/refundOrder/'+ id)
 
@@ -271,7 +277,7 @@
             if(valid){
               let formData = new FormData();
               formData.append('refundId', this.form.id);
-              formData.append('confirmPwd', this.form.checkPsw);
+              // formData.append('confirmPwd', this.form.checkPsw);
               formData.append('status', this.form.result);
               formData.append('refuseReason', this.form.reason);
               refusedAffirm(formData).then( res =>{
@@ -280,7 +286,10 @@
                   message : res.data.message ,
                   center : true ,
                   type : 'success'
-                })
+                });
+                setTimeout(() => {
+                  this.getList();
+                },1500)
                 }else{
                   this.$message({
                     message : res.data.message ,
