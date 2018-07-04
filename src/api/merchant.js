@@ -139,9 +139,9 @@ export function currentSettlement(){
 }
 
 //结算申请
-export function settlementApple(id){
+export function settlementApple(){
   return request({
-    url: '/settlement/apply/'+ id,
+    url: '/center/settlement/apply',
     method: 'post'
   })
 }

@@ -145,7 +145,9 @@ export default {
             });
           }
         })
-        .catch(err => {});
+        .catch(err => {
+          alert('服务器开小差啦，请稍等~')
+        });
       // this.form =
     },
     goBack() {

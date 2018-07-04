@@ -360,7 +360,7 @@
 
           getOrderList(formData).then( res => {
             if( res.data.status === '000000000'){
-
+              console.log('data',res)
               this.deliverList=  res.data.data.tExpressResDtos ;
               this.tableData = res.data.data.pageResultDto.data ;
               this.totalElements = res.data.data.pageResultDto.totalElements;

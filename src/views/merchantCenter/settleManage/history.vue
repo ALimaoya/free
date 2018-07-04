@@ -116,7 +116,8 @@
           formData.append('EQ_status', this.settlement.EQ_status);
 
           historyList(formData).then( res => {
-            if(res.data.status === '000000000'){
+
+            if(res.data.message === '000000000'){
                 this.tableData = res.data.data ;
                 this.totalPages = res.data.totalPages;
                 this.totalElements = res.data.totalElements
