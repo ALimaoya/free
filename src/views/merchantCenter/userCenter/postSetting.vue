@@ -39,7 +39,7 @@
           if(value === ''){
             callback(new Error('请输入运送货物的件数'))
           }else{
-            let reg = /^[1-9]*$/
+            let reg = /^\+?[1-9]\d*$/
             if (!reg.test(value)) {
               callback(new Error('货物件数只能为大于0的整数'))
             }
@@ -50,7 +50,7 @@
           if(value === ''){
             callback(new Error('请输入运费'))
           }else{
-            if (!/^[1-9]*$/.test(value)) {
+            if (!/^\+?[1-9]\d*$/.test(value)) {
               callback(new Error('运费应为大于0的整数'))
             }
             callback();

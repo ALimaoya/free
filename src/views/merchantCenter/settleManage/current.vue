@@ -385,7 +385,9 @@
   }
   .el-table{
     width : 100% !important;
-
+    .tableC{
+      width: 100%;
+    }
   }
   .el-form-item{
     width : 80% ;
