@@ -12,7 +12,7 @@
           </el-form-item>
           <el-form-item :prop="'regulation.' + index + '.carriageAmount'"
                           :rules="rule.carriageAmount">
-              运费<el-input class="inputInfo" size="small" type="number" v-model="item.carriageAmount"></el-input>元
+              运费<el-input class="inputInfo" size="small" :maxlength="2" type="number" v-model="item.carriageAmount"></el-input>元
           </el-form-item>
 
           <el-form-item class="btnWrap">
