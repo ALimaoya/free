@@ -72,7 +72,7 @@
               document.body.removeChild(__div);
             }
             if(res.data.status === '000000000'){
-                console.log(res);
+                // console.log(res);
               var _div = document.createElement('div');
               _div.setAttribute('id', 'myForm');
               _div.innerHTML = res.data.data;

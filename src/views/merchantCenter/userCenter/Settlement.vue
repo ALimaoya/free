@@ -134,7 +134,7 @@
         //绑定
         submitForm(formName){
 
-          console.log(this.form);
+          // console.log(this.form);
           this.$refs[formName].validate((valid) => {
             if(valid){
 
@@ -146,7 +146,7 @@
         //换绑
         changeForm(formName){
 
-          console.log(this.form);
+          // console.log(this.form);
           this.$refs[formName].validate((valid) => {
             if(valid){
 

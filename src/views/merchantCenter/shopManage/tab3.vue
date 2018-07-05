@@ -34,7 +34,7 @@
         <el-input class="inputInfo" type="textarea" :rows="4" size="small" v-model.trim="form.shopDetail" placeholder=""></el-input>
       </el-form-item>
       <el-form-item   labelWidth="180px"  label="店铺管理人姓名：" prop="manageName">
-        <el-input class="inputInfo telInput" :maxLength="4" size="small" v-model.trim="form.manageName" placeholder="请输入店铺管理人姓名"></el-input>
+        <el-input class="inputInfo telInput" :maxlength="4" size="small" v-model.trim="form.manageName" placeholder="请输入店铺管理人姓名"></el-input>
       </el-form-item>
       <el-form-item   labelWidth="180px"  label="店铺管理人邮箱：" prop="email">
         <el-input class="inputInfo telInput"  size="small" v-model.trim="form.email" placeholder="请输入店铺管理人邮箱"></el-input>
@@ -44,7 +44,7 @@
         <el-button type="text" size="mini" @click="goChange">修改</el-button>
       </el-form-item>
       <el-form-item   labelWidth="180px"  label="法定代表人姓名：" prop="legalName">
-        <el-input class="inputInfo telInput" :maxLength="4" size="small" v-model.trim="form.legalName" placeholder="请输入法定代表人姓名"></el-input>
+        <el-input class="inputInfo telInput" :maxlength="4" size="small" v-model.trim="form.legalName" placeholder="请输入法定代表人姓名"></el-input>
       </el-form-item>
       <el-form-item   labelWidth="180px"  label="法定代表人手机号：" prop="tel2">
         <el-input class="inputInfo telInput" size="small" v-model.trim="form.tel2" placeholder="请输入法定代表人手机号"></el-input>

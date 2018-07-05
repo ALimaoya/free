@@ -1,5 +1,5 @@
 <template>
-  <div class="current tableBox">
+  <div class="current tableBox" v-loading="loading"  element-loading-text="拼命加载中">
     <h1 class="h_title">结算管理</h1>
     <div class="description">
       <h2 class="p_title">结算说明</h2>
@@ -49,8 +49,8 @@
                   <span v-if="item.cateGoryMap != ''">
                     <span v-if="item.cateGoryMap.categoryName1">{{item.cateGoryMap.categoryName1}}</span>/
                     <span v-if="item.cateGoryMap.categoryName2">{{item.cateGoryMap.categoryName2}}</span>/
-                    <span v-if="item.cateGoryMap.categoryName3">{{item.cateGoryMap.categoryName3}}</span>/
-                    <span v-if="item.cateGoryMap.categoryName4">{{item.cateGoryMap.categoryName4}}</span>
+                    <span v-if="item.cateGoryMap.categoryName3">{{item.cateGoryMap.categoryName3}}</span>
+                    <!--<span v-if="item.cateGoryMap.categoryName4">{{// item.cateGoryMap.categoryName4}}</span>-->
                   </span>
                 </td>
                 <td><span>{{item.productItems[0].size}}</span><span class="subOrder">{{item.productItems[0].color}}</span></td>
@@ -96,11 +96,11 @@
         <el-form-item   labelWidth="130px"  label="服务费："  prop="serviceFee">
           <el-input class="inputInfo" size="small" v-model.trim="form.serviceFee" disabled="disabled"></el-input>
         </el-form-item>
-        <el-form-item   labelWidth="130px"  label="结算方式："   prop="method">
+        <el-form-item   labelWidth="130px"  label="结算方式：" >
           <div >支付宝</div>
         </el-form-item>
-        <el-form-item   labelWidth="130px"  label="结算账号："   prop="ybMerchantSettlementAccount">
-          <div >{{ form.ybMerchantSettlementAccount }}</div>
+        <el-form-item   labelWidth="130px"  label="结算账号："  >
+          <div >{{ mobile }}</div>
         </el-form-item>
         <!-- <el-form-item   labelWidth="130px"  label="确认密码：" prop="checkPsw">
           <el-input class="inputInfo" size="small" v-model.trim="form.checkPsw" placeholder="请输入登录密码"></el-input>
@@ -137,7 +137,7 @@
         };
 
         return{
-            Mobile : getMobile() ,
+            mobile : getMobile() ,
             tableData : [
               {
                 orderType:'',
@@ -171,7 +171,6 @@
             form: {
               money: '',
               serviceFee: '',
-              ybMerchantSettlementAccount: '',
               checkPsw: '',
             },
             // formRule: {
@@ -232,23 +231,26 @@
             ],
             serviceFee: '',
             settlementMoney : '',
-          }
+          loading : true ,
+
+        }
       },
       mounted(){
         this.getList();
-        console.log(this.Mobile)
       },
       methods : {
         getList(){
+          this.loading = true ;
+
           currentSettlement().then(res => {
-            console.log('data',res)
+            this.loading = false ;
+
             if(res.data.status === '000000000'){
               this.tableData = res.data.data.deliveryOrders ;
               this.serviceFee = res.data.data.serviceAmount ;
               this.settlementMoney = res.data.data.settlementAmount ;
               this.form.serviceFee = res.data.data.serviceAmount ;
               this.form.money = res.data.data.settlementAmount ;
-              this.form.ybMerchantSettlementAccount = this.Mobile ;
             }else{
               this.$message({
                 message : res.data.message,
@@ -281,9 +283,12 @@
                     type: 'error'
                   })
               }else{
+                this.loading = true ;
+
                 settlementApple().then(res => {
-                console.log('data',res)
-                if(res.data.status === '000000000'){
+                  this.loading = false ;
+
+                  if(res.data.status === '000000000'){
                   this.$message({
                     message : '您的申请已提交，请稍后确认结算进度',
                     center: true ,
@@ -303,7 +308,7 @@
                    alert('服务器开小差啦，请稍等~')
               });
               }
-              
+
 
         },
         //关闭弹窗

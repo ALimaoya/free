@@ -15,7 +15,7 @@
               <span>{{ apilyInfo.thirdAccount}}</span>
             </div>
           </div>
-          <router-link v-else class="noAli" to="/userInfor/account">绑定支付宝</router-link>
+          <router-link v-else class="noAli" to="/accountManage/userInfor/account">绑定支付宝</router-link>
         </li>
         <li>
           <el-form-item prop="money">
@@ -38,7 +38,7 @@
               <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
               <svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>
             </span>
-            <router-link to="/userInfor/settings" v-if="!settingPsw">
+            <router-link to="/accountManage/userInfor/settings" v-if="!settingPsw">
               <span style="color:#409EFF">设置支付密码</span>
             </router-link>
           </el-form-item>

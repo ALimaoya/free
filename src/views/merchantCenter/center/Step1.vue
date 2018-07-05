@@ -1,18 +1,18 @@
 <template>
   <div class="step1">
     <h1>资质上传</h1>
-    <el-form ref="form" :model="form" :rules="formRule" center label-position="top">
+    <el-form ref="form" :model="form" :rules="formRule" center label-position="top" v-loading="loading"  element-loading-text="拼命加载中">
       <el-form-item label="店铺负责人"  prop="name">
-        <el-input type="text" size="small" :maxLength="40"  v-model="form.name" :disabled="isRegister"></el-input>
+        <el-input type="text" size="small" :maxlength="40"  v-model="form.name" :disabled="isRegister"></el-input>
       </el-form-item>
       <el-form-item label="Email" prop="email">
         <el-input type="text" size="small" :disabled="isRegister" v-model="form.email"></el-input>
       </el-form-item>
       <el-form-item label="身份证号" prop="cardId">
-        <el-input type="text" size="small" :maxLength="18"  v-model="form.cardId" :disabled="isRegister"></el-input>
+        <el-input type="text" size="small" :maxlength="18"  v-model="form.cardId" :disabled="isRegister"></el-input>
       </el-form-item>
       <el-form-item label="企业名称" prop="enterpriseName">
-        <el-input type="text" size="small" :maxLength="40"  v-model="form.enterpriseName" :disabled="isRegister"></el-input>
+        <el-input type="text" size="small" :maxlength="40"  v-model="form.enterpriseName" :disabled="isRegister"></el-input>
       </el-form-item>
       <el-form-item class="imgWrap" v-if="!isRegister" label="资质" prop="businessImage">
         <ul class="imgList" >
@@ -203,6 +203,7 @@
             imageDomain : process.env.IMAGE_DOMAIN ,
             imgSrc:'',
             status: '',
+            loading: true ,
           }
       },
       mounted(){
@@ -217,6 +218,7 @@
               if(res.data.data !== null){
                 this.form = res.data.data ;
                 this.status = res.data.data.status ;
+                this.loading = false ;
                 if(this.status === '2'|| this.status === '1'){
                   this.isRegister = true ;
                 }
@@ -400,7 +402,7 @@
           }
 
           this.$refs[formName].validate((valid) => {
-            console.log(this.form,this.businessImageWarn,this.authorizeImageWarn,this.cardFaceImageWarn,this.cardBackImageWarn);
+            // console.log(this.form,this.businessImageWarn,this.authorizeImageWarn,this.cardFaceImageWarn,this.cardBackImageWarn);
 
             if(valid&&!this.businessImageWarn&&!this.authorizeImageWarn&&!this.cardFaceImageWarn&&!this.cardBackImageWarn){
 

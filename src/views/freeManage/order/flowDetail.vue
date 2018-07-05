@@ -1,5 +1,5 @@
 <template>
-  <div class="detail">
+  <div class="detail"  v-loading="loading"  element-loading-text="拼命加载中">
     <div class="title">流量任务订单详情</div>
     <div class="content">
       <ul class="detailInfor">
@@ -44,6 +44,8 @@
             showImg : false ,
             bigImg : '' ,
             imageDomain : process.env.IMAGE_DOMAIN ,
+            loading : true ,
+
             // imageDomain : 'http://yabei.oss-cn-beijing.aliyuncs.com/'
           }
       },
@@ -52,6 +54,8 @@
         // console.log(order);
         orderDetail(order).then( res => {
           // console.log(res);
+          this.loading = false ;
+
           if(res.data.status === '000000000'){
             this.detailInfo = res.data.data
           }

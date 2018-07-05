@@ -1,6 +1,6 @@
 <template>
-    <div class="flowActivity step">
-      <el-form :model="form" ref="form" :rules="formRule">
+    <div class="flowActivity step" :model="form" ref="form" :rules="formRule"  v-loading="loading"  element-loading-text="拼命加载中">
+      <el-form >
         <p class="title">第一步：填写活动信息</p>
         <el-form-item label="活动类型："  :labelWidth="labelWidth" prop="activityType">
           <el-radio-group v-model="form.activityType" :disabled="read" >
@@ -350,11 +350,15 @@
             readIpt : false ,  //查看活动详情时禁止输入
             autoUpload : true ,
             vipVisible : false ,
+            loading : true ,
+
             // brokeragePrice : ''
           }
       },
       mounted(){
         shopList().then( res => {
+          this.loading = false ;
+
           if(res.data.status === '000000000'){
             //获取用户是否已绑定店铺
             if(res.data.data.length){
@@ -398,7 +402,11 @@
           if( order !== undefined){
             this.order = order ;
             //获取活动详情
+            this.loading = true ;
+
             this.$store.dispatch('getPublishDetail',order).then( res => {
+              this.loading = false ;
+
               if (res.data.status === '000000000') {
                 this.form = res.data.data;
                 //判断活动是否已支付
@@ -530,6 +538,7 @@
             }
           }).catch( err => {
             // console.log(err);
+            alert('服务器开小差啦，请稍等~')
           })
         },
 
@@ -724,7 +733,7 @@
                 }).catch( err => {
                   // console.log(err) ;
                   _this.goodsImgWarn = true ;
-
+                  alert('服务器开小差啦，请稍等~')
                 })
               }
             };
@@ -1072,7 +1081,11 @@
           // console.log(form)
 
           if (index === 1) {
+            this.loading = true ;
+
             publishActivity(form).then(res => {
+              this.loading = false ;
+
               if (res.data.status === '000000000') {
                 this.$message({
                   type: 'success',
@@ -1096,7 +1109,11 @@
             });
           } else {
             if (index === 2) {
+              this.loading = true ;
+
               changeDetail(form).then(res => {
+                this.loading = false ;
+
                 if (res.data.status === '000000000') {
                   this.$message({
                     type: 'success',

@@ -3,7 +3,7 @@
       <el-form :model="form" ref="form" :rules="formRule" label-position="right">
         <h1 class="h_title">入驻人基本信息</h1>
         <el-form-item  :labelWidth="labelWidth" label="入驻人姓名："  prop="name">
-          <el-input class="inputInfo" :maxLength="4" size="small" :disabled="readOnly" v-model.trim="form.name" placeholder="请输入入驻人的真实姓名" ></el-input>
+          <el-input class="inputInfo" :maxlength="4" size="small" :disabled="readOnly" v-model.trim="form.name" placeholder="请输入入驻人的真实姓名" ></el-input>
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth" label="入驻人邮箱：" prop="email">
           <el-input class="inputInfo" size="small" v-model.trim="form.email" :disabled="readOnly" placeholder="请输入常用邮箱，便于信息及时送达"></el-input>
@@ -13,7 +13,7 @@
           <span class="tip"><svg-icon icon-class="tips"/>此手机号为商家首次登陆后台的账号，有最高管理权限</span>
         </el-form-item>
         <el-form-item   :labelWidth="labelWidth"  label="店铺管理人身份证号：" prop="idCard">
-          <el-input class="inputInfo" :maxLength="18" size="small" :disabled="readOnly" v-model.trim="form.idCard"  placeholder="请输入身份证号码"></el-input>
+          <el-input class="inputInfo" :maxlength="18" size="small" :disabled="readOnly" v-model.trim="form.idCard"  placeholder="请输入身份证号码"></el-input>
           <span class="tip"><svg-icon icon-class="tips"/>该证件号与证件照片、营业执照法人等一致</span>
         </el-form-item>
         <el-form-item   :labelWidth="labelWidth"  label="身份证有效期：" prop="idCardDate">

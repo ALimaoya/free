@@ -1,5 +1,5 @@
 <template>
-  <div class="settleHistory activityTable">
+  <div class="settleHistory activityTable"  v-loading="loading"  element-loading-text="拼命加载中">
     <h1>历史结算</h1>
     <div class="search">
       <el-input size="small" :maxlength="40" v-model.trim="settlement.EQ_code" placeholder="结算单号"></el-input>
@@ -99,6 +99,8 @@
             totalElements : 0,
             currentPage : 1,
             pageSize : 10,
+            loading : true ,
+
           }
       },
       mounted(){
@@ -114,10 +116,12 @@
           formData.append('GT_settlementTime', this.settlement.GT_settlementTime);
           formData.append('LT_settlementTime', this.settlement.LT_settlementTime);
           formData.append('EQ_status', this.settlement.EQ_status);
+          this.loading = true ;
 
           historyList(formData).then( res => {
+            this.loading = false ;
 
-            if(res.data.message === '000000000'){
+            if(res.data.status === '000000000'){
                 this.tableData = res.data.data ;
                 this.totalPages = res.data.totalPages;
                 this.totalElements = res.data.totalElements

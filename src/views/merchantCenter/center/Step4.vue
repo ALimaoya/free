@@ -1,12 +1,12 @@
 <template>
   <div class="step4">
     <h1>我要开店</h1>
-    <el-form ref="form" :model="form" :rules="formRule" center label-position="top">
+    <el-form ref="form" :model="form" :rules="formRule" center label-position="top" v-loading="loading"  element-loading-text="拼命加载中">
       <el-form-item label="店铺名称"  prop="name">
-        <el-input type="text" :maxLength="40" size="small" v-model="form.name" :disabled="readOnly"></el-input>
+        <el-input type="text" :maxlength="40" size="small" v-model="form.name" :disabled="readOnly"></el-input>
       </el-form-item>
       <el-form-item label="主营" prop="mainBusiness">
-        <el-input type="text" :maxLength="40" size="small" :disabled="readOnly" v-model="form.mainBusiness"></el-input>
+        <el-input type="text" :maxlength="40" size="small" :disabled="readOnly" v-model="form.mainBusiness"></el-input>
       </el-form-item>
       <el-form-item label="类型" prop="type">
         <el-select  size="small" clearable v-model="form.type" :disabled="readOnly" filterable placeholder="请选择店铺类型">
@@ -19,7 +19,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="描述" prop="describes">
-        <el-input type="textarea" :rows="4" :maxLength="200" size="small" v-model="form.describes" :disabled="readOnly"></el-input>
+        <el-input type="textarea" :rows="4" :maxlength="200" size="small" v-model="form.describes" :disabled="readOnly"></el-input>
       </el-form-item>
       <el-form-item class="imgWrap" prop="logoImage" v-if="!readOnly" label="店铺LOGO">
             <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logoImageImage"
@@ -117,6 +117,7 @@
           imageDomain : process.env.IMAGE_DOMAIN ,
           status: '0',
           handleType: '提交',
+          loading: true ,
 
         }
       },
@@ -133,6 +134,8 @@
               if(res.data.data !== null){
                 this.form = res.data.data ;
                 this.status = res.data.data.status ;
+                this.loading = false ;
+
                 if(this.status === '1' || this.status === '2'){
                   this.readOnly = true ;
                 }else{
@@ -209,7 +212,7 @@
           reader.readAsDataURL(file);
         },
         submit(formName,type){
-          console.log(this.form,this.step4Status );
+          // console.log(this.form,this.step4Status );
 
 
             if(this.form.logoImageImage === ''){
@@ -236,8 +239,12 @@
               else {
                 if(type === '提交'){
                   //  提交表单
+                  this.loading = true ;
+
                   shopInfo(this.form).then( res => {
                     if(res.data.status === '000000000'){
+                      this.loading = false ;
+
                       this.$message({
                         message : '您的店铺信息已提交，通过审核后即可添加商品' ,
                         type : 'success',
@@ -262,6 +269,8 @@
                   })
                 }else if( type === '修改'){
                   //  修改表单
+                  this.loading = true ;
+
                   changeShop(this.form).then( res => {
                     if(res.data.status === '000000000'){
                       this.$message({
@@ -270,6 +279,8 @@
                         center : true,
                         duration : 1500
                       });
+                      this.loading = false ;
+
                       setTimeout(() => {
                         window.location.reload();
 

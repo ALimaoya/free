@@ -1,5 +1,5 @@
 <template>
-  <div class="vip">
+  <div class="vip" >
     <!--<top></top>-->
     <h1 class="title">会员管理</h1>
     <div class="content">
@@ -21,7 +21,7 @@
         </el-table-column>
       </el-table>
       <p>会员充值记录：</p>
-      <el-table border :data="historyData.data" stripe style="width: 100%">
+      <el-table border :data="historyData.data" stripe style="width: 100%" v-loading="loading"  element-loading-text="拼命加载中">
         <el-table-column prop="creatTime" label="充值时间"></el-table-column>
         <el-table-column prop="usefulMonth" label="开通时长(月)"></el-table-column>
         <el-table-column prop="amount" label="充值金额（元）"></el-table-column>
@@ -63,7 +63,9 @@
         historyData: [],
         pageSize: 10,
         currentPage: 1,
-        vipInfo: {}
+        vipInfo: {},
+        loading : true ,
+
       }
     },
     mounted() {
@@ -76,7 +78,10 @@
         this.$router.push('/freeManage/userInfor/buyVip');
       },
       getVipInfo() {
+
         getMember().then(res => {
+          this.loading = false ;
+
           if (res.data.status === '000000000') {
             this.statusData.push(res.data.data);
             // console.log(this.statusData)
@@ -95,7 +100,11 @@
         let formdata = new FormData();
         formdata.append('currentPage', this.currentPage);
         formdata.append('pageSize', this.pageSize);
+        this.loading = true ;
+
         getMemberOrder(formdata).then(res => {
+          this.loading = false ;
+
           if (res.data.status === '000000000') {
             this.historyData = res.data
           } else {

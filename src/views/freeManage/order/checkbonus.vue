@@ -1,5 +1,5 @@
 <template>
-  <div class="checkbonus tableBox">
+  <div class="checkbonus tableBox"  v-loading="loading"  element-loading-text="拼命加载中">
     <h1>领奖审核</h1>
     <search-bar @searchobj="getData" :platform-type="true" :activity-type="true" :third-order-code="true" :activity-code="true" :activity="'bonus'"></search-bar>
 
@@ -52,7 +52,7 @@
       </el-pagination>
       <span class="totalItems">共{{ totalPages }}页，{{totalElements}}条记录</span>
     </div>
-    <el-dialog class="detailContent" width="50%" :visible.sync="detailInfo" center top="10vh" title="领奖审核">
+    <el-dialog class="detailContent" width="50%" :visible.sync="detailInfo" center top="10vh" title="领奖审核" >
       <div>
         <ul>
           <p>领奖第一步：</p>
@@ -162,6 +162,7 @@
             status : '' ,
             imageDomain : process.env.IMAGE_DOMAIN,
             showImg : false,
+            loading : true ,
 
             // imageDomain : 'http://yabei.oss-cn-beijing.aliyuncs.com/'
           }
@@ -196,7 +197,11 @@
           formData.append('currentPage', this.currentPage);
           formData.append('EQ_status','4');
           formData.append('pageSize', this.pageSize);
+          this.loading = true ;
+
           getOrderList(formData).then( res=> {
+            this.loading = false ;
+
             if(res.data.status === '000000000'){
               this.tableData = res.data.data ;
               this.totalPages = res.data.totalPages ;
@@ -219,7 +224,7 @@
         //查看订单详情
         goDetail(index,order){
 
-          this.$router.push('/order/tryoutDetail/'+ order) ;
+          this.$router.push('/freeManage/order/tryoutDetail/'+ order) ;
 
         },
 
@@ -229,7 +234,11 @@
           this.detailInfo = true ;
           this.imgList= [] ;
           this.orderImg = '' ;
+          this.loading = true ;
+
           orderDetail(order).then( res => {
+            this.loading = false ;
+
             if( res.data.status === '000000000'){
               if(res.data.data.orderImageList.length){
                 res.data.data.orderImageList.forEach( i => {
@@ -271,8 +280,12 @@
 
         //提交审核
         handelRefuse(){
+          this.loading = true ;
+
           checkOrder({ orderId : this.orderId , status : this.status ,reason : this.refuseReason ,activityType : this.order.EQ_activityType}).then( res => {
-             if(res.data.status === '000000000'){
+            this.loading = false ;
+
+            if(res.data.status === '000000000'){
                this.$message({
                  message : '审核提交成功，请稍后确认' ,
                  center : true ,

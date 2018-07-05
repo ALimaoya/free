@@ -1,11 +1,11 @@
 <template>
-  <div class="addressManage">
+  <div class="addressManage"  v-loading="loading"  element-loading-text="拼命加载中">
     <h1 class="h_title">{{this.title }}</h1>
     <div v-if="isNew==='0'|| isNew === '1'" class="formWrap">
-       <el-form :model="form" ref="form" label-position="right" :rules="formRule" >
+       <el-form :model="form" ref="form" label-position="right" :rules="formRule">
         <!--<h2>账户表单</h2>-->
           <el-form-item  labelWidth="130px" label="联系人"  prop="userName">
-            <el-input class="inputInfo" :maxLength="40" size="small" v-model.trim="form.userName" placeholder="请填写联系人" ></el-input>
+            <el-input class="inputInfo" :maxlength="40" size="small" v-model.trim="form.userName" placeholder="请填写联系人" ></el-input>
           </el-form-item>
           <el-form-item   labelWidth="130px"  label="省份" prop="province">
             <el-select  size="small" clearable v-model="form.province"  filterable placeholder="请选择省份">
@@ -18,7 +18,7 @@
             </el-select>
           </el-form-item>
           <el-form-item  labelWidth="130px" label="详细地址" prop="detailAddress">
-            <el-input class="inputInfo" :maxLength="200" type="textarea" :row="4" size="small" v-model.trim="form.detailAddress"  placeholder="详细地址"></el-input>
+            <el-input class="inputInfo" :maxlength="200" type="textarea" :row="4" size="small" v-model.trim="form.detailAddress"  placeholder="详细地址"></el-input>
           </el-form-item>
           <el-form-item  labelWidth="130px" label="邮编" prop="zipCode">
             <el-input class="inputInfo" size="small" v-model.trim="form.zipCode" placeholder="邮编"></el-input>
@@ -146,6 +146,7 @@
             setType: '',
             changeDialog: false ,
             changeData: {},
+            loading: true ,
           }
       },
       computed : {
@@ -167,6 +168,8 @@
           //获取地址列表
           getAddressList(){
             getAddress().then( res => {
+              this.loading= false ;
+
               if(res.data.status === '000000000'){
                 this.tableData = res.data.data
 
@@ -195,7 +198,11 @@
         },
         //确定修改
         confirmChange(){
+          this.loading= true ;
+
           changeAddrStatus(this.changeData).then( res => {
+            this.loading= false ;
+
             if(res.data.status === '000000000'){
               this.$message({
                 message : '操作成功，请稍后确认' ,
@@ -241,12 +248,15 @@
           });
         },
         editorAddr(index,id){
+          this.loading= true ;
+
           getAddrDetail(id).then( res => {
+            this.loading= false ;
+
             if(res.data.status === '000000000') {
               this.form = res.data.data ;
               this.isNew = '1' ;
 
-              console.log(1,this.isNew)
 
             }else{
               this.$message({
@@ -265,9 +275,14 @@
         },
         //提交表单
         submitFrom(formName){
+
           this.$refs[formName].validate((valid) => {
             if(valid){
+              this.loading= true ;
+
               newAddress(this.form).then( res => {
+                this.loading= false ;
+
                 if(res.data.status === '000000000'){
                   // this.tableData = res.data.data
                   this.$message({
@@ -304,7 +319,11 @@
         changeFrom(formName){
           this.$refs[formName].validate((valid) => {
             if(valid){
+              this.loading= true ;
+
               changeAddress(this.form).then( res => {
+                this.loading= false ;
+
                 if(res.data.status === '000000000'){
                   this.$message({
                     message : '修改成功，请稍后确认' ,

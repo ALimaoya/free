@@ -1,7 +1,7 @@
 <template>
-  <div class="bond">
+  <div class="bond"  v-loading="loading"  element-loading-text="拼命加载中">
     <h1>保证金详情</h1>
-    <el-form :model="form" ref="form"  label-position="right" >
+    <el-form :model="form" ref="form"  label-position="right">
       <h2>您当前已经缴纳保证金{{ form.deposit }}元整</h2>
       <el-form-item  labelWidth="130px" label="姓名：" >
         <div class="inputInfo">{{ form.name }}</div>
@@ -31,9 +31,9 @@
           <div class="inputInfo">{{ form.createTime }}</div>
         </el-form-item>
       </div>
-      <el-form-item labelWidth="130px" v-if="!hasBond">
-        <el-button type="primary" size="mini" @click="handleBond">确定缴纳</el-button>
-      </el-form-item>
+      <!--<el-form-item labelWidth="130px" v-if="!hasBond">-->
+        <!--<el-button type="primary" size="mini" @click="handleBond">确定缴纳</el-button>-->
+      <!--</el-form-item>-->
     </el-form>
     <el-dialog title="申请解冻保证金" :visible.sync="dialogVisible" width="60%" >
       <div class="dialog_content">
@@ -90,11 +90,12 @@
             },
             addAmount:'',
             dialogVisible : false ,
-            isBond: true,
+            isBond: false,
             hasBond: true ,
             payVisible: false ,
             dialogVisibleQuestion: false,
-            typeList: ['已缴纳','解冻中','已解冻']
+            typeList: ['已缴纳','解冻中','已解冻'],
+            loading: true
           }
       },
       mounted(){
@@ -104,7 +105,8 @@
         //  获取保证金详情
         getForm(){
           getBond().then( res => {
-            console.log(res.data);
+            // console.log(res.data);
+            this.loading= false;
 
             if(res.data.status === '000000000'){
               this.form = res.data.data ;
@@ -129,7 +131,11 @@
         },
         //确定申请保证金解冻操作
         confirmApply(){
+          this.loading= true;
+
           applyBond().then( res => {
+            this.loading= false;
+
             if(res.data.status === '000000000'){
               this.$message({
                 message : '您的申请已提交，请稍后确认',
@@ -157,9 +163,9 @@
           this.$router.push({ name : 'MerchantCenter-home',params: { 'step3' : true}})
         },
         //去缴纳保证金
-        handleBond(){
-          this.$router.push('/merchantCenter/center/index')
-        },
+        // handleBond(){
+        //   this.$router.push('/merchantCenter/center/index')
+        // },
       //  补缴保证金
         addDeposit(){
           let payStatus = false ;
@@ -176,7 +182,7 @@
             if(res.data.status === '000000000'){
 
 
-                console.log(res);
+                // console.log(res);
                 var _div = document.createElement('div');
                 _div.setAttribute('id', 'myForm');
                 _div.innerHTML = res.data.data;

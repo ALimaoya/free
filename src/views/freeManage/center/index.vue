@@ -143,7 +143,7 @@
         },
         methods : {
           vipPlus(){
-            this.$router.push('/userInfor/vip')
+            this.$router.push('/freeManage/userInfor/vip')
           },
           //充值/提现
           recharge(type){

@@ -1,5 +1,5 @@
 <template>
-  <div class="goodsList activityTable">
+  <div class="goodsList activityTable" v-loading="loading"  element-loading-text="拼命加载中">
     <h1>商品清单</h1>
     <div class="search">
       <el-input size="small" :maxlength="40" v-model.trim="account.EQ_code" placeholder="商品编号"></el-input>
@@ -36,7 +36,7 @@
           :value="item.value">
         </el-option>
       </el-select>
-      <el-button  size="small" type="primary"  @click="search()" class="searchOrder">查询</el-button>
+      <el-button  size="small" type="primary"  @click="getList()" class="searchOrder">查询</el-button>
       <el-button  size="small" type="primary"  @click="reset()" class="searchOrder">重置</el-button>
     </div>
     <div class="tableTitle">
@@ -44,7 +44,7 @@
       <el-button  size="mini" type="primary" style="padding : 0 5px;text-align : center ;height : 30px;line-height : 30px;" @click="newGoods()" class="searchOrder">新增商品</el-button>
 
     </div>
-    <el-table  :data="tableData"  border fit>
+    <el-table  :data="tableData"  border fit >
       <el-table-column prop="id" label="商品序号" width="75"></el-table-column>
       <el-table-column prop="code" label="商品编号" ></el-table-column>
       <el-table-column prop="shopName" label="所属店铺" ></el-table-column>
@@ -161,7 +161,9 @@
             refuseReason: '',
             refuseDialog: false ,
             user: getMobile(),
-          }
+            loading : true ,
+
+      }
       },
       mounted(){
         this.time = parseTime(new Date());
@@ -188,12 +190,16 @@
           formData.append('EQ_status',this.account.EQ_status);
           formData.append('currentPage',this.currentPage);
           formData.append('pageSize',this.pageSize);
+          this.loading = true ;
+
           getGoodsList(formData).then( res => {
+            this.loading = false ;
+
             if(res.data.status === '000000000') {
               this.tableData = res.data.data;
               this.totalPages = res.data.totalPages ;
               this.totalElements = res.data.totalElements ;
-              console.log(this.tableData);
+              // console.log(this.tableData);
 
             }else{
               this.$message({
@@ -203,6 +209,7 @@
               })
             }
           }).catch( err => {
+            alert('服务器开小差啦，请稍等~')
 
           });
 
@@ -221,12 +228,12 @@
               })
             }
           }).catch( err => {
+            alert('服务器开小差啦，请稍等~')
 
           })
         },
         //  获取二级分类
         getSecondList(type){
-          console.log(type);
           secondList(type).then(res=> {
             if(res.data.status === '000000000'){
               this.secondTypeList = res.data.data
@@ -239,6 +246,7 @@
               })
             }
           }).catch( err => {
+            alert('服务器开小差啦，请稍等~')
 
           })
 
@@ -257,16 +265,13 @@
               })
             }
           }).catch( err => {
-            console.log(err);
+            alert('服务器开小差啦，请稍等~')
+
 
           })
 
         },
-      //  查询
-        search(){
-          this.getList();
 
-        },
         //重置搜索条件
         reset(){
           this.account = {
@@ -283,8 +288,11 @@
         },
         //上/下架操作
         handleShelves(index,order,type){
+          this.loading = true ;
 
           changeStatus(order,type,this.user).then(res=> {
+            this.loading = false ;
+
             if(res.data.status === '000000000'){
               this.$message({
                 message : '操作成功',
@@ -304,6 +312,7 @@
               })
             }
           }).catch( err => {
+            alert('服务器开小差啦，请稍等~')
 
           })
 

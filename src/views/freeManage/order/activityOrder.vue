@@ -1,5 +1,5 @@
 <template>
-  <div class="activityOrder tableBox">
+  <div class="activityOrder tableBox"  :data="tableData" border v-loading="loading"  element-loading-text="拼命加载中">
     <h1>试用订单查询</h1>
     <search-bar @searchobj="getData" :platform-type="true" :activity-type="true" :third-order-code="true" :activity-code="true" :eq_status="true" :activity="true"></search-bar>
 
@@ -33,7 +33,7 @@
         <!--<el-button size="small"  @click="getList()" class="searchOrder" style="padding: 0 0.05rem;">查询</el-button>-->
       <!--</div>-->
       <div class="note">备注：以上搜索条件可根据单一条件进行搜索，当单独试客淘宝号搜索不到有用信息时，可尝试输入淘宝订单编号，反之亦然</div>
-      <el-table :data="tableData" border>
+      <el-table>
         <el-table-column prop="activityType" label="试客任务类型" width="100">
           <template slot-scope="scope">
             <span v-if="scope.row.activityType === '1'">超级试用</span>
@@ -206,7 +206,9 @@
         complainBox : false ,
         imageDomain : process.env.IMAGE_DOMAIN ,
         mask : false ,
-        bigImg : ''
+        bigImg : '',
+        loading : true ,
+
       }
     },
     mounted(){
@@ -238,7 +240,11 @@
           formData.append('EQ_status',this.order.EQ_status);
           formData.append('currentPage', this.currentPage);
           formData.append('pageSize', this.pageSize);
+        this.loading = true ;
+
         getOrderList(formData).then( res=> {
+          this.loading = false ;
+
           if(res.data.status === '000000000'){
             this.tableData = res.data.data ;
             this.totalPages = res.data.totalPages ;

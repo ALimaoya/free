@@ -1,5 +1,5 @@
 <template>
-  <div class="refundOrder">
+  <div class="refundOrder"  v-loading="loading"  element-loading-text="拼命加载中">
     <h1 class="h_title">退款详情</h1>
     <el-form  :model="form" ref="form"  label-position="right">
       <el-form-item   labelWidth="130px"  label="退款单号：" >
@@ -123,7 +123,8 @@ export default {
         {
           name: "已收到货物"
         },
-      ]
+      ],
+      loading: true ,
     };
   },
   mounted() {
@@ -132,9 +133,9 @@ export default {
   methods: {
     getDetail() {
       let order = this.$route.params.id;
-      refuseOrder(order)
-        .then(res => {
-          console.log("data", res);
+      refuseOrder(order).then(res => {
+          // console.log("data", res);
+        this.loading = false ;
           if (res.data.status === "000000000") {
             this.form = res.data.data;
           } else {

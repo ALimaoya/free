@@ -109,7 +109,7 @@
           </el-input>
           <!--<div class="getNum" style="width : 1.5rem ;float : right ;"></div>-->
 
-          <router-link to="/userInfor/settings" v-if="!settingPsw"><span style="color:#409EFF;position:absolute;display:inline-block;width:1rem">设置支付密码</span></router-link>
+          <router-link to="/accountManage/userInfor/settings" v-if="!settingPsw"><span style="color:#409EFF;position:absolute;display:inline-block;width:1rem">设置支付密码</span></router-link>
         </el-form-item>
 
       </el-form>
@@ -379,7 +379,7 @@
                 type: 'success',
                 center: true
               });
-              this.$router.push('/userInfor/vip')
+              this.$router.push('/freeManage/userInfor/vip')
           } else {
 
             if(res.data.status=='013001002'&&this.chooseWay!= '1'){
@@ -407,11 +407,11 @@
       },
       //  取消选择
       cancel(formName) {
-        this.$router.push('/userInfor/vip')
+        this.$router.push('/freeManage/userInfor/vip')
       },
       finishPay() {
         this.dialogVisible = false;
-        this.$router.push("/userInfor/vip")
+        this.$router.push("/freeManage/userInfor/vip")
       },
       hasQuestion() {
         this.dialogVisible = false;

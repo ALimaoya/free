@@ -247,7 +247,7 @@
           },
           //查看源宝贝
           getSource(index,url){
-            console.log(url)
+            // console.log(url)
           },
           //删除商品
           deleteGoods(index,order){
@@ -256,11 +256,11 @@
           //选择所有数据
           allData(val){
             this.subTableData = val ;
-            console.log(val)
+            // console.log(val)
           },
           //批量选择
           handleCurrentChange(row){
-            console.log(row);
+            // console.log(row);
             this.subTableData = row ;
 
           },
@@ -278,13 +278,13 @@
           },
           //修改价格操作
           changePrice(){
-            console.log(this.isChange());
+            // console.log(this.isChange());
             if(this.isChange()){
               this.changeType = '1';
               this.title = '价格';
               this.dialogVisible = true ;
 
-              console.log(this.subTableData);
+              // console.log(this.subTableData);
             }
 
 

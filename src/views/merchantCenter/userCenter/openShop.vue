@@ -1,10 +1,10 @@
 <template>
-  <div class="openShop">
+  <div class="openShop"  v-loading="loading"  element-loading-text="拼命加载中">
     <h1>我要开店</h1>
     <el-form :model="form" ref="form" :rules="formRule" label-position="right" >
       <!--<h2>账户表单</h2>-->
-      <el-form-item  labelWidth="130px" label="店铺名称"  prop="name">
-        <el-input class="inputInfo" :maxLength="40" size="small" v-model.trim="form.name" placeholder="店铺名称" :disabled="readOnly"></el-input>
+      <el-form-item  labelWidth="130px" label="店铺名称"  prop="name">loading
+        <el-input class="inputInfo" :maxlength="40" size="small" v-model.trim="form.name" placeholder="店铺名称" :disabled="readOnly"></el-input>
       </el-form-item>
       <el-form-item labelWidth="130px" class="imgWrap" prop="logoImage" v-if="!readOnly" label="店铺LOGO">
         <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logoImage"
@@ -25,7 +25,7 @@
         <!--</dl>-->
       </el-form-item>
       <el-form-item   labelWidth="130px"  label="主营" prop="mainBusiness">
-        <el-input type="textarea" class="inputInfo" :maxLength="40" :rows="4" size="small" v-model.trim="form.mainBusiness" :disabled="readOnly" placeholder="主营"></el-input>
+        <el-input type="textarea" class="inputInfo" :maxlength="40" :rows="4" size="small" v-model.trim="form.mainBusiness" :disabled="readOnly" placeholder="主营"></el-input>
       </el-form-item>
       <el-form-item labelWidth="130px" label="类型" prop="type">
         <el-select  size="small" clearable v-model="form.type" :disabled="readOnly" filterable placeholder="请选择店铺类型">
@@ -38,7 +38,7 @@
         </el-select>
       </el-form-item>
       <el-form-item  labelWidth="130px" label="描述" prop="describes">
-        <el-input class="inputInfo" :maxLength="200" size="small" type="textarea"  :rows="4" v-model.trim="form.describes" :disabled="readOnly" placeholder="描述"></el-input>
+        <el-input class="inputInfo" :maxlength="200" size="small" type="textarea"  :rows="4" v-model.trim="form.describes" :disabled="readOnly" placeholder="描述"></el-input>
       </el-form-item>
       <el-form-item labelWidth="130px" >
         <el-button v-if="!readOnly" type="primary" size="small" @click="submit('form',handleType)">{{ handleType}}</el-button>
@@ -130,6 +130,7 @@
           handleType: '提交',
           infoStatus: '0',
           infoTip: false ,
+          loading: true
         }
       },
       mounted(){
@@ -138,7 +139,8 @@
       methods : {
           getAccountInfo(){
             getInfo().then( res =>{
-              console.log(res);
+              // console.log(res);
+              this.loading= false ;
               if(res.data.status === '000000000'){
                 this.infoStatus = res.data.data.status;
                 if(this.infoStatus === '0'|| this.infoStatus === '1'){
@@ -156,13 +158,17 @@
                 })
               }
             }).catch( err => {
+              alert('服务器开小差啦，请稍等~')
 
             })
           },
         //获取信息
         getShopInfo(){
+          this.loading= true ;
 
           getShop().then( res => {
+            this.loading= false ;
+
             if(res.data.status === '000000000'){
               this.form = res.data.data ;
               this.status = res.data.data.status ;
@@ -186,6 +192,7 @@
               })
             }
           }).catch( err => {
+            alert('服务器开小差啦，请稍等~')
 
           })
 
@@ -239,7 +246,7 @@
 
         //提交表单
         submit(formName,type){
-          console.log(this.form);
+          // console.log(this.form);
 
 
           if(this.form.logoImage === ''){
@@ -259,7 +266,11 @@
               }else {
                if(type === '提交'){
                  //  提交表单
+                 this.loading= true ;
+
                  shopInfo(this.form).then( res => {
+                   this.loading= false ;
+
                    if(res.data.status === '000000000'){
                      this.$message({
                        message : '您的店铺信息已提交，通过审核后即可添加商品' ,
@@ -280,11 +291,16 @@
                      })
                    }
                  }).catch( err => {
+                   alert('服务器开小差啦，请稍等~')
 
                  })
                }else if( type === '修改'){
                  //  提交表单
+                 this.loading= true ;
+
                  changeShop(this.form).then( res => {
+                   this.loading= false ;
+
                    if(res.data.status === '000000000'){
                      this.$message({
                        message : '您的店铺信息已修改，通过审核后即可添加商品' ,
@@ -305,6 +321,7 @@
                      })
                    }
                  }).catch( err => {
+                   alert('服务器开小差啦，请稍等~')
 
                  })
                }

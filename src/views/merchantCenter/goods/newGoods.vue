@@ -1,7 +1,7 @@
 <template>
     <div class="newGoods new">
       <h1>新增商品</h1>
-      <el-form :model="form" ref="form" :rules="formRule" label-position="right" >
+      <el-form :model="form" ref="form" :rules="formRule" label-position="right">
         <h2>商品表单</h2>
         <el-form-item  labelWidth="130px" label="店铺" >
           <div class="inputInfo">丫贝自营</div>
@@ -66,10 +66,10 @@
         </div>
 
         <el-form-item   labelWidth="130px"  label="价格" prop="price">
-          <el-input class="inputInfo" :maxLength="15" size="small" v-model.trim="form.price" placeholder="价格"></el-input>
+          <el-input class="inputInfo" :maxlength="15" size="small" v-model.trim="form.price" placeholder="价格"></el-input>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="运费" prop="carriage">
-          <el-input class="inputInfo" :maxLength="2" size="small" v-model.trim="form.carriage" placeholder="运费"></el-input>
+          <el-input class="inputInfo" :maxlength="2" size="small" v-model.trim="form.carriage" placeholder="运费"></el-input>
         </el-form-item>
         <el-form-item labelWidth="130px" label="图片" prop="imagesList">
           <ul class="imgList">
@@ -181,8 +181,8 @@
           if(value === ''){
             callback(new Error('请输入运费'))
           }else{
-            if(!(/^[0-9]{1,9}$/).test(value)){
-              callback(new Error('运费应不小于0且不超过9位数，请重新输入'))
+            if(!(/^[0-9]{1,2}$/).test(value)){
+              callback(new Error('运费应不小于0且不超过2位数，请重新输入'))
             }
             callback();
 
@@ -269,7 +269,6 @@
               currentPage : 1,
               pageSize : 10,
               tips: '',
-
 
 
 
@@ -435,7 +434,7 @@
           },
           // 上传图片
           beforeImgUpload(file) {
-            console.log(file)
+            // console.log(file)
             let reader = new FileReader();
             let ret = [];
             let _this = this;
@@ -454,7 +453,7 @@
                   uploadImage(formData,_this.token).then(res => {
                     if (res.data.status === '000000000') {
                        _this.$set(_this.form.imagesList,_this.imgIndex,  res.data.data.fileName);
-                       console.log(_this.form.imagesList,_this.imgIndex, )
+                       // console.log(_this.form.imagesList,_this.imgIndex, )
                       // _this.goodsImgWarn = false;
                     } else {
                       _this.$message({
@@ -496,7 +495,7 @@
                 'stock': '',
 
               });
-              console.log(this.form.ybProductItemReqDto)
+              // console.log(this.form.ybProductItemReqDto)
 
             } else {
               this.$message({
@@ -513,22 +512,11 @@
           //提交表格
           submitForm(formName){
 
-            console.log(this.form);
+            // console.log(JSON.stringify(this.form));
 
             this.$refs[formName].validate((valid) => {
               if(valid){
-                // delete this.form.firstType ;
-                // delete this.form.secondType ;
-                // let formData = new FormData();
-                // formData.append('id',this.form.id);
-                // formData.append('productName',this.form.productName);
-                // formData.append('brandId',this.form.brandId);
-                // formData.append('class3Id',this.form.class3Id);
-                // formData.append('price',this.form.price);
-                // formData.append('carriage',this.form.carriage);
-                // formData.append('describes',this.form.describes);
-                // formData.append('ybProductItemReqDto',this.form.ybProductItemReqDto);
-                // formData.append('imagesList',this.form.imagesList);
+
 
                 let data = {
                   id: '',
@@ -541,10 +529,10 @@
                   imagesList : this.form.imagesList,
                   describes: this.form.describes,
                 }
-                data = JSON.stringify(data);
-                console.log(data,this.form);
-
+                // data = JSON.stringify(data);
+                // console.log(data,this.form);
                 newGoogds(data,this.user).then( res => {
+
                   if(res.data.status === '000000000') {
                     this.$message({
                       message : '您添加的商品信息已提交，请稍后确认商品状态',
@@ -553,7 +541,8 @@
                       duration: 1000
                     });
                     setTimeout(()=>{
-                      // window.location.reload();
+                      this.$router.push('/merchantCenter/goods/goodsList')
+
 
                     },2000)
                   }else{

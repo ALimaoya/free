@@ -232,7 +232,7 @@
 
         //提交新建子账号
         confirmNew(formName){
-          console.log(this.form);
+          // console.log(this.form);
           this.$refs[formName].validate((valid) => {
             if(valid){
               this.newSubDialog = false ;

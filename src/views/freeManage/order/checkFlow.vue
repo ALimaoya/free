@@ -1,5 +1,5 @@
 <template>
-  <div class="checkflow tableBox">
+  <div class="checkflow tableBox"   v-loading="loading"  element-loading-text="拼命加载中">
     <h1>流量订单审核</h1>
     <search-bar @searchobj="getData" :platform-type="true" :activity-shop="true" :activity-code="true"  :flow="'checkFlow'"></search-bar>
 
@@ -66,7 +66,7 @@
       <span class="totalItems">共{{ totalPages }}页，{{totalElements}}条记录</span>
     </div>
 
-    <el-dialog width="50%" :visible.sync="detailInfo" center top="10vh" title="流量订单审核">
+    <el-dialog width="50%" :visible.sync="detailInfo" center top="10vh" title="流量订单审核" >
       <div class="checkPic">
         <dl v-if="searchImg">
           <dt>搜索截图</dt>
@@ -164,7 +164,9 @@
         reason : '' ,
         refuseReason : '' ,
         status : '' ,
-        reasonBox : false
+        reasonBox : false,
+        loading : true ,
+
 
       }
     },
@@ -192,7 +194,11 @@
         formData.append('currentPage', this.currentPage);
         formData.append('EQ_status','4');
         formData.append('pageSize', this.pageSize);
+        this.loading = true ;
+
         getOrderList(formData).then( res=> {
+          this.loading = false ;
+
           if(res.data.status === '000000000'){
             this.tableData = res.data.data ;
             this.totalPages = res.data.totalPages ;
@@ -225,8 +231,12 @@
         this.orderId = order ;
         this.detailInfo = true ;
         this.viewImg = '';
+        this.loading = true ;
+
         orderDetail(order).then( res => {
           // console.log(res);
+          this.loading = false ;
+
           if( res.data.status === '000000000'){
             if(res.data.data.orderImageList.length){
               res.data.data.orderImageList.forEach( i => {
@@ -270,7 +280,11 @@
       },
 
       handelRefuse(){
+        this.loading = true ;
+
         checkOrder({ orderId : this.orderId , status : this.status ,reason : this.refuseReason ,activityType : this.order.EQ_activityType}).then( res => {
+          this.loading = false ;
+
           if(res.data.status === '000000000'){
             this.$message({
               message : '审核提交成功，请稍后确认' ,

@@ -26,7 +26,7 @@
       methods : {
         getGoods(url){
           this.urlArr = httpString(url);
-          console.log(this.urlArr);
+          // console.log(this.urlArr);
 
           if(this.urlArr !== null ){
             this.$router.push({ path: '/merchantCenter/tool/list',query: { type: "1" } })

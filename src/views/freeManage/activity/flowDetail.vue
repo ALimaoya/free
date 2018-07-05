@@ -31,7 +31,7 @@
     <div class="taskOrder tableBox">
       <h1>任务查询</h1>
       <search-bar @searchobj="getData" :platform-type="true" :activity-shop="true" :activity-code="true" :activity-status="true" :flow="true"></search-bar>
-      <el-table :data="tableData" border>
+      <el-table :data="tableData" border v-loading="loading"  element-loading-text="拼命加载中">
         <el-table-column label="序号" width="80"></el-table-column>
         <el-table-column prop="orderCode" label="订单流水号" ></el-table-column>
         <el-table-column prop="orderShop" label="店铺名称" ></el-table-column>
@@ -249,6 +249,7 @@
 
                   }
                 }).catch( err => {
+                  alert('服务器开小差啦，请稍等~')
 
 
                   // console.log(err) ;

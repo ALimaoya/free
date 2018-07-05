@@ -52,7 +52,7 @@
         </li>
         <li :class="{isActive:show === '3' }" @click="changeTabs('3')">
           <!--<a href="#" >-->
-          <span>4</span>
+          <span>3</span>
           <dl>
             <dt>我要开店</dt>
             <dd v-if="statusTag.shopStatus === '0'"> 您还未提交店铺信息 </dd>

@@ -156,7 +156,7 @@
               // this.$emit('stepObj',{ index : '3' ,component : 'personal3'});
 
               if(valid){
-                console.log(this.agree,1);
+                // console.log(this.agree,1);
                 if(!this.agree){
                   this.$message({
                     message : '请先阅读并同意《丫贝网合作协议》',

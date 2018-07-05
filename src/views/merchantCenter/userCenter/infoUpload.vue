@@ -1,15 +1,15 @@
 <template>
-  <div class="infoUpload">
+  <div class="infoUpload"  v-loading="loading"  element-loading-text="拼命加载中">
     <h1>资质上传</h1>
-    <el-form :model="form" ref="form"  :rules="formRule" center label-position="right">
+    <el-form :model="form" ref="form"  :rules="formRule" center label-position="right" >
       <el-form-item  :labelWidth="labelWidth" label="店铺负责人："  prop="name">
-        <el-input class="inputInfo" type="text" size="small" :maxLength="40" :disabled="isRegister" v-model.trim="form.name" placeholder="店铺负责人" ></el-input>
+        <el-input class="inputInfo" type="text" size="small" :maxlength="40" :disabled="isRegister" v-model.trim="form.name" placeholder="店铺负责人" ></el-input>
       </el-form-item>
       <el-form-item   :labelWidth="labelWidth"  label="身份证号：" prop="cardId">
-        <el-input class="inputInfo" :maxLength="18" size="small" :disabled="isRegister" v-model.trim="form.cardId"  placeholder="身份证号"></el-input>
+        <el-input class="inputInfo" :maxlength="18" size="small" :disabled="isRegister" v-model.trim="form.cardId"  placeholder="身份证号"></el-input>
       </el-form-item>
       <el-form-item  :labelWidth="labelWidth" label="企业名称：" prop="enterpriseName">
-        <el-input class="inputInfo" size="small" :maxLength="40"  :disabled="isRegister" v-model.trim="form.enterpriseName"  placeholder="企业名称"></el-input>
+        <el-input class="inputInfo" size="small" :maxlength="40"  :disabled="isRegister" v-model.trim="form.enterpriseName"  placeholder="企业名称"></el-input>
       </el-form-item>
       <el-form-item  :labelWidth="labelWidth" label="邮箱：" prop="email">
         <el-input class="inputInfo" size="small" :disabled="isRegister" v-model.trim="form.email" placeholder="邮箱"></el-input>
@@ -196,14 +196,20 @@
             imgSrc:'',
             labelWidth: '150px',
             status: '',
-          }
+            loading : true ,
+
+      }
       },
       mounted(){
         this.getUserInfo();
       },
       methods : {
         getUserInfo(){
+
+
           getInfo().then( res =>{
+            this.loading = false ;
+
             if(res.data.status === '000000000'){
               if(res.data.data !== null){
                 this.form = res.data.data ;
@@ -224,6 +230,7 @@
               })
             }
           }).catch( err => {
+            alert('服务器开小差啦，请稍等~')
 
           })
         },
@@ -353,6 +360,7 @@
             let formData = new FormData();
             formData.append('image', file);
             uploadImage(formData, that.token).then(res => {
+
               if (res.data.status === '000000000') {
 
                 that.form.cardBackImage = res.data.data.fileName;
@@ -390,11 +398,15 @@
           }
 
           this.$refs[formName].validate((valid) => {
-            console.log(this.form,this.businessImageWarn,this.authorizeImageWarn,this.cardFaceImageWarn,this.cardBackImageWarn);
+            // console.log(this.form,this.businessImageWarn,this.authorizeImageWarn,this.cardFaceImageWarn,this.cardBackImageWarn);
 
 
             if(valid&&!this.businessImageWarn&&!this.authorizeImageWarn&&!this.cardFaceImageWarn&&!this.cardBackImageWarn){
+              this.loading = true ;
+
               infoUpload(this.form).then( res => {
+                this.loading = false ;
+
                 if(res.data.status === '000000000'){
                   this.$message({
                     message : '您的资质信息已上传成功，通过审核后即可进行相关操作' ,
@@ -414,6 +426,7 @@
                   })
                 }
               }).catch( err => {
+                alert('服务器开小差啦，请稍等~')
 
               })
             }else{
@@ -440,7 +453,7 @@
     margin-top : 1rem ;
     justify-content: flex-start;
     .el-form-item{
-      width : 60% ;
+      width : 70% ;
       margin: 0.5rem auto ;
 
     }
@@ -477,7 +490,7 @@
       flex-wrap: nowrap;
       /*width: 80%!important;*/
       dl{
-        width : 20%;
+        width : 23%;
         /*float:left;*/
 
         //height : 3rem ;
@@ -487,6 +500,8 @@
           text-align : center ;
           line-height : 0.4rem ;
           background : #eee ;
+          font-size: 0.14rem;
+          color: #333;
         }
         dd{
           flex : 1 ;

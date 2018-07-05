@@ -1,5 +1,5 @@
 <template>
-  <div class="refund activityTable">
+  <div class="refund activityTable"  v-loading="loading"  element-loading-text="拼命加载中">
     <h1 class="h_title">退款管理</h1>
     <div class="search">
       <el-input size="small" :maxlength="40" v-model.trim="refund.orderId" placeholder="退货单号"></el-input>
@@ -100,7 +100,7 @@
           </el-select>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="商品名称：" prop="productName">
-          <el-input :maxLength="100" class="inputInfo" size="small" v-model.trim="form.productName" disabled="disabled"></el-input>
+          <el-input :maxlength="100" class="inputInfo" size="small" v-model.trim="form.productName" disabled="disabled"></el-input>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="商品数量："  prop="goodsNum">
           <el-input  class="inputInfo" size="small" v-model.trim="form.goodsNum" disabled="disabled"></el-input>
@@ -109,7 +109,7 @@
           <el-input class="inputInfo" size="small" v-model.trim="form.refund" disabled="disabled"></el-input>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="退款原因：" prop="reason">
-          <el-input :maxLength="400" class="inputInfo" size="small" v-model.trim="form.reason" placeholder="请输入退款原因"></el-input>
+          <el-input :maxlength="400" class="inputInfo" size="small" v-model.trim="form.reason" placeholder="请输入退款原因"></el-input>
         </el-form-item>
         <!--<el-form-item   labelWidth="130px"  label="确认密码：" prop="checkPsw">-->
           <!--<el-input class="inputInfo" size="small" v-model.trim="form.checkPsw" placeholder="请输入登录密码"></el-input>-->
@@ -205,6 +205,7 @@
             // checkPsw: '',
             id: ''
           },
+          loading: true ,
           // formRule : {
           //
           //   checkPsw: [
@@ -239,8 +240,11 @@
           formData.append('EQ_status',this.refund.status)
           formData.append('GT_createTime',this.refund.startDate)
           formData.append('LT_createTime',this.refund.endDate)
+
           refusedList(formData).then( res => {
-            console.log('data',res)
+            // console.log('data',res)
+            this.loading= false;
+
             if(res.data.status === "000000000"){
               this.tableData = res.data.data ;
               this.totalPages = res.data.totalPages ;
@@ -280,7 +284,11 @@
               // formData.append('confirmPwd', this.form.checkPsw);
               formData.append('status', this.form.result);
               formData.append('refuseReason', this.form.reason);
+              this.loading= true;
+
               refusedAffirm(formData).then( res =>{
+                this.loading= false;
+
                 if(res.data.status === "000000000"){
                 this.$message({
                   message : res.data.message ,

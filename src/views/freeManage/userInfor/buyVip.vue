@@ -1,6 +1,6 @@
 <template>
-  <div class="buyVip">
-    <div class="title">
+  <div class="buyVip" v-loading="loading"  element-loading-text="拼命加载中">
+    <div class="title"  >
       <p>商家开通VIP</p>
       <span class="tips">充值到账可能会有延时，若
         <b>30分钟</b>内未到账请联系在线客服</span>
@@ -109,7 +109,7 @@
           </el-input>
           <!--<div class="getNum" style="width : 1.5rem ;float : right ;"></div>-->
 
-          <router-link to="/userInfor/settings" v-if="!settingPsw"><span style="color:#409EFF;position:absolute;display:inline-block;width:1rem">设置支付密码</span></router-link>
+          <router-link to="/accountManage/userInfor/settings" v-if="!settingPsw"><span style="color:#409EFF;position:absolute;display:inline-block;width:1rem">设置支付密码</span></router-link>
         </el-form-item>
 
       </el-form>
@@ -207,6 +207,7 @@
           }],
         },
         depositStatus:true,
+        loading: true ,
       }
     },
     mounted() {
@@ -217,7 +218,10 @@
     },
     methods: {
       getVipInfo() {
+
         getMember().then(res => {
+          this.loading = false ;
+
           if (res.data.status === '000000000') {
             this.statusData = res.data.data;
             // console.log(this.statusData)
@@ -249,7 +253,11 @@
         })
       },
       getVipList() {
+        this.loading = true ;
+
         getVipType().then(res => {
+          this.loading = false ;
+
           if (res.data.status === '000000000') {
             if( res.data.data.length){
               this.vipInfo = res.data.data;

@@ -1,7 +1,7 @@
 <template>
   <div class="step2">
     <h1>绑定账号</h1>
-    <el-form ref="form" :model="form" :rules="formRule" center label-position="top">
+    <el-form ref="form" :model="form" :rules="formRule" center label-position="top" v-loading="loading"  element-loading-text="拼命加载中">
       <el-form-item label="结算渠道"  >
         <el-input type="text" size="small" :disabled="readOnly" placeholder="支付宝"></el-input>
       </el-form-item>
@@ -53,6 +53,8 @@
                 { message : '请输入验证码',required : true ,trigger : 'blur'}
               ]
             },
+            loading: true ,
+
           }
       },
       mounted(){
@@ -106,7 +108,7 @@
         //绑定
         submitForm(formName){
 
-          console.log(this.form);
+          // console.log(this.form);
           this.$refs[formName].validate((valid) => {
             if(valid){
 

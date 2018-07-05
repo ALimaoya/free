@@ -1,5 +1,5 @@
 <template>
-  <div class="shopContent">
+  <div class="shopContent" v-loading="loading"  element-loading-text="拼命加载中">
     <div class="new">
       <p>店铺管理<button @click="toNew">绑定新店铺</button></p>
     </div>
@@ -31,7 +31,7 @@
       <el-button size="small" round type="primary" @click="getShopList()">搜索店铺</el-button>
     </div>
 
-    <el-table class="list" :data="tableData"  border style="width: 100%">
+    <el-table class="list" :data="tableData"  border style="width: 100%" >
         <el-table-column prop="shopName" label="店铺" width="180"></el-table-column>
         <el-table-column prop="platform" label="平台类型" width="180">
           <template slot-scope="scope">
@@ -149,6 +149,7 @@
             pageSize : 10 ,
             totalPages : '',
             totalElements: 0 ,
+            loading: true,
           }
         },
         mounted(){
@@ -156,7 +157,7 @@
         },
         methods : {
           toNew(){
-            this.$router.push('/newshop')
+            this.$router.push('/freeManage/newshop')
           },
           //获取店铺列表
           getShopList(){
@@ -166,7 +167,10 @@
               formData.append('currentPage' ,this.currentPage);
               formData.append('pageSize' , this.pageSize);
               formData.append('EQ_payStatus',this.shop.EQ_payStatus);
+            this.loading = true ;
+
             shopList(formData).then( res => {
+              this.loading = false ;
 
               if(res.data.status === '000000000'){
                 // console.log(res.data);
@@ -188,7 +192,7 @@
           //修改店铺信息
           change(index,id){
 
-            this.$router.push({ path : '/newshop' , query : { editor : '1' ,id : id }}) ;
+            this.$router.push({ path : '/freeManage/newshop' , query : { editor : '1' ,id : id }}) ;
           },
 
           //支付店铺

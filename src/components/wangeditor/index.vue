@@ -1,6 +1,6 @@
 <template>
   <div id="wangeditor">
-    <div ref="editorElem" style="text-align:left"></div>
+    <div ref="editorElem" style="text-align:left" v-html="word"></div>
   </div>
 </template>
 
@@ -9,10 +9,10 @@
   import E from 'wangeditor'
     export default {
         name: "wangeditor",
-        props:['catchData','getData'],    //接收父组件的方法
+        props:['catchData'],    //接收父组件的方法
         data() {
             return {
-
+              word: '',
               dataInterface: {
                 editorUpImgUrl: process.env.BASE_API+'/file/multi/upload' // 编辑器插入的图片上传地址
               },
@@ -24,17 +24,15 @@
         mounted() {
 
           this.createEditor();
-
+          // console.log(this.getData)
+          // this.$set(this.content,'word',this.getData)
 
 
         },
         methods: {
           createEditor(){
             var editor = new E(this.$refs.editorElem)        //创建富文本实例
-            this.$nextTick(() => {
-              console.log(this.getData)
 
-            })
             editor.customConfig.onchange = (html) => {
 
               this.catchData(html)  //把这个html通过catchData的方法传入父组件
@@ -66,7 +64,8 @@
               'image',  // 插入图片
               'table',  // 表格
               'video',  // 插入视频
-
+              'undo',  // 撤销
+              'redo'  // 重复
             ]
             editor.customConfig.uploadImgHooks = {
               before: function (xhr, editor, files) {
@@ -99,13 +98,11 @@
                 // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象
               },
 
-              // 如果服务器端返回的不是 {errno:0, data: [...]} 这种格式，可使用该配置
-              // （但是，服务器端返回的必须是一个 JSON 格式字符串！！！否则会报错）
               customInsert: function (insertImg, result, editor) {
                 // 图片上传并返回结果，自定义插入图片的事件（而不是编辑器自动插入图片！！！）
                 // insertImg 是插入图片的函数，editor 是编辑器对象，result 是服务器端返回的结果
                 let url = Object.values(result.data.filePath)      //result.data就是服务器返回的图片名字和链接
-                console.log(result.data.filePath,url)
+                // console.log(result.data.filePath,url)
                 // if(url.length !==1){
                   result.data.filePath.map( i => {
                     // let url = Object.values(i)      //result.data就是服务器返回的图片名字和链接
@@ -114,14 +111,14 @@
                   })
                 // }
 
-                // result 必须是一个 JSON 格式字符串！！！否则报错
               }
             }
             editor.customConfig.linkImgCallback = function (url) {
-              console.log(url) // url 即插入图片的地址
+              // console.log(url) // url 即插入图片的地址
             }
 
             editor.create()
+            // editor.txt.html(this.getData)
 
           },
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="tryoutDetail">
+  <div class="tryoutDetail"  v-loading="loading"  element-loading-text="拼命加载中">
     <div class="title">{{ activityTitle[detailInfo.activityType-1]}}订单详情</div>
 
 
@@ -54,14 +54,19 @@
             showImg : false ,
             bigImg : '' ,
             imageDomain : process.env.IMAGE_DOMAIN ,
+            loading : true ,
+
             // imageDomain : 'http://yabei.oss-cn-beijing.aliyuncs.com/'
           }
       },
       mounted(){
         let order = this.$route.params.order ;
         // console.log(order);
+
         orderDetail(order).then( res => {
           // console.log(res);
+          this.loading = false ;
+
           if(res.data.status === '000000000'){
             this.detailInfo = res.data.data
           }

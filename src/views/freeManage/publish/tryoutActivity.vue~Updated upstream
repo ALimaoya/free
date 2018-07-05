@@ -100,7 +100,7 @@
       <span class="tips"><img src="../../assets/imgs/tips3.png" alt=""/>开奖份数为：满足开团条件时的中奖人数</span>
       </el-form-item>
       <el-form-item v-if="form.activityType!=='1'&&form.activityType !== undefined" label="参团人数：" :labelWidth="labelWidth" prop="groupPeopleQuantity" style="margin-bottom:22px;">
-        <el-input class="any" size="small" :maxLength="10" v-model.num="form.groupPeopleQuantity" type="number" min="1" :readonly="readonly" placeholder="请输入内容"></el-input>人
+        <el-input class="any" size="small" :maxlength="10" v-model.num="form.groupPeopleQuantity" type="number" min="1" :readonly="readonly" placeholder="请输入内容"></el-input>人
         <span class="tips" ><img src="../../assets/imgs/tips3.png" alt=""/>参团人数：申请人数满足此条件时，立即开奖</span>
       </el-form-item>
       <span v-if="form.activityType!=='1'&&form.activityType !== undefined" class="tips tips_warn" style="margin-left :120px ;margin-bottom : 22px;" >注：参团人数需在1 ~ 下单价格/2 之间的整数范围内，且不能小于每次开奖份数的输入值，最低人数为1</span>
@@ -1532,13 +1532,13 @@
 
       //  购买会员
         buyVip(){
-          this.$router.push('/userInfor/buyVip')
+          this.$router.push('/freeManage/userInfor/buyVip')
 
         },
 
       // 跳转到试用管理
         goTryout(){
-          this.$router.push('/activity/approval')
+          this.$router.push('/freeManage/activity/approval')
         }
 
       }

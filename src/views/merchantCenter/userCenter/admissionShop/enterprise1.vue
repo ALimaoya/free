@@ -3,7 +3,7 @@
       <el-form :model="form" ref="form" :rules="formRule" label-position="right">
         <h1 class="h_title">入驻人基本信息</h1>
         <el-form-item  :labelWidth="labelWidth" label="店铺管理人姓名："  prop="name1">
-          <el-input class="inputInfo" :maxLength="4" size="small" :disabled="readOnly" v-model.trim="form.name1" placeholder="请输入店铺管理人的真实姓名" ></el-input>
+          <el-input class="inputInfo" :maxlength="4" size="small" :disabled="readOnly" v-model.trim="form.name1" placeholder="请输入店铺管理人的真实姓名" ></el-input>
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth" label="店铺管理人邮箱：" prop="email">
           <el-input class="inputInfo" size="small" v-model.trim="form.email" :disabled="readOnly" placeholder="请输入常用邮箱，便于信息及时送达"></el-input>
@@ -14,13 +14,13 @@
         </el-form-item>
         <p class="h_title otherInfo">企业法定代表人基本信息</p>
         <el-form-item  :labelWidth="labelWidth" label="法定代表人姓名："  prop="name2">
-          <el-input class="inputInfo" :maxLength="4" size="small" :disabled="readOnly" v-model.trim="form.name2" placeholder="请输入法定代表人的真实姓名" ></el-input>
+          <el-input class="inputInfo" :maxlength="4" size="small" :disabled="readOnly" v-model.trim="form.name2" placeholder="请输入法定代表人的真实姓名" ></el-input>
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth " label="法定代表人手机号：" prop="tel2" >
           <el-input class="inputInfo" size="small" v-model.trim="form.tel2" :disabled="readOnly" placeholder="请输入法定代表人常用手机号，不支持座机号"></el-input>
         </el-form-item>
         <el-form-item   :labelWidth="labelWidth"  label="法定代表人身份证号：" prop="idCard">
-          <el-input class="inputInfo" :maxLength="18" size="small" :disabled="readOnly" v-model.trim="form.idCard"  placeholder="请输入法定代表人身份证号码"></el-input>
+          <el-input class="inputInfo" :maxlength="18" size="small" :disabled="readOnly" v-model.trim="form.idCard"  placeholder="请输入法定代表人身份证号码"></el-input>
           <span class="tip"><svg-icon icon-class="tips"/>该证件号与证件照片、营业执照法人等一致</span>
         </el-form-item>
         <el-form-item   :labelWidth="labelWidth"  label="身份证有效期：" prop="idCardDate">

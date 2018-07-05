@@ -1,5 +1,5 @@
 <template>
-    <div class="transitionOrder">
+    <div class="transitionOrder"  v-loading="loading"  element-loading-text="拼命加载中">
       <h1 class="h_title">交易详情</h1>
       <el-form  :model="form" ref="form"  label-position="right">
         <el-form-item   labelWidth="130px"  label="单号：" >
@@ -184,7 +184,8 @@
               {
                 name:'未支付'
               },
-            ]
+            ],
+              loading: true,
             }
         },
         mounted() {
@@ -194,7 +195,9 @@
           getDetail(){
             let order = this.$route.params.id ;
             getOrderDetail(order).then( res => {
-              console.log('res',res)
+              // console.log('res',res)
+              this.loading= false;
+
               if( res.data.status === '000000000'){
                 this.form = res.data.data ;
               }else{

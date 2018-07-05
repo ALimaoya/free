@@ -136,11 +136,15 @@ a:hover {
   border-collapse: collapse;
   border : 0;
   margin : auto ;
+  width: 90% ;
   th,td{
     padding : 0 0.1rem ;
     border : 0;
     text-align: center ;
 
+  }
+  td{
+    font-size: 0.12rem ;
   }
   th{
     height: 30px;
@@ -164,3 +168,10 @@ a:hover {
   display: inline-block;
 
 }
+.w-e-toolbar{
+  flex-wrap: wrap!important;
+}
+.w-e-menu{
+  z-index: 1000!important;
+}
+

@@ -1,5 +1,5 @@
 <template>
-  <div class="postSetting activityTable">
+  <div class="postSetting activityTable"  v-loading="loading"  element-loading-text="拼命加载中">
     <!--<div class="top">-->
       <h1 class="h_title">运费设置<el-button type="primary" size="mini" @click="newRule">新增运费规则</el-button></h1>
     <!--</div>-->
@@ -8,7 +8,7 @@
         <li v-for="(item ,index) in carriageForm.regulation" :key="index">
           <el-form-item :prop="'regulation.' + index + '.reachQuantity'"
                           :rules="rule.reachQuantity">
-              满<el-input class="inputInfo" size="small" :maxLength="11" type="number" v-model="item.reachQuantity"></el-input>件
+              满<el-input class="inputInfo" size="small" :maxlength="11" type="number" v-model="item.reachQuantity"></el-input>件
           </el-form-item>
           <el-form-item :prop="'regulation.' + index + '.carriageAmount'"
                           :rules="rule.carriageAmount">
@@ -69,7 +69,8 @@
             carriageAmount: [
               { required: true, validator: validCarrage , trigger: 'blur' }
             ]
-          }
+          },
+          loading: true
         }
       },
       mounted(){
@@ -78,6 +79,8 @@
       methods : {
         getCarriage(){
           carriageList().then( res => {
+            this.loading= false ;
+
             if(res.data.status === "000000000"){
               if(res.data.data.length >0){
                 this.carriageForm.regulation= res.data.data
@@ -89,8 +92,12 @@
           // console.log(this.carriageForm)
           this.$refs[formName].validate((valid) => {
             if(valid){
+              this.loading= true ;
+
               addCarriage(this.carriageForm.regulation).then( res => {
-                console.log(this.carriageForm.regulation)
+                this.loading= false ;
+
+                // console.log(this.carriageForm.regulation)
                 if(res.data.status === "000000000"){
                   this.$message({
                     message: '您新增运费规则已提交，请稍后确认',
@@ -138,7 +145,7 @@
           if (index !== -1 && this.carriageForm.regulation.length > 1) {
             this.carriageForm.regulation.splice(index, 1)
           }
-          console.log(index,this.carriageForm.regulation)
+          // console.log(index,this.carriageForm.regulation)
 
           if(item.id  !==  ''){
             deleteCarriage(item.id).then( res => {

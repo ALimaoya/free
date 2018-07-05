@@ -1,5 +1,5 @@
 <template>
-  <div class="flow activityTable">
+  <div class="flow activityTable"  v-loading="loading"  element-loading-text="拼命加载中">
     <search-bar @searchobj="getSearchData" :platform-type="true" :activity-shop="true" :task-status="true" :activity-code="true" :flow="'flowTask'" ></search-bar>
     <el-table :data="tableData"  border fit>
       <el-table-column prop="activityId" label="序号"></el-table-column>
@@ -208,6 +208,7 @@
                 value : '4'
               }
             ],
+            loading: true ,
           }
       },
       mounted(){
@@ -244,8 +245,12 @@
         formData.append('LT_activityStartTime',end);
         formData.append('currentPage',this.currentPage);
         formData.append('pageSize',this.pageSize);
+        this.loading= true;
+
         getActivity(formData).then(res => {
           // console.log(res);
+          this.loading= false;
+
           if (res.data.status === '000000000') {
             this.tableData = res.data.data;
             this.totalPages = res.data.totalPages ;
@@ -445,7 +450,11 @@
         let formData = new FormData();
         formData.append('activityId',id);
         formData.append('activityStatus',status);
+        this.loading= true;
+
         changeStatus(formData).then( res => {
+          this.loading= false;
+
           if(res.data.status === '000000000'){
             this.$message({
               message : '操作成功',
@@ -453,7 +462,10 @@
               center : true ,
               duration : 1000
             });
-            window.location.reload();
+            setTimeout(() => {
+              window.location.reload();
+
+            },1500)
           }else{
             this.$message({
               message : res.data.message ,
@@ -468,7 +480,11 @@
 
       //申请结算
       applyAccounts(index ,id){
+        this.loading= true;
+
         applyPay(id).then( res => {
+          this.loading= false;
+
           if( res.data.status === '000000000'){
             this.$message({
               message : '申请结算成功，请稍后确认',
@@ -477,7 +493,10 @@
               duration : 1000
 
             });
-            window.location.reload() ;
+            setTimeout(() => {
+              window.location.reload();
+
+            },1500)
           }else{
             this.$message({
               message :  res.data.message ,
@@ -492,7 +511,11 @@
 
       //取消结算
       cancelAccounts(index ,id){
+        this.loading= true;
+
         cancelPay(id).then( res => {
+          this.loading= false;
+
           if( res.data.status === '000000000'){
             this.$message({
               message : '取消结算成功，请稍后确认',
@@ -501,7 +524,10 @@
               duration : 1000
 
             });
-            window.location.reload();
+            setTimeout(() => {
+              window.location.reload();
+
+            },1500)
           }else{
             this.$message({
               message : res.data.message ,

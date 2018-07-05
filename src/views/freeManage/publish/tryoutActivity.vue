@@ -1,6 +1,6 @@
 <template>
-  <div class="tryoutActivity step">
-    <el-form :model="form" ref="form" :rules="formRule">
+  <div class="tryoutActivity step"  v-loading="loading"  element-loading-text="拼命加载中">
+    <el-form :model="form" ref="form" :rules="formRule" >
       <p class="title">第一步：填写活动信息</p>
        <el-form-item label="活动类型："  :labelWidth="labelWidth" prop="activityType"  >
          <el-radio-group v-model="form.activityType" :disabled="read" @change="form.activityStartTime = '';setRate()">
@@ -100,7 +100,7 @@
       <span class="tips"><img src="../../../assets/imgs/tips3.png" alt=""/>开奖份数为：满足开团条件时的中奖人数</span>
       </el-form-item>
       <el-form-item v-if="form.activityType!=='1'&&form.activityType !== undefined" label="参团人数：" :labelWidth="labelWidth" prop="groupPeopleQuantity" style="margin-bottom:22px;">
-        <el-input class="any" size="small" :maxLength="10" v-model.num="form.groupPeopleQuantity" type="number" min="1" :readonly="readonly" placeholder="请输入内容"></el-input>人
+        <el-input class="any" size="small" :maxlength="10" v-model.num="form.groupPeopleQuantity" type="number" min="1" :readonly="readonly" placeholder="请输入内容"></el-input>人
         <span class="tips" ><img src="../../../assets/imgs/tips3.png" alt=""/>参团人数：申请人数满足此条件时，立即开奖</span>
       </el-form-item>
       <span v-if="form.activityType!=='1'&&form.activityType !== undefined" class="tips tips_warn" style="margin-left :120px ;margin-bottom : 22px;" >注：参团人数需在1 ~ 下单价格/2 之间的整数范围内，且不能小于每次开奖份数的输入值，最低人数为1</span>
@@ -625,7 +625,9 @@
           readIpt : false ,  //查看活动详情时禁止输入
           autoUpload : true ,
           vipVisible : false ,
-          calendarNumType : ''
+          calendarNumType : '',
+          loading : true ,
+
 
         }
       },
@@ -633,6 +635,8 @@
 
       mounted(){
         shopList().then( res => {
+          this.loading = false ;
+
           if(res.data.status === '000000000'){
             //获取用户是否已绑定店铺
             if(res.data.data.length){
@@ -699,7 +703,11 @@
           if( order !== undefined){
             this.order = order ;
             //获取活动详情
+            this.loading = true ;
+
             this.$store.dispatch('getPublishDetail',order).then( res => {
+              this.loading = false ;
+
               if (res.data.status === '000000000') {
                 this.form = res.data.data;
                 //判断活动是否已支付
@@ -823,6 +831,7 @@
                   }).catch( err => {
 
                     _this.showImgWarn = false ;
+                    alert('服务器开小差啦，请稍等~')
 
                     // console.log(err) ;
                   })
@@ -876,6 +885,7 @@
                 }).catch( err => {
                   // console.log(err) ;
                   _this.goodsImgWarn = true ;
+                  alert('服务器开小差啦，请稍等~')
 
                 })
               }
@@ -947,8 +957,10 @@
               this.searchOptions = res.data.data ;
               // console.log(this.searchOptions);
             }
-          }).catch( err => {
             // console.log(err);
+            }).catch( err => {
+              alert('服务器开小差啦，请稍等~')
+
           })
         },
 
@@ -1475,7 +1487,11 @@
           //试用类型不为拼团类时删除拼团相关参数字段
 
           if (index === 1) {
+            this.loading = true ;
+
             publishActivity(form).then(res => {
+              this.loading = false ;
+
               if (res.data.status === '000000000') {
                 this.$message({
                   type: 'success',
@@ -1499,7 +1515,11 @@
             });
           } else {
             if (index === 2) {
+              this.loading = true ;
+
               changeDetail(form).then(res => {
+                this.loading = false ;
+
                 if (res.data.status === '000000000') {
                   this.$message({
                     type: 'success',
@@ -1538,7 +1558,7 @@
 
       // 跳转到试用管理
         goTryout(){
-          this.$router.push('/activity/approval')
+          this.$router.push('/freeManage/activity/approval')
         }
 
       }

@@ -7,7 +7,7 @@
         <el-input class="inputInfo" size="small" v-model.trim="form.name" placeholder="账户名称 2-20位"></el-input>
       </el-form-item>
       <el-form-item   labelWidth="130px"  label="真实姓名" prop="realName">
-        <el-input class="inputInfo" :maxLength="20" size="small" v-model.trim="form.realName" placeholder="真实姓名 最长20位"></el-input>
+        <el-input class="inputInfo" :maxlength="20" size="small" v-model.trim="form.realName" placeholder="真实姓名 最长20位"></el-input>
       </el-form-item>
       <el-form-item  labelWidth="130px" label="账户密码" prop="password">
         <el-input class="inputInfo" :type="pwdType1" size="small" v-model.trim="form.password" placeholder="账户密码 8-16位"></el-input>

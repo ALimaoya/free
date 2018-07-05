@@ -30,7 +30,7 @@
       methods:{
         getGoods(){
           this.orderArr = this.orderId.split('\n');
-          console.log(this.orderArr);
+          // console.log(this.orderArr);
           if(this.orderArr.length>0&&this.orderArr.indexOf('')=== -1 ){
             this.$router.push({ path: '/merchantCenter/tool/list',query: {type: "2"}})
 

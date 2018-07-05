@@ -1,5 +1,5 @@
 <template>
-  <div class="checkbonus tableBox">
+  <div class="checkbonus tableBox"  v-loading="loading"  element-loading-text="拼命加载中">
     <h1>评价审核</h1>
     <search-bar @searchobj="getData" :platform-type="true" :activity-type="true" :third-order-code="true" :activity-code="true" :activity="'view'"></search-bar>
 
@@ -16,7 +16,7 @@
       <!--<el-input size="small" :maxlength="20" v-model.trim="order.thirdOrderCode" placeholder="请输入第三方订单编号"></el-input>-->
       <!--<el-button size="small"  @click="getList()" class="searchOrder" style="padding: 0 0.05rem;">查询</el-button>-->
     <!--</div>-->
-    <el-table :data="tableData" border>
+    <el-table :data="tableData" border >
       <el-table-column prop="activityType" label="试客任务类型" width="100">
         <template slot-scope="scope">
           <span v-if="scope.row.activityType === '1'">超级试用</span>
@@ -53,7 +53,7 @@
       <span class="totalItems">共{{ totalPages }}页，{{totalElements}}条记录</span>
     </div>
 
-    <el-dialog width="50%" :visible.sync="detailInfo" center top="10vh" title="评价审核">
+    <el-dialog width="50%" :visible.sync="detailInfo" center top="10vh" title="评价审核" >
       <dl v-if="viewImg">
         <dt>评价截图</dt>
         <dd >
@@ -68,7 +68,7 @@
         <el-button type="info" @click="detailInfo = false; viewImg = ''">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="拒绝原因" :visible.sync="reasonBox" center top="20vh"  width="30%" >
+    <el-dialog title="拒绝原因" :visible.sync="reasonBox" center top="20vh"  width="30%"  >
       <span>备注：</span>
       <el-input :rows="4" type="textarea" :maxlength="100" v-model.trim="reason" placeholder="审核拒绝时不能为空，可输入字符最大长度为100"></el-input>
       <div slot="footer" class="dialog-footer">
@@ -138,7 +138,9 @@
         reason : '' ,
         refuseReason : '' ,
         status : '' ,
-        reasonBox : false
+        reasonBox : false,
+        loading : true ,
+
 
       }
     },
@@ -172,7 +174,11 @@
         formData.append('currentPage', this.currentPage);
         formData.append('EQ_status','6');
         formData.append('pageSize', this.pageSize);
+        this.loading = true ;
+
         getOrderList(formData).then( res=> {
+          this.loading = false ;
+
           if(res.data.status === '000000000'){
             this.tableData = res.data.data ;
             this.totalPages = res.data.totalPages ;
@@ -204,7 +210,11 @@
         this.orderId = order ;
         this.detailInfo = true ;
         this.viewImg = '';
+        this.loading = true ;
+
         orderDetail(order).then( res => {
+          this.loading = false ;
+
           // console.log(res);
           if( res.data.status === '000000000'){
             if(res.data.data.orderImageList.length){
@@ -245,7 +255,11 @@
       },
 
       handelRefuse(){
+        this.loading = true ;
+
         checkOrder({ orderId : this.orderId , status : this.status ,reason : this.refuseReason ,activityType : this.order.EQ_activityType}).then( res => {
+          this.loading = false ;
+
           if(res.data.status === '000000000'){
             this.$message({
               message : '审核提交成功，请稍后确认' ,

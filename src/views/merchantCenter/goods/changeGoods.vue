@@ -1,7 +1,7 @@
 <template>
-  <div class="changeGoods new">
+  <div class="changeGoods new"  v-loading="loading"  element-loading-text="拼命加载中">
     <h1>修改商品</h1>
-    <el-form :model="form" ref="form" :rules="formRule" label-position="right" >
+    <el-form :model="form" ref="form" :rules="formRule" label-position="right">
       <h2>商品表单</h2>
       <el-form-item  labelWidth="130px" label="店铺" >
         <div class="inputInfo">丫贝自营</div>
@@ -65,10 +65,10 @@
       </div>
 
       <el-form-item   labelWidth="130px"  label="价格" prop="price">
-        <el-input class="inputInfo" :maxLength="15" size="small" v-model.trim="form.price" placeholder="价格"></el-input>
+        <el-input class="inputInfo" :maxlength="15" size="small" v-model.trim="form.price" placeholder="价格"></el-input>
       </el-form-item>
       <el-form-item   labelWidth="130px"  label="运费" prop="carriage">
-        <el-input class="inputInfo" :maxLength="2" size="small" v-model.trim="form.carriage" placeholder="运费"></el-input>
+        <el-input class="inputInfo" :maxlength="2" size="small" v-model.trim="form.carriage" placeholder="运费"></el-input>
       </el-form-item>
       <el-form-item labelWidth="130px" label="图片" prop="imagesList">
         <ul class="imgList">
@@ -79,11 +79,15 @@
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </li>
-          <span class="imgWarn tips_warn" v-if="goodsImgWarn">请上传商品图片</span>
+          <!--<span class="imgWarn tips_warn" v-if="goodsImgWarn">请上传商品图片</span>-->
         </ul>
       </el-form-item>
       <el-form-item   labelWidth="130px"  label="描述" prop="describes">
-        <wangeditor :catchData="catchData" :getData="form.describes"></wangeditor>
+        <!--<wangeditor >-->
+          <div id="wangeditor"   >
+            <div ref="editorElem" style="text-align:left" v-html="word"></div>
+          </div>
+        <!--</wangeditor>-->
 
         <!--<editor :id="tinymceId" v-model="form.describes" :init="init"></editor>-->
       </el-form-item>
@@ -108,14 +112,16 @@
   import { uploadImage  } from "@/api/activity"
   import { newGoogds,getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo} from "@/api/merchant"
   import { getToken,getMobile } from '@/utils/auth'
-  import wangeditor from '@/components/wangeditor'
+  // import wangeditor from '@/components/wangeditor'
+  import E from 'wangeditor'
 
   export default {
     components: {
 
-      wangeditor
+      // wangeditor
     },
     name: "change-goods",
+    // props:['getData'],    //接收父组件的方法
 
     data() {
 
@@ -151,8 +157,8 @@
         if(value === ''){
           callback(new Error('请输入运费'))
         }else{
-          if(!(/^[0-9]{1,9}$/).test(value)){
-            callback(new Error('运费应不小于0且不超过9位数，请重新输入'))
+          if(!(/^[0-9]{1,2}$/).test(value)){
+            callback(new Error('运费应不小于0且不超过2位数，请重新输入'))
           }
           callback();
 
@@ -238,15 +244,23 @@
         totalElements : 0,
         currentPage : 1,
         pageSize : 10,
-        tips: ''
+        tips: '',
+        dataInterface: {
+          editorUpImgUrl: process.env.BASE_API+'/file/multi/upload' // 编辑器插入的图片上传地址
+        },
+        editor: '',  // 存放实例化的wangEditor对象，在多个方法中使用
+        word: '',
+        loading: true ,
+
       }
     },
     mounted(){
       this.getFirstList();
+
       // window.tinymce.init({});
       this.getShop();
-      this.isNewGoods();
 
+      this.createEditor();
 
     },
 
@@ -263,6 +277,8 @@
         getShopInfo().then(res=> {
           if(res.data.status === '000000000'){
             this.hasShop = false ;
+            this.loading = false ;
+            this.isNewGoods();
 
             return true ;
 
@@ -285,10 +301,15 @@
       },
       isNewGoods(){
         let id = this.$route.query.order ;
+        var _this =this;
         if(!this.hasShop){
           if(id !== undefined){
             //获取已有商品信息
+            this.loading = true ;
+
             getGoodsDetail(id).then(res=>{
+              this.loading = false ;
+
               if(res.data.status === '000000000'){
                 this.form = {
                   productName: res.data.data.productName ,
@@ -314,21 +335,11 @@
                     }
                   }
                 }
-               // if(this.form.describes.length !== 0){
-               //   this.form.describes = this.form.describes.replace(/&amp;/g,"&");
-               //   this.form.describes = this.form.describes.replace(/&lt;/g,"<");
-               //   this.form.describes = this.form.describes.replace(/&gt;/g,">");
-               //   this.form.describes = this.form.describes.replace(/&nbsp;/g," ");
-               //   this.form.describes = this.form.describes.replace(/&#39;/g,"\'");
-               //   this.form.describes = this.form.describes.replace(/&quot;/g,"\"");
-               //   this.form.describes = this.form.describes.replace(/\"/g,'"');
-               //   this.form.describes = this.form.describes.replace(/\\/g," \ ");
-               //   this.form.describes = this.form.describes.replace(/\\p\\n/g,"<br>");
-               // }
-
+                this.word = this.form.describes ;
                 this.brandCnName = res.data.data.brandCnName ;
                 this.thirdName = res.data.data.cateGoryMap.categoryId3;
                 this.readOnly = true ;
+
                 // this.title = '修改商品'
               }else{
                 this.$message({
@@ -449,7 +460,7 @@
               uploadImage(formData,_this.token).then(res => {
                 if (res.data.status === '000000000') {
                   _this.$set(_this.form.imagesList,_this.imgIndex,  res.data.data.fileName);
-                  console.log(_this.form.imagesList,_this.imgIndex, )
+                  // console.log(_this.form.imagesList,_this.imgIndex, )
                   // _this.goodsImgWarn = false;
                 } else {
                   _this.$message({
@@ -487,7 +498,7 @@
         if (this.form.ybProductItemReqDto.length < 5) {
           let index = this.form.ybProductItemReqDto.length ;
           // _this.$nextTick(() =>{
-          console.log(this.form.ybProductItemReqDto)
+          // console.log(this.form.ybProductItemReqDto)
             // Vue.set(this.form.ybProductItemReqDto,index,{
             //     'size': '',
             //     'color': '',
@@ -501,7 +512,7 @@
             'stock': '',
 
           });
-          console.log(this.form.ybProductItemReqDto)
+          // console.log(this.form.ybProductItemReqDto)
 
         } else {
           this.$message({
@@ -512,35 +523,19 @@
         }
       },
 
-      catchData(value){
-        console.log(value);
-        value =this.form.describes      //在这里接受子组件传过来的参数，赋值给data里的参数
-      },
+      // catchData(value){
+      //   console.log(value);
+      //   value =this.form.describes      //在这里接受子组件传过来的参数，赋值给data里的参数
+      // },
 
 
       //  修改商品信息
       changeForm(formName){
 
-        console.log(this.form);
-
-
+        // console.log(this.form);
         this.$refs[formName].validate((valid) => {
-          if(valid&& !this.goodsImgWarn){
-            // delete this.form.firstType ;
-            // delete this.form.secondType ;
-            // console.log(this.form);
-            // this.form.class3Id = this.thirdName;
-            // let formData = new FormData();
-            // formData.append('id',this.form.id);
-            // formData.append('productName',this.form.productName);
-            // formData.append('brandId',this.form.brandId);
-            // formData.append('class3Id',this.thirdName);
-            // formData.append('price',this.form.price);
-            // formData.append('carriage',this.form.carriage);
-            // formData.append('describes',this.form.describes);
-            // formData.append('ybProductItemReqDto',this.form.ybProductItemReqDto);
-            // formData.append('imagesList',this.form.imagesList);
-            // this.form.class3Id = this.thirdName;
+          if(valid){
+
             let data = {
               id: this.form.id ,
               productName:this.form.productName,
@@ -552,16 +547,24 @@
               imagesList : this.form.imagesList,
               describes: this.form.describes,
             }
-            data = JSON.stringify(data);
+            // data = JSON.stringify(data);
+            this.loading = true ;
+
             changeGoods(data,this.user).then( res => {
               if(res.data.status === '000000000') {
+                this.loading = false ;
+
                 this.$message({
+
                   message : '您修改的商品信息已提交，请稍后确认商品状态',
                   center: true ,
                   type : 'success',
                   duration: 1000
                 });
-                window.location.reload();
+                setTimeout(() => {
+                  window.location.reload();
+
+                },1500)
               }else{
                 this.$message({
                   message : res.data.message,
@@ -578,6 +581,87 @@
           }
         })
       },
+
+      createEditor(){
+
+        var editor = new E('#wangeditor')        //创建富文本实例
+
+
+        editor.customConfig.onchange = (html) => {
+          this.form.describes = html ;
+          // this.catchData(html)  //把这个html通过catchData的方法传入父组件
+        }
+        editor.customConfig.uploadImgServer = this.dataInterface.editorUpImgUrl
+        editor.customConfig.uploadFileName = 'sourcePic'
+        editor.customConfig.showLinkImg = false;
+        editor.customConfig.uploadImgMaxLength = 10;
+        editor.customConfig.uploadImgHeaders = {
+          'ContentType': 'application/json',
+          'yb-tryout-merchant-token':this.token    //头部token
+        }
+        editor.customConfig.uploadImgParams = {
+          token : 'abcdef12345'
+        }
+        editor.customConfig.menus = [          //菜单配置
+          'head',
+          'list',  // 列表
+          'justify',  // 对齐方式
+          'quote',  // 引用
+          'bold',
+          'fontSize',  // 字号
+          'italic',
+          'underline',
+          'strikeThrough',  // 删除线
+          'foreColor',  // 文字颜色
+          'backColor',  // 背景颜色
+          'link',  // 插入链接
+          'image',  // 插入图片
+          'table',  // 表格
+          'video',  // 插入视频
+          'undo',  // 撤销
+          'redo'  // 重复
+        ]
+        editor.customConfig.uploadImgHooks = {
+          before: function (xhr, editor, files) {
+          },
+          success: function (xhr, editor, result) {
+
+            this.imgUrl= Object.values(result.data.filePath).toString()
+          },
+          fail: function (xhr, editor, result) {
+
+
+          },
+          error: function (xhr, editor) {
+
+          },
+          timeout: function (xhr, editor) {
+
+          },
+
+          customInsert: function (insertImg, result, editor) {
+
+            let url = Object.values(result.data.filePath)      //result.data就是服务器返回的图片名字和链接
+            // console.log(result.data.filePath,url)
+            result.data.filePath.map( i => {
+              // let url = Object.values(i)      //result.data就是服务器返回的图片名字和链接
+              insertImg(i)
+
+            })
+            // }
+
+            // result 必须是一个 JSON 格式字符串！！！否则报错
+          }
+        }
+        editor.customConfig.linkImgCallback = function (url) {
+          // console.log(url) // url 即插入图片的地址
+        }
+
+        editor.create()
+        // editor.txt.html(this.getData)
+
+      },
+
       //  跳转到申请店铺
       applyShop(){
         this.$router.push('/merchantCenter/userCenter/openShop')

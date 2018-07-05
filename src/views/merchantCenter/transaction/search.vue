@@ -1,5 +1,5 @@
 <template>
-  <div class="searchOrder activityTable">
+  <div class="searchOrder activityTable"  v-loading="loading"  element-loading-text="拼命加载中">
       <h1>交易管理</h1>
       <div class="search">
         <div class="inputWrap">
@@ -37,7 +37,7 @@
       <div class="tableTitle">
         <h2>交易列表</h2>
       </div>
-    <el-table  :data="tableData"  border  align="center" >
+    <el-table  :data="tableData"  border  align="center">
       <el-table-column label="订单/子订单"  width="135">
         <template slot-scope="scope">
           <span>{{ scope.row.orderCode}}</span>
@@ -61,8 +61,7 @@
                     <span v-if="item.productItem.cateGoryMap != ''">
                       <span v-if="item.productItem.cateGoryMap.categoryName1">{{item.productItem.cateGoryMap.categoryName1}}</span>/
                       <span v-if="item.productItem.cateGoryMap.categoryName2">{{item.productItem.cateGoryMap.categoryName2}}</span>/
-                      <span v-if="item.productItem.cateGoryMap.categoryName3">{{item.productItem.cateGoryMap.categoryName3}}</span>/
-                      <span v-if="item.productItem.cateGoryMap.categoryName4">{{item.productItem.cateGoryMap.categoryName4}}</span>
+                      <span v-if="item.productItem.cateGoryMap.categoryName3">{{item.productItem.cateGoryMap.categoryName3}}</span>
                     </span>
 
                   </td>
@@ -145,7 +144,7 @@
 
       </div>
     </el-dialog>
-    <el-dialog class="file_dialog" title="导入发货信息" top="20%" :visible.sync="deliverDialog" width="60%" center
+    <el-dialog class="file_dialog" title="导入发货信息" top="20%" :visible.sync="deliverDialog"  width="60%" center
                :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
       <a class="downTag" :href="baseUrl+ '/center/order/download/deliverTemplate'">模板下载</a>
       <el-form  :model="deliverFile" ref="deliverFile" :rules="fileRule" label-position="right">
@@ -337,6 +336,7 @@
             excelTitle: '',
             merchantId: '',
             deliverOrder: '',
+            loading : false ,
 
             // pwdType: 'password'
           }
@@ -357,10 +357,13 @@
           formData.append('GT_createTime',this.transition.GT_createTime);
           formData.append('LT_createTime',this.transition.LT_createTime);
           formData.append('EQ_status',this.transition.EQ_status);
+          this.loading = true ;
 
           getOrderList(formData).then( res => {
+            this.loading = false ;
+
             if( res.data.status === '000000000'){
-              console.log('data',res)
+              // console.log('data',res)
               this.deliverList=  res.data.data.tExpressResDtos ;
               this.tableData = res.data.data.pageResultDto.data ;
               this.totalElements = res.data.data.pageResultDto.totalElements;
@@ -435,9 +438,11 @@
 
               formData.append('sourceFile',this.deliverFile.sourceFile);
               // formData.append('confirmPassword','123456');
-              console.log(this.deliverFile)
+              // console.log(this.deliverFile)
+              this.loading = true ;
 
               importDeliver(formData).then( res => {
+                this.loading = false ;
 
                 if( res.data.status === '015005002' ){
                   this.$message({
@@ -533,8 +538,12 @@
           this.$refs[formName].validate((valid) => {
             if(valid){
               let data = { ...this.expressForm };
-              data.orderId = this.deliverOrder
+              data.orderId = this.deliverOrder;
+              this.loading = true ;
+
               confirmDeliver(data).then( res => {
+                this.loading = false ;
+
                 if( res.data.status === '000000000'){
                   this.$message({
                     message: '操作成功，请稍后确认' ,
