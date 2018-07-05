@@ -81,7 +81,7 @@
       <el-table-column label="操作" >
         <template slot-scope="scope">
         <el-button size="mini" type="warning" v-if="scope.row.status === '1'&& scope.row.shelveStatus === '1'"  @click="handleShelves(scope.$index,scope.row.id,0)">下架</el-button>
-        <el-button size="mini" type="warning" v-if="scope.row.status === '1'&& scope.row.shelveStatus === '0'" @click="handleShelves(scope.$index,scope.row.id,1)">上架</el-button>
+        <el-button size="mini" type="warning" :disabled="limit" v-if="scope.row.status === '1'&& scope.row.shelveStatus === '0'" @click="handleShelves(scope.$index,scope.row.id,1)">上架</el-button>
         <el-button size="mini" type="primary" v-if="scope.row.status === '0'|| scope.row.status === '2'" @click="editor(scope.$index,scope.row.id)">修改</el-button>
         <el-button size="mini" type="warning" v-if="scope.row.status === '2'" @click="handleReason(scope.$index,scope.row.reason)">查看原因</el-button>
 
@@ -117,7 +117,9 @@
   import { parseTime } from "@/utils"
   import { getMobile } from "@/utils/auth"
   import { getGoodsList,firstList,secondList,thirdList,changeStatus ,changeGoods} from "@/api/merchant"
-    export default {
+  import { getBond } from "@/api/userCenter"
+
+  export default {
         name: "goods-list",
       data(){
           return{
@@ -162,13 +164,15 @@
             refuseDialog: false ,
             user: getMobile(),
             loading : true ,
-
+            limit: false,
       }
       },
       mounted(){
         this.time = parseTime(new Date());
         this.getList();
         this.getFirstList();
+        this.getBondInfo();
+
       },
       methods : {
         //  获取商品列表
@@ -214,6 +218,33 @@
           });
 
         },
+        getBondInfo(){
+          getBond().then( res => {
+            // console.log(res.data);
+            this.loading= true;
+
+            if(res.data.status === '000000000'){
+
+              if(res.data.data.status === '3'){
+                this.limit = true ;
+
+              }else{
+                this.limit = false ;
+
+              }
+            }else{
+              if(res.data.data === null ){
+                this.limit = true ;
+
+              }
+
+            }
+          }).catch( err => {
+            alert('服务器开小差啦，请稍等~')
+
+          })
+        },
+
         //  获取一级分类
         getFirstList(){
           firstList().then(res=> {
@@ -300,10 +331,10 @@
                 center : true ,
                 duration : 1000
               });
-              setTimeout(() => {
-                window.location.reload();
+              // setTimeout(() => {
+                this.getList();
 
-              },1500)
+              // },1500)
             }else{
               this.$message({
                 message : res.data.message,

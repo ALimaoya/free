@@ -130,11 +130,28 @@ export function historyList(data){
     data
   })
 }
-//当前结算列表
-export function currentSettlement(){
+//当前发货结算列表
+export function deliveryOrder(data){
   return request({
-    url : '/center/settlement/query',
-    method: 'get'
+    url : '/center/settlement/delivery',
+    method: 'post',
+    data
+  })
+}
+//当前退款结算列表
+export function refundOrder(data){
+  return request({
+    url: '/center/settlement/refund',
+    method: 'post',
+    data
+  })
+}
+//获取结算费用
+export function amountDetail(){
+  return request({
+    url: '/center/settlement/amount',
+    method: 'get',
+
   })
 }
 

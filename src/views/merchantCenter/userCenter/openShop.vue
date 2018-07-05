@@ -20,7 +20,7 @@
           <!--<dt>店铺LOGO</dt>-->
           <!--<dd>-->
             <img v-if="form.logoImage !== ''" :src="imageDomain+ form.logoImage" alt="" />
-            <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
+            <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
           <!--</dd>-->
         <!--</dl>-->
       </el-form-item>
@@ -48,7 +48,7 @@
     <el-dialog title="店铺LOGO" :visible.sync="dialogVisible" width="60%" center>
       <div class="wrap">
         <img :src="imageDomain+ form.logoImage" alt="" />
-        <!--<img src="../../../assets/imgs/logo.png" />-->
+        <!--<img src="../../../assets/404_images/fail.png" />-->
       </div>
     </el-dialog>
     <el-dialog title="提示" :visible.sync="infoTip" width="60%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">

@@ -5,32 +5,38 @@
       <h2 class="p_title">结算说明</h2>
       <ul>
         <li>1、平台为日结算. 每天凌晨1点进行结算；</li>
-        <li>2、结算金额 = 未结算已收货订单 - 未结算已退款退货单；</li>
+        <li>2、结算金额 = 未结算已收货订单 - 未结算已退款退款单；</li>
         <li>3、平台服务费为交易金额的5% ；</li>
-        <li>4、结算审批通过以后，如果退货金额大于订单金额，则从保证金中扣除；</li>
+        <li>4、结算审批通过以后，如果退款金额大于订单金额，则从保证金中扣除；</li>
         <li>5、本次结算未审批通过时，不允许二次结算。</li>
       </ul>
     </div>
     <div class="show">
       <div>
-        <p>结算金额</p><p>{{ settlementMoney }}</p>
+        <p>结算金额</p><p>{{ money }}元</p>
       </div>
       <div>
-        <p>服务费</p><p>{{ serviceFee }}</p>
+        <p>服务费</p><p>{{ serviceFee }}元</p>
       </div>
       <el-button type="warning" size="small" @click="dialogVisible= true ">结算申请</el-button>
     </div>
     <h3 class="p_title">未结算列表</h3>
+    <div class="type_wrap">
+      <el-button size="small"  :class="{ current_btn:orderType === '1' }" @click="getOrder('1')">发货单</el-button>
+      <el-button  size="small" :class="{ current_btn:orderType === '2' }" @click="getOrder('2')">退款单</el-button>
+    </div>
+
+
     <el-table :data="tableData"  border fit>
-        <el-table-column label="订单类型" width="150">
+        <el-table-column label="订单类型" width="85">
           <template slot-scope="scope">
-            <span v-if="scope.row.orderType != ''">
-              <span v-if="scope.row.orderType == '1'">发货单</span>
-              <span v-if="scope.row.orderType == '2'">退货单</span>
-            </span>
+            <!--<span v-if="scope.row.orderType != ''">-->
+              <span v-if="scope.row.orderType === '1'">发货单</span>
+              <span v-else-if="scope.row.orderType == '2'">退款单</span>
+            <!--</span>-->
           </template>
         </el-table-column>
-        <el-table-column  prop="orderCode" label="订单号/退款单号" width="100"></el-table-column>
+        <el-table-column  prop="orderCode" label="订单号/退款单号" width="110"></el-table-column>
         <el-table-column prop="payOrderCode" label="子订单" width="180"></el-table-column>
         <el-table-column prop="goods" label="商品" >
           <template slot-scope="scope">
@@ -53,30 +59,21 @@
                     <!--<span v-if="item.cateGoryMap.categoryName4">{{// item.cateGoryMap.categoryName4}}</span>-->
                   </span>
                 </td>
-                <td><span>{{item.productItems[0].size}}</span><span class="subOrder">{{item.productItems[0].color}}</span></td>
+                <td><span v-if="item.productItems!==null">{{item.productItems[0].size}}</span><span class="subOrder" v-if="item.productItems!==null">{{item.productItems[0].color}}</span></td>
                 <td>{{item.price}}</td>
                 <td>{{item.quantity}}</td>
               </tr>
             </table>
           </template>
         </el-table-column>
-        <el-table-column prop="amount" label="结算金额"  width="100"></el-table-column>
+        <el-table-column prop="amount" label="结算金额（元）"  width="100"></el-table-column>
         <el-table-column label="状态"  width="100">
           <template slot-scope="scope">
-            <!-- <el-button size="mini" v-if="scope.row.status === '1'" type="success">已支付</el-button>
-            <el-button size="mini" v-else-if="scope.row.status === '2'" type="primary">已发货</el-button>
-            <el-button size="mini" v-else-if="scope.row.status === '3'" type="success">确认收货</el-button>
-            <el-button size="mini" v-else-if="scope.row.status === '4'" type="danger">退款中</el-button>
-            <el-button size="mini" v-else-if="scope.row.status === '5'" type="primary">已退款</el-button>
-            <el-button size="mini" v-else-if="scope.row.status === '6'" type="danger">已取消</el-button>
-            <el-button size="mini" v-else-if="scope.row.status === '7'" type="warning">退款已拒绝</el-button>
-            <el-button size="mini" v-else-if="scope.row.status === '9'" type="warning">已删除</el-button>
-            <el-button size="mini" v-else :type="danger">未支付</el-button> -->
-            <el-button v-if="scope.row.status !== ''" size="mini" :type="statusList[scope.row.status-0].type" class="paddingButton">{{ statusList[scope.row.status-0].name }}</el-button>
+            <el-button plain v-if="scope.row.status !== ''" size="mini"  :type="statusList[scope.row.status-0].type" class="paddingButton">{{ statusList[scope.row.status-0].name }}</el-button>
           </template>
         </el-table-column>
     </el-table>
-    <!-- <div class="block2">
+    <div class="block2">
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -87,19 +84,19 @@
         :total="totalElements">
       </el-pagination>
       <span class="totalItems">共{{totalPages }}页，{{ totalElements }}条记录</span>
-    </div> -->
+    </div>
     <el-dialog title="结算申请" :visible.sync="dialogVisible" width="50%" center>
-      <el-form :model="form" ref="form" label-position="right" class="expForm">
-        <el-form-item   labelWidth="130px"  label="结算金额：" prop="money">
-          <el-input class="inputInfo" size="small" v-model.trim="form.money" disabled="disabled"></el-input>
+      <el-form  label-position="right" class="expForm">
+        <el-form-item   labelWidth="150px"  label="结算金额（元）：" >
+          <el-input class="inputInfo" size="small" v-model.trim="money" disabled="disabled"></el-input>
         </el-form-item>
-        <el-form-item   labelWidth="130px"  label="服务费："  prop="serviceFee">
-          <el-input class="inputInfo" size="small" v-model.trim="form.serviceFee" disabled="disabled"></el-input>
+        <el-form-item   labelWidth="150px"  label="服务费：" >
+          <el-input class="inputInfo" size="small" v-model.trim="serviceFee" disabled="disabled"></el-input>
         </el-form-item>
-        <el-form-item   labelWidth="130px"  label="结算方式：" >
+        <el-form-item   labelWidth="150px"  label="结算方式：" >
           <div >支付宝</div>
         </el-form-item>
-        <el-form-item   labelWidth="130px"  label="结算账号："  >
+        <el-form-item   labelWidth="150px"  label="结算账号："  >
           <div >{{ mobile }}</div>
         </el-form-item>
         <!-- <el-form-item   labelWidth="130px"  label="确认密码：" prop="checkPsw">
@@ -112,6 +109,7 @@
       </div>
     </el-dialog>
 
+
   </div>
 </template>
 
@@ -119,7 +117,7 @@
     import { getMobile } from '@/utils/auth'
     import ElForm from "element-ui/packages/form/src/form";
     import {  validPassWord } from '@/utils/validate'
-    import { currentSettlement , settlementApple} from "@/api/merchant"
+    import { deliveryOrder, refundOrder ,amountDetail, settlementApple} from "@/api/merchant"
     export default {
       components: {
         ElForm},
@@ -168,11 +166,8 @@
             currentPage : 1,
             pageSize : 10,
             dialogVisible: false ,
-            form: {
-              money: '',
-              serviceFee: '',
-              checkPsw: '',
-            },
+            money: '',
+            serviceFee: '',
             // formRule: {
             //   checkPsw: [
             //     {
@@ -229,28 +224,27 @@
               },
 
             ],
-            serviceFee: '',
             settlementMoney : '',
-          loading : true ,
+            loading : true ,
+            orderType: '1',
 
         }
       },
       mounted(){
-        this.getList();
+        this.getOrder('1');
+        this.getSettlement();
       },
       methods : {
-        getList(){
+        getSettlement(){
           this.loading = true ;
 
-          currentSettlement().then(res => {
+          amountDetail().then(res => {
             this.loading = false ;
 
             if(res.data.status === '000000000'){
-              this.tableData = res.data.data.deliveryOrders ;
+
               this.serviceFee = res.data.data.serviceAmount ;
-              this.settlementMoney = res.data.data.settlementAmount ;
-              this.form.serviceFee = res.data.data.serviceAmount ;
-              this.form.money = res.data.data.settlementAmount ;
+              this.money = res.data.data.settlementAmount ;
             }else{
               this.$message({
                 message : res.data.message,
@@ -262,17 +256,67 @@
              alert('服务器开小差啦，请稍等~')
           })
         },
+        getOrder(type){
+          // this.pageSize = 10 ;
+          // this.currentPage = 1 ;
+          this.orderType = type ;
+          let formData = new FormData();
+          formData.append('currentPage', this.currentPage);
+          formData.append('pageSize', this.pageSize);
+          if( type=== '1'){
 
+            this.loading = true ;
+            deliveryOrder(formData).then(res => {
+              this.loading = false ;
+
+              if(res.data.status === '000000000'){
+                this.tableData = res.data.data ;
+                this.totalPages = res.data.totalPages;
+                this.totalElements = res.data.totalElements
+              }else{
+                this.$message({
+                  message : res.data.message,
+                  center: true ,
+                  type: 'error'
+                })
+              }
+            }).catch( err =>{
+              alert('服务器开小差啦，请稍等~')
+            })
+          }else{
+
+            this.loading = true ;
+
+            refundOrder(formData).then(res => {
+              this.loading = false ;
+
+              if(res.data.status === '000000000'){
+                this.tableData = res.data.data ;
+                this.totalPages = res.data.totalPages;
+                this.totalElements = res.data.totalElements;
+                console.log(this.tableData)
+              }else{
+                this.$message({
+                  message : res.data.message,
+                  center: true ,
+                  type: 'error'
+                })
+              }
+            }).catch( err =>{
+              alert('服务器开小差啦，请稍等~')
+            })
+          }
+        },
         handleSizeChange(val) {
 
           this.pageSize = val ;
-          this.getList();
+          this.getOrder(this.orderType);
         },
 
         handleCurrentChange(val) {
 
           this.currentPage = val ;
-          this.getList();
+          this.getOrder(this.orderType);
         },
         //  结算相关操作
         confirm(formName){
@@ -314,7 +358,7 @@
         //关闭弹窗
         close(formName){
           this.dialogVisible = false ;
-          this.$refs[formName].resetFields();
+          // this.$refs[formName].resetFields();
         },
       }
     }
@@ -348,6 +392,17 @@
     background : #242a30;
     line-height : 40px;
     text-indent : 0.6rem ;
+  }
+  .type_wrap{
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    margin : 0.2rem 0 ;
+    .el-button:nth-child(1){
+      margin-right: 0.2rem ;
+
+    }
   }
   .show{
     /*height : 1rem ;*/
@@ -400,5 +455,9 @@
   }
   .paddingButton{
     padding: 0.08rem 0.12rem !important;
+  }
+  .current_btn{
+    background : #409EFF;
+    color: #fff ;
   }
 </style>

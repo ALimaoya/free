@@ -132,6 +132,13 @@
         <el-button type="primary" @click="applyShop">申请店铺</el-button>
       </span>
       </el-dialog>
+      <el-dialog class="bondDialog" title="提示" :visible.sync="isBond" width="50%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+        <!--<img :src="ImgSrc" alt="" />-->
+        <p class="tips">您还未缴纳保证金，请先前往缴纳保证金后方可查看相关信息</p>
+        <div slot="footer">
+          <el-button plain @click="goBond">前往缴纳保证金</el-button>
+        </div>
+      </el-dialog>
     </div>
 </template>
 
@@ -140,6 +147,7 @@
   import { uploadImage  } from "@/api/activity"
   import { newGoogds,getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo} from "@/api/merchant"
   import { getToken,getMobile } from '@/utils/auth'
+  import { getBond } from "@/api/userCenter"
 
   export default {
     components: {
@@ -269,7 +277,7 @@
               currentPage : 1,
               pageSize : 10,
               tips: '',
-
+              isBond: false
 
 
             }
@@ -279,7 +287,7 @@
           this.getFirstList();
           // window.tinymce.init({});
           this.getShop();
-          // this.isNewGoods();
+          this.getBondInfo();
 
 
         },
@@ -310,6 +318,32 @@
                 this.tips = res.data.message;
                 this.hasShop = true ;
 
+
+              }
+            }).catch( err => {
+              alert('服务器开小差啦，请稍等~')
+
+            })
+          },
+          getBondInfo(){
+            getBond().then( res => {
+              // console.log(res.data);
+              this.loading= true;
+
+              if(res.data.status === '000000000'){
+
+                if(res.data.data.status === '3'){
+                  this.isBond = true ;
+
+                }else{
+                  this.isBond = false ;
+
+                }
+              }else{
+                if(res.data.data === null ){
+                  this.isBond = true ;
+
+                }
 
               }
             }).catch( err => {
@@ -562,7 +596,9 @@
             })
           },
 
-
+          goBond(){
+            this.$router.push({ name : 'MerchantCenter-home',params: { 'step3' : true}})
+          },
 
         //  跳转到申请店铺
           applyShop(){
@@ -714,5 +750,13 @@
     width: 100%;
     min-height: 330px;
     height: auto;
+  }
+  .bondDialog{
+    p{
+      height : 10vh;
+      font-size : 0.3rem ;
+      text-align : center ;
+      line-height : 10vh ;
+    }
   }
 </style>

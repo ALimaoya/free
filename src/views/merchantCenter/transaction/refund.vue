@@ -52,12 +52,12 @@
       </el-table-column>
       <el-table-column prop="size" label="规格" ></el-table-column>
       <el-table-column prop="quality" label="数量" ></el-table-column>
-      <el-table-column prop="price" label="单价" ></el-table-column>
-      <el-table-column prop="returnAmount" label="退款金额" ></el-table-column>
+      <el-table-column prop="price" label="单价（元）" ></el-table-column>
+      <el-table-column prop="returnAmount" label="退款金额（元）" ></el-table-column>
       <el-table-column prop="createTime" label="申请时间"></el-table-column>
       <el-table-column label="状态" width="100">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.status !==''" :type='statusList[(scope.row.status*1+1)].type' size="mini">{{ statusList[(scope.row.status*1+1)].name }}</el-button>
+          <el-button v-if="scope.row.status !==''" plain :type='statusList[(scope.row.status*1+1)].type' size="mini">{{ statusList[(scope.row.status*1+1)].name }}</el-button>
           <!--<el-button v-else-if="scope.row.status ==='1'" type='danger' size="mini">已退款</el-button>-->
           <!--<el-button v-else-if="scope.row.status ==='2'" type='info' size="mini">已取消</el-button>-->
           <!--<el-button v-else-if="scope.row.status ==='3'" type='warning' size="mini">已拒绝</el-button>-->

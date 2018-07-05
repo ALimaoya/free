@@ -33,7 +33,7 @@
       <el-table-column prop="mobile" label="结算手机号" ></el-table-column>
       <el-table-column prop="status" label="状态">
         <template slot-scope="scope">
-          <el-button size="mini" v-if="scope.row.status !== ''" :type="statusList[scope.row.status].type">{{ statusList[scope.row.status].name}}</el-button>
+          <el-button size="mini" plain v-if="scope.row.status !== ''" :type="statusList[scope.row.status].type">{{ statusList[scope.row.status].name}}</el-button>
           <!--<el-button size="mini" v-if="scope.row.status === '3'" type="primary">已结算</el-button>-->
           <!--<el-button size="mini" v-if="scope.row.status === '4'" type="danger">已拒绝</el-button>-->
         </template>

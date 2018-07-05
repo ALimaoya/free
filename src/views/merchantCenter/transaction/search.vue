@@ -76,22 +76,13 @@
         </template>
       </el-table-column>
       <el-table-column prop="totalNum" label="总数量" width="70"></el-table-column>
-      <el-table-column prop="totalMoney" label="总价" width="70"></el-table-column>
+      <el-table-column prop="totalMoney" label="总价（元）" width="70"></el-table-column>
       <el-table-column prop="createTime" label="交易时间" ></el-table-column>
       <el-table-column label="状态" width="100">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.status === '9'" size="mini" :type="statusList[scope.row.status-1].type">{{ statusList[scope.row.status*1-1].name }}</el-button>
-          <el-button v-else-if="scope.row.status !== ''" size="mini" :type="statusList[scope.row.status*1].type">{{ statusList[scope.row.status*1].name }}</el-button>
-          <el-button v-else size="mini" :type="statusList[0].type">{{ statusList[0].name }}</el-button>
-
-          <!-- <el-button v-if="scope.row.status ==='0'" type='warning' size="mini">未支付</el-button>
-          <el-button v-else-if="scope.row.status ==='1'"  type='primary' size="mini">已支付</el-button>
-          <el-button v-else-if="scope.row.status ==='2'" type='primary' size="mini">已发货</el-button>
-          <el-button v-else-if="scope.row.status ==='3'"  type='success' size="mini">确认收货</el-button>
-          <el-button v-else-if="scope.row.status ==='4'" type='warning' size="mini">申请退货退款</el-button>
-          <el-button v-else-if="scope.row.status ==='5'" type='danger' size="mini">退款中</el-button>
-          <el-button v-else-if="scope.row.status ==='6'" type='primary' size="mini">已退款</el-button>
-          <el-button v-else-if="scope.row.status ==='7'" type='info' size="mini">已取消</el-button> -->
+          <el-button plain v-if="scope.row.status === '9'" size="mini" :type="statusList[scope.row.status-1].type">{{ statusList[scope.row.status*1-1].name }}</el-button>
+          <el-button plain v-else-if="scope.row.status !== ''" size="mini" :type="statusList[scope.row.status*1].type">{{ statusList[scope.row.status*1].name }}</el-button>
+          <el-button plain v-else size="mini" :type="statusList[0].type">{{ statusList[0].name }}</el-button>
         </template>
       </el-table-column>
       <el-table-column prop="action" label="操作" width="100">

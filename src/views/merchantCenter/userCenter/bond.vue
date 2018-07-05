@@ -46,14 +46,14 @@
         <el-button plain size="mini" @click="dialogVisible= false;">取消</el-button>
       </div>
     </el-dialog>
-    <el-dialog class="bondDialog" title="提示" :visible.sync="isBond" width="60%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+    <el-dialog class="bondDialog" title="提示" :visible.sync="isBond" width="50%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
       <!--<img :src="ImgSrc" alt="" />-->
       <p class="tips">您还未缴纳保证金，请先前往缴纳保证金后方可查看相关信息</p>
       <div slot="footer">
         <el-button plain @click="goBond">前往缴纳保证金</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="提示" :visible.sync="payVisible" width="40%" :before-close="handleClose" style="margin-top:20vh">
+    <el-dialog title="提示" :visible.sync="payVisible" width="40%" :before-close="handleClose" style="margin-top:20vh" >
       <span style="text-align:center;width: 70%; display: block; margin: 0 auto;">请在新窗口完成支付，支付成功后请点击“已完成支付” 若支付遇到问题请点击“支付遇到问题”</span>
       <span slot="footer" class="dialog-footer" style="text-align:center;display:block">
         <el-button style="background:#3a8ee6;;color:white;margin-rigth:20px" @click="finishPay()">已完成支付</el-button>
@@ -104,13 +104,21 @@
       methods : {
         //  获取保证金详情
         getForm(){
+          this.loading= true;
+
           getBond().then( res => {
             // console.log(res.data);
             this.loading= false;
 
             if(res.data.status === '000000000'){
               this.form = res.data.data ;
-              this.isBond = false ;
+              if(res.data.data.status === '3'){
+                this.isBond = true ;
+
+              }else{
+                this.isBond = false ;
+
+              }
               this.addAmount = this.form.amount - this.form.deposit ;
 
             }else{
@@ -224,6 +232,10 @@
         },
         finishPay() {
           this.dialogVisible = false;
+          setTimeout(() => {
+            window.location.reload();
+
+          },1500)
           // this.$router.push("/freeManage/userInfor/vip")
         },
         hasQuestion() {
@@ -234,7 +246,10 @@
         handleClose() {
           this.dialogVisible = false;
           this.dialogVisibleQuestion = false;
+          setTimeout(() => {
+            window.location.reload();
 
+          },1500)
         },
       }
     }

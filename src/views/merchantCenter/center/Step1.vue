@@ -61,28 +61,28 @@
             <dt>{{ imgType[0] }}</dt>
             <dd>
               <img v-if="form.businessImage !== ''" :src="imageDomain + form.businessImage" alt="" />
-              <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
+              <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
             </dd>
           </dl>
           <dl @click="bigImg(1,form.authorizeImage)"  >
             <dt>{{ imgType[1] }}</dt>
             <dd>
               <img v-if="form.authorizeImage !== ''" :src="imageDomain + form.authorizeImage" alt="" />
-              <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
+              <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
             </dd>
           </dl>
           <dl @click="bigImg(2,form.cardFaceImage)"  >
             <dt>{{ imgType[2] }}</dt>
             <dd>
               <img v-if="form.cardFaceImage !== ''" :src="imageDomain + form.cardFaceImage" alt="" />
-              <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
+              <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
             </dd>
           </dl>
           <dl @click="bigImg(3,form.cardBackImage)"  >
             <dt>{{ imgType[3] }}</dt>
             <dd>
               <img v-if="form.cardBackImage !== ''" :src="imageDomain + form.cardBackImage" alt="" />
-              <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
+              <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
             </dd>
           </dl>
         </div>
@@ -412,9 +412,12 @@
                     message : '您的资质信息已上传成功，通过审核后即可进行相关操作' ,
                     type : 'success',
                     center : true,
-                    duration: 2000,
+                    duration: 1000,
                   });
-                  window.location.reload();
+                  setTimeout(() =>{
+                    window.location.reload();
+
+                  },1500)
                 }else{
                   this.$message({
                     message : res.data.message ,

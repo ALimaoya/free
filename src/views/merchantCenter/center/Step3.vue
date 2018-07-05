@@ -19,7 +19,7 @@
         <el-button style="background:#3a8ee6;;color:white;" @click="hasQuestion()">支付遇到问题</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="支付遇到问题" :visible.sync="dialogVisibleQuestion" width="40%" :before-close="handleClose" style="margin-top:20vh">
+    <el-dialog title="支付遇到问题" :visible.sync="dialogVisibleQuestion" width="40%" :before-close="handleClose" style="margin-top:20vh" >
       <span style="width: 80%; display: block; margin: 0 auto;">付款遇到问题支付未成功，付款遇到问题了？先看看是不是由于下面的原因:
         <br> 1、所需支付的金额超过了银行支付限额？建议您登录网上银行提高上限额度，或者先分若干次充值到新试客余额，即能轻松支付。
         <br> 2、支付宝或网银页面显示错误或空白？部分网银对不同浏览器的兼容性有限，导致无法正常支付，建议您使用IE7及以上版本浏览器进行支付操作！
@@ -49,11 +49,11 @@
         }
       },
       mounted(){
-        if(this.step3Status === '0'){
-          this.isBond = false ;
+        if(this.step3Status === '1'&& this.step3Status === '2'){
+          this.isBond = true ;
 
         }else{
-          this.isBond = true ;
+          this.isBond = false ;
 
         }
       },
@@ -107,17 +107,25 @@
         },
         finishPay() {
           this.dialogVisible = false;
+          setTimeout(() =>{
+            window.location.reload();
+
+          },1500)
           // this.$router.push("/freeManage/userInfor/vip")
         },
         hasQuestion() {
           this.dialogVisible = false;
           this.dialogVisibleQuestion = true;
+
           // this.getDepositMoney();
         },
         handleClose() {
           this.dialogVisible = false;
           this.dialogVisibleQuestion = false;
+          setTimeout(() => {
+            window.location.reload();
 
+          },1500)
         },
       }
     }

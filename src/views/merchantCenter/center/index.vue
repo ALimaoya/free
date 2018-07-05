@@ -3,7 +3,8 @@
       <!--<iframe src="../../../a.html" scrolling ='no' >点这里</iframe>-->
       <div class="warn" :class="{ hide: close === '1' }">
         <p>温馨提示</p>
-          <div>您的<span  v-if="statusTag.aptitudeStatus === '0'">资质、</span>  <span v-if="statusTag.shopStatus=== '0'">店铺、</span><span v-if="statusTag.wallet === '0'">保证金</span> 信息还未提交，无法进行商品、交易、结算等相关操作，请尽快补充资料。</div>
+          <div>您的<span  v-if="statusTag.aptitudeStatus === '0'">资质、</span><span v-if="statusTag.shopStatus=== '0'">店铺、</span>
+            <span v-if="statusTag.wallet === '0'||statusTag.wallet === '3'">保证金</span> 信息还未提交，无法进行商品、交易、结算等相关操作，请尽快补充资料。</div>
           <div v-if="statusTag.aptitudeStatus === '1'">您的 资质 信息正在审核中，请耐心等候，审核通过后，您可进行商品、交易、结算等相关操作。</div>
           <div v-else-if="statusTag.aptitudeStatus === '-1'">您的 资质 信息未通过审核，请重新编辑提交，审核通过后，您可进行商品、交易、结算等相关操作。</div>
         <span class="close_icon" @click="close = '1'"></span>
@@ -44,8 +45,9 @@
           <!--<a href="#" >-->
           <span>2</span>
           <dl><dt>缴纳保证金</dt>
-            <dd v-if="statusTag.wallet === '0'"> 您还未缴纳保证金 </dd>
-            <dd v-else>您的保证金已缴纳</dd>
+            <dd v-if="statusTag.wallet === '1'"> 您的保证金已缴纳</dd>
+            <dd v-else-if="statusTag.wallet === '2'"> 您申请的解冻保证金正在审核中</dd>
+            <dd v-else>您还未缴纳保证金 </dd>
 
           </dl>
           <!--</a>-->
@@ -119,7 +121,10 @@
             if(res.data.status === '000000000'){
               this.statusTag = res.data.data;
               if(this.statusTag.aptitudeStatus=== '9'&& this.statusTag.isBundle === '1'&& this.statusTag.shopStatus === '9'&&this.statusTag.wallet === '1'){
-                this.close = '';
+                this.close = '1';
+              }else{
+                this.close = ' ';
+
               }
 
             }else{

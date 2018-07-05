@@ -35,7 +35,7 @@
           <dt>店铺LOGO</dt>
           <dd>
             <img v-if="form.logoImage !== undefined" :src="imageDomain +form.logoImage" alt="" />
-            <img  src="../../../assets/imgs/logo.png"  alt="" v-else/>
+            <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
           </dd>
         </dl>
       <!--</el-form-item>-->
@@ -46,7 +46,7 @@
     <el-dialog title="店铺LOGO" :visible.sync="dialogVisible" width="60%" center>
       <div class="wrap">
         <img :src="imageDomain + form.logoImage" alt="" />
-        <!--<img src="../../../assets/imgs/logo.png" />-->
+        <!--<img src="../../../assets/404_images/fail.png" />-->
       </div>
     </el-dialog>
   </div>
