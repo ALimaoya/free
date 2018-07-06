@@ -191,6 +191,8 @@
         formData.append('EQ_activityType',this.order.EQ_activityType);
         formData.append('currentPage', this.currentPage);
         formData.append('EQ_status','4');
+        formData.append('GT_createTime',this.order.activityStartTime);
+        formData.append('LT_createTime',this.order.activityEndTime);
         formData.append('pageSize', this.pageSize);
         getOrderList(formData).then( res=> {
           if(res.data.status === '000000000'){

@@ -146,8 +146,8 @@
           formData.append('EQ_status',this.order.EQ_status);
           formData.append('EQ_activityType',this.order.EQ_activityType);
           formData.append('EQ_tryoutActivity.tryoutMerchantShop.shopId',this.order.EQ_activityShop);
-          formData.append('GT_tryoutActivity.activityStartTime',this.order.activityStartTime);
-          formData.append('LT_tryoutActivity.activityEndTime',this.order.activityEndTime);
+          formData.append('GT_createTime',this.order.activityStartTime);
+          formData.append('LT_createTime',this.order.activityEndTime);
           formData.append('currentPage', this.currentPage);
           formData.append('pageSize', this.pageSize);
           getOrderList(formData).then( res=> {
