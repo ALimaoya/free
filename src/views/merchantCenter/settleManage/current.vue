@@ -104,8 +104,8 @@
         </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer" >
-        <el-button type="primary" size="small" @click="confirm('form')">确认</el-button>
-        <el-button plain size="small" @click="close('form')">关闭</el-button>
+        <el-button type="primary" size="small" @click="confirm">确认</el-button>
+        <el-button plain size="small" @click="close">关闭</el-button>
       </div>
     </el-dialog>
 
@@ -166,8 +166,8 @@
             currentPage : 1,
             pageSize : 10,
             dialogVisible: false ,
-            money: '',
-            serviceFee: '',
+            money: '0',
+            serviceFee: '0',
             // formRule: {
             //   checkPsw: [
             //     {
@@ -224,7 +224,6 @@
               },
 
             ],
-            settlementMoney : '',
             loading : true ,
             orderType: '1',
 
@@ -319,8 +318,8 @@
           this.getOrder(this.orderType);
         },
         //  结算相关操作
-        confirm(formName){
-              if( this.form.money == '0'){
+        confirm(){
+              if( this.money == '0'){
                 this.$message({
                     message : '结算金额为0,无需进行结算申请',
                     center: true ,
@@ -356,7 +355,7 @@
 
         },
         //关闭弹窗
-        close(formName){
+        close(){
           this.dialogVisible = false ;
           // this.$refs[formName].resetFields();
         },

@@ -54,7 +54,7 @@
       <el-table-column prop="action" label="操作">
         <template slot-scope="scope" >
             <el-button size="mini" v-if="scope.row.status === '3' || scope.row.status === '4'"  @click="reason(scope.$index,scope.row.reason)"  style="padding : 0 0.1rem;line-height:0.28rem;">查看原因</el-button>
-            <el-button size="mini" v-if="scope.row.status !== '2'" @click="change(scope.$index ,scope.row.shopId)"  style="width: 0.6rem ;padding : 0;line-height:0.28rem;">修改</el-button>
+            <el-button size="mini" v-if="scope.row.status !== '2'" @click="change(scope.$index ,scope.row.shopId)"  style="width: 0.8rem ;padding : 0.03rem 0;line-height:0.28rem;text-align: center">修改</el-button>
             <el-button v-if="scope.row.payStatus === '0'"  class="patBtn" size="mini" @click="goPay(scope.$index ,scope.row.shopId)"  style="width: 0.6rem ;padding : 0;">去支付</el-button>
             <span  v-if="scope.row.status === '2'&& scope.row.payStatus === '1'">--</span>
         </template>
@@ -249,7 +249,7 @@
       margin-bottom : 0.3rem ;
       .el-select{
         margin-right : 0.2rem ;
-        width : 1.6rem ;
+        width : 2.6rem ;
       }
     }
     .list{

@@ -465,7 +465,7 @@
             setTimeout(() => {
               window.location.reload();
 
-            },1500)
+            },2000)
           }else{
             this.$message({
               message : res.data.message ,
@@ -481,10 +481,8 @@
       //申请结算
       applyAccounts(index ,id){
         this.loading= true;
-
         applyPay(id).then( res => {
           this.loading= false;
-
           if( res.data.status === '000000000'){
             this.$message({
               message : '申请结算成功，请稍后确认',
@@ -496,7 +494,7 @@
             setTimeout(() => {
               window.location.reload();
 
-            },1500)
+            },2000)
           }else{
             this.$message({
               message :  res.data.message ,
@@ -517,6 +515,7 @@
           this.loading= false;
 
           if( res.data.status === '000000000'){
+
             this.$message({
               message : '取消结算成功，请稍后确认',
               type : 'success' ,
@@ -527,7 +526,7 @@
             setTimeout(() => {
               window.location.reload();
 
-            },1500)
+            },2000)
           }else{
             this.$message({
               message : res.data.message ,

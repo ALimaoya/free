@@ -1,12 +1,14 @@
 <template>
-    <div class="merchantCenter allWid">
+    <div class="merchantCenter allWid" v-loading="loading"  element-loading-text="拼命加载中">
       <!--<iframe src="../../../a.html" scrolling ='no' >点这里</iframe>-->
       <div class="warn" :class="{ hide: close === '1' }">
         <p>温馨提示</p>
-          <div>您的<span  v-if="statusTag.aptitudeStatus === '0'">资质、</span><span v-if="statusTag.shopStatus=== '0'">店铺、</span>
+          <div v-if="statusTag.aptitudeStatus === '0'||statusTag.shopStatus=== '0'||statusTag.wallet === '0'||statusTag.wallet === '3'">您的<span  v-if="statusTag.aptitudeStatus === '0'">资质、</span><span v-if="statusTag.shopStatus=== '0'">店铺、</span>
             <span v-if="statusTag.wallet === '0'||statusTag.wallet === '3'">保证金</span> 信息还未提交，无法进行商品、交易、结算等相关操作，请尽快补充资料。</div>
           <div v-if="statusTag.aptitudeStatus === '1'">您的 资质 信息正在审核中，请耐心等候，审核通过后，您可进行商品、交易、结算等相关操作。</div>
           <div v-else-if="statusTag.aptitudeStatus === '-1'">您的 资质 信息未通过审核，请重新编辑提交，审核通过后，您可进行商品、交易、结算等相关操作。</div>
+        <div v-if="statusTag.shopStatus === '1'">您的 店铺 信息正在审核中，请耐心等候，审核通过后，您可进行商品、设置等相关操作。</div>
+
         <span class="close_icon" @click="close = '1'"></span>
       </div>
       <ul class="step allWid">
@@ -101,7 +103,8 @@
             tabView : 'step1',
             user : getUser(),
             statusTag: {},
-            close: ''
+            close: '',
+            loading: true
           }
       },
     mounted(){
@@ -118,6 +121,7 @@
     methods: {
         getStatusType(){
           getStatus().then(res=> {
+            this.loading = false ;
             if(res.data.status === '000000000'){
               this.statusTag = res.data.data;
               if(this.statusTag.aptitudeStatus=== '9'&& this.statusTag.isBundle === '1'&& this.statusTag.shopStatus === '9'&&this.statusTag.wallet === '1'){

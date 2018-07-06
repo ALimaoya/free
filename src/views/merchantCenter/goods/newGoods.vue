@@ -129,7 +129,7 @@
                   :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
         <p>{{ tips }}</p>
         <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="applyShop">申请店铺</el-button>
+        <el-button type="primary" @click="applyShop">前往我要开店</el-button>
       </span>
       </el-dialog>
       <el-dialog class="bondDialog" title="提示" :visible.sync="isBond" width="50%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
@@ -286,7 +286,6 @@
         mounted(){
           this.getFirstList();
           // window.tinymce.init({});
-          this.getShop();
           this.getBondInfo();
 
 
@@ -310,11 +309,11 @@
 
 
               }else{
-                this.$message({
-                  message : res.data.message,
-                  center: true ,
-                  type : 'error'
-                });
+                // this.$message({
+                //   message : res.data.message,
+                //   center: true ,
+                //   type : 'error'
+                // });
                 this.tips = res.data.message;
                 this.hasShop = true ;
 
@@ -337,6 +336,7 @@
 
                 }else{
                   this.isBond = false ;
+                  this.getShop();
 
                 }
               }else{

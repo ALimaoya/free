@@ -24,11 +24,20 @@
         <el-button  type="primary" size="mini" @click="submitForm('carriageForm')">确定</el-button>
       </el-form-item>
     </el-form>
+    <el-dialog class="shop_dialog" title="提示" top="20%" :visible.sync="hasShop" width="40%" center
+               :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+      <p>{{ tips }}</p>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="applyShop">前往我要开店</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
     // import {  int } from '@/utils/validate'
+    import {  getShopInfo} from "@/api/merchant"
+
     import ElFormItem from "element-ui/packages/form/src/form-item";
     import { carriageList , deleteCarriage,  addCarriage } from "@/api/userCenter"
     export default {
@@ -70,13 +79,43 @@
               { required: true, validator: validCarrage , trigger: 'blur' }
             ]
           },
-          loading: true
+          loading: true,
+          tips: '',
+          hasShop: false ,
         }
       },
       mounted(){
-        this.getCarriage();
+        this.getShop();
       },
       methods : {
+        //判断是否已有店铺
+        getShop(){
+          getShopInfo().then(res=> {
+            this.loading= false ;
+
+            if(res.data.status === '000000000'){
+              this.hasShop = false ;
+              this.getCarriage();
+
+              return true ;
+
+
+            }else{
+              // this.$message({
+              //   message : res.data.message,
+              //   center: true ,
+              //   type : 'error'
+              // });
+              this.tips = res.data.message;
+              this.hasShop = true ;
+
+
+            }
+          }).catch( err => {
+            alert('服务器开小差啦，请稍等~')
+
+          })
+        },
         getCarriage(){
           carriageList().then( res => {
             this.loading= false ;
@@ -168,7 +207,11 @@
             })
 
           }
-        }
+        },
+        //  跳转到申请店铺
+        applyShop(){
+          this.$router.push('/merchantCenter/userCenter/openShop')
+        },
       }
     }
 </script>
@@ -223,5 +266,13 @@
       margin : 0 0.9rem;
     }
 
+  }
+  .shop_dialog{
+    p{
+      height : 10vh;
+      font-size : 0.3rem ;
+      text-align : center ;
+      line-height : 10vh ;
+    }
   }
 </style>

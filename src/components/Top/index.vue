@@ -3,7 +3,7 @@
     <img src="../../assets/imgs/logo.png"  alt="" />
     <h1>丫贝商家管理后台</h1>
     <ul class="menu">
-      <li v-for="(item,index) in menuList" :key="index">
+      <li v-for="(item,index) in menuList" :key="index" @click="closeAllTags()">
         <router-link :to="item.path">{{ item.name }}</router-link>
       </li>
       <!--<li>hello</li>-->
@@ -83,11 +83,13 @@
         logout() {
           this.$store.dispatch('LogOut').then(() => {
             this.$router.push('/login')
-          })
-          //   .catch( err => {
-          //   console.log(err) ;
-          // })
-        }
+          });
+
+        },
+        closeAllTags() {
+          this.$store.dispatch('delAllViews')
+          // this.$router.push('/')
+        },
       }
     }
 </script>
@@ -146,8 +148,8 @@
           top: 25px;
           font-size: 12px;
         }
-
       }
+
 
     }
     .menu{

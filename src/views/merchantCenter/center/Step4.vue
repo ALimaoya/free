@@ -131,10 +131,11 @@
 
           getShop().then( res => {
             if(res.data.status === '000000000'){
+              this.loading = false ;
+
               if(res.data.data !== null){
                 this.form = res.data.data ;
                 this.status = res.data.data.status ;
-                this.loading = false ;
 
                 if(this.status === '1' || this.status === '2'){
                   this.readOnly = true ;

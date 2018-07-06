@@ -80,10 +80,16 @@ export function validateCaptcha(str){
     const reg =  /^[0-9A-Za-z]{4}$/;
     return reg.test(str)
 }
-/*登录注册密码*/
-export function validPassWord(str){
+/*登录密码*/
+export function validLoginPassWord(str){
   // const reg =  /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}/;
   const reg = /^(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}/
+  return reg.test(str)
+}
+/*注册、修改登录密码*/
+export function validPassWord(str){
+  const reg =  /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}/;
+  // const reg = /^(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}/
   return reg.test(str)
 }
 /*验证姓名*/

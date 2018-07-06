@@ -229,7 +229,7 @@
                     type: 'success',
                     duration : 1000
                   });
-                  this.$router.push('/fund/history/cash')
+                  this.$router.push('/freeManage/fund/history/cash')
                 } else {
                   if(res.data.status === '013001002'){
                     this.settingPsw = false

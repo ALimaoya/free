@@ -214,11 +214,12 @@
         getUserInfo(){
 
           getInfo().then( res =>{
+            this.loading = false ;
+
             if(res.data.status === '000000000'){
               if(res.data.data !== null){
                 this.form = res.data.data ;
                 this.status = res.data.data.status ;
-                this.loading = false ;
                 if(this.status === '2'|| this.status === '1'){
                   this.isRegister = true ;
                 }

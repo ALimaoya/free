@@ -148,9 +148,9 @@
           //充值/提现
           recharge(type){
             if(type === 2){
-              this.$router.push('/fund/cash')
+              this.$router.push('/freeManage/fund/cash')
             }else{
-              this.$router.push('/fund/recharge')
+              this.$router.push('/freeManage/fund/recharge')
             }
           },
 

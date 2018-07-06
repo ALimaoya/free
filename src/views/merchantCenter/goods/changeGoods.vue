@@ -102,7 +102,7 @@
                :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
       <p>{{ tips }}</p>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="applyShop">申请店铺</el-button>
+        <el-button type="primary" @click="applyShop">前往我要开店</el-button>
       </span>
     </el-dialog>
   </div>

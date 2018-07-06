@@ -188,7 +188,7 @@
             form.append("returnUrl", window.location.href);
             let _this=this;
             $.ajax({
-              url: process.env.BASE_API+"/tryout/recharge/deposit",
+              url: process.env.BASE_API+"/recharge/deposit",
               type: 'POST',
               data: {
                 amount: this.form.money,
@@ -239,7 +239,7 @@
       },
       finishPay() {
         this.dialogVisible = false;
-        this.$router.push("/fund/history/money")
+        this.$router.push("/freeManage/fund/history/money")
       },
       hasQuestion() {
         this.dialogVisible = false;

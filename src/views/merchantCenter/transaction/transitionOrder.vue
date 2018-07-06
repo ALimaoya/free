@@ -27,9 +27,9 @@
               <th>订单状态</th><th>下单时间</th><th>支付方式</th><th>支付时间</th>
             </tr>
             <tr class="tbColor">
-              <td><el-button size="mini" disabled="disabled">{{ statusList[form.deliverOrder.status-0].name }}</el-button></td>
+              <td><el-button size="mini" disabled="disabled" v-if="form.deliverOrder.status!==null">{{ statusList[form.deliverOrder.status-0].name }}</el-button></td>
               <td>{{form.deliverOrder.createTime}}</td>
-              <td>{{ payList[form.deliverOrder.payType-0].name }}</td>
+              <td v-if="form.deliverOrder.payType!==null">支付宝</td>
               <td>{{form.deliverOrder.payTime}}</td>
               </tr>
           </table>
@@ -37,7 +37,7 @@
         <el-form-item   labelWidth="130px"  label="商品：" >
           <table class="tableC">
             <tr class="thColor">
-              <th>商品编号</th><th>商品名称</th><th>品牌</th><th>分类</th><th>规格</th><th>数量</th><th>价格</th><th>状态</th>
+              <th>商品编号</th><th>商品名称</th><th>品牌</th><th>分类</th><th>规格</th><th>数量</th><th>价格（元）</th><th>状态</th>
             </tr>
             <tr class="tbColor" v-for="(item,index) in form.deliverOrder.orderProducts" :key="index">
               <td>{{item.productItem.code}}</td>
@@ -58,7 +58,7 @@
               <td>{{item.quantity}}</td>
               <td>{{item.price}}</td>
               <td>
-                <el-button size="mini" disabled="disabled">{{ commodityTypeList[item.productItem.status-0].name }}</el-button>
+                <el-button size="mini" disabled="disabled" v-if="item.productItem.status!==null">{{ commodityTypeList[item.productItem.status-0].name }}</el-button>
               </td>
             </tr>
           </table>
@@ -195,9 +195,7 @@
           getDetail(){
             let order = this.$route.params.id ;
             getOrderDetail(order).then( res => {
-              // console.log('res',res)
               this.loading= false;
-
               if( res.data.status === '000000000'){
                 this.form = res.data.data ;
               }else{

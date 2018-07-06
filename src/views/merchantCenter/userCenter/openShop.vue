@@ -3,7 +3,7 @@
     <h1>我要开店</h1>
     <el-form :model="form" ref="form" :rules="formRule" label-position="right" >
       <!--<h2>账户表单</h2>-->
-      <el-form-item  labelWidth="130px" label="店铺名称"  prop="name">loading
+      <el-form-item  labelWidth="130px" label="店铺名称"  prop="name">
         <el-input class="inputInfo" :maxlength="40" size="small" v-model.trim="form.name" placeholder="店铺名称" :disabled="readOnly"></el-input>
       </el-form-item>
       <el-form-item labelWidth="130px" class="imgWrap" prop="logoImage" v-if="!readOnly" label="店铺LOGO">
@@ -55,6 +55,7 @@
       <!--<img :src="ImgSrc" alt="" />-->
       <p class="tips" v-if="infoStatus === '0'">您还未上传资质信息，请先前往上传资质信息</p>
       <p class="tips" v-else-if="infoStatus === '1'">您上传的资质信息正在审核中，审核通过后即可绑定店铺</p>
+      <p class="tips" v-else-if="infoStatus === '3'">您上传的资质信息未通过审核，请先前往修改资质信息，待通过后即可绑定店铺</p>
 
       <div slot="footer">
         <el-button plain @click="goUpload" >前往资质上传</el-button>
@@ -143,7 +144,7 @@
               this.loading= false ;
               if(res.data.status === '000000000'){
                 this.infoStatus = res.data.data.status;
-                if(this.infoStatus === '0'|| this.infoStatus === '1'){
+                if(this.infoStatus !== '2'){
                   this.infoTip = true;
                 }else{
                   this.getShopInfo();
@@ -170,20 +171,24 @@
             this.loading= false ;
 
             if(res.data.status === '000000000'){
-              this.form = res.data.data ;
-              this.status = res.data.data.status ;
-              if(this.status === '1' || this.status === '2'){
-                this.readOnly = true ;
+              if(res.data.data === null){
+                this.handleType = '提交'
+
               }else{
-                this.readOnly = false ;
-                if(this.status === '0'){
-                  this.handleType = '提交'
+                this.form = res.data.data ;
+                this.status = res.data.data.status ;
+                if(this.status === '1' || this.status === '2'){
+                  this.readOnly = true ;
                 }else{
-                  if(this.status === '3'){
-                    this.handleType = '修改'
-                  }
+                  this.readOnly = false ;
+
+                    if(this.status === '3'){
+                      this.handleType = '修改'
+                    }
+
                 }
               }
+
             }else{
               this.$message({
                 message : res.data.message ,
@@ -218,9 +223,9 @@
                 formData.append('image', file);
                 uploadImage(formData,_this.token).then(res => {
                   if (res.data.status === '000000000') {
-                    _this.form.logo = res.data.data.fileName ;
+                    _this.form.logoImage = res.data.data.fileName ;
 
-                    // console.log(_this.form.imgList)
+                    console.log(_this.form.logoImage)
                     _this.goodsImgWarn = false;
                   } else {
                     _this.$message({

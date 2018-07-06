@@ -23,7 +23,11 @@
       <p>会员充值记录：</p>
       <el-table border :data="historyData.data" stripe style="width: 100%" v-loading="loading"  element-loading-text="拼命加载中">
         <el-table-column prop="creatTime" label="充值时间"></el-table-column>
-        <el-table-column prop="usefulMonth" label="开通时长(月)"></el-table-column>
+        <el-table-column prop="usefulMonth" label="开通时长(月)">
+          <template slot-scope="scope">
+            <span>{{ scope.row.usefulMonth }}</span><span v-if="scope.row.giveMonth!==null" class="given">（赠送{{ scope.row.giveMonth }}）</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="amount" label="充值金额（元）"></el-table-column>
         <el-table-column prop="type" label="充值类型">
           <template slot-scope="scope">
@@ -160,6 +164,10 @@
         line-height: 0.4rem;
         text-indent: 0.4rem;
         margin-top: 0.2rem;
+      }
+      .given{
+        font-size: 0.12rem ;
+        color: #f18531;
       }
       .el-table--border,
       .el-table--group {

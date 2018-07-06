@@ -54,7 +54,7 @@
           <img src="../../assets/imgs/index/buyer.png"  width="100%"/>
         </div>
         <div class="mtb80">
-          <router-link to="/login" >
+          <router-link to="/register" >
             <img src="../../assets/imgs/index/register.png" />
           </router-link>
         </div>

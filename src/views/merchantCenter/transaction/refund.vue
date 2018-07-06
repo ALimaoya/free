@@ -44,8 +44,8 @@
           <span v-if="scope.row.categoryMap != undefined">
           <span v-if="scope.row.categoryMap.categoryName1">{{scope.row.categoryMap.categoryName1}}</span>/
           <span v-if="scope.row.categoryMap.categoryName2">{{scope.row.categoryMap.categoryName2}}</span>/
-          <span v-if="scope.row.categoryMap.categoryName3">{{scope.row.categoryMap.categoryName3}}</span>/
-          <span v-if="scope.row.categoryMap.categoryName4">{{scope.row.categoryMap.categoryName4}}</span>
+          <span v-if="scope.row.categoryMap.categoryName3">{{scope.row.categoryMap.categoryName3}}</span>
+          <!--<span v-if="scope.row.categoryMap.categoryName4">{{scope.row.categoryMap.categoryName4}}</span>-->
           </span>
 
         </template>
@@ -54,13 +54,11 @@
       <el-table-column prop="quality" label="数量" ></el-table-column>
       <el-table-column prop="price" label="单价（元）" ></el-table-column>
       <el-table-column prop="returnAmount" label="退款金额（元）" ></el-table-column>
-      <el-table-column prop="createTime" label="申请时间"></el-table-column>
+      <el-table-column prop="createTime" label="申请时间" width="100"></el-table-column>
       <el-table-column label="状态" width="100">
         <template slot-scope="scope">
           <el-button v-if="scope.row.status !==''" plain :type='statusList[(scope.row.status*1+1)].type' size="mini">{{ statusList[(scope.row.status*1+1)].name }}</el-button>
-          <!--<el-button v-else-if="scope.row.status ==='1'" type='danger' size="mini">已退款</el-button>-->
-          <!--<el-button v-else-if="scope.row.status ==='2'" type='info' size="mini">已取消</el-button>-->
-          <!--<el-button v-else-if="scope.row.status ==='3'" type='warning' size="mini">已拒绝</el-button>-->
+
         </template>
       </el-table-column>
       <el-table-column prop="action" label="操作" width="100">

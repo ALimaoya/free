@@ -13,7 +13,7 @@
       <el-form-item   labelWidth="130px"  label="退款信息：" >
         <table class="tableC">
           <tr class="thColor">
-            <th>金额</th><th>退款时间</th><th>退款状态</th>
+            <th>金额（元）</th><th>退款时间</th><th>退款状态</th>
           </tr>
           <tr class="tbColor">
             <td>{{form.returnAmount}}</td>
@@ -35,7 +35,7 @@
       <el-form-item   labelWidth="130px"  label="商品：" >
         <table class="tableC">
           <tr class="thColor">
-            <th>商品编号</th><th>商品名称</th><th>品牌</th><th>分类</th><th>规格</th><th>数量</th><th>价格</th>
+            <th>商品编号</th><th>商品名称</th><th>品牌</th><th>分类</th><th>规格</th><th>数量</th><th>价格（元）</th>
           </tr>
           <tr class="tbColor">
             <td>{{form.productCode}}</td>
@@ -163,6 +163,9 @@ export default {
   margin: 0.5rem auto;
   width: 70%;
   .el-form-item {
+    div{
+      color: #666;
+    }
     .backBtn {
       margin-left: 1.8rem;
     }

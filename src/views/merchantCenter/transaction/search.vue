@@ -44,7 +44,7 @@
           <span class="subOrder">({{ scope.row.code }})</span>
         </template>
       </el-table-column>
-      <el-table-column  label="商品" class="goodsInfo" width="550">
+      <el-table-column  label="商品" class="goodsInfo" >
         <template slot-scope="scope">
           <table class="tableC">
             <tr class="thColor">
@@ -77,7 +77,7 @@
       </el-table-column>
       <el-table-column prop="totalNum" label="总数量" width="70"></el-table-column>
       <el-table-column prop="totalMoney" label="总价（元）" width="70"></el-table-column>
-      <el-table-column prop="createTime" label="交易时间" ></el-table-column>
+      <el-table-column prop="createTime" label="交易时间" width="100"></el-table-column>
       <el-table-column label="状态" width="100">
         <template slot-scope="scope">
           <el-button plain v-if="scope.row.status === '9'" size="mini" :type="statusList[scope.row.status-1].type">{{ statusList[scope.row.status*1-1].name }}</el-button>
@@ -381,34 +381,6 @@
         //导出订单列表
         exportOrder(){
           document.getElementById('orderFile').click()
-
-          // let formData = new FormData();
-          //
-          // formData.append('EQ_payOrder.code',this.transition.EQ_payOrder);
-          // formData.append('EQ_code',this.transition.EQ_code);
-          // formData.append('productCode',this.transition.productCode);
-          // formData.append('LIKE_payOrder.user.accountName',this.transition.LIKE_payOrder);
-          // formData.append('GT_createTime',this.transition.GT_createTime);
-          // formData.append('LT_createTime',this.transition.LT_createTime);
-          // formData.append('EQ_status',this.transition.EQ_status);
-          // // data.pageSize = this.pageSize ;
-          // // data.currentPage = this.currentPage
-          // exportList(formData).then( res => {
-          //
-          //   if( res.data.status === '000000000'){
-          //
-          //
-          //   }else{
-          //     this.$message({
-          //       message: res.data.message ,
-          //       center : true ,
-          //       type: 'error'
-          //     })
-          //   }
-          // }).catch( err => {
-          //   alert('服务器开小差啦，请稍等~')
-          //
-          // })
         },
         //选择文件
         handelFile(){
@@ -530,10 +502,10 @@
             if(valid){
               let data = { ...this.expressForm };
               data.orderId = this.deliverOrder;
-              this.loading = true ;
+              // this.loading = true ;
 
               confirmDeliver(data).then( res => {
-                this.loading = false ;
+                // this.loading = false ;
 
                 if( res.data.status === '000000000'){
                   this.$message({
@@ -541,8 +513,10 @@
                     center : true ,
                     type: 'success'
                   });
+                  this.dialogVisible = false ;
+
                   setTimeout(() => {
-                    window.location.reload();
+                    this.getList();
                   },2000)
 
                 }else{

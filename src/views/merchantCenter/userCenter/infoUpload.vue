@@ -19,7 +19,7 @@
           <li>
             <span class="imeTilte">营业执照</span>
             <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.businessImage"
-                        :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeBusinessUpload">
+                        :headers="{'yb-tryout-merchant-token':token}"      :show-file-list="false"   :before-upload="beforeBusinessUpload" >
               <img v-if="form.businessImage" :src="imageDomain + form.businessImage" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
@@ -57,28 +57,28 @@
       <el-form-item :labelWidth="labelWidth" class="imgWrap" label="资质：" v-else="isRegister" prop="businessImage">
         <div  class="showImage">
           <dl @click="bigImg(0,form.businessImage)"  >
-            <dt>{{ imgType[0] }}</dt>
+            <dt class="imeTilte">{{ imgType[0] }}</dt>
             <dd>
               <img v-if="form.businessImage !== ''" :src="imageDomain+form.businessImage" alt="" />
               <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
             </dd>
           </dl>
           <dl @click="bigImg(1,form.authorizeImage)"  >
-            <dt>{{ imgType[1] }}</dt>
+            <dt class="imeTilte">{{ imgType[1] }}</dt>
             <dd>
               <img v-if="form.authorizeImage !== ''" :src="imageDomain+form.authorizeImage" alt="" />
               <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
             </dd>
           </dl>
           <dl @click="bigImg(2,form.cardFaceImage)"  >
-            <dt>{{ imgType[2] }}</dt>
+            <dt class="imeTilte">{{ imgType[2] }}</dt>
             <dd>
               <img v-if="form.cardFaceImage !== ''" :src="imageDomain+form.cardFaceImage" alt="" />
               <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
             </dd>
           </dl>
           <dl @click="bigImg(3,form.cardBackImage)"  >
-            <dt>{{ imgType[3] }}</dt>
+            <dt class="imeTilte">{{ imgType[3] }}</dt>
             <dd>
               <img v-if="form.cardBackImage !== ''" :src="imageDomain+form.cardBackImage" alt="" />
               <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
@@ -197,6 +197,7 @@
             labelWidth: '150px',
             status: '',
             loading : true ,
+            limitImg : false,
 
       }
       },
@@ -244,7 +245,7 @@
           this.dialogVisible = true ;
         },
         //限制上传图片大小
-        limitImg(file){
+        limitImage(file){
           let reader = new FileReader();
           let _this = this;
           const isImg = file.type === 'image/jpeg'|| file.type === 'image/png';
@@ -255,11 +256,14 @@
               const isWidth = this.width;
               if (isWidth > 800 || isHeight > 800) {
                 _this.$message.error('图片尺寸过大，请重新选择后上传');
-                return false;
+                _this.limitImg = false;
 
               }else if(!isImg){
                 _this.$message.error('图片必须为jpg或者png格式，请重新选择后上传');
-                return false;
+                _this.limitImg = false;
+
+              }else{
+                _this.limitImg = true;
 
               }
             };
@@ -267,19 +271,22 @@
             image.src = e.target.result;
           };
           reader.readAsDataURL(file);
-          return true ;
         },
         // 上传图片
         beforeBusinessUpload(file) {
           let that = this ;
-          if (this.limitImg(file)) {
+          this.limitImage(file)
+
+          if (this.limitImg) {
             let formData = new FormData();
             formData.append('image', file);
+
             uploadImage(formData, that.token).then(res => {
               if (res.data.status === '000000000') {
 
-                that.form.businessImage = res.data.data.fileName;
 
+                that.form.businessImage = res.data.data.fileName;
+                // console.log(that.form.businessImage)
                 that.businessImageWarn = false;
               } else {
                 that.$message({
@@ -295,12 +302,17 @@
               that.businessImageWarn = true;
 
             })
+          }else{
+            that.businessImageWarn = true;
+            return false ;
           }
 
         },
+
         beforeAuthorizeUpload(file) {
           let that = this ;
-          if (this.limitImg(file)) {
+          this.limitImage(file)
+          if (this.limitImg) {
             let formData = new FormData();
             formData.append('image', file);
             uploadImage(formData, that.token).then(res => {
@@ -323,12 +335,17 @@
               that.authorizeImageWarn = true;
 
             })
+          }else{
+            that.authorizeImageWarn = true;
+            return false ;
+
           }
 
         },
         beforeCardFaceImgUpload(file) {
           let that = this ;
-          if (this.limitImg(file)) {
+          this.limitImage(file)
+          if (this.limitImg) {
             let formData = new FormData();
             formData.append('image', file);
             uploadImage(formData, that.token).then(res => {
@@ -351,12 +368,18 @@
               that.cardFaceImageWarn = true;
 
             })
+          }else{
+            that.cardFaceImageWarn = true;
+
+            return false ;
+
           }
 
         },
         beforeCardBackImgUpload(file) {
           let that = this ;
-          if (this.limitImg(file)) {
+          this.limitImage(file)
+          if (this.limitImg) {
             let formData = new FormData();
             formData.append('image', file);
             uploadImage(formData, that.token).then(res => {
@@ -380,21 +403,33 @@
               that.cardBackImageWarn = true;
 
             })
+          }else{
+            that.cardBackImageWarn = true;
+            return false ;
+
           }
 
         },
         submit(formName){
           if(this.form.businessImage === ''){
             this.businessImageWarn = true
+          }else{
+            this.businessImageWarn = false ;
           }
           if(this.form.authorizeImage === ''){
             this.authorizeImageWarn = true
+          }else{
+            this.authorizeImageWarn = false ;
           }
           if(this.form.cardFaceImage === ''){
             this.cardFaceImageWarn = true
+          }else{
+            this.cardFaceImageWarn = false ;
           }
           if(this.form.cardBackImage === ''){
             this.cardBackImageWarn = true
+          }else{
+            this.cardBackImageWarn = false ;
           }
 
           this.$refs[formName].validate((valid) => {
@@ -469,7 +504,10 @@
         align-items: center;
         li{
           flex: 1 ;
-
+          .imeTilte{
+            display: inline-block;
+            width: 1.5rem ;
+          }
           .upload{
             width: 100%;
             img{
@@ -484,6 +522,15 @@
         }
       }
     }
+    .imeTilte{
+
+      height : 0.4rem;
+      text-align : center ;
+      line-height : 0.4rem ;
+      background : #eee ;
+      font-size: 0.14rem;
+      color: #333;
+    }
     .showImage{
       display : flex ;
       flex-direction: row;
@@ -495,14 +542,7 @@
 
         //height : 3rem ;
         margin : auto ;
-        dt{
-          height : 0.4rem;
-          text-align : center ;
-          line-height : 0.4rem ;
-          background : #eee ;
-          font-size: 0.14rem;
-          color: #333;
-        }
+
         dd{
           flex : 1 ;
           img{

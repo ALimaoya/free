@@ -30,13 +30,13 @@ html {
 
 }
 #app .el-menu-item{
-  padding-left: 40px !important;
+  padding-left: 30px !important;
 }
 #app .el-submenu>.el-submenu__title{
   padding-left:20px !important;
 }
 #app .nest-menu .el-submenu__title{
-  padding-left: 40px !important;
+  padding-left: 30px !important;
 }
 #app .nest-menu .el-menu .el-menu-item{
   //padding-left: 60px !important;
@@ -148,6 +148,8 @@ a:hover {
   }
   th{
     height: 30px;
+    font-weight: bold!important;
+    color: #666;
   }
   .thColor {
     background : #cee ;

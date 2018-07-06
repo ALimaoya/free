@@ -46,6 +46,9 @@
   //height : auto ;
   overflow : hidden ;
 }
+ .user-dropdown{
+   z-index: 20000!important;
+ }
  .el-dropdown-menu__item{
    text-align : center ;
  }
@@ -149,4 +152,10 @@
    line-height : 40px;
    padding : 0;
    text-align : center;
+ }
+ .el-tooltip__popper{
+   max-width: 3rem!important;
+ }
+ .el-message{
+   z-index: 25000 !important;
  }

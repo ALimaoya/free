@@ -173,25 +173,6 @@
         dialogVisible: false,
         dialogVisibleQuestion: false,
         dialogPswVisible: false,
-        // vipTime: [{
-        //     time: '12',
-        //     date: '',
-        //     money: '3988'
-        //   },
-        //   {
-        //     time: '24',
-        //     date: '',
-        //     money: '7199'
-        //   },
-        //   {
-        //     time: '36',
-        //     date: '',
-        //     money: '9572'
-        //   }
-        // ],
-        // isVip: {
-        //
-        // },
         settingPsw:true,
         deposit: '',
         pwdType: 'password',

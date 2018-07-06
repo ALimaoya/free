@@ -14,16 +14,16 @@
           <div class="block">
         <span class="demonstration">开始时间：</span>
         <el-date-picker size="small"
-          v-model="searchForm.startDate" value-format="yyyy-MM-dd HH:mm:ss"
-          type="datetime"
+          v-model="searchForm.startDate" value-format="yyyy-MM-dd"
+          type="date"
           placeholder="选择日期时间">
         </el-date-picker>
       </div>
           <div class="block">
         <span class="demonstration">结束时间：</span>
         <el-date-picker size="small"
-            v-model="searchForm.endDate" value-format="yyyy-MM-dd HH:mm:ss"
-          type="datetime"
+            v-model="searchForm.endDate" value-format="yyyy-MM-dd"
+          type="date"
           placeholder="选择日期时间">
         </el-date-picker>
       </div>
