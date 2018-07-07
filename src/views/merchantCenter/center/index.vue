@@ -124,7 +124,7 @@
             this.loading = false ;
             if(res.data.status === '000000000'){
               this.statusTag = res.data.data;
-              if(this.statusTag.aptitudeStatus=== '9'&& this.statusTag.isBundle === '1'&& this.statusTag.shopStatus === '9'&&this.statusTag.wallet === '1'){
+              if(this.statusTag.aptitudeStatus=== '9'&& this.statusTag.shopStatus === '9'&&this.statusTag.wallet === '1'){
                 this.close = '1';
               }else{
                 this.close = ' ';

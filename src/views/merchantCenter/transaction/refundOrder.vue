@@ -19,7 +19,7 @@
             <td>{{form.returnAmount}}</td>
             <td>{{form.returnTime}}</td>
             <td>
-              <el-button size="mini"  :type="statusList[form.status-0].type">{{ statusList[form.status-0].name }}</el-button>
+              <el-button plain size="mini"  :type="statusList[form.status-0].type">{{ statusList[form.status-0].name }}</el-button>
             </td>
           </tr>
         </table>

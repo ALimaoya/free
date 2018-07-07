@@ -27,10 +27,11 @@
               <th>订单状态</th><th>下单时间</th><th>支付方式</th><th>支付时间</th>
             </tr>
             <tr class="tbColor">
-              <td><el-button size="mini" disabled="disabled" v-if="form.deliverOrder.status!==null">{{ statusList[form.deliverOrder.status-0].name }}</el-button></td>
+              <td><el-button plain size="mini" disabled="disabled" v-if="form.deliverOrder.status!==null" :type="statusList[form.deliverOrder.status*1].type">{{ statusList[form.deliverOrder.status*1].name }}</el-button></td>
               <td>{{form.deliverOrder.createTime}}</td>
-              <td v-if="form.deliverOrder.payType!==null">支付宝</td>
-              <td>{{form.deliverOrder.payTime}}</td>
+              <td>支付宝</td>
+              <td v-if="form.deliverOrder.payTime!==null">{{form.deliverOrder.payTime}}</td>
+              <td v-else></td>
               </tr>
           </table>
         </el-form-item>
@@ -45,20 +46,20 @@
               <td>{{item.productItem.brandCnName}}</td>
               <td>
                 <span v-if="item.productItem.categoryMap != ''">
-                  <!-- <span v-for="(item1,index) in item.productItem.categoryMap " :key="index">
-                    <span>{{item.categoryName1}}</span>
-                  </span> -->
+                   <!--&lt;!&ndash;&ndash;&gt;<span v-for="(item1,index) in item.productItem.categoryMap " :key="index">-->
                   <span v-if="item.productItem.cateGoryMap.categoryName1">{{item.productItem.cateGoryMap.categoryName1}}</span>/
                   <span v-if="item.productItem.cateGoryMap.categoryName2">{{item.productItem.cateGoryMap.categoryName2}}</span>/
-                  <span v-if="item.productItem.cateGoryMap.categoryName3">{{item.productItem.cateGoryMap.categoryName3}}</span>/
-                  <span v-if="item.productItem.cateGoryMap.categoryName4">{{item.productItem.cateGoryMap.categoryName4}}</span>
+                  <span v-if="item.productItem.cateGoryMap.categoryName3">{{item.productItem.cateGoryMap.categoryName3}}</span>
+                  <!--<span v-if="item.productItem.cateGoryMap.categoryName4">{{item.productItem.cateGoryMap.categoryName4}}</span>-->
+
                 </span>
               </td>
               <td><span>{{item.productItem.size}}</span><span class="subOrder">{{item.productItem.color}}</span></td>
               <td>{{item.quantity}}</td>
               <td>{{item.price}}</td>
               <td>
-                <el-button size="mini" disabled="disabled" v-if="item.productItem.status!==null">{{ commodityTypeList[item.productItem.status-0].name }}</el-button>
+                <el-button plain size="mini" disabled="disabled"  v-if="item.productItem.status!==null" :type="statusList[item.productItem.status*1].type">{{ statusList[item.productItem.status*1].name }}</el-button>
+                <span v-else></span>
               </td>
             </tr>
           </table>
@@ -66,7 +67,7 @@
         <el-form-item   labelWidth="130px"  label="金额：">
           <table class="tableC">
             <tr class="thColor">
-              <th>订单金额</th><th>下单时间</th>
+              <th>订单金额（元）</th><th>下单时间</th>
             </tr>
             <tr class="tbColor"><td>{{form.price}}</td><td>{{form.deliverOrder.createTime}}</td></tr>
           </table>
@@ -122,32 +123,7 @@
                 region:'',
                 street:''
               },
-              statusList:[
-                {
-                  name : '未支付',
-                },
-                {
-                  name : '已支付',
-                },
-                {
-                  name : '已发货',
-                },
-                {
-                  name : '确认收货',
-                },
-                {
-                  name : '退款中',
-                },
-                {
-                  name : '已退款',
-                },
-                {
-                  name : '已取消',
-                },
-                {
-                  name : '退款已拒绝',
-                }
-              ],
+
             payList:[
               {
                   name : '支付宝',
@@ -156,33 +132,46 @@
                   name : '微信支付',
                 },
             ],
-            commodityTypeList:[
+              statusList:[
+                {
+                  name:'',
+                  type: ''
+                },
               {
-                name:'已支付'
+                name:'已支付',
+                type: 'primary'
               },
               {
-                name:'已发货'
+                name:'已发货',
+                type: 'info'
               },
               {
-                name:'确认收货'
+                name:'确认收货',
+                type: 'success'
               },
               {
-                name:'退款中'
+                name:'退款中',
+                type: 'warning'
               },
               {
-                name:'已退款'
+                name:'已退款',
+                type: 'danger'
               },
               {
-                name:'已取消'
+                name:'已取消',
+                type: 'info'
               },
               {
-                name:'退款已拒绝'
+                name:'退款已拒绝',
+                type: 'warning'
               },
               {
-                name:'已删除'
+                name:'已删除',
+                type: 'info'
               },
               {
-                name:'未支付'
+                name:'未支付',
+                type:' '
               },
             ],
               loading: true,

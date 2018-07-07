@@ -225,7 +225,7 @@
                   if (res.data.status === '000000000') {
                     _this.form.logoImage = res.data.data.fileName ;
 
-                    console.log(_this.form.logoImage)
+                    // console.log(_this.form.logoImage)
                     _this.goodsImgWarn = false;
                   } else {
                     _this.$message({

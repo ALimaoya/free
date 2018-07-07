@@ -49,7 +49,7 @@
         }
       },
       mounted(){
-        if(this.step3Status === '1'&& this.step3Status === '2'){
+        if(this.step3Status === '1'||this.step3Status === '2'){
           this.isBond = true ;
 
         }else{
