@@ -77,7 +77,7 @@
         </el-form-item>
         <div>
           <p class="title">第四步：设置投放信息</p>
-          <el-form-item label="选择活动开始时间：" labelWidth="150px" prop="activityStartTime">
+          <el-form-item label="选择活动开始时间：" labelWidth="160px" prop="activityStartTime">
             <div class="block">
               <el-date-picker :disabled="read" v-model="form.activityStartTime"  format="yyyy-MM-dd" value-format="yyyy-MM-dd" size="small" :picker-options="pickerOptions"
                               type="date" :clearable="autoUpload" placeholder="开始日期" @blur="setRate(form.activityStartTime)" >
@@ -255,7 +255,7 @@
               //   id : '4'
               // }
             ],
-            labelWidth : '120px',
+            labelWidth : '140px',
             shopOptions : [],
             searchOptions : [],
             topOptions : [

@@ -130,7 +130,7 @@
         <!--<el-input type="textarea" :rows="4" class="textarea" placeholder="请输入内容" @blur="cancelWarn(form.productShareUrl,appKey)" v-model.trim="form.productShareUrl"></el-input>-->
       <!--</el-form-item>-->
       <el-form-item class="size" v-for="(keyItem,index) in form.keyword" :label="'APP端关键词'+(index+1)*1+'：'"
-            :key="index" :prop="'keyword.'+ index + '.searchKeyword'" :labelWidth="labelWidth">
+            :key="index" :prop="'keyword.'+ index + '.searchKeyword'" labelWidth="150px">
         <el-select :disabled="read" class="search" @focus="getType(form.platformType)" v-model="keyItem.searchId" placeholder="搜索平台" size="small">
           <el-option
             v-for="(item ,index) in searchOptions"
@@ -176,7 +176,7 @@
             <!--<li>当日18点前提交担保金的活动，当日审核上架次日10点开奖；18点后提交的活动次日10点上架，隔天10点系统自动开奖</li>-->
           <!--</ul>-->
         <!--</el-form-item>-->
-        <el-form-item label="选择活动开始时间：" labelWidth="150px" prop="activityStartTime">
+        <el-form-item label="选择活动开始时间：" labelWidth="160px" prop="activityStartTime">
           <div class="block">
             <el-date-picker :disabled="read" v-model="form.activityStartTime"  format="yyyy-MM-dd" value-format="yyyy-MM-dd" size="small" :picker-options="pickerOptions"
               type="date" :clearable="autoUpload" placeholder="开始日期" @blur="setRate(form.activityStartTime)" >
@@ -437,7 +437,7 @@
             productDetail : '',
             // startTime : ''
           },
-          labelWidth : '120px',
+          labelWidth : '130px',
           payWay : '',
           platForm : [
             {
