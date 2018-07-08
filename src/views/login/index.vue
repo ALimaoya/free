@@ -51,7 +51,7 @@
 <script>
   import {
     validatePhone,
-    validPassWord,
+    validLoginPassWord,
     validateCaptcha
   } from '@/utils/validate'
   import {
@@ -74,7 +74,7 @@
         }
       };
       const validatePass = (rule, value, callback) => {
-        if (!validPassWord(value)) {
+        if (!validLoginPassWord(value)) {
           callback(new Error('密码为8-16位的数字、字母组合'))
         } else {
 

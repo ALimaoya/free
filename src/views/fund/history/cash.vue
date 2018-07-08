@@ -1,5 +1,5 @@
 <template>
-  <div class="money">
+  <div class="money" v-loading="loading"  element-loading-text="拼命加载中">
     <div class="title">
       <p>类型：</p>
       <el-select clearable v-model="searchForm.detail" placeholder="全部明细" size="small">
@@ -19,7 +19,7 @@
       </div>
       <el-button type="primary" size="mini" style="padding : 0 0.1rem;" @click="search(searchForm)">查询</el-button>
     </div>
-    <el-table :data="tableData" style="width: 100%;" border>
+    <el-table :data="tableData" style="width: 100%;" border >
       <el-table-column prop="" label="编号">
         <template slot-scope="scope">
           {{scope.$index+1}}
@@ -89,7 +89,9 @@
         currentPage: 1,
         pageSize: 10,
         type: "",
-        moneyRecord: {}
+        moneyRecord: {},
+        loading : true ,
+
       }
     },
     mounted() {
@@ -116,6 +118,7 @@
         }else{
           formdata.append('LT_createTime','');
         }
+        this.loading = true ;
 
         getCashList(formdata).then(res => {
           this.tableData = res.data.data;

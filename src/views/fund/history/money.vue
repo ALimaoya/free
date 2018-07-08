@@ -1,5 +1,5 @@
 <template>
-  <div class="money">
+  <div class="money"  v-loading="loading"  element-loading-text="拼命加载中">
     <div class="title">
         <p>类型：</p>
         <el-select clearable v-model="searchForm.detail" placeholder="全部明细" size="small">
@@ -14,22 +14,22 @@
           <div class="block">
         <span class="demonstration">开始时间：</span>
         <el-date-picker size="small"
-          v-model="searchForm.startDate" value-format="yyyy-MM-dd HH:mm:ss"
-          type="datetime"
+          v-model="searchForm.startDate" value-format="yyyy-MM-dd"
+          type="date"
           placeholder="选择日期时间">
         </el-date-picker>
       </div>
           <div class="block">
         <span class="demonstration">结束时间：</span>
         <el-date-picker size="small"
-            v-model="searchForm.endDate" value-format="yyyy-MM-dd HH:mm:ss"
-          type="datetime"
+            v-model="searchForm.endDate" value-format="yyyy-MM-dd"
+          type="date"
           placeholder="选择日期时间">
         </el-date-picker>
       </div>
           <el-button type="primary" style="padding : 0 0.1rem;line-height: 0.34rem;" size="mini" @click="search(searchForm)">查询</el-button>
     </div>
-    <el-table :data="tableData" style="width: 100%;"  border>
+    <el-table :data="tableData" style="width: 100%;"  border >
       <el-table-column prop="" label="编号">
           <template slot-scope="scope">
               {{scope.$index+1}}
@@ -110,7 +110,9 @@
             currentPage : 1 ,
             pageSize : 10,
             type:"",
-            moneyRecord:{}
+            moneyRecord:{},
+            loading : true ,
+
           }
       },
       mounted(){
@@ -137,6 +139,8 @@
           }else{
             formdata.append('LT_createTime','');
           }
+          this.loading = true ;
+
           getWalletLog(formdata).then( res => {
             this.tableData = res.data.data;
               this.moneyRecord=res.data

@@ -247,7 +247,7 @@
           }).catch(err => {
             this.RegForm.imgNum = '' ;
             this.changeCaptcha() ;
-            alert('服务器开小差啦，请稍等~')
+
           });
         },
 

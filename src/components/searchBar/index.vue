@@ -335,12 +335,7 @@
           // formData.append('EQ_payStatus','1');
           getShopList(this.order.platformType).then( res => {
 
-            if(res.data.status === '000000000'){
-              this.shopList = res.data.data ;
-
-            }
-          }).catch(err => {
-            alert('服务器开小差啦，请稍等~')
+             this.shopList = res.data.data ;
           })
         },
         //  获取搜索条件内容
@@ -400,85 +395,5 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
 
-  .search{
-    //margin : 0 0.3rem ;
-    padding : 0.2rem 0.3rem ;
-    box-sizing: border-box;
-    .searchOrder{
-      height : 34px ;
-    }
-    .el-input{
-      width : 200px ;
-      margin-left :   0.3rem ;
-      font-size : 0.14rem ;
-      color : #8f949a;
-
-    }
-    .el-select{
-      margin-left : 0.3rem ;
-      width : 140px ;
-      background : #eee ;
-    }
-    /*.searchOrder{*/
-      /*width : 100px ;*/
-      /*height : 34px ;*/
-      /*border-radius : 0.2rem ;*/
-      /*font-size : 0.14rem ;*/
-      /*color : #fff;*/
-      /*background : #409EFF;*/
-      /*margin-left : 0.2rem ;*/
-    /*}*/
-    .searchOrder {
-      width : 65px ;
-      margin-bottom : 0.2rem ;
-      margin-left : 20px ;
-
-    }
-    .block{
-      width : 80% ;
-      //float : left;
-      display: inline-block;
-      margin-bottom : 0.2rem ;
-      margin-top : 0.2rem ;
-
-      span{
-        width : 170px ;
-        height : 100% ;
-        line-height : 0.4rem ;
-        display : inline-block ;
-        //float : left;
-        text-align : right ;
-        color : #333;
-        margin-right : 20px ;
-        /*&:nth-last-child(2){*/
-          /*width : 0.25rem ;*/
-          /*margin : 0 ;*/
-          /*text-align : center ;*/
-        /*}*/
-      }
-      .el-date-editor, .el-range-editor, .el-input__inner, .el-date-editor--daterange, .is-active{
-        width : 20% ;
-        margin : 0;
-        /*padding : 0 0.03rem;*/
-
-      }
-      .demonstration2{
-        width : 20px;
-        margin-right :0;
-        text-align : center;
-      }
-
-    }
-    .note{
-      padding-left : 0.3rem ;
-      width : 100% ;
-      border-bottom : 1px solid #aaa ;
-      height : 0.4rem ;
-      line-height : 0.4rem ;
-      font-size : 0.14rem ;
-      text-indent : 0.32rem ;
-      color : #999 ;
-    }
-
-  }
+  @import '../../styles/search';
 </style>

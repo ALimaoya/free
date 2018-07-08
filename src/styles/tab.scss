@@ -1,0 +1,110 @@
+.tab{
+  width : 90% ;
+  margin : auto ;
+  .check{
+    margin: 0.7rem auto 0.3rem ;
+    width : 80% ;
+    svg{
+      width : 0.25rem ;
+      height : 0.25rem ;
+    }
+    span{
+      line-height : 0.5rem ;
+
+
+    }
+    span:nth-child(2){
+      font-size : 0.24rem ;
+      color : #11cf00 ;
+      margin-right :0.2rem ;
+
+    }
+    span:nth-child(3){
+      font-size : 0.14rem ;
+      color : #1e6abc;
+    }
+  }
+  .el-form{
+    width : 80% ;
+    margin : 0.5rem auto ;
+    color : #333 ;
+    h1{
+      height : 0.5rem ;
+      line-height : 0.5rem ;
+      font-size : 0.24rem ;
+      text-align: center;
+    }
+    .el-form-item{
+      width : 60% ;
+      margin: 0.5rem auto ;
+      .upload{
+        float : left ;
+        position : relative ;
+
+        img{
+          width : 100% ;
+        }
+
+      }
+      .require {
+        font-size : 0.12rem ;
+        color : #aaa ;
+        float: right ;
+        width :50%;
+        line-height: 0.3rem;
+      }
+      .imgWarn{
+        font-size: 12px;
+        line-height: 1;
+        padding-top: 4px;
+        position: absolute;
+        top: 100%;
+        left: 0;
+      }
+    }
+    .ruleDetail{
+      padding-left : 160px;
+      span{
+        font-size : 0.12rem ;
+        line-height : 0.24rem!important ;
+      }
+    }
+    .telInput{
+      width : 70% ;
+    }
+    .infoWrap{
+      width : 100% ;
+      height : auto;
+      border : 1px solid #eee ;
+      border-radius : 0.05rem ;
+      margin-bottom : 0.5rem ;
+      h2{
+        height: 0.5rem ;
+        line-height : 0.5rem ;
+        text-indent : 0.5rem ;
+        width : 100% ;
+        font-size : 0.22rem ;
+        background : #eee;
+        margin-bottom : 0.5rem ;
+      }
+      .tips{
+        padding : 0 0.2rem ;
+        box-sizing: border-box;
+        color: #666;
+      }
+      .el-form-item{
+        margin : 0.2rem 0.7rem ;
+
+      }
+    }
+  }
+  .dialog_content{
+    .el-select{
+      width : 160px;
+    }
+    .el-input{
+      width : 60%;
+      margin-left : 0.2rem;
+    }
+  }
+}
