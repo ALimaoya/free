@@ -63,6 +63,7 @@ export function getCaptcha(){
   return request({
     url : 'tryout/loginStatus/captcha',
     method : 'get',
+    needFailResponse:true,
   })
 }
 
@@ -71,6 +72,7 @@ export function getMember(){
   return request({
     url : 'tryout/member/data',
     method : 'get',
+    needFailResponse:true,   
   })
 }
 //获取会员订单列表
@@ -93,6 +95,7 @@ export function buyVip(data){
   return request({
     url : 'tryout/vip/buy',
     method : 'post',
-    data:data
+    data:data,
+    needFailResponse:true,
   })
 }

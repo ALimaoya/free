@@ -457,15 +457,10 @@
       // 获取第三方账号信息
       getThirdInfo() {
         getThirdAccount().then(res => {
-          if (res.data.status === '000000000') {
-            // console.log(res.data.data)
-            this.user = res.data.data;
+          this.user = res.data.data;
             this.contactType[0].value = this.user.qq;
             this.contactType[1].value = this.user.wechat;
             this.contactType[2].value = this.user.email;
-          }
-        }).catch(err => {
-          alert('服务器开小差啦，请稍等~')
         })
       },
       //设置支付密码/QQ/微信/邮箱弹窗
@@ -538,8 +533,7 @@
             formdata.append('captcha', this.pswForm.pswVerify);
             formdata.append('payPassword', this.pswForm.payPsw);
             editPayPsw(formdata).then(res => {
-              if (res.data.status == "000000000") {
-                this.$message({
+              this.$message({
                   message: '支付密码设置成功',
                   type: 'success',
                   center: true
@@ -548,17 +542,6 @@
                 this.getThirdInfo();
                 this.pswVisible = false;
                 this.getNew = true ;
-              } else {
-                this.$message({
-                  message: res.data.message,
-                  type: 'error',
-                  center: true
-                });
-                return
-              }
-            }).catch(err => {
-              alert('服务器开小差啦，请稍等~')
-              return
             })
 
 
@@ -575,19 +558,9 @@
             formdata.append('password', this.changePsw.newPsw);
             formdata.append('captcha', this.changePsw.pswVerify);
               editLoginPsw(formdata).then(res => {
-                if (res.data.status == "000000000") {
-                  this.$store.dispatch('LogOut').then(() => {
+                this.$store.dispatch('LogOut').then(() => {
                     location.reload()
                   })
-                } else {
-                  this.$message({
-                    message: res.data.message,
-                    type: 'error',
-                    center: true
-                  });
-                }
-              }).catch(err => {
-                alert('服务器开小差啦，请稍等~')
               })
 
           }
@@ -618,23 +591,13 @@
             formdata.append('account', _account)
             formdata.append('type', _typeId)
             setThirdAccount(formdata).then(res => {
-              if (res.data.status === '000000000') {
-                this.$message({
+              this.$message({
                   message: '修改成功',
                   type: 'success',
                   center: true
                 });
                 this.getThirdInfo();
                 this.$refs[ways].resetFields();
-              } else {
-                this.$message({
-                  message: res.data.message,
-                  type: 'error',
-                  center: true
-                });
-              }
-            }).catch(err => {
-              alert('服务器开小差啦，请稍等~')
             })
 
           }
@@ -696,11 +659,6 @@
               });
               return
             } else {
-              this.$message({
-                message: res.data.message,
-                type: 'error',
-                center: true
-              });
               clearInterval(timer);
               this.disabled = false;
             }
@@ -708,7 +666,6 @@
         ).catch(err => {
           clearInterval(timer);
           this.disabled = false;
-          alert('服务器开小差啦，请稍等~')
         })
       },
 

@@ -72,6 +72,7 @@ export function getShopList(data){
     url : '/tryout/shop/select/list',
     // url : '/tryout/select/'+data+'/list',
     method : 'get',
+    needFailResponse:true,
     params : {
       platform : data
     }
@@ -189,6 +190,7 @@ export function uploadImage(file){
     url : "/tryout/file/upload" ,
     method : 'post' ,
     data : file ,
+    needFailResponse:true,
     // headers : {
     //   // 'Content-Type' : 'form-data'
     // }
@@ -202,7 +204,8 @@ export function getJDetail(url){
     method : 'get',
     params : {
       productUrl : url
-    }
+    },
+    needFailResponse:true,
   })
 }
 

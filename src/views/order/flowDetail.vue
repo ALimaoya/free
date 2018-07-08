@@ -51,12 +51,7 @@
         let order = this.$route.params.order ;
         // console.log(order);
         orderDetail(order).then( res => {
-          // console.log(res);
-          if(res.data.status === '000000000'){
-            this.detailInfo = res.data.data
-          }
-        }).catch( err => {
-          alert('服务器开小差啦，请稍等~')
+          this.detailInfo = res.data.data
         })
       },
       methods : {

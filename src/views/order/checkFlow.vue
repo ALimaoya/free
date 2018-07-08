@@ -195,15 +195,9 @@
         formData.append('LT_createTime',this.order.activityEndTime);
         formData.append('pageSize', this.pageSize);
         getOrderList(formData).then( res=> {
-          if(res.data.status === '000000000'){
-            this.tableData = res.data.data ;
+          this.tableData = res.data.data ;
             this.totalPages = res.data.totalPages ;
             this.totalElements = res.data.totalElements ;
-            // console.log( this.totalElements)
-          }
-        }).catch( err => {
-          alert('服务开小差啦，请稍等~');
-
         })
       },
       //根据搜索条件获取订单列表
@@ -229,8 +223,7 @@
         this.viewImg = '';
         orderDetail(order).then( res => {
           // console.log(res);
-          if( res.data.status === '000000000'){
-            if(res.data.data.orderImageList.length){
+          if(res.data.data.orderImageList.length){
               res.data.data.orderImageList.forEach( i => {
                 if(i.type === '5'){
                   this.searchImg = i.imageUrl ;
@@ -242,16 +235,6 @@
                 }
               } )
             }
-
-          }else{
-            this.$message({
-              message : res.data.message ,
-              center : true ,
-              type : 'error'
-            })
-          }
-        }).catch( err => {
-          alert('服务器开小差啦，请稍等~')
         })
       },
 
@@ -273,8 +256,7 @@
 
       handelRefuse(){
         checkOrder({ orderId : this.orderId , status : this.status ,reason : this.refuseReason ,activityType : this.order.EQ_activityType}).then( res => {
-          if(res.data.status === '000000000'){
-            this.$message({
+          this.$message({
               message : '审核提交成功，请稍后确认' ,
               center : true ,
               type : 'success',
@@ -282,17 +264,8 @@
             setTimeout(()=> {
               window.location.reload();
             }, 3000);
-          }else{
-            this.$message({
-              message : res.data.message ,
-              center : true ,
-              type : 'error'
-            })
-          }
 
-        }).catch( err => {
-          alert('服务器开小差啦，请稍等~')
-        });
+        })
         this.detailInfo = false ;
         this.viewImg = '' ;
       },

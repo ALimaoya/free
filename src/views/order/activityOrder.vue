@@ -239,15 +239,9 @@
           formData.append('currentPage', this.currentPage);
           formData.append('pageSize', this.pageSize);
         getOrderList(formData).then( res=> {
-          if(res.data.status === '000000000'){
-            this.tableData = res.data.data ;
+          this.tableData = res.data.data ;
             this.totalPages = res.data.totalPages ;
             this.totalElements = res.data.totalElements ;
-            // console.log( this.totalElements)
-          }
-        }).catch( err => {
-          alert('服务开小差啦，请稍等~');
-
         })
       },
       //根据搜索条件获取订单列表

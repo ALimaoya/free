@@ -170,21 +170,11 @@
     methods: {
       getApilyAccount() {
         getThirdInfo('1').then(res => {
-          if (res.data.status == '000000000') {
-            if (res.data.data.length > 0) {
+          if (res.data.data.length > 0) {
               this.userInfo = true;
               this.apilyInfo = res.data.data[0];
               this.title = "修改支付宝账号";
             }
-          } else {
-            this.$message({
-              message: res.data.message,
-              type: 'error',
-              center: true
-            });
-          }
-        }).catch(err => {
-          alert('服务器开小差啦，请稍等~')
         })
       },
       //获取验证码
@@ -213,11 +203,6 @@
               });
               return
             } else {
-              this.$message({
-                message: res.data.message,
-                type: 'error',
-                center: true
-              });
               clearInterval(timer);
               this.disabled = false;
             }
@@ -225,7 +210,6 @@
         ).catch(err => {
           clearInterval(timer);
           this.disabled = false;
-          alert('服务器开小差啦，请稍等~')
         })
       },
 
@@ -241,8 +225,7 @@
             formdata.append('captcha', this.payForm.pswVerify);
             formdata.append('thirdAccount', this.payForm.account);
             setApilyAccount(formdata).then(res => {
-              if (res.data.status === '000000000') {
-                this.$message({
+              this.$message({
                   type: 'success',
                   message: '支付宝绑定成功',
                   center: true
@@ -251,16 +234,6 @@
                 this.accountBox=false;
                 this.getApilyAccount();
                 this.$refs[formName].resetFields();
-              } else {
-                this.$message({
-                  message: res.data.message,
-                  type: 'error',
-                  center: true
-                });
-                return
-              }
-            }).catch(err => {
-              alert('服务器开小差啦，请稍等~')
             })
 
           }

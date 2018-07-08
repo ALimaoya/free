@@ -14,7 +14,8 @@ export function handleCash(data){
   return request({
     url: '/tryout/cash/add',
     method: 'post',
-    data
+    data,
+    needFailResponse:true
   })
 }
 

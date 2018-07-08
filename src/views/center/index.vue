@@ -119,26 +119,10 @@
           // console.log(token) ;
           this.$store.dispatch('GetInfo').then(res => {
 
-            if( res.data.status === '000000000'){
-              this.attendant = this.$store.state.user.attendant ;
+           this.attendant = this.$store.state.user.attendant ;
               this.userInfo = this.$store.state.user.userInfo ;
               this.wallet = this.$store.state.user.wallet ;
               this.pub_plans = this.$store.state.user.pub_plans ;
-              // const date = this.userInfo.vip_time ;
-              // this.userInfo.vip_time = date.slice(0,4)+ ' - ' + date.slice(4,6) + ' - ' + date.slice(6,8) ;
-            }else{
-              this.$message({
-                message : res.data.message ,
-                center : true ,
-                type : 'error'
-              })
-            }
-          }).catch(error => {
-            // this.$store.dispatch('LogOut').then(() => {
-
-            //   this.$message.error('获取用户信息失败,请重新登录');
-            //   this.$router.push('/login')
-            // })
           })
         },
         methods : {

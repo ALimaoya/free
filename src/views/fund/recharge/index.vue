@@ -166,11 +166,7 @@
       },
       getDepositMoney() {
         getDeposit().then(res => {
-          if (res.data.status === '000000000') {
-            this.deposit = res.data.data
-          }
-        }).catch(err => {
-          alert('服务器开小差啦，请稍等~')
+          this.deposit = res.data.data
         })
       },
       gopay() {

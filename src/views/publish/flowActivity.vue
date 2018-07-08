@@ -355,9 +355,8 @@
       },
       mounted(){
         shopList().then( res => {
-          if(res.data.status === '000000000'){
-            //获取用户是否已绑定店铺
-            if(res.data.data.length){
+               //获取用户是否已绑定店铺
+               if(res.data.data.length){
               getMember().then( res => {
                 //判断用户是否是会员身份
                 if(res.data.data.vipLevel*1){
@@ -369,25 +368,11 @@
                 }else{
                   this.vipVisible = true ;
                 }
-              }).catch( err => {
-                alert('服务器开小差啦，请稍等~')
               })
             }else{
               this.activityVisible = true ;
             }
-          }else{
-            this.$message({
-              message : res.data.message ,
-              center : true ,
-              type : 'error'
-
-            })
-          }
-        }).catch( err => {
-          // console.log(err);
-
-          alert('服务器开小差啦，请稍等~');
-        });
+        })
       },
       methods : {
         //判断是新建活动还是已存在活动
@@ -399,8 +384,7 @@
             this.order = order ;
             //获取活动详情
             this.$store.dispatch('getPublishDetail',order).then( res => {
-              if (res.data.status === '000000000') {
-                this.form = res.data.data;
+              this.form = res.data.data;
                 //判断活动是否已支付
                 if(this.$route.query.payStatus === '1'){
                   this.readonly = true ;
@@ -408,15 +392,6 @@
                 //已存在活动相关操作
                 this.activityStatus();
 
-              } else {
-                this.$message({
-                  message: res.data.message,
-                  center: true,
-                  type: 'error'
-                })
-              }
-            }).catch( err => {
-              alert('服务器开小差啦，请稍等~')
             })
           } else{
             //获取活动佣金值
@@ -515,8 +490,6 @@
                 this.form.shopId = '没有可选店铺';
               }
             }
-          }).catch( err => {
-            alert('服务器开小差啦，请稍等~')
           })
 
         },
@@ -524,12 +497,7 @@
         getType(value){
 
           searchTypeList(value).then( res => {
-            if(res.data.status === '000000000'){
-              this.searchOptions = res.data.data ;
-              // console.log(this.searchOptions);
-            }
-          }).catch( err => {
-            // console.log(err);
+            this.searchOptions = res.data.data ;
           })
         },
 
@@ -552,18 +520,11 @@
 
                 return true ;
               }else{
-                this.$message({
-                  message : res.data.message ,
-                  type : 'error',
-                  center : true
-                });
                 that.form.productUrl = '' ;
                 that.form.productId = '' ;
 
               }
 
-            }).catch( err => {
-              alert('服务器开小差啦，请稍等~')
             })
           }else{
 
@@ -675,12 +636,7 @@
         //获取活动佣金
         activityCommission(){
           getCommission().then(res => {
-            if(res.data.status === '000000000'){
-              this.form.brokeragePrice = res.data.data ;
-              // console.log(this.searchOptions);
-            }
-          }).catch( err => {
-            alert('服务器开小差啦，请稍等~')
+            this.form.brokeragePrice = res.data.data ;
           })
         },
         //上传商品主图
@@ -713,11 +669,6 @@
                     _this.form.mainImageUrl = res.data.data.fileName ;
                     _this.goodsImgWarn = false ;
                   }else{
-                    _this.$message({
-                      message : res.data.message ,
-                      center : true ,
-                      type : 'error'
-                    }) ;
                     _this.goodsImgWarn = true ;
 
                   }
@@ -1073,8 +1024,7 @@
 
           if (index === 1) {
             publishActivity(form).then(res => {
-              if (res.data.status === '000000000') {
-                this.$message({
+              this.$message({
                   type: 'success',
                   message: '提交成功',
                   center: true,
@@ -1082,40 +1032,17 @@
 
                 });
                 this.$router.push({name: 'FlowPay', params: {id: res.data.data.activityId}});
-
-              } else {
-                this.$message({
-                  message: res.data.message,
-                  center: true,
-                  type: 'error'
-                })
-              }
-            }).catch(err => {
-              // console.log(err);
-              alert('服务器开小差啦，请稍等~')
-            });
+            })
           } else {
             if (index === 2) {
               changeDetail(form).then(res => {
-                if (res.data.status === '000000000') {
-                  this.$message({
+                this.$message({
                     type: 'success',
                     message: '提交成功',
                     center: true,
                     duration: 500
                   });
                   this.$router.push({name: 'FlowPay', params: {id: this.order}});
-
-                } else {
-                  this.$message({
-                    type: 'error',
-                    message: res.data.message,
-                    center: true
-                  }, 500);
-                }
-
-              }).catch(err => {
-                alert('服务器开小差啦，请稍等~')
               })
             }
           }

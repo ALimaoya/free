@@ -77,18 +77,7 @@
       },
       getVipInfo() {
         getMember().then(res => {
-          if (res.data.status === '000000000') {
-            this.statusData.push(res.data.data);
-            // console.log(this.statusData)
-          } else {
-            this.$message({
-              message: res.data.message,
-              type: 'error',
-              center: true
-            });
-          }
-        }).catch(err => {
-          alert('服务器开小差啦，请稍等~')
+          this.statusData.push(res.data.data);
         })
       },
       getOrderList() {
@@ -96,17 +85,7 @@
         formdata.append('currentPage', this.currentPage);
         formdata.append('pageSize', this.pageSize);
         getMemberOrder(formdata).then(res => {
-          if (res.data.status === '000000000') {
-            this.historyData = res.data
-          } else {
-            this.$message({
-              message: res.data.message,
-              type: 'error',
-              center: true
-            });
-          }
-        }).catch(err => {
-          alert('服务器开小差啦，请稍等~')
+          this.historyData = res.data
         })
       },
       handleSizeChange(val) {

@@ -151,8 +151,7 @@
           formData.append('currentPage', this.currentPage);
           formData.append('pageSize', this.pageSize);
           getOrderList(formData).then( res=> {
-            if(res.data.status === '000000000'){
-              // console.log(res)
+               // console.log(res)
 
               this.tableData = res.data.data ;
               this.totalPages = res.data.totalPages ;
@@ -168,10 +167,6 @@
               //   }
               // })
               // console.log( this.totalElements)
-            }
-          }).catch( err => {
-            alert('服务开小差啦，请稍等~');
-
           })
         },
         //根据搜索条件获取订单列表

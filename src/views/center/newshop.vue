@@ -240,28 +240,12 @@
         this.editor = this.$route.query.editor ;
         this.shopId = this.$route.query.id ;
         shopDetail(this.shopId).then( res => {
-          // console.log(res);
-          if( res.data.status === '000000000'){
-            this.sizeForm = res.data.data ;
+          this.sizeForm = res.data.data ;
             this.type = this.sizeForm.shopUrl ;
-          }else{
-            this.$message({
-              message : res.data.message ,
-              center : true ,
-              type : 'error'
-            })
-          }
-        }).catch( err => {
-          alert('服务器开小差啦，请稍等~')
         })
-
       }else{
         shopCaptcha().then( res => {
-          if(res.data.status === '000000000'){
-            this.sizeForm.captcha = res.data.data ;
-          }
-        }).catch( err => {
-          alert('服务器开小差啦，请稍等~')
+          this.sizeForm.captcha = res.data.data ;
         })
       }
 
@@ -291,29 +275,18 @@
             if(type === '1'){
               formData.append('shopId',this.shopId);
               changeInfo(formData).then( res => {
-                if(res.data.status === '000000000'){
-                  this.$message({
+                this.$message({
                     type : 'success',
                     message : '提交成功',
                     center : true ,
                     duration : 500
                   })
                   this.$router.push('/shop')
-                }else{
-                  this.$message({
-                    type : 'error' ,
-                    message : res.data.message,
-                    center : true
-                  })
-                }
-              }).catch( err => {
-                alert('服务器开小差啦，请稍等~')
               })
             }else{
 
               shopInfo(formData).then( res => {
-                if(res.data.status === '000000000'){
-                  this.$message({
+                this.$message({
                     type : 'success',
                     message : '提交成功',
                     center : true ,
@@ -321,15 +294,6 @@
 
                   })
                   this.$router.push('/shop')
-                }else{
-                  this.$message({
-                    type : 'error' ,
-                    message : res.data.message,
-                    center : true
-                  })
-                }
-              }).catch( err => {
-                alert('服务器开小差啦，请稍等~')
               })
 
             }

@@ -165,35 +165,15 @@
       getDepositMoney() {
         getDeposit().then(res => {
           // console.log(res);
-          if (res.data.status === '000000000') {
-            this.deposit = res.data.data;
-          } else {
-            this.$message({
-              message: res.data.message,
-              type: 'error',
-              center: true
-            });
-          }
-        }).catch(err => {
-          alert('服务器开小差啦，请稍等~')
+          this.deposit = res.data.data;
         })
       },
       getApilyAccount() {
         getThirdInfo('1').then(res => {
-          if (res.data.status === '000000000') {
-            if (res.data.data.length > 0) {
+          if (res.data.data.length > 0) {
               this.userInfo = true;
               this.apilyInfo = res.data.data[0];
             }
-          } else {
-            this.$message({
-              message: res.data.message,
-              type: 'error',
-              center: true
-            });
-          }
-        }).catch(err => {
-          alert('服务器开小差啦，请稍等~')
         })
       },
       //  确认提现
@@ -236,14 +216,7 @@
                   } else {
                     this.settingPsw= true
                   }
-                  this.$message({
-                    message: res.data.message,
-                    type: 'error',
-                    center: true
-                  });
                 }
-              }).catch(err => {
-                alert('服务器开小差啦，请稍等~')
               })
             }
 

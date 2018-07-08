@@ -55,8 +55,7 @@
       mounted(){
         let shopId = this.$route.params.id ;
         shopPayDetail(shopId).then( res => {
-          if (res.data.status === '000000000') {
-            this.shop = res.data.data ;
+          this.shop = res.data.data ;
             if(res.data.data.payStatus === '1'){
               for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
                 if (v.path === this.$route.path) {
@@ -66,17 +65,7 @@
                 }
               }
             }
-            // console.log(this.shop);
-          } else {
-            this.$message({
-              message: res.data.message,
-              center: true,
-              type: 'error'
-            })
-          }
-        }).catch( err => {
-          alert('服务器开小差啦，请稍等~')
-        });
+        })
 
 
       },
@@ -94,25 +83,15 @@
             if( reg.test(password)){
 
               buyShop({ shopId : id+'' ,payPassword : password }).then( res => {
-                if(res.data.status === '000000000'){
-                  for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
+                for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
                     if (v.path === this.$route.path) {
                       this.$store.state.tagsView.visitedViews.splice(i, 1);
                       this.$router.push('/checkshop');
 
                     }
                   }
-                }else{
-                  this.$message({
-                    message : res.data.message ,
-                    center : true ,
-                    type : 'error'
-                  })
-                }
 
-              }).catch( err => {
-                alert('服务器开小差啦，请稍等~')
-              });
+              })
             }else{
 
               this.$message({

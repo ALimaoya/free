@@ -168,14 +168,9 @@
               formData.append('EQ_payStatus',this.shop.EQ_payStatus);
             shopList(formData).then( res => {
 
-              if(res.data.status === '000000000'){
-                // console.log(res.data);
-                this.tableData = res.data.data ;
+             this.tableData = res.data.data ;
                 this.totalPages = res.data.totalPages ;
                 this.totalElements=res.data.totalElements;
-              }
-            }).catch(err => {
-              alert('服务器开小差啦，请稍等~')
             })
           },
 

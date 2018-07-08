@@ -371,14 +371,10 @@
           formData.append('pageSize',this.pageSize);
           getActivity(formData).then(res => {
             // console.log(this.activity,res);
-            if (res.data.status === '000000000') {
-              this.tableData = res.data.data;
+            this.tableData = res.data.data;
               this.totalPages = res.data.totalPages ;
               this.totalElements = res.data.totalElements ;
-            }
-          }).catch(err => {
-            alert('服务开小差啦，请稍等~')
-          });
+          })
 
 
       },
@@ -397,15 +393,10 @@
       //获取活动详情数据
       detail( index,order ){
         getDetail(order).then( res =>{
-          if(res.data.status === '000000000'){
-            this.activityDetail = res.data.data ;
+          this.activityDetail = res.data.data ;
             this.$router.push({ path : '/publish/tryout_step1' ,query : { editor : '2', order : order }})
 
-          }
-
-        }).catch( err => {
-          alert('服务开小差啦，请稍等~')
-        });
+        })
       },
 
       //修改指定试用发布内容
@@ -419,38 +410,16 @@
       changeKeys(index,order){
         this.keyBox = true ;
         this.$store.dispatch('getPublishDetail',order).then( res => {
-
-          if (res.data.status === '000000000') {
-            this.form = res.data.data;
+         this.form = res.data.data;
             this.choosePlat = this.platForm[this.form.platformType-1].name ;
             this.getType(this.form.platformType);
-
-          } else {
-            this.$message({
-              message: res.data.message,
-              center: true,
-              type: 'error'
-            })
-          }
-        }).catch( err => {
-          alert('服务器开小差啦，请稍等~')
         })
       },
       //获取平台类型
       getType(value){
 
         searchTypeList(value).then( res => {
-          if(res.data.status === '000000000'){
-            this.searchOptions = res.data.data ;
-          }else{
-            this.$message({
-              message : res.data.message ,
-              type : 'error',
-              center : true,
-            })
-          }
-        }).catch( err => {
-          // console.log(err);
+         this.searchOptions = res.data.data ;
         })
       },
       //删除APP端关键词
@@ -518,22 +487,12 @@
             };
             if(keyArr.length){
               updateKeyword(data).then((res)=>{
-                if(res.data.status === '000000000'){
-                  this.$message({
+                this.$message({
                     message : '修改成功',
                     center : true ,
                     type : 'success'
                   });
                   this.keyBox = false ;
-                }else{
-                  this.$message({
-                    message : res.data.message ,
-                    center : true ,
-                    type : 'error'
-                  })
-                }
-              }).catch((err)=>{
-                alert('服务器开小差啦，请稍等~')
               })
 
             }else{
@@ -571,31 +530,20 @@
         formData.append('activityId',id);
         formData.append('activityStatus',status);
         changeStatus(formData).then( res => {
-          if(res.data.status === '000000000'){
-            this.$message({
+          this.$message({
               message : '操作成功',
               type : 'success',
               center : true ,
               duration : 1000
             });
             window.location.reload();
-          }else{
-            this.$message({
-              message : res.data.message ,
-              type : 'error',
-              center : true
-            })
-          }
-        }).catch( err => {
-          alert('服务器开小差啦，请稍等~')
-        });
+        })
       },
 
       //申请结算
       applyAccounts(index ,id){
         applyPay(id).then( res => {
-          if( res.data.status === '000000000'){
-            this.$message({
+          this.$message({
               message : '申请结算成功，请稍后确认',
               center : true ,
               type : 'success',
@@ -603,23 +551,13 @@
 
             });
             window.location.reload() ;
-          }else{
-            this.$message({
-              message :  res.data.message ,
-              center : true ,
-              type : 'error'
-            })
-          }
-        }).catch( err =>{
-          alert('服务器开小差啦，请稍等~')
-        });
+        })
       },
 
       //取消结算
       cancelAccounts(index ,id){
         cancelPay(id).then( res => {
-          if( res.data.status === '000000000'){
-            this.$message({
+          this.$message({
               message : '取消结算成功，请稍后确认',
               type : 'success' ,
               center : true ,
@@ -627,15 +565,6 @@
 
             });
             window.location.reload();
-          }else{
-            this.$message({
-              message : res.data.message ,
-              type : 'error' ,
-              center : true
-            })
-          }
-        }).catch( err =>{
-          alert('服务器开小差啦，请稍等~')
         })
       },
 
@@ -648,8 +577,7 @@
       //取消发布
       handleCancel(index, id){
         cancelActivity(id).then( res => {
-          if( res.data.status === '000000000'){
-            this.$message({
+          this.$message({
               message : '已成功取消该活动发布，请稍后确认',
               type : 'success' ,
               center : true ,
@@ -657,15 +585,6 @@
 
             });
             window.location.reload();
-          }else{
-            this.$message({
-              message : res.data.message ,
-              type : 'error' ,
-              center : true
-            })
-          }
-        }).catch( err =>{
-          alert('服务器开小差啦，请稍等~')
         })
       },
 
@@ -700,7 +619,6 @@
     }
     }
 </script>
-
 <style scoped lang="scss" rel="stylesheet/scss">
   @import 'src/styles/activityTable' ;
   .approval{}

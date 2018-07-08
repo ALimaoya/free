@@ -118,21 +118,8 @@
         }
 
         getCashList(formdata).then(res => {
-          // console.log(res)
-          if (res.data.status === '000000000') {
-            this.tableData = res.data.data;
+          this.tableData = res.data.data;
             this.moneyRecord = res.data
-            // console.log(this.tableData)
-          } else {
-            this.$message({
-              message: res.data.message,
-              type: 'error',
-              center: true
-            });
-            return
-          }
-        }).catch(err => {
-          alert('服务器开小差啦，请稍等~')
         })
       },
 

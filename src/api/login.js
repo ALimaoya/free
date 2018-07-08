@@ -9,7 +9,8 @@ export function login(data) {
     headers : {
       'Content-Type' : 'multipart/form-data'
     },
-    data: data
+    data: data,
+    needFailResponse:true
   })
 }
 export function register(data) {
@@ -18,6 +19,7 @@ export function register(data) {
     // url: '/POST/tryout/account/register',
     url: '/tryout/account/register',
     method: 'post',
+    needFailResponse:true, 
     headers : {
       'Content-Type' : 'multipart/form-data'
     },
@@ -54,6 +56,7 @@ export function getMessageCode(mobile ,data){
     url : '/tryout/captcha/'+ mobile ,
     method : 'post',
     data : data ,
+    needFailResponse:true,   
     headers : {
       'Content-Type' : 'multipart/form-data'
     },

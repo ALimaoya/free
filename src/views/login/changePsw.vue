@@ -197,12 +197,8 @@
         changeCaptcha() {
           getCaptcha().then(res => {
             // console.log(res);
-            if (res.data.status === '000000000') {
-              this.imgCode = res.data.data.image;
+            this.imgCode = res.data.data.image;
               this.userToken = res.data.data.token;
-            }
-          }).catch(err => {
-            alert('服务器开小差啦，请稍等~')
           })
         },
         //获取短信验证码
@@ -278,11 +274,6 @@
 
                 } else {
                   this.loading = false;
-                  this.$message({
-                    message: res.data.message,
-                    type: 'error',
-                    center: 'true'
-                  });
                   this.RegForm.imgNum = '' ;
                   this.changeCaptcha() ;
                 }

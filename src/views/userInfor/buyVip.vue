@@ -218,16 +218,7 @@
     methods: {
       getVipInfo() {
         getMember().then(res => {
-          if (res.data.status === '000000000') {
-            this.statusData = res.data.data;
-            // console.log(this.statusData)
-          } else {
-            this.$message({
-              message: res.data.message,
-              type: 'error',
-              center: true
-            });
-          }
+          this.statusData = res.data.data;
         }).catch(err => {
           alert('服务器开小差啦，请稍等~')
         })
@@ -241,30 +232,15 @@
       },
       getDepositMoney() {
         getDeposit().then(res => {
-          if (res.data.status === '000000000') {
-            this.deposit = res.data.data
-          }
-        }).catch(err => {
-          alert('服务器开小差啦，请稍等~')
+          this.deposit = res.data.data
         })
       },
       getVipList() {
         getVipType().then(res => {
-          if (res.data.status === '000000000') {
-            if( res.data.data.length){
+          if( res.data.data.length){
               this.vipInfo = res.data.data;
               this.choose = this.vipInfo[0];
             }
-
-          } else {
-            this.$message({
-              message: res.data.message,
-              type: 'error',
-              center: true
-            });
-          }
-        }).catch(err => {
-          alert('服务器开小差啦，请稍等~')
         })
       },
       chooseVip(item) {
@@ -381,22 +357,12 @@
               });
               this.$router.push('/userInfor/vip')
           } else {
-
             if(res.data.status=='013001002'&&this.chooseWay!= '1'){
                     this.settingPsw=false
                 }else{
                   this.settingPsw=true
                 }
-            this.$message({
-              message: res.data.message,
-              type: 'error',
-              center: true
-            });
           }
-        }).catch(err => {
-          // console.log(err);
-
-          alert('服务器开小差啦，请稍等~')
         })
       },
       handleClose() {

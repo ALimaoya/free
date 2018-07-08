@@ -245,7 +245,7 @@
             this.userToken = res.data.data.token;
           }
         }).catch(err => {
-          alert('服务器开小差啦，请稍等~')
+          // alert('服务器开小差啦，请稍等~')
         })
       }
     },
