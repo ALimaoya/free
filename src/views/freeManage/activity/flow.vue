@@ -248,6 +248,7 @@
         this.loading= true;
 
         getActivity(formData).then(res => {
+          this.loading= false;
           this.tableData = res.data.data;
             this.totalPages = res.data.totalPages ;
             this.totalElements = res.data.totalElements ;
@@ -272,7 +273,7 @@
       detail( index,order ){
         getDetail(order).then( res =>{
           this.activityDetail = res.data.data ;
-            this.$router.push({ path : '/publish/flow_step1' ,query : { editor : '2', order : order }})
+            this.$router.push({ path : '/freeManage/publish/flow_step1' ,query : { editor : '2', order : order }})
 
         })
       },
@@ -410,13 +411,17 @@
         this.loading= true;
 
         changeStatus(formData).then( res => {
+          this.loading= false;
           this.$message({
               message : '操作成功',
               type : 'success',
               center : true ,
               duration : 1000
             });
+          setTimeout(() => {
             window.location.reload();
+
+          },2000)
         })
       },
 
@@ -424,6 +429,7 @@
       applyAccounts(index ,id){
         this.loading= true;
         applyPay(id).then( res => {
+          this.loading= false;
           this.$message({
               message : '申请结算成功，请稍后确认',
               center : true ,
@@ -431,7 +437,10 @@
               duration : 1000
 
             });
-            window.location.reload() ;
+          setTimeout(() => {
+            window.location.reload();
+
+          },2000)
         })
       },
 
@@ -440,6 +449,7 @@
         this.loading= true;
 
         cancelPay(id).then( res => {
+          this.loading= false;
           this.$message({
               message : '取消结算成功，请稍后确认',
               type : 'success' ,
@@ -447,7 +457,10 @@
               duration : 1000
 
             });
+          setTimeout(() => {
             window.location.reload();
+
+          },2000)
         })
       },
       //查看大图

@@ -192,7 +192,7 @@
                 } else {
                   let formData = new FormData();
                   formData.append('image', file);
-                  uploadImage(formData,_this.token).then(res => {
+                  uploadImage(formData).then(res => {
                     if (res.data.status === '000000000') {
 
                         _this.form.logo = res.data.data.fileName;

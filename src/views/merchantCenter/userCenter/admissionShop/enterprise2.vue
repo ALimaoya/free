@@ -349,7 +349,7 @@
 
               let formData = new FormData();
               formData.append('image', file);
-              uploadImage(formData,that.token).then(res => {
+              uploadImage(formData).then(res => {
                 if (res.data.status === '000000000') {
                   // console.log(_this.form.imgList)
                   that.form.business_license = res.data.data.fileName ;
@@ -376,7 +376,7 @@
             if (this.limitImg(file)) {
               let formData = new FormData();
               formData.append('image', file);
-              uploadImage(formData,that.token).then(res => {
+              uploadImage(formData).then(res => {
                 if (res.data.status === '000000000') {
                   // console.log(_this.form.imgList)
                   that.form.opening_permit = res.data.data.fileName ;
@@ -401,7 +401,7 @@
             if (this.limitImg(file)) {
               let formData = new FormData();
               formData.append('image', file);
-              uploadImage(formData,that.token).then(res => {
+              uploadImage(formData).then(res => {
                 if (res.data.status === '000000000') {
                   // console.log(_this.form.imgList)
                   that.form.certification = res.data.data.fileName ;

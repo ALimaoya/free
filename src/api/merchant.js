@@ -81,7 +81,9 @@ export function getShopInfo(){
   return request({
     url: '/center/product/isHaveShop',
     method: 'get',
-    needFailResponse:true,   
+    needFailResponse:true,
+    noTips: true
+
   })
 }
 

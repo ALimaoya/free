@@ -1,6 +1,6 @@
 <template>
-    <div class="flowActivity step" :model="form" ref="form" :rules="formRule"  v-loading="loading"  element-loading-text="拼命加载中">
-      <el-form >
+    <div class="flowActivity step" v-loading="loading"  element-loading-text="拼命加载中">
+      <el-form :model="form" ref="form" :rules="formRule"  >
         <p class="title">第一步：填写活动信息</p>
         <el-form-item label="活动类型："  :labelWidth="labelWidth" prop="activityType">
           <el-radio-group v-model="form.activityType" :disabled="read" >
@@ -357,6 +357,7 @@
       },
       mounted(){
         shopList().then( res => {
+          this.loading = false ;
                //获取用户是否已绑定店铺
                if(res.data.data.length){
               getMember().then( res => {
@@ -388,6 +389,7 @@
             this.loading = true ;
 
             this.$store.dispatch('getPublishDetail',order).then( res => {
+              this.loading = false ;
               this.form = res.data.data;
                 //判断活动是否已支付
                 if(this.$route.query.payStatus === '1'){
@@ -667,7 +669,7 @@
               }else{
                 let formData = new FormData();
                 formData.append('image',file);
-                uploadImage(formData,_this.token).then( res => {
+                uploadImage(formData).then( res => {
                   if(res.data.status === '000000000'){
                     _this.mainImg = res.data.data.filePath ;
                     _this.form.mainImageUrl = res.data.data.fileName ;
@@ -1029,6 +1031,7 @@
             this.loading = true ;
 
             publishActivity(form).then(res => {
+              this.loading = false ;
               this.$message({
                   type: 'success',
                   message: '提交成功',
@@ -1043,6 +1046,7 @@
               this.loading = true ;
 
               changeDetail(form).then(res => {
+                this.loading = false ;
                 this.$message({
                     type: 'success',
                     message: '提交成功',

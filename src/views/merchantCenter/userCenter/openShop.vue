@@ -3,10 +3,10 @@
     <h1>我要开店</h1>
     <el-form :model="form" ref="form" :rules="formRule" label-position="right" >
       <!--<h2>账户表单</h2>-->
-      <el-form-item  labelWidth="130px" label="店铺名称"  prop="name">
+      <el-form-item  labelWidth="130px" label="店铺名称："  prop="name">
         <el-input class="inputInfo" :maxlength="40" size="small" v-model.trim="form.name" placeholder="店铺名称" :disabled="readOnly"></el-input>
       </el-form-item>
-      <el-form-item labelWidth="130px" class="imgWrap" prop="logoImage" v-if="!readOnly" label="店铺LOGO">
+      <el-form-item labelWidth="130px" class="imgWrap" prop="logoImage" v-if="!readOnly" label="店铺LOGO：">
         <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logoImage"
                     :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeImgUpload">
           <img v-if="form.logoImage" :src="imageDomain + form.logoImage" class="avatar">
@@ -15,7 +15,7 @@
         <span class="imgWarn tips_warn" v-if="goodsImgWarn">请上传店铺LOGO</span>
 
       </el-form-item>
-      <el-form-item labelWidth="130px" class="imgWrap" v-else-if="readOnly" prop="logoImage" label="店铺LOGO">
+      <el-form-item labelWidth="130px" class="imgWrap" v-else-if="readOnly" prop="logoImage" label="店铺LOGO：">
         <!--<dl  @click="dialogVisible = true;"  >-->
           <!--<dt>店铺LOGO</dt>-->
           <!--<dd>-->
@@ -24,10 +24,10 @@
           <!--</dd>-->
         <!--</dl>-->
       </el-form-item>
-      <el-form-item   labelWidth="130px"  label="主营" prop="mainBusiness">
+      <el-form-item   labelWidth="130px"  label="主营：" prop="mainBusiness">
         <el-input type="textarea" class="inputInfo" :maxlength="40" :rows="4" size="small" v-model.trim="form.mainBusiness" :disabled="readOnly" placeholder="主营"></el-input>
       </el-form-item>
-      <el-form-item labelWidth="130px" label="类型" prop="type">
+      <el-form-item labelWidth="130px" label="类型：" prop="type">
         <el-select  size="small" clearable v-model="form.type" :disabled="readOnly" filterable placeholder="请选择店铺类型">
           <el-option
             v-for="item in typeList"
@@ -37,7 +37,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item  labelWidth="130px" label="描述" prop="describes">
+      <el-form-item  labelWidth="130px" label="描述：" prop="describes">
         <el-input class="inputInfo" :maxlength="200" size="small" type="textarea"  :rows="4" v-model.trim="form.describes" :disabled="readOnly" placeholder="描述"></el-input>
       </el-form-item>
       <el-form-item labelWidth="130px" >
@@ -51,7 +51,7 @@
         <!--<img src="../../../assets/404_images/fail.png" />-->
       </div>
     </el-dialog>
-    <el-dialog title="提示" :visible.sync="infoTip" width="60%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+    <el-dialog title="提示" :visible.sync="infoTip" width="40%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
       <!--<img :src="ImgSrc" alt="" />-->
       <p class="tips" v-if="infoStatus === '0'">您还未上传资质信息，请先前往上传资质信息</p>
       <p class="tips" v-else-if="infoStatus === '1'">您上传的资质信息正在审核中，审核通过后即可绑定店铺</p>
@@ -141,8 +141,12 @@
           getAccountInfo(){
             getInfo().then( res =>{
               // console.log(res);
-              this.loading= false ;
-              this.infoStatus = res.data.data.status;
+              this.loading=false ;
+              if(res.data.data === null){
+                this.infoTip = true;
+                this.infoStatus = '0'
+              }else{
+                this.infoStatus = res.data.data.status;
                 if(this.infoStatus !== '2'){
                   this.infoTip = true;
                 }else{
@@ -150,6 +154,7 @@
                   this.infoTip = false;
 
                 }
+              }
             })
           },
         //获取信息
@@ -197,7 +202,7 @@
               } else {
                 let formData = new FormData();
                 formData.append('image', file);
-                uploadImage(formData,_this.token).then(res => {
+                uploadImage(formData).then(res => {
                   if (res.data.status === '000000000') {
                     _this.form.logoImage = res.data.data.fileName ;
 
@@ -339,7 +344,7 @@
       height : 10vh;
       font-size : 0.3rem ;
       text-align : center ;
-      line-height : 10vh ;
+      line-height : 2 ;
     }
   }
 </style>

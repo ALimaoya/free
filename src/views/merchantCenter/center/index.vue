@@ -8,21 +8,12 @@
           <div v-if="statusTag.aptitudeStatus === '1'">您的 资质 信息正在审核中，请耐心等候，审核通过后，您可进行商品、交易、结算等相关操作。</div>
           <div v-else-if="statusTag.aptitudeStatus === '-1'">您的 资质 信息未通过审核，请重新编辑提交，审核通过后，您可进行商品、交易、结算等相关操作。</div>
         <div v-if="statusTag.shopStatus === '1'">您的 店铺 信息正在审核中，请耐心等候，审核通过后，您可进行商品、设置等相关操作。</div>
+        <div v-if="statusTag.wallet === '2'">您申请的解冻保证金正在审核中，审核通过后，金额将会转到您的支付宝账户中，所有商品将全部下架。</div>
 
         <span class="close_icon" @click="close = '1'"></span>
       </div>
       <ul class="step allWid">
-        <!--<li v-for="(item,index) in Process" :key="index" :class="{isActive:show == index }" @click="changeTabs(index)">-->
-          <!--&lt;!&ndash;<a href="#" >&ndash;&gt;-->
-            <!--<span>{{(index + 1)*1 }}</span>-->
-            <!--<dl><dt>{{item.title}}</dt>-->
-              <!--<dd v-if="isRegister&&!isChecking">{{ item.intro1 }}</dd>-->
-              <!--<dd v-if="!isRegister">{{ item.intro2 }}</dd>-->
-              <!--<dd v-if="isRegister&&isChecking">{{ item.intro3 }}</dd>-->
 
-            <!--</dl>-->
-          <!--&lt;!&ndash;</a>&ndash;&gt;-->
-        <!--</li>-->
         <li :class="{isActive:show === '1' }" @click="changeTabs('1')">
           <!--<a href="#" >-->
           <span>1</span>
@@ -52,10 +43,8 @@
             <dd v-else>您还未缴纳保证金 </dd>
 
           </dl>
-          <!--</a>-->
         </li>
         <li :class="{isActive:show === '3' }" @click="changeTabs('3')">
-          <!--<a href="#" >-->
           <span>3</span>
           <dl>
             <dt>我要开店</dt>
@@ -65,16 +54,11 @@
             <dd v-else>您的店铺信息已审核通过</dd>
 
           </dl>
-          <!--</a>-->
         </li>
 
       </ul>
       <div class="wrap allWid" >
-
-
         <component  :is="tabView " :deposit="statusTag.deposit" :step3Status="statusTag.wallet" :step4Status="statusTag.aptitudeStatus"></component>
-
-        <!--<step-wrap></step-wrap>-->
       </div>
     </div>
 </template>

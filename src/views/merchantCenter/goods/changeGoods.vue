@@ -391,7 +391,7 @@
             } else {
               let formData = new FormData();
               formData.append('image', file);
-              uploadImage(formData,_this.token).then(res => {
+              uploadImage(formData).then(res => {
                 _this.$set(_this.form.imagesList,_this.imgIndex,  res.data.data.fileName);
               })
             }

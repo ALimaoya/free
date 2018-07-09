@@ -199,6 +199,7 @@
         this.loading = true ;
 
         getOrderList(formData).then( res=> {
+          this.loading = false ;
           this.tableData = res.data.data ;
             this.totalPages = res.data.totalPages ;
             this.totalElements = res.data.totalElements ;
@@ -229,6 +230,7 @@
 
         orderDetail(order).then( res => {
           // console.log(res);
+          this.loading = false ;
           if(res.data.data.orderImageList.length){
               res.data.data.orderImageList.forEach( i => {
                 if(i.type === '5'){
@@ -264,6 +266,7 @@
         this.loading = true ;
 
         checkOrder({ orderId : this.orderId , status : this.status ,reason : this.refuseReason ,activityType : this.order.EQ_activityType}).then( res => {
+          this.loading = false ;
           this.$message({
               message : '审核提交成功，请稍后确认' ,
               center : true ,

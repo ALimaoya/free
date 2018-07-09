@@ -111,9 +111,9 @@
           <el-select  size="small" clearable v-model="expressForm.expressName" filterable placeholder="快递公司">
             <el-option
               v-for="item in deliverList"
-              :key="item.id"
+              :key="item.code"
               :label="item.name"
-              :value="item.id">
+              :value="item.code">
             </el-option>
           </el-select>
         </el-form-item>

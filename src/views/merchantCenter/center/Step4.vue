@@ -22,7 +22,7 @@
         <el-input type="textarea" :rows="4" :maxlength="200" size="small" v-model="form.describes" :disabled="readOnly"></el-input>
       </el-form-item>
       <el-form-item class="imgWrap" prop="logoImage" v-if="!readOnly" label="店铺LOGO">
-            <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logoImageImage"
+            <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logoImage"
                         :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeImgUpload">
               <img v-if="form.logoImage" :src="imageDomain + form.logoImage" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -38,6 +38,8 @@
             <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
           </dd>
         </dl>
+      <div class="tips_warn refuse" v-if="form.status==='3'">审核未通过原因：{{ form.reason }}</div>
+
       <!--</el-form-item>-->
     </el-form>
     <el-button v-if="readOnly" type="primary" size="small" @click="goDetail">查看</el-button>
@@ -171,9 +173,9 @@
               } else {
                 let formData = new FormData();
                 formData.append('image', file);
-                uploadImage(formData,_this.token).then(res => {
+                uploadImage(formData).then(res => {
                   if (res.data.status === '000000000') {
-                      _this.form.logoImageImage = res.data.data.fileName ;
+                      _this.form.logoImage = res.data.data.fileName ;
 
                     _this.goodsImgWarn = false;
                   } else {
@@ -196,7 +198,7 @@
           // console.log(this.form,this.step4Status );
 
 
-            if(this.form.logoImageImage === ''){
+            if(this.form.logoImage === ''){
               this.goodsImgWarn = true ;
             }
 

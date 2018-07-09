@@ -271,7 +271,7 @@
           if (this.limitImg(file)) {
             let formData = new FormData();
             formData.append('image', file);
-            uploadImage(formData, that.token).then(res => {
+            uploadImage(formData).then(res => {
               if (res.data.status === '000000000') {
 
                 that.form.businessImage = res.data.data.fileName;
@@ -294,7 +294,7 @@
           if (this.limitImg(file)) {
             let formData = new FormData();
             formData.append('image', file);
-            uploadImage(formData, that.token).then(res => {
+            uploadImage(formData).then(res => {
               if (res.data.status === '000000000') {
 
                 that.form.authorizeImage = res.data.data.fileName;
@@ -322,7 +322,7 @@
           if (this.limitImg(file)) {
             let formData = new FormData();
             formData.append('image', file);
-            uploadImage(formData, that.token).then(res => {
+            uploadImage(formData).then(res => {
               if (res.data.status === '000000000') {
 
                 that.form.cardFaceImage = res.data.data.fileName;
@@ -350,7 +350,7 @@
           if (this.limitImg(file)) {
             let formData = new FormData();
             formData.append('image', file);
-            uploadImage(formData, that.token).then(res => {
+            uploadImage(formData).then(res => {
               if (res.data.status === '000000000') {
 
                 that.form.cardBackImage = res.data.data.fileName;
@@ -442,12 +442,5 @@
 
   }
 
-  .refuse{
-    text-align: left ;
-    font-size: 0.24rem ;
-    width: 100% ;
-    height: 0.8rem ;
-    line-height: 0.8rem ;
-    text-indent: 0.2rem ;
-  }
+
 </style>

@@ -177,6 +177,7 @@
         this.loading = true ;
 
         getOrderList(formData).then( res=> {
+          this.loading = false ;
           this.tableData = res.data.data ;
             this.totalPages = res.data.totalPages ;
             this.totalElements = res.data.totalElements ;
@@ -239,6 +240,7 @@
         this.loading = true ;
 
         checkOrder({ orderId : this.orderId , status : this.status ,reason : this.refuseReason ,activityType : this.order.EQ_activityType}).then( res => {
+          this.loading = false ;
           this.$message({
               message : '审核提交成功，请稍后确认' ,
               center : true ,
