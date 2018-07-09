@@ -4,7 +4,7 @@
     <el-form :model="form" ref="form" :rules="formRule" label-position="right">
       <h2>商品表单</h2>
       <el-form-item  labelWidth="130px" label="店铺" >
-        <div class="inputInfo">丫贝自营</div>
+        <div class="inputInfo">{{shopName}}</div>
       </el-form-item>
       <el-form-item   labelWidth="130px"  label="商品名称" prop="productName">
         <el-input class="inputInfo" :maxlength="100" :disabled="readOnly" size="small" v-model.trim="form.productName" placeholder="商品名称"></el-input>
@@ -166,6 +166,7 @@
       };
 
       return {
+        shopName:'',
         form : {
           productName:'',
           brandId:'',
@@ -279,6 +280,7 @@
             this.hasShop = false ;
             this.loading = false ;
             this.isNewGoods();
+            this.shopName = res.data.data.name
             return true ;
 
           }else{
