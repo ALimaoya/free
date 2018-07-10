@@ -399,7 +399,7 @@
       detail( index,order ){
         getDetail(order).then( res =>{
           this.activityDetail = res.data.data ;
-            this.$router.push({ path : '/publish/tryout_step1' ,query : { editor : '2', order : order }})
+            this.$router.push({ path : '/freeManage/publish/tryout_step1' ,query : { editor : '2', order : order }})
 
         })
       },
@@ -537,13 +537,17 @@
         this.loading= true;
 
         changeStatus(formData).then( res => {
+          this.loading= false;
           this.$message({
               message : '操作成功',
               type : 'success',
               center : true ,
               duration : 1000
             });
+          setTimeout(() => {
             window.location.reload();
+
+          },1500)
         })
       },
 
@@ -552,6 +556,7 @@
         this.loading= true;
 
         applyPay(id).then( res => {
+          this.loading= false;
           this.$message({
               message : '申请结算成功，请稍后确认',
               center : true ,
@@ -559,7 +564,10 @@
               duration : 1000
 
             });
-            window.location.reload() ;
+          setTimeout(() => {
+            window.location.reload();
+
+          },1500)
         })
       },
 
@@ -568,6 +576,7 @@
         this.loading= true;
 
         cancelPay(id).then( res => {
+          this.loading= false;
           this.$message({
               message : '取消结算成功，请稍后确认',
               type : 'success' ,
@@ -575,7 +584,10 @@
               duration : 1000
 
             });
+          setTimeout(() => {
             window.location.reload();
+
+          },1500)
         })
       },
 
@@ -590,6 +602,8 @@
         this.loading= true;
 
         cancelActivity(id).then( res => {
+          this.loading= false;
+
           this.$message({
               message : '已成功取消该活动发布，请稍后确认',
               type : 'success' ,
@@ -597,7 +611,10 @@
               duration : 1000
 
             });
+          setTimeout(() => {
             window.location.reload();
+
+          },1500)
         })
       },
 

@@ -82,7 +82,7 @@
         <template slot-scope="scope">
         <el-button size="mini" type="warning" v-if="scope.row.status === '1'&& scope.row.shelveStatus === '1'"  @click="handleShelves(scope.$index,scope.row.id,0)">下架</el-button>
         <el-button size="mini" type="warning" :disabled="limit" v-if="scope.row.status === '1'&& scope.row.shelveStatus === '0'" @click="handleShelves(scope.$index,scope.row.id,1)">上架</el-button>
-        <el-button size="mini" type="primary" v-if="scope.row.status === '0'|| scope.row.status === '2'" @click="editor(scope.$index,scope.row.id)">修改</el-button>
+        <el-button size="mini" type="primary" v-if="scope.row.status === '0'|| scope.row.status === '2'|| scope.row.status === '1'&& scope.row.shelveStatus === '0'" @click="editor(scope.$index,scope.row.id)">修改</el-button>
         <el-button size="mini" type="warning" v-if="scope.row.status === '2'" @click="handleReason(scope.$index,scope.row.reason)">查看原因</el-button>
 
         </template>
@@ -103,7 +103,7 @@
     <el-dialog class="shop_dialog" title="审核拒绝原因" top="20%" :visible.sync="refuseDialog" width="30%" center
                :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
 
-      <p>{{ refuseReason }}</p>
+      <p class="tips_warn">拒绝原因：{{ refuseReason }}</p>
       <span slot="footer" class="dialog-footer">
 
         <el-button plain @click="refuseDialog = false;refuseReason = ''; " size="mini">关闭</el-button>
@@ -224,6 +224,11 @@
                 this.limit = true ;
 
               }
+              this.$message({
+                message: res.data.message,
+                center: true,
+                type: 'error'
+              });
 
             }
           })

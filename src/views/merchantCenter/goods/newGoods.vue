@@ -66,7 +66,7 @@
         </div>
 
         <el-form-item   labelWidth="130px"  label="价格" prop="price">
-          <el-input class="inputInfo" :maxlength="15" size="small" v-model.trim="form.price" placeholder="价格"></el-input>
+          <el-input class="inputInfo" :maxlength="15" size="small" type="number" v-model.number="form.price" placeholder="价格"></el-input>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="运费" prop="carriage">
           <el-input class="inputInfo" :maxlength="2" size="small" v-model.trim="form.carriage" placeholder="运费"></el-input>
@@ -148,7 +148,7 @@
   import { newGoogds,getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo} from "@/api/merchant"
   import { getToken,getMobile } from '@/utils/auth'
   import { getBond } from "@/api/userCenter"
-
+  import { checkFloat } from "@/utils/validate"
   export default {
     components: {
       wangeditor
@@ -178,8 +178,12 @@
           if(value === ''){
             callback(new Error('请输入商品价格'))
           }else{
-            if(!(/^[1-9][0-9]{0,8}$/).test(value)){
-              callback(new Error('商品价格应大于0且不超过9位数，请重新输入'))
+            if(value< 0 ){
+              callback(new Error('商品价格应大于0，请重新输入'))
+            }
+            if( !checkFloat(value)){
+              callback(new Error('商品价格最多可有两位小数，请重新输入'))
+
             }
             callback();
 
@@ -430,7 +434,7 @@
                 } else {
                   let formData = new FormData();
                   formData.append('image', file);
-                  uploadImage(formData,_this.token).then(res => {
+                  uploadImage(formData).then(res => {
                     _this.$set(_this.form.imagesList,_this.imgIndex,  res.data.data.fileName);
                   })
                 }

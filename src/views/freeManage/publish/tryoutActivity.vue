@@ -635,11 +635,14 @@
 
       mounted(){
         shopList().then( res => {
-          i //获取用户是否已绑定店铺
+          this.loading = false ;
+           //获取用户是否已绑定店铺
             if(res.data.data.length){
+
               getMember().then( res => {
                 //判断用户是否是会员身份
                 if(res.data.data.vipLevel*1){
+
                   // if(this.$route.query.order !== undefined ) {
                   //判断活动是新建还是已存在活动
                   this.activityDetail();
@@ -684,6 +687,8 @@
             this.loading = true ;
 
             this.$store.dispatch('getPublishDetail',order).then( res => {
+              this.loading = false ;
+
               this.form = res.data.data;
                 //判断活动是否已支付
                 if(this.$route.query.payStatus === '1'){
@@ -778,7 +783,7 @@
               }else{
                 let formData = new FormData();
                 formData.append('image',file);
-                  uploadImage(formData,_this.token).then( res => {
+                  uploadImage(formData).then( res => {
                     if(res.data.status === '000000000'){
                       _this.showImg = res.data.data.filePath ;
                       _this.form.showImageUrl = res.data.data.fileName ;
@@ -828,7 +833,7 @@
               }else{
                 let formData = new FormData();
                 formData.append('image',file);
-                uploadImage(formData,_this.token).then( res => {
+                uploadImage(formData).then( res => {
                   if(res.data.status === '000000000'){
                     _this.mainImg = res.data.data.filePath ;
                     _this.form.mainImageUrl = res.data.data.fileName ;
@@ -1426,6 +1431,8 @@
             this.loading = true ;
 
             publishActivity(form).then(res => {
+              this.loading = false ;
+
               this.$message({
                   type: 'success',
                   message: '提交成功',
@@ -1441,6 +1448,7 @@
               this.loading = true ;
 
               changeDetail(form).then(res => {
+                this.loading = false ;
                 this.$message({
                     type: 'success',
                     message: '提交成功',

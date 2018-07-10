@@ -37,7 +37,7 @@
   import { rechargeBond } from "@/api/userCenter"
     export default {
       name: "step3",
-      props: ['deposit','step3Status'],
+      props: ['deposit','step3Status','step4Status'],
       data(){
         return {
           form : {},
@@ -63,39 +63,49 @@
           this.$router.push('/merchantCenter/userCenter/bond') ;
         },
         handleBond(){
-          let payStatus = false ;
-          let formData = new FormData ;
-          formData.append('returnUrl',window.location.href)
-          rechargeBond(formData).then(res=> {
-            var __div = document.getElementById('myForm');
-            if(__div){
-              document.body.removeChild(__div);
-            }
-            if(res.data.status === '000000000'){
-                // console.log(res);
-              var _div = document.createElement('div');
-              _div.setAttribute('id', 'myForm');
-              _div.innerHTML = res.data.data;
-              document.body.appendChild(_div);
-              document.getElementById('myForm').getElementsByTagName("form")[0].setAttribute('target',
-                "_blank");
-              payStatus = true ;
-
-            }else{
-              payStatus = false ;
-            }
-             __div = document.getElementById('myForm');
-            if ( payStatus) {
+          if(this.step4Status ==='0'){
               this.$message({
-                message : '支付成功，请稍后确认',
-                center: true ,
-                type : 'success'
+                message: '您还未上传资质信息，请先前往上传资质信息',
+                center: true,
+                type: 'error'
               });
-              this.dialogVisible = true;
-              document.getElementById('myForm').getElementsByTagName("form")[0].submit()
-              document.body.removeChild(__div);
-            }
-          })
+              return false ;
+          }else{
+            let payStatus = false ;
+            let formData = new FormData ;
+            formData.append('returnUrl',window.location.href)
+            rechargeBond(formData).then(res=> {
+              var __div = document.getElementById('myForm');
+              if(__div){
+                document.body.removeChild(__div);
+              }
+              if(res.data.status === '000000000'){
+                // console.log(res);
+                var _div = document.createElement('div');
+                _div.setAttribute('id', 'myForm');
+                _div.innerHTML = res.data.data;
+                document.body.appendChild(_div);
+                document.getElementById('myForm').getElementsByTagName("form")[0].setAttribute('target',
+                  "_blank");
+                payStatus = true ;
+
+              }else{
+                payStatus = false ;
+              }
+              __div = document.getElementById('myForm');
+              if ( payStatus) {
+                this.$message({
+                  message : '支付成功，请稍后确认',
+                  center: true ,
+                  type : 'success'
+                });
+                this.dialogVisible = true;
+                document.getElementById('myForm').getElementsByTagName("form")[0].submit()
+                document.body.removeChild(__div);
+              }
+            })
+          }
+
         },
         finishPay() {
           this.dialogVisible = false;

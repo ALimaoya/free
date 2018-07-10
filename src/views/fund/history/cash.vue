@@ -121,6 +121,8 @@
         this.loading = true ;
 
         getCashList(formdata).then(res => {
+          this.loading = false ;
+
           this.tableData = res.data.data;
             this.moneyRecord = res.data
         })

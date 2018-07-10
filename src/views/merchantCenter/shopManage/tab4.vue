@@ -40,7 +40,7 @@
         <h2>类目资质</h2>
         <el-form-item labelWidth="200px" :label="imgType[item.type]" v-for="(item,index) in form.imgList" :key="index">
           <el-upload  class="upload"  :action="imgUrl" :multiple="false" v-model.trim="item.url"
-                      :show-file-list="false"  >
+                      :headers="{'yb-tryout-merchant-token':token}"          :show-file-list="false"  >
             <img v-if="item.url" :src="imageDomain + item.url" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>

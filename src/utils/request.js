@@ -12,12 +12,18 @@ const service = axios.create({
 
 });
 var needFailResponse=false;
+var noTips = false ;
 // request拦截器
 service.interceptors.request.use(config => {
   if(config.needFailResponse){
     needFailResponse=true;
   }else{
     needFailResponse=false;
+  }
+  if(config.noTips){
+    noTips=true;
+  }else{
+    noTips=false;
   }
   let status = config.url.indexOf('/tryout/captcha/') > 0 || config.url.indexOf('/tryout/account/register') > 0 || config.url.indexOf('/tryout/account/login') > 0||config.url.indexOf('/tryout/account/findpassword')>0 ||config.url.indexOf('/tryout/file/upload') >0
   if (!status) {
@@ -37,21 +43,24 @@ service.interceptors.response.use(
     if(response.data.status=='000000000'){
       return response
     }else{
-      Message({
-        title: '提示',
-        message : response.data.message ,
-        center : true ,
-        type : 'error'
-      }) 
+      if(!noTips){
+        Message({
+          title: '提示',
+          message : response.data.message ,
+          center : true ,
+          type : 'error'
+        })
+      }
+
       if(needFailResponse){
         return response
       }
     }
-   
+
   },
   error => {
     if (!error.response) {
-      alert('请检查您的网络连接是否正常~') 
+      alert('请检查您的网络连接是否正常~')
       return
     }
     if(error.response.data.status==401){

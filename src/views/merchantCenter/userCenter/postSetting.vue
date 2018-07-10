@@ -36,7 +36,7 @@
 
 <script>
     // import {  int } from '@/utils/validate'
-    import {  getShopInfo} from "@/api/merchant"
+    import {  getShopInfo } from "@/api/merchant"
 
     import ElFormItem from "element-ui/packages/form/src/form-item";
     import { carriageList , deleteCarriage,  addCarriage } from "@/api/userCenter"
@@ -126,7 +126,6 @@
           this.$refs[formName].validate((valid) => {
             if(valid){
               this.loading= true ;
-
               addCarriage(this.carriageForm.regulation).then( res => {
                 this.loading= false ;
                 this.$message({
@@ -138,8 +137,6 @@
                     window.location.reload();
                   },1500)
               })
-            }else{
-
             }
           })
         },
@@ -162,21 +159,34 @@
         },
         deleteRule(item){
           let index = this.carriageForm.regulation.indexOf(item);
-          if (index !== -1 && this.carriageForm.regulation.length > 1) {
-            this.carriageForm.regulation.splice(index, 1)
-          }
-          // console.log(index,this.carriageForm.regulation)
+          if (index !== -1&&this.carriageForm.regulation.length > 0 ) {
+            this.carriageForm.regulation.splice(index, 1);
 
-          if(item.id  !==  ''){
-            deleteCarriage(item.id).then( res => {
-              this.$message({
+            if(item.id  !==  ''){
+              deleteCarriage(item.id).then( res => {
+
+                this.$message({
                   message : '您已删除成功，请稍后确认' ,
                   center : true ,
                   type : 'success'
                 })
-            })
+
+              })
+
+            }
+
 
           }
+
+          if(this.carriageForm.regulation.length > 0){
+            return  ;
+
+          }else{
+            this.newRule();
+
+          }
+          // console.log(index,this.carriageForm.regulation)
+
         },
         //  跳转到申请店铺
         applyShop(){

@@ -185,7 +185,7 @@ export function checkOrder(data){
 // }
 
 //上传图片
-export function uploadImage(file,token){
+export function uploadImage(file){
   return request({
     url : "/file/upload" ,
     method : 'post' ,

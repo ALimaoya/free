@@ -64,6 +64,7 @@
         // console.log(order);
 
         orderDetail(order).then( res => {
+          this.loading = false ;
           // console.log(res);
           this.detailInfo = res.data.data
         })
@@ -227,7 +228,7 @@
       display : flex ;
       align-items: center;
       justify-content: center;
-      z-index : 10000;
+      z-index : 20000;
       img{
          max-height : 100% ;
 

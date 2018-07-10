@@ -53,7 +53,9 @@
         let order = this.$route.params.order ;
         // console.log(order);
         orderDetail(order).then( res => {
-          this.detailInfo = res.data.data
+          this.loading = false ;
+
+            this.detailInfo = res.data.data
         })
       },
       methods : {
@@ -215,7 +217,7 @@
       display : flex ;
       align-items: center;
       justify-content: center;
-      z-index : 10000;
+      z-index : 20000;
       img{
          max-height : 100% ;
 

@@ -29,12 +29,31 @@
             <tr class="tbColor">
               <td><el-button plain size="mini" disabled="disabled" v-if="form.deliverOrder.status!==null" :type="statusList[form.deliverOrder.status*1].type">{{ statusList[form.deliverOrder.status*1].name }}</el-button></td>
               <td>{{form.deliverOrder.createTime}}</td>
-              <td>支付宝</td>
+              <td v-if="form.deliverOrder.status!==''||form.deliverOrder.status!=='9'">支付宝</td>
               <td v-if="form.deliverOrder.payTime!==null">{{form.deliverOrder.payTime}}</td>
               <td v-else></td>
               </tr>
           </table>
         </el-form-item>
+        <el-form-item   labelWidth="130px"  label="发货：" v-if="form.deliverOrder.status !== '0'">
+          <table class="tableC">
+            <tr class="thColor">
+              <th>收货人姓名</th><th>收货人电话</th><th>收货地址</th><th>运费（元）</th><th>发货时间</th><th>快递名称</th><th>快递单号</th><th>收货时间</th>
+            </tr>
+            <tr class="tbColor">
+              <td>{{form.deliverOrder.receiverName}}</td>
+              <td>{{form.deliverOrder.receiverMobile}}</td>
+              <td>{{form.deliverOrder.receiverAddress}}</td>
+              <td>{{form.deliverOrder.carriageAmount}}</td>
+              <td>{{form.deliverOrder.deliveryTime}}</td>
+              <td>{{form.deliverOrder.expressName}}</td>
+              <td>{{form.deliverOrder.expressNumber}}</td>
+              <td>{{form.deliverOrder.receiveTime}}</td>
+
+            </tr>
+          </table>
+        </el-form-item>
+
         <el-form-item   labelWidth="130px"  label="商品：" >
           <table class="tableC">
             <tr class="thColor">
@@ -133,9 +152,13 @@
                 },
             ],
               statusList:[
+                // {
+                //   name:'',
+                //   type:' '
+                // },
                 {
-                  name:'',
-                  type: ''
+                  name:'未支付',
+                  type:' '
                 },
               {
                 name:'已支付',
@@ -165,14 +188,15 @@
                 name:'退款已拒绝',
                 type: 'warning'
               },
+                {
+                  name:'',
+                  type:' '
+                },
               {
                 name:'已删除',
                 type: 'info'
               },
-              {
-                name:'未支付',
-                type:' '
-              },
+
             ],
               loading: true,
             }

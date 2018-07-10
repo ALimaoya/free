@@ -20,6 +20,7 @@ export function getInfo(){
   return request({
     url : '/center/aptitude/detail',
     method: 'get',
+    noTips: true
 
   })
 }
@@ -27,7 +28,8 @@ export function getInfo(){
 export function getShop(){
   return request({
     url : '/center/shop/detail',
-    method : 'get'
+    method : 'get',
+    noTips: true
   })
 }
 //店铺信息上传
@@ -124,6 +126,8 @@ export function getBond(){
     url : '/center/merchant/wallet/query',
     method : 'get',
     needFailResponse:true,
+    noTips: true
+
   })
 }
 //保证金详情查询
@@ -132,6 +136,8 @@ export function getBondDetail(){
     url: '/center/recharge/query',
     method: 'get',
     needFailResponse:true,
+    noTips: true
+
   })
 }
 //保证金缴纳

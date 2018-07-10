@@ -201,6 +201,7 @@
       getVipInfo() {
 
         getMember().then(res => {
+          this.loading = false ;
           this.statusData = res.data.data;
         })
       },
@@ -220,6 +221,7 @@
         this.loading = true ;
 
         getVipType().then(res => {
+          this.loading = false ;
           if( res.data.data.length){
               this.vipInfo = res.data.data;
               this.choose = this.vipInfo[0];

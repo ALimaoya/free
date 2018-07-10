@@ -148,15 +148,27 @@
           formData.append('EQ_status',this.order.EQ_status);
           formData.append('EQ_activityType',this.order.EQ_activityType);
           formData.append('EQ_tryoutActivity.tryoutMerchantShop.shopId',this.order.EQ_activityShop);
-          formData.append('GT_createTime',this.order.activityStartTime);
-          formData.append('LT_createTime',this.order.activityEndTime);
+          if(this.order.activityStartTime === null){
+            formData.append('GT_tryoutActivity.activityStartTime','');
+
+          }else{
+            formData.append('GT_tryoutActivity.activityStartTime',this.order.activityStartTime);
+
+          }
+          if(this.order.activityEndTime === null){
+            formData.append('LT_tryoutActivity.activityEndTime','');
+
+          }else{
+            formData.append('LT_tryoutActivity.activityEndTime',this.order.activityEndTime);
+
+          }
           formData.append('currentPage', this.currentPage);
           formData.append('pageSize', this.pageSize);
           this.loading = true ;
 
           getOrderList(formData).then( res=> {
                // console.log(res)
-
+              this.loading = false ;
               this.tableData = res.data.data ;
               this.totalPages = res.data.totalPages ;
               this.totalElements = res.data.totalElements ;

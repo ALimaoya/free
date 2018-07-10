@@ -70,11 +70,22 @@
         <el-button style="background:#3a8ee6;;color:white;" @click="dialogVisibleQuestion = false">确定</el-button>
       </span>
     </el-dialog>
+    <el-dialog class="bondDialog" title="提示" :visible.sync="infoTip" width="40%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+      <!--<img :src="ImgSrc" alt="" />-->
+      <p class="tips" v-if="infoStatus === '0'">您还未上传资质信息，请先前往上传资质信息</p>
+      <p class="tips" v-else-if="infoStatus === '1'">您上传的资质信息正在审核中，审核通过后即可绑定店铺</p>
+      <p class="tips" v-else-if="infoStatus === '3'">您上传的资质信息未通过审核，请先前往修改资质信息，待通过后即可绑定店铺</p>
+
+      <div slot="footer">
+        <el-button plain @click="goUpload" >前往资质上传</el-button>
+
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-  import { getBond, applyBond ,getBondDetail,addBond } from "@/api/userCenter"
+  import { getInfo,getBond, applyBond ,getBondDetail,addBond } from "@/api/userCenter"
     export default {
       name: "bond",
       data(){
@@ -95,13 +106,36 @@
             payVisible: false ,
             dialogVisibleQuestion: false,
             typeList: ['已缴纳','解冻中','已解冻'],
-            loading: true
+            loading: true,
+            infoTip: false ,
+            infoStatus: '',
           }
       },
       mounted(){
-        this.getForm();
+        this.getAccountInfo();
       },
       methods : {
+        getAccountInfo(){
+          getInfo().then( res =>{
+            // console.log(res);
+            this.loading= false ;
+            if(res.data.data === null){
+              this.infoTip = true;
+              this.infoStatus = '0'
+            }else{
+              this.infoStatus = res.data.data.status;
+              if(this.infoStatus !== '2'){
+                this.infoTip = true;
+              }else{
+                this.getForm();
+                this.infoTip = false;
+
+              }
+            }
+
+          })
+        },
+
         //  获取保证金详情
         getForm(){
           this.loading= true;
@@ -229,6 +263,9 @@
 
           },1500)
         },
+        goUpload(){
+          this.$router.push('/merchantCenter/userCenter/infoUpload')
+        }
       }
     }
 </script>
@@ -297,7 +334,7 @@
       height : 10vh;
       font-size : 0.3rem ;
       text-align : center ;
-      line-height : 10vh ;
+      line-height : 2 ;
     }
   }
 </style>

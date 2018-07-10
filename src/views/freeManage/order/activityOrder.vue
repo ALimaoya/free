@@ -243,6 +243,7 @@
         this.loading = true ;
 
         getOrderList(formData).then( res=> {
+          this.loading = false ;
           this.tableData = res.data.data ;
             this.totalPages = res.data.totalPages ;
             this.totalElements = res.data.totalElements ;

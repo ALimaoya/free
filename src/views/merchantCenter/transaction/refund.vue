@@ -255,7 +255,7 @@
         },
         //审核订单
         handleCheck(index,row){
-          console.log('row',row)
+          // console.log('row',row)
           this.dialogVisible = true ;
           this.form.productName = row.productName
           this.form.goodsNum = row.quality
@@ -275,8 +275,8 @@
 
               refusedAffirm(formData).then( res =>{
                 this.loading= false;
-                   this.$message({
-                  message : res.data.message ,
+                  this.$message({
+                  message : '操作成功' ,
                   center : true ,
                   type : 'success'
                 });
