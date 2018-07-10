@@ -58,7 +58,7 @@
           <table class="tableC">
             <tr class="thColor">
               <th>商品编号</th><th>商品名称</th><th>品牌</th>
-              <th>分类</th><th>规格</th><th>价格</th><th>数量</th>
+              <th>分类</th><th>规格</th><th>价格（元）</th><th>数量</th>
             </tr>
             <!-- <template slot-scope="scope" > -->
             <tr class="tbColor" v-for="(item , index) in scope.row.orderProducts" :key="index">
@@ -84,9 +84,9 @@
           </table>
         </template>
       </el-table-column>
-      <el-table-column  label="订单分类" width="70">
+      <el-table-column  label="订单分类" width="85">
         <template slot-scope="scope">
-          <span v-if="scope.row.activityType!==undefined">{{ typeList[(scope.row.activityType*1+1)].name}}</span>
+          <span v-if="scope.row.activityType!==''">{{ typeList[(scope.row.activityType*1+1)].name}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="totalNum" label="总数量" width="70"></el-table-column>
@@ -223,6 +223,7 @@
               GT_createTime: '',
               LT_createTime: '',
               EQ_status: '',
+              EQ_activityType:'',
             },
             typeList:[
               {

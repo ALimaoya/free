@@ -104,6 +104,9 @@
  //.el-table td{
  //  padding : 0.08rem  0;
  //}
+ .el-dialog__wrapper{
+   z-index: 20000!important;
+ }
  .el-table__row{
    td{
      padding : 0.05rem  0;

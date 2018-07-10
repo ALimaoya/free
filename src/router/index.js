@@ -496,8 +496,8 @@ export const constantRouterMap = [
         ]
       },
       {
-        path: '/merchantCenter/spread ',
-        name: 'spread ',
+        path: '/merchantCenter/spread',
+        name: 'Spread',
         component: FreeManage,
         meta: { title: '推广管理', icon: 'spread ' },
         children : [

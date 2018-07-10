@@ -256,11 +256,12 @@
           //选择所有数据
           allData(val){
             this.subTableData = val ;
-            // console.log(val)
+
+            console.log(val,1)
           },
           //批量选择
           handleCurrentChange(row){
-            // console.log(row);
+            console.log(row,2);
             this.subTableData = row ;
 
           },
