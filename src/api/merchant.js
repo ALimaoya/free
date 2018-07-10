@@ -223,6 +223,19 @@ export function exportList(data){
     data
   })
 }
+
+//获取淘宝商品详情
+export function getTao(data){
+  return request({
+    url: '/thirdProduct/detail/tb',
+    method:'post',
+    headers: {
+      'Content-Type': 'application/json',
+
+    },
+    data
+  })
+}
 //test
 export function test(){
   return request({

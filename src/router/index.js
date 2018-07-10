@@ -495,6 +495,28 @@ export const constantRouterMap = [
           },
         ]
       },
+      {
+        path: '/merchantCenter/spread ',
+        name: 'spread ',
+        component: FreeManage,
+        meta: { title: '推广管理', icon: 'spread ' },
+        children : [
+          {
+            path: 'goodsManage',
+            name: 'GoodsManage',
+            component: () => import('@/views/merchantCenter/spread/goodsManage'),
+            meta: { title: '商品管理', icon: 'goodsManage' },
+
+          },
+          {
+            path: 'orderList',
+            name: 'OrderList',
+            component: () => import('@/views/merchantCenter/spread/orderList'),
+            meta: { title: '订单明细', icon: 'orderList' },
+
+          },
+        ]
+      },
       // {
       //   path: '/merchantCenter/shopManage',
       //   name: 'ShopManage',

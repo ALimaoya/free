@@ -3,6 +3,9 @@
       <h1>新增商品</h1>
       <el-form :model="form" ref="form" :rules="formRule" label-position="right">
         <h2>商品表单</h2>
+        <el-form-item  labelWidth="130px"  >
+          <el-button type="primary" size="small" @click="taoVisible=true">获取淘宝商品信息</el-button>
+        </el-form-item>
         <el-form-item  labelWidth="130px" label="店铺" >
           <div class="inputInfo">{{shopName}}</div>
         </el-form-item>
@@ -84,8 +87,9 @@
           </ul>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="描述" prop="describes">
-          <wangeditor :catchData="catchData"></wangeditor>
-          <!--<editor :id="tinymceId" v-model="form.describes" :init="init"></editor>-->
+          <div id="wangeditor"   >
+            <div style="text-align:left" ></div>
+          </div>
         </el-form-item>
         <el-form-item>
           <el-button v-if="!readOnly" class="inputInfo button" type="primary" size="small" @click="submitForm('form')">提交</el-button>
@@ -139,20 +143,31 @@
           <el-button plain @click="goBond">前往缴纳保证金</el-button>
         </div>
       </el-dialog>
+      <el-dialog class="taoDetail" title="获取淘宝商品信息" :visible.sync="taoVisible" width="50%" top="24vh" :before-close="beforeClose">
+        <div class="input_wrap"><span>淘宝商品链接：</span><el-input placeholder="商品链接" size="small" v-model.trim="taoLink"></el-input></div>
+        <div slot="footer">
+          <el-button type="primary" size="mini" @click="getTaoInfo(taoLink)">确定</el-button>
+          <el-button plain size="mini" @click="taoVisible=false ;taoLink='';">关闭</el-button>
+
+        </div>
+      </el-dialog>
     </div>
 </template>
 
 <script>
-  import wangeditor from '@/components/wangeditor'
+  // import wangeditor from '@/components/wangeditor'
   import { uploadImage  } from "@/api/activity"
-  import { newGoogds,getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo} from "@/api/merchant"
+  import { newGoogds,getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo, getTao} from "@/api/merchant"
   import { getToken,getMobile } from '@/utils/auth'
   import { getBond } from "@/api/userCenter"
   import { checkFloat } from "@/utils/validate"
+  import $ from '../../../../static/js/jquery-3.3.1.min.js'
+  import E from 'wangeditor'
+
   export default {
-    components: {
-      wangeditor
-    },
+    // components: {
+    //   wangeditor
+    // },
     name: "new-goods",
 
         data() {
@@ -282,9 +297,13 @@
               currentPage : 1,
               pageSize : 10,
               tips: '',
-              isBond: false
-
-
+              isBond: false,
+              taoVisible: false ,
+              taoLink:'',
+              dataInterface: {
+                editorUpImgUrl: process.env.BASE_API+'/file/multi/upload' // 编辑器插入的图片上传地址
+              },
+              editor: '',  // 存放实例化的wangEditor对象，在多个方法中使用
             }
         },
 
@@ -292,17 +311,10 @@
           this.getFirstList();
           // window.tinymce.init({});
           this.getBondInfo();
-
+          this.createEditor();
 
         },
 
-        // computed:{
-        //   showImg(){
-        //     console.log(this.form.images);
-        //     return this.form.images
-        //   }
-        //
-        // },
         methods: {
           //判断是否已有店铺
           getShop(){
@@ -475,9 +487,9 @@
             }
           },
 
-          catchData(value){
-            this.form.describes=value      //在这里接受子组件传过来的参数，赋值给data里的参数
-          },
+          // catchData(value){
+          //   this.form.describes=value      //在这里接受子组件传过来的参数，赋值给data里的参数
+          // },
           //提交表格
           submitForm(formName){
 
@@ -519,7 +531,187 @@
               }
             })
           },
+          createEditor(){
 
+            this.editor = new E('#wangeditor')        //创建富文本实例
+
+
+            this.editor.customConfig.onchange = (html) => {
+              this.form.describes = html ;
+              // this.catchData(html)  //把这个html通过catchData的方法传入父组件
+            }
+            this.editor.customConfig.uploadImgServer = this.dataInterface.editorUpImgUrl
+            this.editor.customConfig.uploadFileName = 'sourcePic'
+            this.editor.customConfig.showLinkImg = false;
+            this.editor.customConfig.uploadImgMaxLength = 10;
+            this.editor.customConfig.uploadImgHeaders = {
+              'ContentType': 'application/json',
+              'yb-tryout-merchant-token':this.token    //头部token
+            }
+            this.editor.customConfig.uploadImgParams = {
+              token : 'abcdef12345'
+            }
+            this.editor.customConfig.menus = [          //菜单配置
+              'head',
+              'list',  // 列表
+              'justify',  // 对齐方式
+              'quote',  // 引用
+              'bold',
+              'fontSize',  // 字号
+              'italic',
+              'underline',
+              'strikeThrough',  // 删除线
+              'foreColor',  // 文字颜色
+              'backColor',  // 背景颜色
+              'link',  // 插入链接
+              'image',  // 插入图片
+              'table',  // 表格
+              'video',  // 插入视频
+              'undo',  // 撤销
+              'redo'  // 重复
+            ]
+            this.editor.customConfig.uploadImgHooks = {
+              before: function (xhr, editor, files) {
+              },
+              success: function (xhr, editor, result) {
+
+                this.imgUrl= Object.values(result.data.filePath).toString()
+              },
+              fail: function (xhr, editor, result) {
+
+
+              },
+              error: function (xhr, editor) {
+
+              },
+              timeout: function (xhr, editor) {
+
+              },
+
+              customInsert: function (insertImg, result, editor) {
+
+                let url = Object.values(result.data.filePath)      //result.data就是服务器返回的图片名字和链接
+
+                result.data.filePath.map( i => {
+                  // let url = Object.values(i)      //result.data就是服务器返回的图片名字和链接
+                  insertImg(i)
+
+                });
+
+              },
+
+            }
+            this.editor.customConfig.linkImgCallback = function (url) {
+              // console.log(url);
+            }
+
+            this.editor.create()
+
+          },
+
+          //获取淘宝商品详情
+          getTaoInfo(url){
+            let that = this ;
+            if(url === ''){
+              this.$message({
+                message: '请输入商品链接！',
+                center: true,
+                type: 'error'
+              });
+            }else{
+              var startIndex = url.indexOf("&id=");
+              if (startIndex < 0) {
+                startIndex = url.indexOf("?id=");
+              }
+              if (startIndex < 0) {
+                this.taoLink = '';
+                this.$message({
+                  message: '您输入的商品链接有误，请重新输入！',
+                  center: true,
+                  type: 'error'
+                });
+                return;
+              }
+              var endIndex = url.indexOf("&", startIndex + 1);
+              if (endIndex < 0) {
+                endIndex = url.length;
+              }
+              if (endIndex < 0) {
+                this.taoLink = '';
+                this.$message({
+                  message: '您输入的商品链接有误，请重新输入！',
+                  center: true,
+                  type: 'error'
+                });
+                return;
+              }
+              var productId = '';
+              productId = url.substring(startIndex + 4, endIndex);
+              if (productId.length <= 0) {
+                this.$message({
+                  message: '您输入的商品链接有误，请重新输入！',
+                  center: true,
+                  type: 'error'
+                });
+                this.taoLink = '';
+                return;
+              }
+              // console.log(productId);
+              if( productId!== '' ){
+
+                let _this = this ;
+                $.ajax({
+                  url: "https://acs.m.taobao.com/h5/mtop.taobao.detail.getdetail/6.0/?data=%7B%22itemNumId%22%3A%22" + productId + "%22%7D&qq-pf-to=pcqq.group",
+                  dataType: 'jsonp',
+                  type: 'get',
+                  contentType: 'application/json',
+                  success: function (data) {
+                    // var productBase = data;
+                    var params = {
+                      "productId": productId,
+                      "productBaseMap": data
+                    };
+                    // console.log(params)
+                    params = JSON.stringify(params);
+                    that.getDetail(params);
+                  },
+                  error: function(err){
+                    // console.log(err);
+                  }
+                });
+
+
+              }
+            }
+          },
+          getDetail(params){
+            getTao(params).then( res => {
+              // console.log(res);
+              this.form.ybProductItemReqDto = res.data.data.sizeColor ;
+              this.form.productName = res.data.data.productName ;
+              this.form.imagesList = res.data.data.showImages ;
+              if(this.form.imagesList.length < 5){
+                if(this.form.imagesList.length === 0){
+                  this.form.imagesList =   ['','','','','']
+
+                }else {
+                  for(let i = this.form.imagesList.length ; i< 5;i++){
+                    this.form.imagesList.push('');
+                  }
+                }
+              }
+              this.form.describes = res.data.data.detailImages ;
+              this.taoVisible = false;
+              res.data.data.detailImages.map( i => {
+                this.editor.uploadImg.insertLinkImg(i)
+              })
+            })
+          },
+          beforeClose(){
+            this.taoLink ='';
+            this.taoVisible = false;
+
+          },
           goBond(){
             this.$router.push({ name : 'MerchantCenter-home',params: { 'step3' : true}})
           },
@@ -681,6 +873,26 @@
       font-size : 0.3rem ;
       text-align : center ;
       line-height : 10vh ;
+    }
+  }
+  .taoDetail{
+    .input_wrap{
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      width: 80%;
+      margin : 0.5rem auto ;
+      span{
+        display: inline-block;
+        width: 120px;
+        color: #666;
+        text-align: right;
+        font-size: 0.14rem;
+      }
+      .el-input{
+        flex: 1;
+        margin-left: 0.15rem;
+      }
     }
   }
 </style>

@@ -437,7 +437,7 @@
             productDetail : '',
             // startTime : ''
           },
-          labelWidth : '130px',
+          labelWidth : '140px',
           payWay : '',
           platForm : [
             {

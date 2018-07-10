@@ -111,7 +111,6 @@
     import { infoUpload , getInfo } from "@/api/userCenter"
     import { validateEmail,validateIDCard,validName } from '@/utils/validate'
     import ElFormItem from "element-ui/packages/form/src/form-item";
-
     export default {
 
       components: {ElFormItem},
@@ -435,7 +434,14 @@
     flex-direction: row;
     flex-wrap: nowrap;
     width: 80%!important;
+    dd{
+      height: 2.5rem;
+      img{
+        max-width : 100% ;
+        max-height: 100%;
 
+      }
+    }
   }
   .imgItem, .imgItem .imgWrap{
     width: 100%!important;

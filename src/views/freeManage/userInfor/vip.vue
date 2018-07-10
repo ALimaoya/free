@@ -94,6 +94,8 @@
         this.loading = true ;
 
         getMemberOrder(formdata).then(res => {
+          this.loading = false ;
+
           this.historyData = res.data
         })
       },

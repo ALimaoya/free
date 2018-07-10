@@ -3,10 +3,27 @@
       <h1>交易管理</h1>
       <div class="search">
         <div class="inputWrap">
+          <el-select  size="small" clearable v-model="transition.EQ_activityType" filterable placeholder="订单类型">
+            <el-option
+              v-for="item in typeList"
+              :key="item.value"
+              :label="item.name"
+              :value="item.value">
+            </el-option>
+          </el-select>
           <el-input size="small" :maxlength="40" v-model.trim="transition.EQ_payOrder" placeholder="订单号"></el-input>
           <el-input size="small" :maxlength="40" v-model.trim="transition.EQ_code" placeholder="子订单号"></el-input>
           <el-input size="small" :maxlength="40" v-model.trim="transition.productCode" placeholder="商品编号"></el-input>
           <el-input size="small" :maxlength="40" v-model.trim="transition.LIKE_payOrder" placeholder="买方账号"></el-input>
+          <el-select  size="small" clearable v-model="transition.EQ_status" filterable placeholder="订单状态">
+            <el-option
+              v-for="item in statusList"
+              :key="item.value"
+              :label="item.name"
+              :value="item.value">
+            </el-option>
+          </el-select>
+
         </div>
         <div class="inputWrap">
         <div class="block">
@@ -17,17 +34,9 @@
           <span class="demonstration">交易结束时间：</span>
           <el-date-picker size="small" v-model="transition.LT_createTime" value-format="yyyy-MM-dd" type="date" placeholder="结束时间"></el-date-picker>
         </div>
-        <el-select  size="small" clearable v-model="transition.EQ_status" filterable placeholder="订单状态">
-          <el-option
-            v-for="item in statusList"
-            :key="item.value"
-            :label="item.name"
-            :value="item.value">
-          </el-option>
-        </el-select>
         </div>
         <div class="inputWrap">
-          <el-button  size="mini" type="primary"  @click="search()" class="searchOrder">查询</el-button>
+          <el-button  size="mini" type="primary"  @click="getList()" class="searchOrder">查询</el-button>
           <el-button  size="mini" type="primary"  @click="exportOrder()" class="searchOrder">导出</el-button>
           <a style="display: none" id="orderFile"  :href="baseUrl+'/center/order/export?merchantId='+ merchantId+'&EQ_payOrder.code='+ transition.EQ_payOrder +'&EQ_code='+ transition.EQ_code+'&productCode='+ transition.productCode+'&LIKE_payOrder.user.accountName='+transition.LIKE_payOrder+ '&GT_createTime='+transition.GT_createTime+ '&LT_createTime='+transition.LT_createTime+ '&EQ_status='+transition.EQ_status"></a>
           <el-button  size="mini" type="primary" style="padding: 0;text-align: center;height : 28px;"  @click="deliverDialog= true;excelTitle = '';" class="searchOrder">导入发货</el-button>
@@ -73,6 +82,11 @@
             </tr>
             <!-- </template> -->
           </table>
+        </template>
+      </el-table-column>
+      <el-table-column  label="订单分类" width="70">
+        <template slot-scope="scope">
+          <span v-if="scope.row.activityType!==undefined">{{ typeList[(scope.row.activityType*1+1)].name}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="totalNum" label="总数量" width="70"></el-table-column>
@@ -128,7 +142,6 @@
         <!--</span>-->
         <!--</el-form-item>-->
       </el-form>
-
       <div slot="footer" class="dialog-footer" >
         <el-button type="primary" size="mini" @click="confirm('expressForm')">确认</el-button>
         <el-button plain size="mini" @click="close('expressForm')">关闭</el-button>
@@ -211,6 +224,24 @@
               LT_createTime: '',
               EQ_status: '',
             },
+            typeList:[
+              {
+                value: '',
+                name: '全部类型'
+              },
+              {
+                value: '0',
+                name: '商城订单'
+              },
+              {
+                value: '1',
+                name: '秒杀订单'
+              },
+              {
+                value: '2',
+                name: '助力享面单'
+              },
+            ],
             statusList:[
               {
                 name : '未支付',
@@ -307,12 +338,7 @@
                   required : true ,trigger : 'change',message: '请上传文件'
                 }
               ],
-              // confirmPassword: [
-              //   {
-              //     required : true ,trigger : 'blur',validator : validPassword
-              //
-              //   }
-              // ]
+
             },
             deliverList : [],
             expressType : '',
@@ -348,6 +374,8 @@
           formData.append('GT_createTime',this.transition.GT_createTime);
           formData.append('LT_createTime',this.transition.LT_createTime);
           formData.append('EQ_status',this.transition.EQ_status);
+          formData.append('EQ_activityType',this.transition.EQ_activityType);
+
           this.loading = true ;
 
           getOrderList(formData).then( res => {
@@ -362,10 +390,7 @@
 
         },
 
-        //  查询交易
-        search(){
-          this.getList();
-        },
+
         //导出订单列表
         exportOrder(){
           document.getElementById('orderFile').click()
