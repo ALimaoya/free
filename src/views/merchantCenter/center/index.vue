@@ -9,6 +9,7 @@
           <div v-else-if="statusTag.aptitudeStatus === '-1'">您的 资质 信息未通过审核，请重新编辑提交，审核通过后，您可进行商品、交易、结算等相关操作。</div>
         <div v-if="statusTag.shopStatus === '1'">您的 店铺 信息正在审核中，请耐心等候，审核通过后，您可进行商品、设置等相关操作。</div>
         <div v-if="statusTag.wallet === '2'">您申请的解冻保证金正在审核中，审核通过后，金额将会转到您的支付宝账户中，所有商品将全部下架。</div>
+        <div v-if="statusTag.shopStatus === '-1'">您的 店铺 信息未通过审核，请修改后重新提交。</div>
 
         <span class="close_icon" @click="close = '1'"></span>
       </div>
