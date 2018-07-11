@@ -236,6 +236,48 @@ export function getTao(data){
     data
   })
 }
+//获取待添加推广商品列表
+export function getSpreadList(date){
+  return request({
+    url: '/center/extendProduct/extending/query',
+    method: 'post',
+    date
+  })
+}
+//添加推广商品
+export function addSpread(data){
+  return request({
+    url: '/center/extendProduct/extending/add',
+    method: 'post',
+    data
+  })
+}
+
+//获取已添加推广商品列表
+export function hasSpreadGoods(data){
+  return request({
+    url: '/center/extendProduct/extended/query',
+    method: 'post',
+    data
+  })
+}
+//修改佣金比率
+export function editorR(data){
+  return request({
+    url: '/center/extendProduct/extended/update',
+    method: 'post',
+    data
+  })
+}
+//删除推广商品
+export function deleteGoods(data){
+  return request({
+    url: '',
+    method: 'post',
+    data
+  })
+}
+
 //test
 export function test(){
   return request({

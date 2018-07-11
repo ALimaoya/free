@@ -76,13 +76,15 @@
           if( reg.test(password)){
 
             activityPay({ activityId : id+'' ,payPassword : password }).then( res => {
-              for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
-                  if (v.path === this.$route.path) {
-                    this.$store.state.tagsView.visitedViews.splice(i, 1);
-                    // this.$router.push('/freeManage/publish/step3');
-                    this.$router.push({ name : 'Auditing',params : {type:'flow'}})
-                  }
-                }
+               if(res.data.status === '000000000'){
+                 for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
+                   if (v.path === this.$route.path) {
+                     this.$store.state.tagsView.visitedViews.splice(i, 1);
+                     // this.$router.push('/freeManage/publish/step3');
+                     this.$router.push({ name : 'Auditing',params : {type:'flow'}})
+                   }
+                 }
+               }
 
             })
           }else{

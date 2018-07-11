@@ -134,3 +134,9 @@ export function int(value){
   const reg = /^\+?[1-9]\d*$/;
   return reg.test(value);
 }
+
+/*验证输入百分数*/
+export function validPercent(value){
+  const reg = /^(100|[1-9]?\d(\.\d\d?\d?)?)%$/;
+  return reg.test(value)
+}
