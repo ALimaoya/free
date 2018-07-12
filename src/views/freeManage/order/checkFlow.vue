@@ -30,12 +30,14 @@
       <el-table-column prop="receiveTime" label="订单创建时间" ></el-table-column>
       <el-table-column prop="searchImageUrl" label="搜索截图">
         <template slot-scope="scope">
-          <img class="showPic" @click="getImg( scope.row.searchImageUrl )" :src=" imageDomain + scope.row.searchImageUrl " alt="" />
+          <img class="showPic" v-if="scope.row.searchImageUrl!==''" @click="getImg( scope.row.searchImageUrl )" :src=" imageDomain + scope.row.searchImageUrl " :onerror="errorImg"/>
+          <img :src="failImg"  v-else>
         </template>
       </el-table-column>
       <el-table-column prop="collectImageUrl" label="收藏截图">
         <template slot-scope="scope">
-          <img class="showPic" @click="getImg( scope.row.collectImageUrl)" :src=" imageDomain + scope.row.collectImageUrl" alt="" />
+          <img class="showPic" v-if="scope.row.collectImageUrl!==''" @click="getImg( scope.row.collectImageUrl)" :src=" imageDomain + scope.row.collectImageUrl"  :onerror="errorImg"/>
+          <img :src="failImg"  v-else>
         </template>
       </el-table-column>
       <el-table-column prop="status" label="订单状态">
@@ -71,14 +73,16 @@
         <dl v-if="searchImg">
           <dt>搜索截图</dt>
           <dd >
-            <img  @click="getImg(searchImg)" :src=" imageDomain + searchImg" alt="" />
+            <img  @click="getImg(searchImg)" v-if="searchImg!==''" :src=" imageDomain + searchImg"  :onerror="errorImg"/>
+            <img :src="failImg"  v-else>
           </dd>
         </dl>
         <dl v-else class="noViewPic">暂无搜索截图</dl>
         <dl v-if="likeImg">
           <dt>商品收藏截图</dt>
           <dd >
-            <img @click="getImg(likeImg)" :src=" imageDomain + likeImg" alt="" />
+            <img @click="getImg(likeImg)" v-if="likeImg!==''" :src=" imageDomain + likeImg"  :onerror="errorImg"/>
+            <img :src="failImg"  v-else>
           </dd>
         </dl>
         <dl v-else class="noViewPic">暂无商品收藏截图</dl>
@@ -98,7 +102,7 @@
       </div>
     </el-dialog>
     <div v-if="showImg" @click="close" class="mask">
-      <img :src=" imageDomain + bigImg" alt="" />
+      <img :src=" imageDomain + bigImg"  />
     </div>
   </div>
 </template>
@@ -106,6 +110,7 @@
 <script>
   import { getOrderList , orderDetail , checkOrder  } from "@/api/activity"
   import  searchBar  from "@/components/searchBar";
+  import userPhoto from '@/assets/404_images/fail.png'
 
   export default {
     name: "check-flow" ,
@@ -166,8 +171,9 @@
         status : '' ,
         reasonBox : false,
         loading : true ,
-
-
+        bigImg: '',
+        errorImg:'this.src="' + userPhoto + '"',
+        failImg: userPhoto,
       }
     },
     mounted(){

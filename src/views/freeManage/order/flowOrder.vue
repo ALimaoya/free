@@ -17,12 +17,14 @@
       <el-table-column prop="receiveTime" label="订单创建时间" ></el-table-column>
       <el-table-column prop="searchImageUrl" label="搜索截图">
         <template slot-scope="scope">
-          <img v-if="scope.row.searchImageUrl!==null" class="showPic" @click="showImg( scope.row.searchImageUrl )" :src=" imageDomain + scope.row.searchImageUrl " alt="" />
+          <img v-if="scope.row.searchImageUrl!==null" class="showPic" @click="showImg( scope.row.searchImageUrl )" :src=" imageDomain + scope.row.searchImageUrl " :onerror="errorImg"/>
+          <img :src="failImg"  v-else>
         </template>
       </el-table-column>
       <el-table-column prop="collectImageUrl" label="收藏截图">
         <template slot-scope="scope">
-          <img v-if="scope.row.collectImageUrl !== null" class="showPic" @click="showImg( scope.row.collectImageUrl)" :src=" imageDomain + scope.row.collectImageUrl" alt="" />
+          <img v-if="scope.row.collectImageUrl !== null" class="showPic" @click="showImg( scope.row.collectImageUrl)" :src=" imageDomain + scope.row.collectImageUrl" :onerror="errorImg"/>
+          <img :src="failImg"  v-else>
         </template>
       </el-table-column>
       <el-table-column prop="status" label="订单状态">
@@ -67,6 +69,7 @@
 <script>
   import { getOrderList ,changeStatus } from "@/api/activity";
   import  searchBar  from "@/components/searchBar";
+  import userPhoto from '@/assets/404_images/fail.png'
 
   export default {
       name: "flow-order",
@@ -122,7 +125,8 @@
             mask : false ,
             bigImg : '',
             loading : true ,
-
+            errorImg:'this.src="' + userPhoto + '"',
+            failImg: userPhoto,
           }
       },
       mounted(){

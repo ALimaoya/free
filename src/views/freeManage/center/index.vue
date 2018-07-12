@@ -2,11 +2,11 @@
     <div class="container">
       <ul class="user">
         <li>
-          <img class="photo" src="../../../assets/imgs/logo.png" alt=""/>
+          <img class="photo" src="../../../assets/imgs/logo.png" />
           <p>
             <span>您好，{{userInfo.name}}</span>
             <span v-if="userInfo.vipLevel">会员等级：{{ userInfo.vipLevel }}
-              <img src="../../../assets/imgs/VIP.png" alt="" />
+              <img src="../../../assets/imgs/VIP.png"  />
             </span>
             <span v-else>您还不是会员</span>
             <span v-if="userInfo.vipLevel">会员到期时间：{{ userInfo.vip_time}}</span>
@@ -18,18 +18,21 @@
         <li>
           <div class="title">
             <span>您的专属运营顾问：</span>
-            <img v-if="attendant.avator" :src=" imageDomain + attendant.avator" alt="" />
+            <img :src=" imageDomain + attendant.avator" />
+
+
           </div>
           <div class="service">
               <a :href="'http://wpa.qq.com/msgrd?v=3&uin='+attendant.qq+'&site=qq&menu=yes'" target="_blank">
-                      <img src="../../../assets/imgs/qq.png" alt=""/>
+                      <img src="../../../assets/imgs/qq.png" />
 							</a>
             <a href="#javascript:;">
               <div class="wechat_info">
-                <img src="../../../assets/imgs/weixin.png" alt=""  />
+                <img src="../../../assets/imgs/weixin.png"  />
                 <!--<span>微信号：{{ attendant.wechat }}</span>-->
               </div>
-              <img v-if="attendant.wechatQrcode !== undefined" :src="imageDomain+ attendant.wechatQrcode" alt="" class="wechat">
+              <img v-if="attendant.wechatQrcode !== undefined" :src="imageDomain+ attendant.wechatQrcode"  class="wechat" :onerror="errorImg">
+              <img :src="failImg"  v-else>
 
             </a>
               <!-- {{ attendant.wechat}} -->
@@ -58,7 +61,9 @@
         <ul>
           <li v-for="item in pub_plans" @click="plan(item.url)">
             <p>{{ item.planTitle }}</p>
-            <img :src=" imageDomain + item.planImg" alt=""/>
+            <img v-if="item.planImg !== ''" :src=" imageDomain + item.planImg"  :onerror="errorImg"/>
+            <img :src="failImg"  v-else>
+
           </li>
           <!--<li><img src="" /></li>-->
           <!--<li><img src="" /></li>-->
@@ -74,6 +79,7 @@
 <script>
   // import store from '@/store'
   import { getToken } from '@/utils/auth'
+  import userPhoto from '@/assets/404_images/fail.png'
 
   export default {
         name: "CenterHome",
@@ -89,7 +95,8 @@
             attendant : {},
             pub_plans : [],
             imageDomain : process.env.IMAGE_DOMAIN ,
-
+            errorImg:'this.src="' + userPhoto + '"',
+            failImg: userPhoto,
           }
         },
 
@@ -485,7 +492,8 @@
           }
           img{
             width : 100% ;
-            height : 0.8rem ;
+            min-height : 0.8rem ;
+            max-height: 100% ;
             border : 1px solid #aaa;
             border-radius: 0.05rem ;
           }

@@ -59,7 +59,11 @@
           <li class="imageShow" v-if="imgList.length" >
             <dl v-for="(item,index) in imgList"  :key="index">
               <dt>{{ imageType[item.type] }}</dt>
-              <dd><img @click="getImg(item.imageUrl)" :src=" imageDomain + item.imageUrl" alt="" /></dd>
+              <dd>
+                <img v-if="item.imageUrl !== ''" @click="getImg(item.imageUrl)" :src=" imageDomain + item.imageUrl"  />
+                <img :src="failImg"  v-else>
+
+              </dd>
             </dl>
           </li>
           <p v-else class="tips">暂无详情</p>
@@ -76,7 +80,11 @@
           <li class="imageShow">
             <dl v-if="orderImg">
               <dt>订单截图</dt>
-              <dd ><img @click="getImg(orderImg)" :src=" imageDomain + orderImg" alt="" /></dd>
+              <dd >
+                <img v-if="orderImg!== ''" @click="getImg(orderImg)" :src=" imageDomain + orderImg"   :onerror="errorImg"/>
+                <img :src="failImg"  v-else>
+
+              </dd>
             </dl>
             <p class="tips" v-else>暂无详情</p>
           </li>
@@ -98,7 +106,7 @@
       </div>
     </el-dialog>
     <div v-if="showImg" @click="close" class="mask">
-      <img :src=" imageDomain + bigImg" alt="" />
+      <img :src=" imageDomain + bigImg"  />
     </div>
   </div>
 </template>
@@ -107,6 +115,7 @@
   import { getOrderList , orderDetail , checkOrder   } from "@/api/activity"
   import ElDialog from "element-ui/packages/dialog/src/component";
   import SearchBar from "@/components/searchBar"
+  import userPhoto from '@/assets/404_images/fail.png'
 
   export default {
     components: { ElDialog, SearchBar},
@@ -163,8 +172,9 @@
             imageDomain : process.env.IMAGE_DOMAIN,
             showImg : false,
             loading : true ,
-
-            // imageDomain : 'http://yabei.oss-cn-beijing.aliyuncs.com/'
+            errorImg:'this.src="' + userPhoto + '"',
+            failImg: userPhoto,
+            bigImg:'',
           }
       },
       mounted(){

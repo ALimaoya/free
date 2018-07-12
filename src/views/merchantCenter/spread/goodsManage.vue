@@ -10,9 +10,8 @@
         <el-table-column label="商品信息" >
           <template slot-scope="scope">
             <div class="goodsWrap">
-              <img v-if="scope.row.productImage!==null&&scope.row.productImage!==''" :src="imageDomain + scope.row.productImage"  />
-              <img  src="../../../assets/404_images/fail.png" v-else>
-
+              <img v-if="scope.row.productImage!==null&&scope.row.productImage!==''" :src="imageDomain + scope.row.productImage" :onerror="errorImg" />
+              <img  :src="failImg" v-else>
               <div class="detailWrap">
                 <span>{{ scope.row.productName }}</span>
                 <span>商品编号：{{ scope.row.code}}</span>
@@ -23,14 +22,14 @@
         </el-table-column>
         <el-table-column label="佣金比率(%)"  width="125" class="flex_show" >
           <template slot-scope="scope">
-            <span class="showRatio" :class="{ isHide:show[scope.$index*1] === scope.$index, isEdited:date[scope.$index*1] !==false&&(show[scope.$index*1] === '' || show[scope.$index*1] === undefined)}" @click="editRatio(scope.$index,scope.row.brokerageRate)">{{ scope.row.brokerageRate }}</span>
+            <span class="showRatio" :class="{ isHide:show[scope.$index*1] === scope.$index, isEdited:scope.row.status === '0'&&(show[scope.$index*1] === '' || show[scope.$index*1] === undefined)}" @click="editRatio(scope.$index,scope.row.brokerageRate)">{{ scope.row.brokerageRate }}</span>
             <el-input type="number" v-model.number="scope.row.brokerageRate"  class="ratio_input" size="mini" :class="{isActive:show[scope.$index*1] === scope.$index }"></el-input>
             <el-popover trigger="hover" placement="right"  >
               <p>距该修改生效还需时间：</p>
               <p class="tips_warn"> {{ date[scope.$index] }}</p>
               <p v-if="scope.row.usingBrate!== null">原比率：{{ scope.row.usingBrate}}</p>
               <div slot="reference" class="name-wrapper">
-                <svg-icon slot="reference" class="icon isHide" icon-class="alarm" :class="{isEdited:date[scope.$index*1] !==false&&(show[scope.$index*1] === '' || show[scope.$index*1] === undefined)}"></svg-icon>
+                <svg-icon slot="reference" class="icon isHide" icon-class="alarm" :class="{isEdited:scope.row.status === '0'&&(show[scope.$index*1] === '' || show[scope.$index*1] === undefined)}"></svg-icon>
               </div>
             </el-popover>
           </template>
@@ -77,8 +76,8 @@
           <el-table-column label="商品名称">
             <template slot-scope="scope">
               <div class="goodsWrap">
-                <img v-if="scope.row.productImages!==null&&scope.row.productImages[0]!==''" :src="imageDomain+ scope.row.productImages[0]" />
-                <img  src="../../../assets/404_images/fail.png" v-else>
+                <img v-if="scope.row.productImages!==null&&scope.row.productImages[0]!==''" :src="imageDomain+ scope.row.productImages[0]" :onerror="errorImg"/>
+                <img  :src="failImg" v-else>
                 <div class="detailWrap">
                   <span>{{ scope.row.productName}}</span>
                   <span>商品编号：{{ scope.row.code}}</span>
@@ -132,6 +131,8 @@
     import SvgIcon from "../../../components/SvgIcon/index";
     import { getSpreadList, addSpread, hasSpreadGoods, editorR, deleteGoods,batchDelete } from "@/api/merchant"
     import { parseTime,countTime } from "@/utils"
+    import userPhoto from '@/assets/404_images/fail.png'
+
     // import { validPercent } from "@/utils/validate"
     export default {
       components: {SvgIcon},
@@ -179,6 +180,8 @@
               date: [],
               pageTimer: [],
               updateId: '',
+              errorImg:'this.src="' + userPhoto + '"',
+              failImg: userPhoto,
             }
         },
         mounted() {
@@ -304,7 +307,6 @@
                   this.$set(this.goodsList,index ,i)
 
                 } )
-                console.log(this.chooseList,this.$refs.multipleTable)
 
               }
 

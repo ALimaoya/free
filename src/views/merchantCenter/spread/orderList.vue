@@ -20,34 +20,34 @@
             </el-select>
             <el-button type="primary" size="mini" @click="getList()">查询</el-button>
         </div>
-        <el-table :data="tableData"  border  align="center" fit>
-            <el-table-column  label="商品信息" width="430">
+        <el-table :data="tableData"  border  fit>
+            <el-table-column  label="商品信息" >
                 <template slot-scope="scope">
-                    <div class="img">
-                        <img v-if="scope.row.ybProductResDto.productImages!== null &&  scope.row.ybProductResDto.productImages[0]!==undefined" :src="imageDomain + scope.row.ybProductResDto.productImages[0]" alt="">
-                        <img v-else src="../../../assets/404_images/fail.png" alt="">
+                    <div class="goodsWrap">
+                        <img v-if="scope.row.ybProductResDto.productImages!== null &&  scope.row.ybProductResDto.productImages[0]!==undefined" :src="imageDomain + scope.row.ybProductResDto.productImages[0]" :onerror="errorImg">
+                        <img :src="failImg" v-else >
+                        <div class="detailWrap">
+                          <span>{{scope.row.ybProductResDto.productName}}</span>
+                          <span>商品编号：{{scope.row.ybProductResDto.code}}</span>
+                          <span>￥{{scope.row.ybProductResDto.price}}</span>
+                        </div>
                     </div>
-                    <ul class="particulars">
-                      <li>{{scope.row.ybProductResDto.productName}}</li>
-                      <li>商品编号：{{scope.row.ybProductResDto.code}}</li>
-                      <li>￥{{scope.row.ybProductResDto.price}}</li>
-                    </ul>
                 </template>
             </el-table-column>
-            <el-table-column prop="createTime" label="创建时间"></el-table-column>
-            <el-table-column prop="dealPrice" label="实际成交价格"></el-table-column>
-            <el-table-column prop="dealNum" label="成交商品数量"></el-table-column>
-            <el-table-column prop="brokerageRate" label="佣金比例">
+            <el-table-column prop="createTime" label="创建时间" width="100"></el-table-column>
+            <el-table-column prop="dealPrice" label="实际成交价格(元)" width="70"></el-table-column>
+            <el-table-column prop="dealNum" label="成交商品数量" width="80"></el-table-column>
+            <el-table-column prop="brokerageRate" label="佣金比例" width="90">
               <template slot-scope="scope">
                 <span>{{(scope.row.brokerageRate)*100}}%</span>
               </template>
             </el-table-column>
-            <el-table-column prop="brokerage" label="佣金"></el-table-column>
-            <el-table-column prop="receiveTime" label="确认收货时间"></el-table-column>
-            <el-table-column prop="settlementTime" label="结算时间"></el-table-column>
-            <el-table-column prop="status" label="状态">
+            <el-table-column prop="brokerage" label="佣金(元)" width="80"></el-table-column>
+            <el-table-column prop="receiveTime" label="确认收货时间" width="100"></el-table-column>
+            <el-table-column prop="settlementTime" label="结算时间" width="100"></el-table-column>
+            <el-table-column prop="status" label="状态" width="100">
               <template slot-scope="scope">
-                <el-button v-if="scope.row.statu !==''" plain :type='orderStatus[(scope.row.status-0)].type' size="mini">{{ orderStatus[(scope.row.status-0)].name }}</el-button>
+                <el-button v-if="scope.row.status !==''" plain :type='statusList[(scope.row.status*1+1)].type' size="mini">{{ statusList[(scope.row.status*1+1)].name }}</el-button>
               </template>
             </el-table-column>
         </el-table>
@@ -68,6 +68,8 @@
 
 <script>
 import {getOrderLists} from '@/api/merchant';
+import userPhoto from '@/assets/404_images/fail.png'
+
 export default {
   name: "order-list",
   data() {
@@ -105,7 +107,7 @@ export default {
         {
           name: "未付款",
           value: "0",
-          type: "primary"
+          type: " "
         },
         {
           name: "已付款",
@@ -115,39 +117,12 @@ export default {
         {
           name: "结算中",
           value: "2",
-          type: "info"
-        },
-        {
-          name: "已结算",
-          value: "3",
-          type: "danger"
-        },
-        {
-          name: "已失效",
-          value: "4",
-          type: "info"
-        }
-      ],
-      orderStatus: [
-        {
-          name: "未付款",
-          value: "0",
           type: "primary"
         },
         {
-          name: "已付款",
-          value: "1",
-          type: "success"
-        },
-        {
-          name: "结算中",
-          value: "2",
-          type: "info"
-        },
-        {
           name: "已结算",
           value: "3",
-          type: "danger"
+          type: "warning"
         },
         {
           name: "已失效",
@@ -155,10 +130,13 @@ export default {
           type: "info"
         }
       ],
+
       currentPage: 1,
       pageSize: 10,
       totalElements: 0,
-      totalPages: ""
+      totalPages: 0,
+      errorImg:'this.src="' + userPhoto + '"',
+      failImg: userPhoto,
     };
   },
   mounted() {
@@ -174,7 +152,7 @@ export default {
       formData.append('LT_createTime',this.search.endDate)
 
       getOrderLists(formData).then( res =>{
-        console.log('res',res)
+        // console.log('res',res)
         this.loading= false;
         if(res.data.status =="000000000"){
           this.tableData =  res.data.data
@@ -197,54 +175,56 @@ export default {
 
 <style scoped lang="scss" rel="stylesheet/scss">
 @import "../../../styles/activityTable";
-@import "../../../styles/table";
 .search {
   height: 100px !important;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  .el-input,
-  .el-select,
+  /*display: flex;*/
+  /*flex-direction: row;*/
+  /*justify-content: flex-start;*/
+  /*flex-wrap: wrap;*/
+  /*.el-input,*/
+  /*.el-select,*/
+  /*.block {*/
+    /*width: 25% !important;*/
+    /*margin-left: 0 !important;*/
+    /*margin-right: 0.25rem !important;*/
+  /*}*/
   .block {
-    width: 25% !important;
-    margin-left: 0 !important;
+    display: inline-block;
+    width: 20%!important; ;
     margin-right: 0.25rem !important;
-  }
-  .block {
+
     .el-input {
       width: 100% !important;
     }
-  } 
-  .el-button {
-    height: 32px;
-    margin-left: 0 !important;
   }
+  /*.el-button {*/
+    /*height: 32px;*/
+    /*margin-left: 0 !important;*/
+  /*}*/
 }
-.el-table .particulars,
-.img {
-  display: inline-block;
-}
-.el-table .img {
-  width: 1rem;
-  height: 1rem;
-  vertical-align: top;
-  margin-right: 0.2rem;
-  img {
-    width: 100%;
-    height: 100%;
+
+.goodsWrap{
+  padding: 0.1rem ;
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  img{
+    width : 1rem ;
+    height: 1rem ;
+    margin: 0 0.2rem ;
   }
-}
-.el-table .particulars {
-  width: 3rem;
-  li {
-    text-align: left;
-    margin-bottom: 2px;
-    &:nth-of-type(1) {
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
+  .detailWrap{
+    flex-direction: column;
+    flex: 1 ;
+    font-size: 0.16rem ;
+    color : #666;
+    span{
+      display: inline-block;
+      text-align: left;
+      width: 100%;
     }
   }
 }
+
 </style>

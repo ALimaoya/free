@@ -1,6 +1,6 @@
 <template>
   <div class="top">
-    <img src="../../assets/imgs/logo.png"  alt="" />
+    <img src="../../assets/imgs/logo.png"  />
     <h1>丫贝商家管理后台</h1>
     <ul class="menu">
       <li v-for="(item,index) in menuList" :key="index" @click="closeAllTags()">
