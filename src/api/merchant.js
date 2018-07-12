@@ -292,3 +292,11 @@ export function test(){
 
   })
 }
+//推广订单 列表
+export function getOrderLists(data){
+  return request({
+    url: 'center/extend/order/list',
+    method: 'post',
+    data
+  })
+}
