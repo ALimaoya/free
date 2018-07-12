@@ -53,16 +53,14 @@
           <span class="subOrder">({{ scope.row.code }})</span>
         </template>
       </el-table-column>
-      <el-table-column  label="商品" class="goodsInfo" >
+      <el-table-column  label="商品" class="goodsInfo" min-width="500">
         <template slot-scope="scope">
           <table class="tableC">
             <tr class="thColor">
               <th>商品编号</th><th>商品名称</th><th>品牌</th>
               <th>分类</th><th>规格</th><th>价格（元）</th><th>数量</th>
             </tr>
-            <!-- <template slot-scope="scope" > -->
             <tr class="tbColor" v-for="(item , index) in scope.row.orderProducts" :key="index">
-                  <!-- <template> -->
                   <td>{{item.productItem.code}}</td>
                   <td>{{item.productItem.productName}}</td>
                   <td>{{item.productItem.brandCnName}}</td>
@@ -72,25 +70,22 @@
                       <span v-if="item.productItem.cateGoryMap.categoryName2">{{item.productItem.cateGoryMap.categoryName2}}</span>/
                       <span v-if="item.productItem.cateGoryMap.categoryName3">{{item.productItem.cateGoryMap.categoryName3}}</span>
                     </span>
-
                   </td>
                   <td><span>{{item.productItem.size}}</span><span class="subOrder">{{item.productItem.color}}</span></td>
                   <td>{{item.price}}</td>
                   <td>{{item.quantity}}</td>
-                <!-- </template> -->
-
             </tr>
-            <!-- </template> -->
           </table>
         </template>
       </el-table-column>
-      <el-table-column  label="订单分类" width="85">
+      <el-table-column  label="订单分类" width="95">
         <template slot-scope="scope">
           <span v-if="scope.row.activityType!==''">{{ typeList[(scope.row.activityType*1+1)].name}}</span>
+          <span v-else>{{ typeList[1].name}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="totalNum" label="总数量" width="70"></el-table-column>
-      <el-table-column prop="totalMoney" label="总价（元）" width="70"></el-table-column>
+      <el-table-column prop="payAmount" label="总价（元）" width="70"></el-table-column>
       <el-table-column prop="createTime" label="交易时间" width="100"></el-table-column>
       <el-table-column label="状态" width="100">
         <template slot-scope="scope">
@@ -302,7 +297,7 @@
             // thColor : true ,
             // tbColor : true,
             tableData : [],
-            totalPages : '',
+            totalPages : 0,
             totalElements : 0,
             currentPage : 1,
             pageSize : 10,

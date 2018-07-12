@@ -7,7 +7,7 @@
         <li><img src="../../../assets/imgs/u924.png" alt="" /></li>
         <li><img src="../../../assets/imgs/logo.png" alt="" /></li>
       </ul>
-      <el-button @click="goTryout">发布第三方使用活动</el-button>
+      <el-button @click="goTryout">发布第三方试用活动</el-button>
     </div>
     <div class="shopCenter">
       <img src="../../../assets/imgs/logo.png" />

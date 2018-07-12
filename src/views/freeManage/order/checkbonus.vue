@@ -148,7 +148,7 @@
             tableData : [],
             currentPage : 1 ,
             pageSize : 10 ,
-            totalPages : '',
+            totalPages : 0,
             totalElements : 0 ,
             detailInfo : false ,
             reasonBox : false ,

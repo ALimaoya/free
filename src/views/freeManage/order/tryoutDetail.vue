@@ -18,7 +18,7 @@
         <li class="mainImg" >
           <span style="width:18.9%;float : left ;">宝贝主图:</span><span v-if="!detailInfo.mainImageUrl">暂无详情</span>
           <div v-else>
-            <img @click="getImg(detailInfo.mainImageUrl)" :src="imageDomain + detailInfo.mainImageUrl" alt="" />
+            <img @click="getImg(detailInfo.mainImageUrl)" :src="imageDomain + detailInfo.mainImageUrl"  />
           </div>
         </li>
         <li class="faileReason"><span>用户上传图片详情：</span><span v-if="detailInfo.orderImageList == 0" class="noImg">暂无图片</span></li>
@@ -27,7 +27,7 @@
             <dl v-for="item in detailInfo.orderImageList">
               <dt>{{ imgType[item.type-1] }}</dt>
               <dd>
-                <img @click="getImg(item.imageUrl)" :src="imageDomain + item.imageUrl" alt="" />
+                <img @click="getImg(item.imageUrl)" :src="imageDomain + item.imageUrl"  />
               </dd>
             </dl>
           </div>
@@ -36,7 +36,7 @@
       </ul>
     </div>
     <div v-if="showImg" @click="close" class="mask">
-      <img :src=" imageDomain + bigImg" alt="" />
+      <img :src=" imageDomain + bigImg" />
     </div>
   </div>
 </template>

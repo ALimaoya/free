@@ -140,8 +140,8 @@ export function countTime(now) {
   // var end = endDate.getTime();
   //时间差
   let time = 12*3600;
-
   var leftTime = time-now;
+
   //定义变量 d,h,m,s保存倒计时的时间
   var d,h,m,s;
   if (leftTime>=0) {
@@ -149,6 +149,14 @@ export function countTime(now) {
     h = Math.floor(leftTime/60/60%24);
     m = Math.floor(leftTime/60%60);
     s = Math.floor(leftTime%60);
+    h=h>9?h:"0"+h;
+    m=m>9?m:"0"+m;
+    s=s>9?s:"0"+s;
+
+    return h+ ':'+ m + ':'+ s
+
+  }else{
+    return false ;
   }
   //将倒计时赋值到div中
   // document.getElementById("_d").innerHTML = d+"天";
@@ -157,7 +165,7 @@ export function countTime(now) {
   // document.getElementById("_s").innerHTML = s+"秒";
   //递归每秒调用countTime方法，显示动态时间效果
   // setTimeout(countTime,1000);
-  return h+ ':'+ m + ':'+ s
+
 }
 
 

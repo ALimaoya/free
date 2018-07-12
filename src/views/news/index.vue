@@ -26,7 +26,7 @@
       </table>
     </div>
     <div class="detailBox" v-if="detailInfo">
-    <div class="detailTitle">公告标题<img src="../../assets/imgs/close.png" alt="" @click="detailInfo= false"/></div>
+    <div class="detailTitle">公告标题<img src="../../assets/imgs/close.png"  @click="detailInfo= false"/></div>
       <div class="detailContent">
         <span>{{ inforDate }}</span>
         <div class="passage">{{ content }}</div>

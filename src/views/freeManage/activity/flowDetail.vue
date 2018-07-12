@@ -165,7 +165,7 @@
           tableData : [],
           currentPage : 1 ,
           pageSize : 10 ,
-          totalPages : '',
+          totalPages : 0,
           totalElements : 0 ,
           token : getToken(),
           imgUrl: process.env.BASE_API+'/file/upload',   // 上传图片的域名

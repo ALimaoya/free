@@ -18,7 +18,7 @@
             <dl v-for="item in detailInfo.orderImageList">
               <dt>{{ imgType[item.type-1] }}</dt>
               <dd>
-                <img @click="getImg(item.imageUrl)" :src="imageDomain + item.imageUrl" alt="" />
+                <img @click="getImg(item.imageUrl)" :src="imageDomain + item.imageUrl"  />
               </dd>
             </dl>
           </div>
@@ -27,7 +27,7 @@
       </ul>
     </div>
     <div v-if="showImg" @click="close" class="mask">
-      <img :src=" imageDomain + bigImg" alt="" />
+      <img :src=" imageDomain + bigImg" />
     </div>
   </div>
 </template>

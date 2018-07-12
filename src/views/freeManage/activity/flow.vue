@@ -160,7 +160,7 @@
               //   name : '拼多多'
               // }
             ],
-            totalPages : '',
+            totalPages : 0,
             totalElements : 0,
             currentPage : 1,
             pageSize : 10,

@@ -10,7 +10,7 @@
         <el-table-column label="商品信息" >
           <template slot-scope="scope">
             <div class="goodsWrap">
-              <img v-if="scope.row.productImage!==null" :src="imageDomain + scope.row.productImage" alt="" />
+              <img v-if="scope.row.productImage!==null&&scope.row.productImage!==''" :src="imageDomain + scope.row.productImage"  />
               <img  src="../../../assets/404_images/fail.png" v-else>
 
               <div class="detailWrap">
@@ -21,16 +21,16 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="佣金比率"  width="125" class="flex_show" >
+        <el-table-column label="佣金比率(%)"  width="125" class="flex_show" >
           <template slot-scope="scope">
-            <span class="showRatio" :class="{isHide:show[scope.$index*1] === scope.$index ,isEdited:edited[scope.$index*1] === true }" @click="editRatio(scope.$index,scope.row.brokerageRate)">{{ scope.row.brokerageRate }}</span>
+            <span class="showRatio" :class="{ isHide:show[scope.$index*1] === scope.$index, isEdited:date[scope.$index*1] !==false&&(show[scope.$index*1] === '' || show[scope.$index*1] === undefined)}" @click="editRatio(scope.$index,scope.row.brokerageRate)">{{ scope.row.brokerageRate }}</span>
             <el-input type="number" v-model.number="scope.row.brokerageRate"  class="ratio_input" size="mini" :class="{isActive:show[scope.$index*1] === scope.$index }"></el-input>
             <el-popover trigger="hover" placement="right"  >
               <p>距该修改生效还需时间：</p>
               <p class="tips_warn"> {{ date[scope.$index] }}</p>
-              <p>原比率：{{ scope.row.oldRatio}}</p>
+              <p v-if="scope.row.usingBrate!== null">原比率：{{ scope.row.usingBrate}}</p>
               <div slot="reference" class="name-wrapper">
-                <svg-icon slot="reference" class="icon isHide" icon-class="alarm" :class="{isEdited:edited[scope.$index*1] === true }"></svg-icon>
+                <svg-icon slot="reference" class="icon isHide" icon-class="alarm" :class="{isEdited:date[scope.$index*1] !==false&&(show[scope.$index*1] === '' || show[scope.$index*1] === undefined)}"></svg-icon>
               </div>
             </el-popover>
           </template>
@@ -44,7 +44,7 @@
           <template slot-scope="scope">
             <div class="action1" :class="{isHide:show[scope.$index*1] === scope.$index }">
               <el-button type="text" @click="editRatio(scope.$index,scope.row.brokerageRate)">编辑</el-button>
-              <el-button type="text" @click="deleteItem(scope.$index,scope.row.id)">删除</el-button>
+              <el-button type="text" @click="deleteItem(scope.$index,scope.row.id,scope.row.productId)">删除</el-button>
             </div>
             <div class="action2 isHide"  :class="{isActive:show[scope.$index*1] === scope.$index }">
               <el-button type="text" @click="saveEdit(scope.$index,scope.row.brokerageRate,scope.row.id)">保存修改</el-button>
@@ -66,34 +66,34 @@
         <span class="totalItems" >共{{totalPages }}页，{{ totalElements }}条记录</span>
       </div>
 
-      <el-dialog title="选择推广商品" :visible.sync="dialogVisible" width="70%" center :show-close="false">
+      <el-dialog title="选择推广商品" :visible.sync="dialogVisible" width="75%" center :show-close="false" >
         <div class="search">
-          <el-input size="small" :maxlength="40" v-model.trim="shopName" placeholder="请输入商品名称"></el-input>
-          <el-input size="small" :maxlength="40" v-model.trim="goodsCode" placeholder="请输入商品编号"></el-input>
+          <el-input size="small" :maxlength="40" v-model.trim="shopName" placeholder="请输入商品名称" clearable></el-input>
+          <el-input size="small" :maxlength="40" v-model.trim="goodsCode" placeholder="请输入商品编号" clearable></el-input>
           <el-button type="primary" size="mini" @click="getGoods">搜索</el-button>
         </div>
-        <el-table ref="multipleTable" :data="goodsList"  border fit class="chooseTable" max-height="600" @select="handleApart" @select-all="allData" >
+        <el-table ref="multipleTable" :data="goodsList"  border fit class="chooseTable" max-height="600" @select="handleApart" @select-all="allData" v-loading="loading2"  element-loading-text="拼命加载中">
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column label="商品名称">
             <template slot-scope="scope">
               <div class="goodsWrap">
-                <img v-if="scope.row.productImages!==null" :src="imageDomain+ scope.row.productImages[0]" alt="" />
+                <img v-if="scope.row.productImages!==null&&scope.row.productImages[0]!==''" :src="imageDomain+ scope.row.productImages[0]" />
                 <img  src="../../../assets/404_images/fail.png" v-else>
                 <div class="detailWrap">
                   <span>{{ scope.row.productName}}</span>
-                  <span>商品编号：{{ scope.row.currentPageode}}</span>
+                  <span>商品编号：{{ scope.row.code}}</span>
                   <span>￥{{ scope.row.price}}</span>
                 </div>
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="设置佣金比率" prop="brokerageRate">
+          <el-table-column label="设置佣金比率(%)" prop="brokerageRate">
             <template slot-scope="scope">
-              <el-input placeholder="1.5%(默认)" type="number" v-model.number="scope.row.brokerageRate" size="mini" @change="validPercent(scope.row.brokerageRate)"></el-input>
+              <el-input placeholder="1.5%(默认)"  v-model.trim="scope.row.brokerageRate" size="mini" @change="validPercent(scope.row.brokerageRate)"></el-input>
             </template>
           </el-table-column>
         </el-table>
-        <div class="setting"><span>批量设置佣金：</span><el-input size="mini" v-model.trim="commonRatio" @change="setAllRatio"></el-input></div>
+        <div class="setting"><span>批量设置佣金：</span><el-input size="mini" v-model.trim="commonRatio" @change="handleApart(chooseList)"></el-input></div>
         <div class="block2">
           <el-pagination
             @size-change="handleSubSizeChange"
@@ -103,9 +103,9 @@
             :page-size="subPageSize"
             layout=" sizes, prev, pager, next, jumper"
             :total="subTotalElements">
-            <span class="totalItems" style="display: inline-block;">共{{ subTotalPages }}页，{{ subTotalElements }}条记录</span>
-
           </el-pagination>
+          <span class="totalItems" >共{{ subTotalPages }}页，{{ subTotalElements }}条记录</span>
+
         </div>
         <div slot="footer" class="dialog-footer" style="padding-bottom: 0px;height: 0.7rem ;">
           <el-button type="primary" size="mini" @click="confirmAdd">完成添加</el-button>
@@ -130,7 +130,7 @@
 
 <script>
     import SvgIcon from "../../../components/SvgIcon/index";
-    import { getSpreadList, addSpread, hasSpreadGoods, editorR, deleteGoods} from "@/api/merchant"
+    import { getSpreadList, addSpread, hasSpreadGoods, editorR, deleteGoods,batchDelete } from "@/api/merchant"
     import { parseTime,countTime } from "@/utils"
     // import { validPercent } from "@/utils/validate"
     export default {
@@ -139,6 +139,7 @@
         data() {
             return {
               loading: true ,
+              loading2: true ,
               tableData: [],
               dialogVisible: false,
               shopName:'',
@@ -155,11 +156,11 @@
               statusList:[
                 {
                   value: '0',
-                  name: '未更新',
+                  name: '待生效',
                 },
                 {
                   value: '1',
-                  name: '已更新',
+                  name: '生效中',
                 }
 
               ],
@@ -182,23 +183,12 @@
         },
         mounted() {
           this.getList();
-
         },
-      // computed:{
-      //   date: function(){
-      //     let arr = [];
-      //     this.tableData.map( (i,index) => {
-      //       arr.push(i.date);
-      //
-      //     });
-      //     arr.map((i ,index) =>{
-      //       this.pageTimer["timer"+ index] = setInterval(() => {
-      //         countTime(i);
-      //       },1000)
-      //     });
-      //     return arr ;
-      //   }
-      // },
+        // computed: {
+        //   list : function(){
+        //     return this.goodsList ;
+        //   }
+        // },
         methods: {
           //已有推广商品列表
           getList() {
@@ -209,59 +199,45 @@
             for (var i in this.pageTimer) {
               clearInterval(this.pageTimer[i]);
             }
-            // this.pageTimer.map( (i) => {
-            //   clearInterval(this.pageTimer[i])
-            //
-            // })
+
             let formData = new FormData();
-            formData.append('currenPage', this.currentPage);
+            formData.append('currentPage', this.currentPage);
             formData.append('pageSize', this.pageSize);
+            this.loading = true ;
             hasSpreadGoods(formData).then(res => {
-              this.loading = false;
               this.tableData = res.data.data ;
               this.totalPages = res.data.totalPages;
               this.totalElements = res.data.totalElements;
-              this.tableData.map((i, index) => {
-                this.date.push(i.totalSeconds);
-                console.log(this.date)
+              if(this.tableData.length !== 0){
+                this.tableData.map((i, index) => {
+                  this.date.push(i.totalSeconds);
+                });
+                this.date.map((i, index) => {
 
-              });
+                  this.pageTimer["timer" + index] = setInterval(() => {
 
-              this.date.map((i, index) => {
-                this.pageTimer["timer" + index] = setInterval(() => {
-                  // i = parseTime(i,'{h}:{i}:{s}')
-                  // console.log(i)
+                    this.$set(this.date,index,countTime(i));
+                    i++;
 
-                  this.$set(this.date,index,countTime(i));
-                  i++;
-                  // console.log(this.date)
+                  }, 1000);
 
-                }, 1000)
-              });
+                });
+              }
+              this.loading = false;
             })
-
-            console.log(this.tableData)
-
-
-
-            // return arr ;
-          // }
-
-            // this.date = this.tableData[index].date ;
-            // countTime(this.date)
           },
           //获取商品列表
           getGoods(){
             this.dialogVisible= true ;
             let formData = new FormData();
-            formData.append('currenPage',this.subCurrentPage);
+            formData.append('currentPage',this.subCurrentPage);
             formData.append('pageSize',this.subPageSize);
             formData.append('EQ_code',this.goodsCode);
             formData.append('LIKE_productName',this.shopName);
-            this.loading = true ;
+            this.loading2 = true ;
 
             getSpreadList(formData).then( res => {
-              this.loading = false ;
+              this.loading2 = false ;
               this.goodsList = res.data.data ;
               this.subTotalPages = res.data.totalPages;
               this.subTotalElements = res.data.totalElements
@@ -269,55 +245,96 @@
                 i.brokerageRate = '';
               })
             })
-
+            //   this.goodsList = [{
+            //   ratio: '2%',
+            //     productName: '王小虎',
+            //   price: '123',
+            //   code: '上海市普陀区金沙江路 1518 弄'
+            // },
+            //     {
+            //   ratio: '4%',
+            //     productName: '王小虎',
+            //   price: '654',
+            //   code: '上海市普陀区金沙江路 1517 弄'
+            // },
+            //     {
+            //   ratio: '1%',
+            //     productName: '王小虎',
+            //   price: '1423',
+            //   code: '上海市普陀区金沙江路 1519 弄'
+            // },
+            //     {
+            //   ratio: '3%',
+            //     productName: '王小虎',
+            //   price: '223',
+            //   code: '上海市普陀区金沙江路 1516 弄'
+            // }];
           },
           //选择所有数据
           allData(val){
             this.chooseList = val ;
-            console.log(val,1)
+            this.setAllRatio();
+
           },
           //选择部分数据
           handleApart(row){
-            console.log(row,2);
             this.chooseList = row ;
+            this.setAllRatio();
 
           },
 
           //批量设置比率
           setAllRatio(){
-            // this.validPercent(this.commonRatio) ;
-            if(this.chooseList.length>0){
-              if(!this.validPercent(this.commonRatio)){
-                this.commonRatio = '';
-                return false ;
+            if(this.commonRatio !== ''){
+              this.goodsList.map( i=> {
+                i.brokerageRate = '';
+              });
+              if(this.chooseList.length>0){
+                if(!this.validPercent(this.commonRatio)){
+                  this.commonRatio = '';
+                  return false ;
+
+                }
+
+                this.chooseList.map( (i,index) => {
+                  // this.$set(this.chooseList[index],'brokerageRate' ,this.commonRatio)
+                  i.brokerageRate = this.commonRatio ;
+                });
+                this.$refs.multipleTable.tableData.map( (i,index) =>{
+                  this.$set(this.goodsList,index ,i)
+
+                } )
+                console.log(this.chooseList,this.$refs.multipleTable)
+
               }
 
-              this.chooseList.map( i => {
-                i.brokerageRate = this.commonRatio ;
-              })
-            }else{
-              this.$message({
-                message: '请选择需要批量设置佣金的商品',
-                center: true,
-                type: 'error'
-              });
-              this.commonRatio = '';
-              return false ;
             }
+
 
           },
           //确认新增
           confirmAdd(){
             // let flag = false ;
-            this.chooseList.map( i => {
-              if(i.brokerageRate === ''){
-                i.brokerageRate = '1.5';
+            if(this.commonRatio === ''){
+              this.chooseList.map( i => {
+                if(i.brokerageRate === ''){
+                  i.brokerageRate = '1.5';
 
-              }
+                }
+              });
+
+            }else{
+              this.chooseList.map( i => {
+                if(i.brokerageRate === ''){
+                  i.brokerageRate = this.commonRatio;
+
+                }
+              });
+            }
+
               // else{
               //   // i.brokerageRate = i.brokerageRate.split('%')[0];
               // }
-            });
             // if(!flag){
               let arr = [];
               this.chooseList.map( i =>{
@@ -332,67 +349,86 @@
                       duration: 1000
                     });
                     this.getList();
-
+                    this.close() ;
                   }
-              })
-              console.log(this.chooseList);
-              this.dialogVisible = false ;
-              this.$refs.multipleTable.clearSelection();
+              });
+
+
             // }
-
-
-            // this.chooseList
           },
           //取消新增
           close(){
             this.dialogVisible = false ;
+            this.commonRatio = '';
+            this.goodsCode = '';
+            this.shopName = '';
             this.$refs.multipleTable.clearSelection();
           },
           chooseAll(val){
             this.deleteList = val ;
-            console.log(val);
-
           },
           //
           chooseApart(row){
             this.deleteList = row ;
-
-            console.log(row);
-
           },
           //批量删除
           deleteChoose(){
-            console.log(this.deleteList);
+            let arr = [];
+            this.deleteList.map( i => {
+              arr.push( { id: i.id ,productId: i.productId ,brokerageRate: 0 })
+            });
+            this.loading = true ;
+            batchDelete(arr).then( res => {
+              this.loading = false ;
+              if(res.data.status === '000000000'){
+                this.$message({
+                  message: '批量删除成功，请稍后确认',
+                  center: true ,
+                  type: 'success'
+                });
+                this.getList();
+
+              }
+
+            })
+            // console.log(this.deleteList);
 
           },
           //删除选中项
-          deleteItem(index,id){
-            deleteGoods().then( res => {
+          deleteItem(index,id,productId){
+            this.loading = true ;
+            deleteGoods(id,productId).then( res => {
+              this.loading = false ;
+              if(res.data.status === '000000000'){
+                this.$message({
+                  message: '删除成功',
+                  center: true,
+                  type: "success"
+                });
+                this.getList();
+
+              }
 
             })
-            console.log(id);
           },
           //编辑佣金比率
           editRatio(index,ratio){
             this.$set(this.show,index,index)  ;
             this.$set(this.oldRatio,index,ratio)  ;
             this.$set(this.edited,this.currentIndex,'')  ;
-
             // console.log(this.show,this.edited);
-
           },
           //保存编辑
           saveEdit(index,ratio,id){
-            console.log(this.validPercent(ratio));
+
           if(!this.validPercent(ratio)){
 
             return false ;
 
           }else{
-            console.log(this.oldRatio[index],ratio)
 
             if(ratio !== this.oldRatio[index]&&ratio!== ''){
-              this.currentRatio = ratio.split('%')[0];
+              this.currentRatio = ratio;
               this.editDialog = true ;
               this.currentIndex = index ;
               this.updateId = id;
@@ -406,7 +442,7 @@
           //取消编辑
           cancelEditor(index){
             this.$set(this.show,index,'')  ;
-            // this.$set(this.tableData,index,this.oldRatio[index])  ;
+            this.$set(this.tableData[index], 'brokerageRate',this.oldRatio[index])  ;
 
           },
           //确认修改
@@ -422,13 +458,8 @@
 
 
           },
-          getEndTime(index){
-            // this.getList();
-
-          },
 
           validPercent(value){
-
               // let num = value.split('%')[0];
               if (value < 1.5 || value > 70) {
                 this.$message({
@@ -480,7 +511,7 @@
     border-bottom : 1px solid #aaa ;
     margin-bottom : 0.3rem ;
     .el-input{
-      width : 18% ;
+      width : 20% ;
       margin :0 0.25rem 0.2rem ;
       float : left;
     }
@@ -561,7 +592,12 @@
     display: inline-block!important;
 
   }
-
+  .tips_warn{
+    margin : 0.07rem 0 ;
+  }
+  .el-pagination{
+    white-space: pre!important;
+  }
 
 
 </style>

@@ -237,11 +237,11 @@ export function getTao(data){
   })
 }
 //获取待添加推广商品列表
-export function getSpreadList(date){
+export function getSpreadList(data){
   return request({
     url: '/center/extendProduct/extending/query',
     method: 'post',
-    date
+    data
   })
 }
 //添加推广商品
@@ -270,14 +270,20 @@ export function editorR(data){
   })
 }
 //删除推广商品
-export function deleteGoods(data){
+export function deleteGoods(id,productId){
   return request({
-    url: '',
+    url: '/center/extendProduct/delete/'+id+ '/'+productId,
     method: 'post',
+  })
+}
+//批量删除推广商品
+export function batchDelete(data){
+  return request({
+    url: '/center/extendProduct/extending/batchDelete',
+    method:'post',
     data
   })
 }
-
 //test
 export function test(){
   return request({

@@ -239,7 +239,7 @@
         // currentRow : null,
         hasShop : false ,
         readOnly : false ,
-        totalPages : '',
+        totalPages : 0,
         totalElements : 0,
         currentPage : 1,
         pageSize : 10,

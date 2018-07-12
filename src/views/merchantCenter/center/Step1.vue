@@ -60,29 +60,29 @@
           <dl @click="bigImg(0,form.businessImage)"  >
             <dt>{{ imgType[0] }}</dt>
             <dd>
-              <img v-if="form.businessImage !== ''" :src="imageDomain + form.businessImage" alt="" />
-              <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
+              <img v-if="form.businessImage !== ''" :src="imageDomain + form.businessImage"  />
+              <img  src="../../../assets/404_images/fail.png"   v-else/>
             </dd>
           </dl>
           <dl @click="bigImg(1,form.authorizeImage)"  >
             <dt>{{ imgType[1] }}</dt>
             <dd>
-              <img v-if="form.authorizeImage !== ''" :src="imageDomain + form.authorizeImage" alt="" />
-              <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
+              <img v-if="form.authorizeImage !== ''" :src="imageDomain + form.authorizeImage"  />
+              <img  src="../../../assets/404_images/fail.png"  v-else/>
             </dd>
           </dl>
           <dl @click="bigImg(2,form.cardFaceImage)"  >
             <dt>{{ imgType[2] }}</dt>
             <dd>
-              <img v-if="form.cardFaceImage !== ''" :src="imageDomain + form.cardFaceImage" alt="" />
-              <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
+              <img v-if="form.cardFaceImage !== ''" :src="imageDomain + form.cardFaceImage"  />
+              <img  src="../../../assets/404_images/fail.png"  v-else/>
             </dd>
           </dl>
           <dl @click="bigImg(3,form.cardBackImage)"  >
             <dt>{{ imgType[3] }}</dt>
             <dd>
-              <img v-if="form.cardBackImage !== ''" :src="imageDomain + form.cardBackImage" alt="" />
-              <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
+              <img v-if="form.cardBackImage !== ''" :src="imageDomain + form.cardBackImage"  />
+              <img  src="../../../assets/404_images/fail.png"  v-else/>
             </dd>
           </dl>
         </div>
@@ -98,7 +98,7 @@
 
     <el-dialog :title="imgTitle" :visible.sync="dialogVisible" width="60%" center>
       <div class="wrap">
-        <img :src=" imageDomain + imgSrc" alt="" />
+        <img :src=" imageDomain + imgSrc"  />
       </div>
     </el-dialog>
   </div>

@@ -38,7 +38,7 @@
         </el-table-column>
         <el-table-column  prop="orderCode" label="订单号/退款单号" width="110"></el-table-column>
         <el-table-column prop="payOrderCode" label="子订单" width="180"></el-table-column>
-        <el-table-column prop="goods" label="商品" >
+        <el-table-column prop="goods" label="商品" min-width="500">
           <template slot-scope="scope">
             <!--<el-table :data="scope.row.size"  border fit :header-row-class-name="thColor" :row-style="tbColor">-->
             <!--<el-table-column prop="size" label="尺码" ></el-table-column>-->
@@ -161,7 +161,7 @@
                 status:''
               }
             ],
-            totalPages : '',
+            totalPages : 0,
             totalElements : 0,
             currentPage : 1,
             pageSize : 10,

@@ -29,7 +29,7 @@
                 <img src="../../../assets/imgs/weixin.png" alt=""  />
                 <!--<span>微信号：{{ attendant.wechat }}</span>-->
               </div>
-              <img v-if="attendant.wechatQrcode !== 'undefined'" :src="imageDomain+ attendant.wechatQrcode" alt="" class="wechat">
+              <img v-if="attendant.wechatQrcode !== undefined" :src="imageDomain+ attendant.wechatQrcode" alt="" class="wechat">
 
             </a>
               <!-- {{ attendant.wechat}} -->
@@ -89,28 +89,7 @@
             attendant : {},
             pub_plans : [],
             imageDomain : process.env.IMAGE_DOMAIN ,
-            // show : false,
-            // show0 : false ,
-            // show1 : false ,
-            // show2 : false ,
-            // note : {},
-            // pop : '',
-            // detail : [
-            //   {
-            //     name : '最近押金记录',
-            //     visible : false
-            //   },
-            //   {
-            //     name : '最近金币记录',
-            //     visible : false
-            //
-            //   },
-            //   {
-            //     name : '最近提现记录',
-            //     visible : false
-            //
-            //   }
-            // ]
+
           }
         },
 
@@ -142,46 +121,7 @@
           plan(url){
             window.open(url);
           }
-          // look(index){
-          //   if(index!='2'){
-          //     // this.$refs.popover1 = true ;
-          //     if(index== '0'){
-          //       this.show0 = !this.show0 ;
-          //     }else{
-          //       this.show1 = !this.show1 ;
-          //     }
-          //   }else{
-          //     this.show2 = !this.show2 ;
-          //   }
-          //  this.first(index);
-          //  this.detail[index].visible = !this.detail[index].visible ;
-          //   // console.log(index,this.show0,this.show1,this.show2)
-          //   var type = String((index+1)*1);
-          //
-          //   getHistory({ type : type ,size : '1',page : '1'}).then( res =>{
-          //       if(res.code == '000000000'){
-          //         this.tableData = res.data.splice(5);
-          //         console.log(this.tableData)
-          //       }
-          //   }).catch( err => {
-          //     alert('服务开小差啦，请稍等~')
-          //   })
-          // },
-          // toAll(){
-          //   this.$route.push('/history/money');
-          // },
-          // first(index){
-          //   let oDiv = document.getElementsByClassName('history');
-          //   for(let i = 0 ; i < oDiv.length ; i++ ){
-          //     oDiv[i].style.zIndex = 1000*i ;
-          //   }
-          //   oDiv[index].style.zIndex = 5000 ;
-          //
-          // }
-          // close(index){
-          //   console.log(index);
-          //   this.detail[index].visible = false ;
-          // }
+
         }
     }
 </script>
