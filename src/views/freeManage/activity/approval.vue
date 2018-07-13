@@ -63,7 +63,9 @@
       <el-table-column prop="activityTitle" label="试用活动标题" ></el-table-column>
       <el-table-column prop="showImageUrl" label="试用品展示图" width="115">
         <template slot-scope="scope">
-          <img v-if="scope.row.showImageUrl" class="showImg" @click="showImg(scope.row.showImageUrl)" :src="imageDomain + scope.row.showImageUrl" alt="" />
+          <img v-if="scope.row.showImageUrl" class="showImg" @click="showImg(scope.row.showImageUrl)" :src="imageDomain + scope.row.showImageUrl" :onerror="errorImg" />
+          <img :src="failImg"  v-else>
+
         </template>
       </el-table-column>
       <el-table-column prop="status" label="活动状态" width="92">
@@ -178,6 +180,8 @@
   import { parseTime } from "@/utils"
   import ElButton from "element-ui/packages/button/src/button";
   import SearchBar from "@/components/searchBar";
+  import userPhoto from '@/assets/404_images/fail.png'
+
   export default {
     name: "approval",
     components: {
@@ -276,7 +280,7 @@
         ],
         activityTitle : ['超级试用','','拼团试用'],
         tableData : [],
-        totalPages : '',
+        totalPages : 0,
         totalElements : 0,
         currentPage : 1,
         pageSize : 10,
@@ -326,7 +330,8 @@
           }
         ],
         loading: true,
-
+        errorImg:'this.src="' + userPhoto + '"',
+        failImg: userPhoto,
 
       }
 

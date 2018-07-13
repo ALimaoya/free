@@ -67,29 +67,29 @@
           <dl @click="bigImg(0,form.businessImage)"  >
             <dt class="imeTilte">{{ imgType[0] }}</dt>
             <dd>
-              <img v-if="form.businessImage !== ''" :src="imageDomain+form.businessImage" alt="" />
-              <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
+              <img v-if="form.businessImage !== ''" :src="imageDomain+form.businessImage" :onerror="errorImg">
+              <img :src="failImg" v-else >
             </dd>
           </dl>
           <dl @click="bigImg(1,form.authorizeImage)"  >
             <dt class="imeTilte">{{ imgType[1] }}</dt>
             <dd>
-              <img v-if="form.authorizeImage !== ''" :src="imageDomain+form.authorizeImage" alt="" />
-              <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
+              <img v-if="form.authorizeImage !== ''" :src="imageDomain+form.authorizeImage" :onerror="errorImg">
+              <img :src="failImg" v-else >
             </dd>
           </dl>
           <dl @click="bigImg(2,form.cardFaceImage)"  >
             <dt class="imeTilte">{{ imgType[2] }}</dt>
             <dd>
-              <img v-if="form.cardFaceImage !== ''" :src="imageDomain+form.cardFaceImage" alt="" />
-              <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
+              <img v-if="form.cardFaceImage !== ''" :src="imageDomain+form.cardFaceImage" :onerror="errorImg">
+              <img :src="failImg" v-else >
             </dd>
           </dl>
           <dl @click="bigImg(3,form.cardBackImage)"  >
             <dt class="imeTilte">{{ imgType[3] }}</dt>
             <dd>
-              <img v-if="form.cardBackImage !== ''" :src="imageDomain+form.cardBackImage" alt="" />
-              <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
+              <img v-if="form.cardBackImage !== ''" :src="imageDomain+form.cardBackImage" :onerror="errorImg">
+              <img :src="failImg" v-else >
             </dd>
           </dl>
         </div>
@@ -103,7 +103,6 @@
     <el-dialog :title="imgTitle" :visible.sync="dialogVisible" width="60%" center>
       <div class="wrap">
         <img :src="imageDomain+ imgSrc" alt="" />
-        <!--<img src="../../../assets/404_images/fail.png" />-->
       </div>
     </el-dialog>
   </div>
@@ -114,6 +113,8 @@
     import { uploadImage  } from "@/api/activity"
     import { infoUpload , getInfo } from "@/api/userCenter"
     import { validateEmail,validateIDCard,validName } from '@/utils/validate'
+    import userPhoto from '@/assets/404_images/fail.png'
+
     export default {
       name: "info-upload",
       data(){
@@ -206,7 +207,8 @@
             status: '',
             loading : true ,
             limitImg : false,
-
+            errorImg:'this.src="' + userPhoto + '"',
+            failImg: userPhoto,
       }
       },
       mounted(){

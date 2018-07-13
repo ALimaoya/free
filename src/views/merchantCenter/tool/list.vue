@@ -15,7 +15,7 @@
         <el-table-column prop="orderId" label="序号"></el-table-column>
         <el-table-column label="图片">
           <template slot-scope="scope">
-            <img :src="scope.row.imgUrl" alt="" @click="showImg( scope.row.imgUrl )" />
+            <img :src="scope.row.imgUrl"  @click="showImg( scope.row.imgUrl )" />
           </template>
         </el-table-column>
         <el-table-column prop="title" label="宝贝标题" ></el-table-column>
@@ -30,7 +30,7 @@
         </el-table-column>
       </el-table>
       <div v-if="mask" @click="close" class="mask">
-        <img :src=" imageDomain + bigImg" alt="" />
+        <img :src=" imageDomain + bigImg"  />
       </div>
       <el-dialog :title="'批量修改商品'+ title " :visible.sync="dialogVisible" width="50%" center>
         <!--<el-table  :data="subTableData"  border fit ref="changeData">-->
@@ -256,11 +256,12 @@
           //选择所有数据
           allData(val){
             this.subTableData = val ;
-            // console.log(val)
+
+            console.log(val,1)
           },
           //批量选择
           handleCurrentChange(row){
-            // console.log(row);
+            console.log(row,2);
             this.subTableData = row ;
 
           },

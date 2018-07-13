@@ -13,14 +13,14 @@
                     <el-radio label="1">支付宝</el-radio>
                   </dt>
                   <dd>
-                    <img src="../../../assets/imgs/pay3.png" alt="" />
+                    <img src="../../../assets/imgs/pay3.png"  />
                   </dd>
                 </dl>
                 <!-- <dl>
                 <dt>
                   <el-radio label="2">微信</el-radio>
                 </dt>
-                <dd><img src="../../../assets/imgs/pay2.png" alt="" /></dd>
+                <dd><img src="../../../assets/imgs/pay2.png"  /></dd>
               </dl> -->
               </el-radio-group>
             </el-form-item>

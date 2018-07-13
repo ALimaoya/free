@@ -24,6 +24,7 @@
    width : 8% ;
  }
 
+
  .el-button{
    //padding : 0 ;
    text-align : center ;
@@ -103,6 +104,9 @@
  //.el-table td{
  //  padding : 0.08rem  0;
  //}
+ .el-dialog__wrapper{
+   z-index: 20000!important;
+ }
  .el-table__row{
    td{
      padding : 0.05rem  0;
@@ -141,7 +145,6 @@
 
  .el-form-item__label{
    padding-right : 0.3rem!important; ;
-
  }
  .el-checkbox-button .el-checkbox-button__inner {
    border: 1px solid #dcdfe6;
@@ -158,4 +161,7 @@
  }
  .el-message{
    z-index: 25000 !important;
+ }
+ .el-select-dropdown{
+   z-index: 20000!important;
  }

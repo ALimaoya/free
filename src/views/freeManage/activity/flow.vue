@@ -12,7 +12,8 @@
       </el-table-column>
       <el-table-column prop="mainImageUrl" label="活动图片" >
         <template slot-scope="scope">
-          <img v-if="scope.row.mainImageUrl" class="showImg" @click="showImg(scope.row.mainImageUrl)" :src="imageDomain + scope.row.mainImageUrl" alt="" />
+          <img v-if="scope.row.mainImageUrl" class="showImg" @click="showImg(scope.row.mainImageUrl)" :src="imageDomain + scope.row.mainImageUrl" :onerror="errorImg"/>
+          <img :src="failImg" v-else />
         </template>
       </el-table-column>
       <el-table-column prop="date" label="任务时间" >
@@ -106,7 +107,7 @@
       </div>
     </el-dialog>
     <div v-if="mask" @click="close" class="mask">
-      <img :src=" imageDomain + bigImg" alt="" />
+      <img :src=" imageDomain + bigImg"  />
     </div>
   </div>
 </template>
@@ -115,6 +116,7 @@
   import { searchTypeList, getActivity ,getDetail , changeStatus , applyPay ,cancelPay , cancelActivity,updateKeyword } from '@/api/activity'
   import SearchBar from "@/components/searchBar"
   import { parseTime } from "@/utils"
+  import userPhoto from '@/assets/404_images/fail.png'
 
   export default {
       name: "flow",
@@ -160,7 +162,7 @@
               //   name : '拼多多'
               // }
             ],
-            totalPages : '',
+            totalPages : 0,
             totalElements : 0,
             currentPage : 1,
             pageSize : 10,
@@ -209,6 +211,8 @@
               }
             ],
             loading: true ,
+            errorImg:'this.src="' + userPhoto + '"',
+            failImg: userPhoto,
           }
       },
       mounted(){

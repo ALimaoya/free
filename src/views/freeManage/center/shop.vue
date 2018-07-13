@@ -147,7 +147,7 @@
             reasonWord : '',
             currentPage : 1,
             pageSize : 10 ,
-            totalPages : '',
+            totalPages : 0,
             totalElements: 0 ,
             loading: true,
           }
@@ -248,8 +248,9 @@
       }
     }
     .list{
+      width: 95%!important ;
       border : 1px solid #aaa ;
-      margin-top : 0.4rem ;
+      margin : 0.4rem auto;
       border-radius : 0.05rem ;
       .el-button{
         margin : 0 0.05rem ;

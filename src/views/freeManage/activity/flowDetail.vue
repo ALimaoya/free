@@ -45,12 +45,12 @@
         <el-table-column prop="orderDate" label="订单创建时间" ></el-table-column>
         <el-table-column prop="search" label="搜索截图">
           <template slot-scope="scope">
-            <img class="mainPic" @click="showImg( scope.row.mainImageUrl)" :src=" imageDomain + scope.row.mainImageUrl " alt="" />
+            <img class="mainPic" @click="showImg( scope.row.mainImageUrl)" :src=" imageDomain + scope.row.mainImageUrl "  />
           </template>
         </el-table-column>
         <el-table-column prop="" label="收藏截图">
           <template slot-scope="scope">
-            <img class="mainPic" @click="showImg( scope.row.likeImageUrl)" :src=" imageDomain + scope.row.likeImageUrl " alt="" />
+            <img class="mainPic" @click="showImg( scope.row.likeImageUrl)" :src=" imageDomain + scope.row.likeImageUrl " />
           </template>
         </el-table-column>
         <el-table-column prop="status" label="任务状态">
@@ -86,7 +86,7 @@
     </div>
 
     <div v-if="mask" @click="close" class="mask">
-      <img :src=" imageDomain + bigImg" alt="" />
+      <img :src=" imageDomain + bigImg"  />
     </div>
   </div>
 </template>
@@ -165,7 +165,7 @@
           tableData : [],
           currentPage : 1 ,
           pageSize : 10 ,
-          totalPages : '',
+          totalPages : 0,
           totalElements : 0 ,
           token : getToken(),
           imgUrl: process.env.BASE_API+'/file/upload',   // 上传图片的域名

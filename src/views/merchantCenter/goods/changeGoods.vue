@@ -65,7 +65,7 @@
       </div>
 
       <el-form-item   labelWidth="130px"  label="价格" prop="price">
-        <el-input class="inputInfo" :maxlength="15" size="small" v-model.trim="form.price" placeholder="价格"></el-input>
+        <el-input class="inputInfo" :maxlength="15" size="small" type="number" v-model.number="form.price" placeholder="价格"></el-input>
       </el-form-item>
       <el-form-item   labelWidth="130px"  label="运费" prop="carriage">
         <el-input class="inputInfo" :maxlength="2" size="small" v-model.trim="form.carriage" placeholder="运费"></el-input>
@@ -85,11 +85,10 @@
       <el-form-item   labelWidth="130px"  label="描述" prop="describes">
         <!--<wangeditor >-->
           <div id="wangeditor"   >
-            <div ref="editorElem" style="text-align:left" v-html="word"></div>
+            <div  style="text-align:left" v-html="word"></div>
           </div>
         <!--</wangeditor>-->
 
-        <!--<editor :id="tinymceId" v-model="form.describes" :init="init"></editor>-->
       </el-form-item>
       <el-form-item>
         <el-button class="inputInfo button" type="primary" size="small" @click="changeForm('form')">修改</el-button>
@@ -112,17 +111,12 @@
   import { uploadImage  } from "@/api/activity"
   import { newGoogds,getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo} from "@/api/merchant"
   import { getToken,getMobile } from '@/utils/auth'
-  // import wangeditor from '@/components/wangeditor'
+  import { getQueryString,checkFloat } from "@/utils/validate"
   import E from 'wangeditor'
 
   export default {
-    components: {
 
-      // wangeditor
-    },
     name: "change-goods",
-    // props:['getData'],    //接收父组件的方法
-
     data() {
 
       const validGoodsName = (rule,value,callback) => {
@@ -146,8 +140,12 @@
         if(value === ''){
           callback(new Error('请输入商品价格'))
         }else{
-          if(!(/^[1-9][0-9]{0,8}$/).test(value)){
-            callback(new Error('商品价格应大于0且不超过9位数，请重新输入'))
+          if(value< 0 ){
+            callback(new Error('商品价格应大于0，请重新输入'))
+          }
+          if( !checkFloat(value)){
+            callback(new Error('商品价格最多可有两位小数，请重新输入'))
+
           }
           callback();
 
@@ -241,7 +239,7 @@
         // currentRow : null,
         hasShop : false ,
         readOnly : false ,
-        totalPages : '',
+        totalPages : 0,
         totalElements : 0,
         currentPage : 1,
         pageSize : 10,
@@ -533,6 +531,7 @@
         ]
         editor.customConfig.uploadImgHooks = {
           before: function (xhr, editor, files) {
+
           },
           success: function (xhr, editor, result) {
 

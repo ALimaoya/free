@@ -45,7 +45,9 @@
           <el-table-column prop="activityTitle" label="商品名称"></el-table-column>
           <el-table-column prop="" label="宝贝主图">
             <template slot-scope="scope">
-              <img class="mainPic" @click="showImg( scope.row.mainImageUrl)" :src=" imageDomain + scope.row.mainImageUrl " alt="" />
+              <img class="mainPic" v-if="scope.row.mainImageUrl!==''" @click="showImg( scope.row.mainImageUrl)" :src=" imageDomain + scope.row.mainImageUrl " :onerror="errorImg"/>
+              <img :src="failImg"  v-else>
+
             </template>
           </el-table-column>
 
@@ -86,7 +88,7 @@
     </div>
 
     <div v-if="mask" @click="close" class="mask">
-      <img :src=" imageDomain + bigImg" alt="" />
+      <img :src=" imageDomain + bigImg"  />
     </div>
   </div>
 </template>
@@ -95,7 +97,8 @@
   import ElButton from "element-ui/packages/button/src/button";
   import { getOrderList ,changeStatus } from "@/api/activity";
   import searchBar from "@/components/searchBar"
-  // import ElDialog from "element-ui/packages/dialog/src/component";
+  import userPhoto from '@/assets/404_images/fail.png'
+
 
   export default {
     name: "activity-order" ,
@@ -200,7 +203,7 @@
         tableData : [],
         currentPage : 1 ,
         pageSize : 10 ,
-        totalPages : '',
+        totalPages : 0,
         totalElements : 0 ,
         complaintOrder : '',
         complainBox : false ,
@@ -208,7 +211,8 @@
         mask : false ,
         bigImg : '',
         loading : true ,
-
+        errorImg:'this.src="' + userPhoto + '"',
+        failImg: userPhoto,
       }
     },
     mounted(){

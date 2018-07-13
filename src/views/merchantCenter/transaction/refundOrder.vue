@@ -150,7 +150,7 @@ export default {
 <style scoped lang="scss" rel="stylesheet/scss">
 .el-form {
   margin: 0.5rem auto;
-  width: 70%;
+  width: 85%;
   .el-form-item {
     div{
       color: #666;

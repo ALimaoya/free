@@ -24,7 +24,7 @@
       <el-form-item class="imgWrap" prop="logoImage" v-if="!readOnly" label="店铺LOGO">
             <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logoImage"
                         :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeImgUpload">
-              <img v-if="form.logoImage" :src="imageDomain + form.logoImage" class="avatar">
+              <img v-if="form.logoImage" :src="imageDomain + form.logoImage" class="avatar" >
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
             <span class="imgWarn tips_warn" v-if="goodsImgWarn">请上传店铺LOGO</span>
@@ -34,8 +34,8 @@
        <dl @click="dialogVisible = true;" v-else-if="readOnly" >
           <dt>店铺LOGO</dt>
           <dd>
-            <img v-if="form.logoImage !== undefined" :src="imageDomain +form.logoImage" alt="" />
-            <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
+            <img v-if="form.logoImage !== undefined" :src="imageDomain +form.logoImage" :onerror="errorImg"  />
+            <img  :src="failImg"   v-else/>
           </dd>
         </dl>
       <div class="tips_warn refuse" v-if="form.status==='3'">审核未通过原因：{{ form.reason }}</div>
@@ -47,7 +47,7 @@
 
     <el-dialog title="店铺LOGO" :visible.sync="dialogVisible" width="60%" center>
       <div class="wrap">
-        <img :src="imageDomain + form.logoImage" alt="" />
+        <img :src="imageDomain + form.logoImage"  />
         <!--<img src="../../../assets/404_images/fail.png" />-->
       </div>
     </el-dialog>
@@ -59,7 +59,9 @@
   import {  getToken } from '@/utils/auth'
   import { uploadImage  } from "@/api/activity"
   import { shopInfo, getShop, changeShop } from "@/api/userCenter"
-    export default {
+  import userPhoto from '@/assets/404_images/fail.png'
+
+  export default {
       name: "step4",
       props : ['step4Status'],
       data(){
@@ -120,7 +122,8 @@
           status: '0',
           handleType: '提交',
           loading: true ,
-
+          errorImg:'this.src="' + userPhoto + '"',
+          failImg: userPhoto,
         }
       },
       mounted(){

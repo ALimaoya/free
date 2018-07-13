@@ -27,7 +27,7 @@
       </el-form-item>
     </el-form>
     <el-dialog title="提示" :visible.sync="isRegister" width="60%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
-        <!--<img :src="ImgSrc" alt="" />-->
+
         <p class="tips">您还未上传资质信息，请先前往上传资质信息</p>
       <div slot="footer">
         <el-button plain @click="goUpload">前往资质上传</el-button>

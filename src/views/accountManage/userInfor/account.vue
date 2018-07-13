@@ -35,11 +35,11 @@
       </el-form>
     </div>
     <div v-if="!userInfo&&!accountBox" class="accountImg">
-      <img src="../../../assets/imgs/u860.png" alt="" />
+      <img src="../../../assets/imgs/u860.png"  />
     </div>
     <div v-if="userInfo&&!accountBox" class="payInfo detail">
       <div>
-        <img src="../../../assets/imgs/apily.png" alt="">
+        <img src="../../../assets/imgs/apily.png" >
       </div>
       <div class="mt20">
         <span class="f17 ">支付宝姓名：</span> {{ apilyInfo.thirdName}}

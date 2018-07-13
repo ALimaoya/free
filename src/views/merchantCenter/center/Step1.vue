@@ -20,7 +20,7 @@
             <span class="imeTitle">营业执照</span>
             <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.businessImage"
                         :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeBusinessUpload">
-              <img v-if="form.businessImage" :src="imageDomain + form.businessImage" class="avatar">
+              <img v-if="form.businessImage" :src="imageDomain + form.businessImage" class="avatar" >
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
             <span class="imgWarn tips_warn" v-if="businessImageWarn">请上传营业执照</span>
@@ -60,29 +60,29 @@
           <dl @click="bigImg(0,form.businessImage)"  >
             <dt>{{ imgType[0] }}</dt>
             <dd>
-              <img v-if="form.businessImage !== ''" :src="imageDomain + form.businessImage" alt="" />
-              <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
+              <img v-if="form.businessImage !== ''" :src="imageDomain + form.businessImage" :onerror="errorImg"  />
+              <img  :src="failImg"   v-else/>
             </dd>
           </dl>
           <dl @click="bigImg(1,form.authorizeImage)"  >
             <dt>{{ imgType[1] }}</dt>
             <dd>
-              <img v-if="form.authorizeImage !== ''" :src="imageDomain + form.authorizeImage" alt="" />
-              <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
+              <img v-if="form.authorizeImage !== ''" :src="imageDomain + form.authorizeImage"  :onerror="errorImg"/>
+              <img  :src="failImg"  v-else/>
             </dd>
           </dl>
           <dl @click="bigImg(2,form.cardFaceImage)"  >
             <dt>{{ imgType[2] }}</dt>
             <dd>
-              <img v-if="form.cardFaceImage !== ''" :src="imageDomain + form.cardFaceImage" alt="" />
-              <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
+              <img v-if="form.cardFaceImage !== ''" :src="imageDomain + form.cardFaceImage"  :onerror="errorImg"/>
+              <img  :src="failImg"  v-else/>
             </dd>
           </dl>
           <dl @click="bigImg(3,form.cardBackImage)"  >
             <dt>{{ imgType[3] }}</dt>
             <dd>
-              <img v-if="form.cardBackImage !== ''" :src="imageDomain + form.cardBackImage" alt="" />
-              <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
+              <img v-if="form.cardBackImage !== ''" :src="imageDomain + form.cardBackImage"  :onerror="errorImg"/>
+              <img  :src="failImg"  v-else/>
             </dd>
           </dl>
         </div>
@@ -98,7 +98,7 @@
 
     <el-dialog :title="imgTitle" :visible.sync="dialogVisible" width="60%" center>
       <div class="wrap">
-        <img :src=" imageDomain + imgSrc" alt="" />
+        <img :src=" imageDomain + imgSrc"  />
       </div>
     </el-dialog>
   </div>
@@ -111,7 +111,7 @@
     import { infoUpload , getInfo } from "@/api/userCenter"
     import { validateEmail,validateIDCard,validName } from '@/utils/validate'
     import ElFormItem from "element-ui/packages/form/src/form-item";
-
+    import userPhoto from '@/assets/404_images/fail.png'
     export default {
 
       components: {ElFormItem},
@@ -204,6 +204,8 @@
             imgSrc:'',
             status: '',
             loading: true ,
+            errorImg:'this.src="' + userPhoto + '"',
+            failImg: userPhoto,
           }
       },
       mounted(){
@@ -435,7 +437,14 @@
     flex-direction: row;
     flex-wrap: nowrap;
     width: 80%!important;
+    dd{
+      height: 2.5rem;
+      img{
+        max-width : 100% ;
+        max-height: 100%;
 
+      }
+    }
   }
   .imgItem, .imgItem .imgWrap{
     width: 100%!important;

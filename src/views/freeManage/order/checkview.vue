@@ -57,7 +57,8 @@
       <dl v-if="viewImg">
         <dt>评价截图</dt>
         <dd >
-          <img @click="getImg(viewImg)" :src=" imageDomain + viewImg" alt="" />
+          <img v-if="viewImg!==''" @click="getImg(viewImg)" :src=" imageDomain + viewImg"  :onerror="errorImg"/>
+          <img :src="failImg"  v-else>
         </dd>
       </dl>
       <dl v-else class="noViewPic">暂无评价截图</dl>
@@ -85,6 +86,7 @@
 <script>
   import { getOrderList , orderDetail , checkOrder  } from "@/api/activity"
   import SearchBar from "@/components/searchBar"
+  import userPhoto from '@/assets/404_images/fail.png'
 
   export default {
     name: "checkview" ,
@@ -127,7 +129,7 @@
         tableData : [],
         currentPage : 1 ,
         pageSize : 10 ,
-        totalPages : '',
+        totalPages : 0,
         totalElements : 0 ,
         viewImg : '' ,
         detailInfo : false ,
@@ -140,8 +142,9 @@
         status : '' ,
         reasonBox : false,
         loading : true ,
-
-
+        errorImg:'this.src="' + userPhoto + '"',
+        failImg: userPhoto,
+        bigImg: '',
       }
     },
     mounted(){

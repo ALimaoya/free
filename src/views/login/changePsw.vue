@@ -13,7 +13,7 @@
             <svg-icon icon-class="verify" />
           </span>
           <el-input type="text" v-model="RegForm.imgNum" autoComplete="on" placeholder="请输入图形验证码" />
-          <img class="show-captcha" :src="'data:image/png;base64,'+imgCode" alt="" @click="changeCaptcha" />
+          <img class="show-captcha" :src="'data:image/png;base64,'+imgCode" @click="changeCaptcha" />
         </el-form-item>
         <el-form-item prop="message" class="validateCode">
           <span class="svg-container">

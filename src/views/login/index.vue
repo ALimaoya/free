@@ -22,10 +22,10 @@
       </el-form-item>
       <el-form-item prop="captcha" v-if="examine">
         <span class="svg-container">
-          <img src="../../assets/imgs/verify2.png" alt="" />
+          <img src="../../assets/imgs/verify2.png"  />
         </span>
         <el-input style="width : 150px;"  v-model="loginForm.captcha" @keyup.enter.native="handleLogin('loginForm')" autoComplete="on" placeholder="请输入验证码"></el-input>
-        <img class="show-captcha" :src="'data:image/png;base64,'+ imgCode" alt="" @click="changeCaptcha" />
+        <img class="show-captcha" :src="'data:image/png;base64,'+ imgCode"  @click="changeCaptcha" />
 
       </el-form-item>
       <el-form-item class="remember">

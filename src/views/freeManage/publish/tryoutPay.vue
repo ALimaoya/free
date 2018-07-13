@@ -1,6 +1,6 @@
 <template>
   <div class="tryoutPay pay">
-    <div class="stepImg"><img src="../../../assets/imgs/u258.png" alt="" /></div>
+    <div class="stepImg"><img src="../../../assets/imgs/u258.png"  /></div>
     <p class="tips">您现在为《<span>&nbsp;{{ activity.activityTitle }}&nbsp;</span>》试用活动存入试用活动款（合计总费用）：<span class="money_color">{{ activity.activityTotalAmount }}</span>元</p>
     <div class="note">费用说明：</div>
     <table border="1" bordercolor="#d3d3dd">
@@ -82,14 +82,16 @@
             if( reg.test(password)){
 
               activityPay({ activityId : id+'' ,payPassword : password }).then( res => {
-                
-                for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
+
+                if(res.data.status=== '000000000'){
+                  for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
                     if (v.path === this.$route.path) {
                       this.$store.state.tagsView.visitedViews.splice(i, 1);
                       this.$router.push('/freeManage/publish/step3');
 
                     }
                   }
+                }
 
               })
             }else{

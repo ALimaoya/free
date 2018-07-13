@@ -19,8 +19,8 @@
         <!--<dl  @click="dialogVisible = true;"  >-->
           <!--<dt>店铺LOGO</dt>-->
           <!--<dd>-->
-            <img v-if="form.logoImage !== ''" :src="imageDomain+ form.logoImage" alt="" />
-            <img  src="../../../assets/404_images/fail.png"  alt="" v-else/>
+        <img v-if="form.logoImage !== ''" :src="imageDomain+ form.logoImage" :onerror="errorImg" />
+        <img  :src="failImg" v-else>
           <!--</dd>-->
         <!--</dl>-->
       </el-form-item>
@@ -69,6 +69,7 @@
   import {  getToken } from '@/utils/auth'
   import { uploadImage  } from "@/api/activity"
   import { shopInfo, getShop,getInfo, changeShop } from "@/api/userCenter"
+  import userPhoto from '@/assets/404_images/fail.png'
 
   export default {
         name: "open-shop",
@@ -131,7 +132,9 @@
           handleType: '提交',
           infoStatus: '0',
           infoTip: false ,
-          loading: true
+          loading: true,
+          errorImg:'this.src="' + userPhoto + '"',
+          failImg: userPhoto,
         }
       },
       mounted(){

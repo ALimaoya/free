@@ -18,7 +18,8 @@
         <li class="mainImg" >
           <span style="width:18.9%;float : left ;">宝贝主图:</span><span v-if="!detailInfo.mainImageUrl">暂无详情</span>
           <div v-else>
-            <img @click="getImg(detailInfo.mainImageUrl)" :src="imageDomain + detailInfo.mainImageUrl" alt="" />
+            <img v-if="detailInfo.mainImageUrl!==''" @click="getImg(detailInfo.mainImageUrl)" :src="imageDomain + detailInfo.mainImageUrl"  :onerror="errorImg"/>
+            <img :src="failImg"  v-else>
           </div>
         </li>
         <li class="faileReason"><span>用户上传图片详情：</span><span v-if="detailInfo.orderImageList == 0" class="noImg">暂无图片</span></li>
@@ -27,7 +28,8 @@
             <dl v-for="item in detailInfo.orderImageList">
               <dt>{{ imgType[item.type-1] }}</dt>
               <dd>
-                <img @click="getImg(item.imageUrl)" :src="imageDomain + item.imageUrl" alt="" />
+                <img v-if="item.imageUrl !== ''" @click="getImg(item.imageUrl)" :src="imageDomain + item.imageUrl" :onerror="errorImg"/>
+                <img :src="failImg"  v-else>
               </dd>
             </dl>
           </div>
@@ -36,14 +38,16 @@
       </ul>
     </div>
     <div v-if="showImg" @click="close" class="mask">
-      <img :src=" imageDomain + bigImg" alt="" />
+      <img :src=" imageDomain + bigImg" />
     </div>
   </div>
 </template>
 
 <script>
   import { orderDetail } from '@/api/activity'
-    export default {
+  import userPhoto from '@/assets/404_images/fail.png'
+
+  export default {
         name: "tryoutDetail" ,
       data(){
           return  {
@@ -55,8 +59,9 @@
             bigImg : '' ,
             imageDomain : process.env.IMAGE_DOMAIN ,
             loading : true ,
+            errorImg:'this.src="' + userPhoto + '"',
+            failImg: userPhoto,
 
-            // imageDomain : 'http://yabei.oss-cn-beijing.aliyuncs.com/'
           }
       },
       mounted(){

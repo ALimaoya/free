@@ -18,7 +18,8 @@
             <dl v-for="item in detailInfo.orderImageList">
               <dt>{{ imgType[item.type-1] }}</dt>
               <dd>
-                <img @click="getImg(item.imageUrl)" :src="imageDomain + item.imageUrl" alt="" />
+                <img v-if="item.imageUrl!==''" @click="getImg(item.imageUrl)" :src="imageDomain + item.imageUrl"  :onerror="errorImg"/>
+                <img :src="failImg"  v-else>
               </dd>
             </dl>
           </div>
@@ -27,14 +28,16 @@
       </ul>
     </div>
     <div v-if="showImg" @click="close" class="mask">
-      <img :src=" imageDomain + bigImg" alt="" />
+      <img :src=" imageDomain + bigImg" />
     </div>
   </div>
 </template>
 
 <script>
   import { orderDetail } from '@/api/activity'
-    export default {
+  import userPhoto from '@/assets/404_images/fail.png'
+
+  export default {
         name: "detail" ,
       data(){
           return  {
@@ -45,8 +48,9 @@
             bigImg : '' ,
             imageDomain : process.env.IMAGE_DOMAIN ,
             loading : true ,
+            errorImg:'this.src="' + userPhoto + '"',
+            failImg: userPhoto,
 
-            // imageDomain : 'http://yabei.oss-cn-beijing.aliyuncs.com/'
           }
       },
       mounted(){

@@ -76,7 +76,7 @@
           </div>
           <div class="wechat">
             <img src="../../assets/imgs/index/weixin.png" />
-            <img src="../../assets/imgs/index/wechat.png" alt=""  class="code"/>
+            <img src="../../assets/imgs/index/wechat.png"   class="code"/>
           </div>
         </div>
       </div>

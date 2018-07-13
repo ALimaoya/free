@@ -51,7 +51,8 @@ export function activityPay(data){
     data : data ,
     headers : {
       'Content-Type' : 'application/json'
-    }
+    },
+    needFailResponse: true
   })
 }
 

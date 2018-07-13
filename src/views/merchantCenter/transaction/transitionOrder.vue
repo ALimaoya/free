@@ -29,10 +29,11 @@
             <tr class="tbColor">
               <td><el-button plain size="mini" disabled="disabled" v-if="form.deliverOrder.status!==null" :type="statusList[form.deliverOrder.status*1].type">{{ statusList[form.deliverOrder.status*1].name }}</el-button></td>
               <td>{{form.deliverOrder.createTime}}</td>
-              <td v-if="form.deliverOrder.status!==''||form.deliverOrder.status!=='9'">支付宝</td>
+              <td v-if="form.deliverOrder.status!='0'">支付宝</td>
+              <td v-else></td>
               <td v-if="form.deliverOrder.payTime!==null">{{form.deliverOrder.payTime}}</td>
               <td v-else></td>
-              </tr>
+            </tr>
           </table>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="发货：" v-if="form.deliverOrder.status !== '0'">
@@ -222,7 +223,7 @@
 <style scoped lang="scss" rel="stylesheet/scss">
   .el-form{
     margin :0.5rem auto ;
-    width : 70% ;
+    width : 85% ;
     .el-form-item{
       .backBtn{
         margin-left : 1.8rem  ;
