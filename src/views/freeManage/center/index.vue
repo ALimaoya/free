@@ -18,7 +18,7 @@
         <li>
           <div class="title">
             <span>您的专属运营顾问：</span>
-            <img :src=" imageDomain + attendant.avator" />
+            <img fv-if="attendant.avator!==null" :src=" imageDomain + attendant.avator" />
 
 
           </div>

@@ -156,7 +156,7 @@ export function countTime(now) {
     return h+ ':'+ m + ':'+ s
 
   }else{
-    return false ;
+    return '--:--:--' ;
   }
   //将倒计时赋值到div中
   // document.getElementById("_d").innerHTML = d+"天";
