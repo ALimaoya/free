@@ -27,7 +27,8 @@
             <el-popover trigger="hover" placement="right"  >
               <p>距该修改生效还需时间：</p>
               <p class="tips_warn"> {{ date[scope.$index] }}</p>
-              <p v-if="scope.row.usingBrate!== null">原比率：{{ scope.row.usingBrate}}</p>
+              <p v-if="scope.row.usingBrate!== null">原比率：{{ scope.row.usingBrate}}%</p>
+              <p v-else>原比率：0%</p>
               <div slot="reference" class="name-wrapper">
                 <svg-icon slot="reference" class="icon isHide" icon-class="alarm" :class="{isEdited:scope.row.status === '0'&&(show[scope.$index*1] === '' || show[scope.$index*1] === undefined)}"></svg-icon>
               </div>
@@ -88,7 +89,7 @@
           </el-table-column>
           <el-table-column label="设置佣金比率(%)" prop="brokerageRate">
             <template slot-scope="scope">
-              <el-input placeholder="1.5%(默认)"  v-model.trim="scope.row.brokerageRate" size="mini" @change="validPercent(scope.row.brokerageRate)"></el-input>
+              <el-input placeholder="1.5%(默认)" type="number" v-model.number="scope.row.brokerageRate"  size="mini" @change="setPercent(scope.$index,scope.row.brokerageRate)"></el-input>
             </template>
           </el-table-column>
         </el-table>
@@ -131,6 +132,7 @@
     import SvgIcon from "../../../components/SvgIcon/index";
     import { getSpreadList, addSpread, hasSpreadGoods, editorR, deleteGoods,batchDelete } from "@/api/merchant"
     import { parseTime,countTime } from "@/utils"
+    import { checkFloat } from "@/utils/validate"
     import userPhoto from '@/assets/404_images/fail.png'
 
     // import { validPercent } from "@/utils/validate"
@@ -171,7 +173,7 @@
               show:[],
               currentRatio: '',
               oldRatio: [],
-              range: '1.5%-70%',
+              range: '1.5~70',
               hour: '12',
               editDialog: false ,
               currentIndex: '',
@@ -232,6 +234,7 @@
           //获取商品列表
           getGoods(){
             this.dialogVisible= true ;
+            this.goodsList = [];
             let formData = new FormData();
             formData.append('currentPage',this.subCurrentPage);
             formData.append('pageSize',this.subPageSize);
@@ -246,32 +249,10 @@
               this.subTotalElements = res.data.totalElements
               this.goodsList.map( i=> {
                 i.brokerageRate = '';
-              })
+              });
+
             })
-            //   this.goodsList = [{
-            //   ratio: '2%',
-            //     productName: '王小虎',
-            //   price: '123',
-            //   code: '上海市普陀区金沙江路 1518 弄'
-            // },
-            //     {
-            //   ratio: '4%',
-            //     productName: '王小虎',
-            //   price: '654',
-            //   code: '上海市普陀区金沙江路 1517 弄'
-            // },
-            //     {
-            //   ratio: '1%',
-            //     productName: '王小虎',
-            //   price: '1423',
-            //   code: '上海市普陀区金沙江路 1519 弄'
-            // },
-            //     {
-            //   ratio: '3%',
-            //     productName: '王小虎',
-            //   price: '223',
-            //   code: '上海市普陀区金沙江路 1516 弄'
-            // }];
+
           },
           //选择所有数据
           allData(val){
@@ -292,10 +273,23 @@
               this.goodsList.map( i=> {
                 i.brokerageRate = '';
               });
+
               if(this.chooseList.length>0){
                 if(!this.validPercent(this.commonRatio)){
-                  this.commonRatio = '';
-                  return false ;
+                  if(this.commonRatio < 1.5){
+                    this.commonRatio = 1.5;
+                  }else if(this.commonRatio > 70){
+                    this.commonRatio = 70;
+
+
+                  }else if(this.commonRatio+''.indexOf('.')!==-1){
+                    this.commonRatio = Math.round(this.commonRatio*100)/100;
+
+                  }else{
+                    this.commonRatio = '';
+
+                  }
+                  // return false ;
 
                 }
 
@@ -304,7 +298,7 @@
                   i.brokerageRate = this.commonRatio ;
                 });
                 this.$refs.multipleTable.tableData.map( (i,index) =>{
-                  this.$set(this.goodsList,index ,i)
+                  this.$set(this.goodsList,index ,i);
 
                 } )
 
@@ -312,6 +306,34 @@
 
             }
 
+
+          },
+          //新增商品单个设置比率
+          setPercent(index,ratio){
+            // let num = i;
+            let arr = this.goodsList;
+            if(!this.validPercent(ratio)){
+              if(ratio < 1.5){
+                this.$set(this.goodsList[index],'brokerageRate' ,1.5);
+              }else if(ratio > 70){
+                this.$set(this.goodsList[index],'brokerageRate' ,70);
+
+              }else if(ratio+''.indexOf('.')!==-1){
+                  ratio = Math.round(ratio*100)/100;
+                  this.$set(this.goodsList[index],'brokerageRate' ,ratio);
+
+              }else{
+                this.$set(this.goodsList[index],'brokerageRate' ,'');
+
+              }
+              this.$refs.multipleTable.tableData.map( (i,index) =>{
+
+                this.$set(this.goodsList,index ,i);
+
+              } )
+
+
+            };
 
           },
           //确认新增
@@ -376,23 +398,26 @@
           //批量删除
           deleteChoose(){
             let arr = [];
-            this.deleteList.map( i => {
-              arr.push( { id: i.id ,productId: i.productId ,brokerageRate: 0 })
-            });
-            this.loading = true ;
-            batchDelete(arr).then( res => {
-              this.loading = false ;
-              if(res.data.status === '000000000'){
-                this.$message({
-                  message: '批量删除成功，请稍后确认',
-                  center: true ,
-                  type: 'success'
-                });
-                this.getList();
+            if(this.deleteList.length> 0){
+              this.deleteList.map( i => {
+                arr.push( { id: i.id ,productId: i.productId ,brokerageRate: 0 })
+              });
+              this.loading = true ;
+              batchDelete(arr).then( res => {
+                this.loading = false ;
+                if(res.data.status === '000000000'){
+                  this.$message({
+                    message: '批量删除成功，请稍后确认',
+                    center: true ,
+                    type: 'success'
+                  });
+                  this.getList();
 
-              }
+                }
 
-            })
+              })
+            }
+
             // console.log(this.deleteList);
 
           },
@@ -463,11 +488,12 @@
 
           validPercent(value){
               // let num = value.split('%')[0];
-              if (value < 1.5 || value > 70) {
+              if (value < 1.5 || value > 70||!checkFloat(value)) {
                 this.$message({
-                  message: '请输入' + this.range + '之间的百分数',
+                  message: '请输入' + this.range + '之间的数字',
                   center: true,
-                  type: 'error'
+                  type: 'error',
+                  duration: 1500
                 });
                 return false ;
 
@@ -552,6 +578,8 @@
   .chooseTable{
     .el-input{
       width : 40%;
+      border: 1px solid #777!important;
+      border-radius: 4px;
     }
   }
   .setting{

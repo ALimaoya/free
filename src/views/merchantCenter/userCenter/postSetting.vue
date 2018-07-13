@@ -8,11 +8,11 @@
         <li v-for="(item ,index) in carriageForm.regulation" :key="index">
           <el-form-item :prop="'regulation.' + index + '.reachQuantity'"
                           :rules="rule.reachQuantity">
-              满<el-input class="inputInfo" size="small" :maxlength="11" type="number" v-model="item.reachQuantity"></el-input>件
+              满<el-input class="inputInfo" size="small" :maxLength="11" type="number" v-model.number="item.reachQuantity"></el-input>件
           </el-form-item>
           <el-form-item :prop="'regulation.' + index + '.carriageAmount'"
                           :rules="rule.carriageAmount">
-              运费<el-input class="inputInfo" size="small" :maxlength="2" type="number" v-model="item.carriageAmount"></el-input>元
+              运费<el-input class="inputInfo" size="small" :maxlength="2"  type="tel" v-model.trim="item.carriageAmount"></el-input>元
           </el-form-item>
 
           <el-form-item class="btnWrap">
@@ -48,8 +48,8 @@
           if(value === ''){
             callback(new Error('请输入运送货物的件数'))
           }else{
-            let reg = /^\+?[1-9]\d*$/
-            if (!reg.test(value)) {
+            let reg = /^[0-9]{1,11}$/
+            if (!reg.test(value)|| value == 0) {
               callback(new Error('货物件数只能为大于0的整数'))
             }
             callback();
@@ -59,8 +59,8 @@
           if(value === ''){
             callback(new Error('请输入运费'))
           }else{
-            if (!/^\+?[1-9]\d*$/.test(value)) {
-              callback(new Error('运费应为大于0的整数'))
+            if (value <= 0) {
+              callback(new Error('运费应为大于0且小于100的整数'))
             }
             callback();
           }
@@ -204,7 +204,7 @@
   /*.top{*/
     /*border-bottom*/
     h1{
-      height : 50px ;
+      height : 0.8rem;
       .el-button{
         float : right ;
 

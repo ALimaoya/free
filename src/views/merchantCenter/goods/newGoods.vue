@@ -1,5 +1,5 @@
 <template>
-    <div class="newGoods new">
+    <div class="newGoods new goods">
       <h1>新增商品</h1>
       <el-form :model="form" ref="form" :rules="formRule" label-position="right">
         <h2>商品表单</h2>
@@ -17,7 +17,7 @@
           <div class="showBrand" @click="searchBrand()"><svg-icon icon-class="brand"></svg-icon><span>品牌速查</span></div>
         </el-form-item>
         <el-form-item  labelWidth="130px" label="一级分类" prop="firstType">
-          <el-select  size="small" :disabled="readOnly" clearable v-model="form.firstType" @change="getSecondList(form.firstType)" filterable placeholder="请选择一级分类">
+          <el-select  size="small" :disabled="readOnly" clearable v-model="form.firstType"  @change="getFirstList()" filterable placeholder="请选择一级分类">
             <el-option
               v-for="item in firstTypeList"
               :key="item.id"
@@ -27,7 +27,7 @@
           </el-select>
         </el-form-item>
         <el-form-item  labelWidth="130px" label="二级分类" prop="secondType">
-          <el-select  size="small" :disabled="readOnly" clearable v-model="form.secondType" @change="getThirdList(form.secondType)" filterable placeholder="请选择二级分类">
+          <el-select  size="small" :disabled="readOnly" clearable v-model="form.secondType"  @change="getSecondList(form.firstType)" filterable placeholder="请选择二级分类">
             <el-option
               v-for="item in secondTypeList"
               :key="item.id"
@@ -37,7 +37,7 @@
           </el-select>
         </el-form-item>
         <el-form-item  labelWidth="130px" label="三级分类" prop="class3Id">
-          <el-select  size="small" :disabled="readOnly" clearable v-model="form.class3Id" filterable placeholder="请选择三级分类">
+          <el-select  size="small" :disabled="readOnly" clearable v-model="form.class3Id" @change="getThirdList(form.secondType)" filterable placeholder="请选择三级分类">
             <el-option
               v-for="item in thirdTypeList"
               :key="item.id"
@@ -69,7 +69,7 @@
         </div>
 
         <el-form-item   labelWidth="130px"  label="价格" prop="price">
-          <el-input class="inputInfo" :maxlength="15" size="small" type="number" v-model.number="form.price" placeholder="价格"></el-input>
+          <el-input class="inputInfo" :maxlength="15" size="small" v-model.trim="form.price" placeholder="价格"></el-input>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="运费" prop="carriage">
           <el-input class="inputInfo" :maxlength="2" size="small" v-model.trim="form.carriage" placeholder="运费"></el-input>
@@ -88,7 +88,7 @@
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="描述" prop="describes">
           <div id="wangeditor"   >
-            <div style="text-align:left" ></div>
+            <div style="text-align:left" v-html="word"></div>
           </div>
         </el-form-item>
         <el-form-item>
@@ -160,7 +160,7 @@
   import { newGoogds,getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo, getTao} from "@/api/merchant"
   import { getToken,getMobile } from '@/utils/auth'
   import { getBond } from "@/api/userCenter"
-  import { checkFloat } from "@/utils/validate"
+  import { checkFloat,validName } from "@/utils/validate"
   import $ from '../../../../static/js/jquery-3.3.1.min.js'
   import E from 'wangeditor'
 
@@ -196,8 +196,9 @@
             if(value< 0 ){
               callback(new Error('商品价格应大于0，请重新输入'))
             }
+
             if( !checkFloat(value)){
-              callback(new Error('商品价格最多可有两位小数，请重新输入'))
+              callback(new Error('商品价格应为数字且最多可有两位小数，请重新输入'))
 
             }
             callback();
@@ -224,6 +225,9 @@
                 brandId:'',
                 firstType : '',
                 secondType:'',
+                thirdType: '',
+                class1Id:'',
+                class2Id:'',
                 class3Id:'',
                 price:'',
                 carriage:'',
@@ -272,7 +276,6 @@
 
 
               },
-              thirdName: '',
               // title: '新增商品',
               radio : '',
               brandData: [],
@@ -304,6 +307,8 @@
                 editorUpImgUrl: process.env.BASE_API+'/file/multi/upload' // 编辑器插入的图片上传地址
               },
               editor: '',  // 存放实例化的wangEditor对象，在多个方法中使用
+              word:'',
+              thirdName:'',
             }
         },
 
@@ -316,23 +321,7 @@
         },
 
         methods: {
-          //判断是否已有店铺
-          getShop(){
-            getShopInfo().then(res=> {
-              if(res.data.status === '000000000'){
-                this.hasShop = false ;
-                this.shopName = res.data.data.name
-                  return true ;
 
-
-              }else{
-                this.tips = res.data.message;
-                this.hasShop = true ;
-
-
-              }
-            })
-          },
           getBondInfo(){
             getBond().then( res => {
               // console.log(res.data);
@@ -357,7 +346,68 @@
               }
             })
           },
+          //判断是否已有店铺
+          getShop(){
+            getShopInfo().then(res=> {
+              if(res.data.status === '000000000'){
+                this.hasShop = false ;
+                this.shopName = res.data.data.name;
+                this.copyGoods();
+                return true ;
 
+
+              }else{
+                this.tips = res.data.message;
+                this.hasShop = true ;
+
+
+              }
+            })
+          },
+          //判断是否是复制商品
+          copyGoods(){
+            let id = this.$route.query.order ;
+            if(id !== undefined){
+              getGoodsDetail(id).then(res=>{
+                this.loading = false ;
+
+                this.form = {
+                  productName: res.data.data.productName ,
+                  brandId:res.data.data.brandId,
+                  firstType : res.data.data.cateGoryMap.categoryName1,
+                  secondType:res.data.data.cateGoryMap.categoryName2,
+                  // thirdType:res.data.data.cateGoryMap.categoryName3,
+                  class1Id : res.data.data.cateGoryMap.categoryId1,
+                  class2Id:res.data.data.cateGoryMap.categoryId2,
+                  class3Id:res.data.data.cateGoryMap.categoryName3,
+                  price:res.data.data.price,
+                  carriage:res.data.data.carriage,
+                  ybProductItemReqDto : res.data.data.productItems,
+                  imagesList : res.data.data.productImages,
+                  describes: res.data.data.describes,
+                  id: ''
+                }  ;
+                if(this.form.imagesList.length < 5){
+                  if(this.form.imagesList.length === 0){
+                    this.form.imagesList =   ['','','','','']
+
+                  }else {
+                    for(let i = this.form.imagesList.length ; i< 5;i++){
+                      this.form.imagesList.push('');
+                    }
+                  }
+                }
+                this.word = this.form.describes ;
+                this.brandCnName = res.data.data.brandCnName ;
+                this.thirdName = res.data.data.cateGoryMap.categoryId3;
+                // this.getFirstList();
+                // this.getSecondList(this.form.class1Id);
+                // this.getThirdList(this.form.class2Id);
+              })
+            }else{
+              // this.title = '新增商品';
+            }
+          },
           getBrandList(){
 
             getBrand(this.brandName, this.currentPage ,this.pageSize).then(res => {
@@ -401,30 +451,57 @@
           },
           //  获取一级分类
           getFirstList(){
+            this.clearType('1');
+
             firstList().then(res=> {
-              this.firstTypeList = res.data.data
+              this.firstTypeList = res.data.data;
+              // if(this.form.class1Id!== ''){
+              //   this.getSecondList(this.form.class1Id);
+              //
+              // }
+              if(!validName(this.form.firstType)){
+                this.getSecondList(this.form.firstType)
+              }
             })
           },
           //  获取二级分类
           getSecondList(type){
-            this.form.secondType = '';
-            this.form.class3Id = '';
-
+            this.clearType('2');
             secondList(type).then(res=> {
 
-              this.secondTypeList = res.data.data
+              this.secondTypeList = res.data.data;
+              // if(this.form.class2Id!== ''){
+              //   this.getThirdList(this.form.class2Id);
+              //
+              // }
+              if(!validName(this.form.secondType)){
+                this.getThirdList(this.form.secondType)
+              }
             })
 
           },
           //获取三级分类
           getThirdList(type){
-            this.form.class3Id = '';
-
+            this.clearType('3');
             thirdList(type).then(res=> {
               this.thirdTypeList = res.data.data
             })
           },
+          //重选清除原有分类
+          clearType(type){
+            if(type==='1'){
+              this.form.class2Id = '';
+              this.form.secondType = '';
+              this.secondTypeList = [];
+            }
+            if(type !== '3'){
+              this.form.class3Id = '';
+              this.form.thirdType = '';
+              this.thirdTypeList = [];
+            }
 
+
+          },
           getImg(index){
             this.imgIndex = index ;
           },
@@ -468,7 +545,7 @@
 
           //添加商品规格
           addSize() {
-            if (this.form.ybProductItemReqDto.length < 5) {
+            if (this.form.ybProductItemReqDto.length < 10) {
 
               this.form.ybProductItemReqDto.push({
                 'size': '',
@@ -492,13 +569,9 @@
           // },
           //提交表格
           submitForm(formName){
-
             // console.log(JSON.stringify(this.form));
-
             this.$refs[formName].validate((valid) => {
               if(valid){
-
-
                 let data = {
                   id: '',
                   productName:this.form.productName,
@@ -509,6 +582,9 @@
                   ybProductItemReqDto : this.form.ybProductItemReqDto,
                   imagesList : this.form.imagesList,
                   describes: this.form.describes,
+                };
+                if(validName(data.class3Id) ){
+                  data.class3Id = this.thirdName ;
                 }
                 // data = JSON.stringify(data);
                 // console.log(data,this.form);
@@ -685,26 +761,54 @@
             }
           },
           getDetail(params){
+            this.form.describe = '';
+            this.editor.txt.html('');
+            this.form.imagesList = ['','','','',''];
+            this.form.productName = '';
+            this.form.ybProductItemReqDto = [{ size: '', color : '', stock: ''}];
             getTao(params).then( res => {
               // console.log(res);
-              this.form.ybProductItemReqDto = res.data.data.sizeColor ;
-              this.form.productName = res.data.data.productName ;
-              this.form.imagesList = res.data.data.showImages ;
-              if(this.form.imagesList.length < 5){
-                if(this.form.imagesList.length === 0){
-                  this.form.imagesList =   ['','','','','']
+              this.taoLink = '';
 
-                }else {
-                  for(let i = this.form.imagesList.length ; i< 5;i++){
-                    this.form.imagesList.push('');
+              if(res.data.data.sizeColor!== undefined){
+                let sizeLength = res.data.data.sizeColor.length ;
+                if(sizeLength> 0){
+                  if(sizeLength< 10){
+                    this.form.ybProductItemReqDto = res.data.data.sizeColor ;
+
+                  }else{
+                    this.form.ybProductItemReqDto = res.data.data.sizeColor.slice(0,10) ;
+
                   }
+
                 }
+              };
+              if( res.data.data.productName!==''){
+                this.form.productName = res.data.data.productName ;
+
               }
-              this.form.describes = res.data.data.detailImages ;
+              if(res.data.data.showImages!== null &&res.data.data.showImages.length > 0){
+                this.form.imagesList = res.data.data.showImages ;
+                if(this.form.imagesList.length < 5){
+                  if(this.form.imagesList.length === 0){
+                    this.form.imagesList =   ['','','','','']
+
+                  }else {
+                    for(let i = this.form.imagesList.length ; i< 5;i++){
+                      this.form.imagesList.push('');
+                    }
+                  }
+                };
+              }
+
+              if(res.data.data.detailImages!== undefined &&res.data.data.detailImages.length > 0){
+                this.form.describes = res.data.data.detailImages ;
+                res.data.data.detailImages.map( i => {
+                  this.editor.uploadImg.insertLinkImg(i)
+                })
+              }
               this.taoVisible = false;
-              res.data.data.detailImages.map( i => {
-                this.editor.uploadImg.insertLinkImg(i)
-              })
+
             })
           },
           beforeClose(){
@@ -737,136 +841,9 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
   @import '../../../styles/new';
-  @import '../../../styles/table';
-
-  .el-form{
-    width  : 90%!important;
-    .showBrand{
-      width : 100px;
-      display: inline-block;
-      margin-left : 0.2rem ;
-
-      svg{
-        width : 0.3rem ;
-        height : 0.3rem ;
-      }
-      span{
-        margin-left : 0.1rem ;
-        color : #aaa ;
-        font-size : 0.14rem ;
-        display : inline-block;
-        line-height : 41px;
-        height : 41px;
-      }
-    }
-    .wrap{
-      width: 70%;
-      margin: 0.3rem auto;
-      display: flex;
-      flex-wrap: nowrap;
-      flex-direction: row;
-      .tag{
-        width: 130px;
-        height: 40px;
-        line-height: 40px;
-        display: inline-block;
-        padding-right: 0.3rem;
-        text-align: right;
-        font-size: 14px;
-        color: #606266;
-        position: absolute ;
-        /*box-sizing: border-box;*/
-      }
-      .tag:before{
-        content: '*';
-        color: #f56c6c;
-        margin-right: 4px;
-      }
-      .size{
-        display: flex;
-        flex-direction: column;
-        /*justify-content: flex-start;*/
-        position: relative;
-        .itemContent{
-          width: 100% ;
-          display: flex;
-          flex-direction: row;
-          justify-content: flex-start;
-          margin-left: 130px!important;
-
-          .el-form-item{
-
-            width : 20% ;
-            margin: 0 0.2rem 0 0!important;
-            .el-input{
-
-              /*width : 85% ;*/
-            }
-            .el-button {
-              height : 30px;
-              margin : 2px 0!important;
-            }
-          }
-
-          .el-form-item:nth-child(3){
-            width: 60%;
-            .el-input{
-              width: 50%;
-              margin-right: 0.1rem ;
-            }
-          }
-        }
-
-      }
-    }
+  @import "../../../styles/goods";
 
 
-    .imgList{
-      display : flex ;
-      flex-direction: row;
-      justify-content: space-around;
-      margin-bottom : 0.3rem ;
-      position: relative ;
-      li{
-        width : 20% ;
-
-        .el-upload{
-          img{
-            width : 100% ;
-          }
-
-        }
-      }
-      .imgWarn{
-        position: absolute;
-        top: 95%!important;
-        left: 0;
-        display: inline;
-        font-size: 0.12rem ;
-      }
-
-    }
-  }
-  .dialogTop{
-    margin : 0 auto 0.3rem ;
-    width: 90% ;
-    .el-button {
-      margin-left : 0.12rem ;
-    }
-  }
-  .shop_dialog{
-    p{
-      height : 10vh;
-      font-size : 0.3rem ;
-      text-align : center ;
-      line-height : 10vh ;
-    }
-  }
-  #account--editor {
-    width: 100%;
-    min-height: 330px;
-    height: auto;
-  }
   .bondDialog{
     p{
       height : 10vh;

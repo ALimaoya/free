@@ -323,14 +323,23 @@
           })
         },
         newAddr(){
-          this.isNew = '0' ;
-          this.form = {
-            userName : '',
+          if(this.tableData.length<5){
+            this.isNew = '0' ;
+            this.form = {
+              userName : '',
               province : '',
               detailAddress: '',
               zipCode: '',
               mobile: ''
+            }
+          }else{
+            this.$message({
+              message: '地址最多只能添加5个，不能再多啦~',
+              center: true ,
+              type: 'error'
+            })
           }
+
         },
         // 取消新增
         cancel(formName){
