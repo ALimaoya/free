@@ -54,7 +54,7 @@ service.interceptors.response.use(
 
       if(needFailResponse){
         return response
-      }
+      };
     }
 
   },

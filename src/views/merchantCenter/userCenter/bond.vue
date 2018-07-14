@@ -39,7 +39,7 @@
       <div class="dialog_content">
         <h3>确定进行保证金解冻操作？</h3>
         <p>保证金解冻以后，所有商品自动下架，不可售卖。</p>
-        <p>只有缴纳保证金以后才可重新上架，解冻操作审核通过以后，金额会转到您的支付宝账户中。</p>
+        <p>只有缴纳保证金以后才可重新上架，解冻操作审核通过以后，金额会转到您的钱包中。</p>
       </div>
       <div slot="footer" class="dialog-footer" >
         <el-button type="primary" size="mini" @click="confirmApply">确定</el-button>
@@ -86,7 +86,10 @@
 
 <script>
   import { getInfo,getBond, applyBond ,getBondDetail,addBond } from "@/api/userCenter"
-    export default {
+  // import $ from '../../../../static/js/jquery-3.3.1.min.js'
+  import { getToken } from "@/utils/auth";
+
+  export default {
       name: "bond",
       data(){
           return{
@@ -109,6 +112,8 @@
             loading: true,
             infoTip: false ,
             infoStatus: '',
+            token: getToken(),
+
           }
       },
       mounted(){
@@ -196,51 +201,74 @@
         // },
       //  补缴保证金
         addDeposit(){
+          let _this = this ;
           let payStatus = false ;
           let formData = new FormData();
           formData.append('addAmount',this.addAmount);
           formData.append('returnUrl',window.location.href);
-
-          addBond(formData).then( res => {
-            var __div = document.getElementById('myForm');
-
-            if(__div){
-              document.body.removeChild(__div);
-            }
-            if(res.data.status === '000000000'){
+          $.ajax({
+            url: process.env.BASE_API+"/center/recharge/addDeposit",
+            type: 'POST',
+            data: formData ,
+            async: false,
+            processData: false,
+            contentType: false,
+            headers: {
+              'yb-tryout-merchant-token':  this.token
+            },
+            // contentType: "application/json",
+            success: function (res) {
+              // addBond(formData).then( res => {
+              var __div = document.getElementById('myForm');
+              if (__div) {
+                document.body.removeChild(__div);
+              }
+              if (res.status === '000000000') {
 
 
                 // console.log(res);
                 var _div = document.createElement('div');
                 _div.setAttribute('id', 'myForm');
-                _div.innerHTML = res.data.data;
+                _div.innerHTML = res.data;
                 document.body.appendChild(_div);
                 document.getElementById('myForm').getElementsByTagName("form")[0].setAttribute('target',
                   "_blank");
-                payStatus = true ;
+                payStatus = true;
 
-            }else{
-                payStatus = false ;
-
+              } else {
+                payStatus = false;
+                _this.$message({
+                  message: res.message,
+                  type: 'error',
+                  center: true
+                });
+                return
               }
-            __div = document.getElementById('myForm');
-            if ( payStatus) {
-              this.$message({
-                message : '您的申请已提交，请稍后确认',
-                center : true ,
-                type : 'success',
-                duration : 1000
-              });
 
-              this.dialogVisible = true;
-              document.getElementById('myForm').getElementsByTagName("form")[0].submit()
-              document.body.removeChild(__div);
-              setTimeout(() => {
-                window.location.reload();
-
-              },1500)
+            },
+            error: function(res){
+              payStatus = false;
+              alert('服务器开小差啦，请稍等~');
+              return
             }
-          })
+          });
+          var __div = document.getElementById('myForm');
+          if (payStatus) {
+            this.$message({
+              message: '您的申请已提交，请稍后确认',
+              center: true,
+              type: 'success',
+              duration: 1000
+            });
+
+            this.dialogVisible = true;
+            document.getElementById('myForm').getElementsByTagName("form")[0].submit()
+            document.body.removeChild(__div);
+            setTimeout(() => {
+              // window.location.reload();
+
+            }, 1500)
+          }
         },
         finishPay() {
           this.dialogVisible = false;

@@ -13,7 +13,7 @@
                     <el-radio label="1">支付宝</el-radio>
                   </dt>
                   <dd>
-                    <img src="../../../assets/imgs/pay3.png"  />
+                    <img src="../../../../assets/imgs/pay3.png"  />
                   </dd>
                 </dl>
                 <!-- <dl>
@@ -88,7 +88,7 @@
   import ElFormItem from "element-ui/packages/form/src/form-item";
   import ElButton from "element-ui/packages/button/src/button";
   import ElRadioGroup from "element-ui/packages/radio/src/radio-group";
-  import $ from '../../../../static/js/jquery-3.3.1.min.js'
+  import $ from '../../../../../static/js/jquery-3.3.1.min.js'
   import {
     getToken
   } from '@/utils/auth'
@@ -235,7 +235,7 @@
       },
       finishPay() {
         this.dialogVisible = false;
-        this.$router.push("/freeManage/fund/history/money")
+        this.$router.push("/accountManage/fund/history/money")
       },
       hasQuestion() {
         this.dialogVisible = false;

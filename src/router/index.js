@@ -225,55 +225,55 @@ export const constantRouterMap = [
           }
         ]
       },
-      {
-        path: '/freeManage/fund',
-        component: FreeManage,
-        // redirect: '/userInfor/approval',
-        name: 'Fund',
-        meta: { title: '资金管理', icon: 'fund' },
-        children: [
-          {
-            path: 'recharge',
-            name: 'Recharge',
-            component: () => import('@/views/fund/recharge/index'),
-            meta: {title: '我要充值', icon: 'recharge'},
-          },
-          {
-            path: 'cash',
-            name: 'Cash',
-            component: () => import('@/views/fund/cash'),
-            meta: { title: '押金提现', icon: 'cash' }
-
-          },
-          {
-            path: '/freeManage/fund/history',
-            name: 'History',
-            component: () => import('@/views/fund/history/index'),
-            meta: { title: '资金明细', icon: 'history' },
-            children: [
-              {
-                path: 'money',
-                name: 'Money',
-                component: () => import('@/views/fund/history/money'),
-                meta: { title: '资金记录', icon: 'money' }
-              },
-              {
-                path: 'cash',
-                name: 'cash',
-                component: () => import('@/views/fund/history/cash'),
-                meta: { title: '取现记录', icon: 'cash' }
-              },
-              // {
-              //   path: 'coin',
-              //   name: 'Coin',
-              //   component: () => import('@/views/fund/history/coin'),
-              //   meta: { title: '金币明细', icon: 'coin' }
-
-              // }
-            ]
-          }
-        ]
-      },
+      // {
+      //   path: '/freeManage/fund',
+      //   component: FreeManage,
+      //   // redirect: '/userInfor/approval',
+      //   name: 'Fund',
+      //   meta: { title: '资金管理', icon: 'fund' },
+      //   children: [
+      //     {
+      //       path: 'recharge',
+      //       name: 'Recharge',
+      //       component: () => import('@/views/fund/recharge/index'),
+      //       meta: {title: '我要充值', icon: 'recharge'},
+      //     },
+      //     {
+      //       path: 'cash',
+      //       name: 'Cash',
+      //       component: () => import('@/views/fund/cash'),
+      //       meta: { title: '押金提现', icon: 'cash' }
+      //
+      //     },
+      //     {
+      //       path: '/freeManage/fund/history',
+      //       name: 'History',
+      //       component: () => import('@/views/fund/history/index'),
+      //       meta: { title: '资金明细', icon: 'history' },
+      //       children: [
+      //         {
+      //           path: 'money',
+      //           name: 'Money',
+      //           component: () => import('@/views/fund/history/money'),
+      //           meta: { title: '资金记录', icon: 'money' }
+      //         },
+      //         {
+      //           path: 'cash',
+      //           name: 'cash',
+      //           component: () => import('@/views/fund/history/cash'),
+      //           meta: { title: '取现记录', icon: 'cash' }
+      //         },
+      //         // {
+      //         //   path: 'coin',
+      //         //   name: 'Coin',
+      //         //   component: () => import('@/views/fund/history/coin'),
+      //         //   meta: { title: '金币明细', icon: 'coin' }
+      //
+      //         // }
+      //       ]
+      //     }
+      //   ]
+      // },
     ]
   },
   { path: '/merchantCenter',
@@ -625,6 +625,61 @@ export const constantRouterMap = [
           //   meta: { title: '开通会员', icon: 'vip' },
           //   hidden : true
           // }
+        ]
+      },
+      {
+        path: '/accountManage/fund',
+        component: FreeManage,
+        // redirect: '/userInfor/approval',
+        name: 'Fund',
+        meta: { title: '资金管理', icon: 'fund' },
+        children: [
+          {
+            path: 'index',
+            name: 'wallet',
+            component: () => import('@/views/accountManage/fundManage/index'),
+            meta: {title: '我的钱包', icon: 'wallet'},
+          },
+          {
+            path: 'recharge',
+            name: 'Recharge',
+            component: () => import('@/views/accountManage/fundManage/recharge/index'),
+            meta: {title: '我要充值', icon: 'recharge'},
+          },
+          {
+            path: 'cash',
+            name: 'Cash',
+            component: () => import('@/views/accountManage/fundManage/cash'),
+            meta: { title: '押金提现', icon: 'cash' }
+
+          },
+          {
+            path: '/accountManage/fund/history',
+            name: 'History',
+            component: () => import('@/views/accountManage/fundManage/history/index'),
+            meta: { title: '资金明细', icon: 'history' },
+            children: [
+              {
+                path: 'money',
+                name: 'Money',
+                component: () => import('@/views/accountManage/fundManage/history/money'),
+                meta: { title: '资金记录', icon: 'money' }
+              },
+              {
+                path: 'cash',
+                name: 'cash',
+                component: () => import('@/views/accountManage/fundManage/history/cash'),
+                meta: { title: '取现记录', icon: 'cash' }
+              },
+              // {
+              //   path: 'coin',
+              //   name: 'Coin',
+              //   component: () => import('@/views/fund/history/coin'),
+              //   meta: { title: '金币明细', icon: 'coin' }
+
+              // }
+            ]
+          }
         ]
       },
       // {

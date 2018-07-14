@@ -35,7 +35,10 @@
 
 <script>
   import { rechargeBond } from "@/api/userCenter"
-    export default {
+  import { getToken } from "@/utils/auth";
+  // import $ from '../../../../static/js/jquery-3.3.1.min'
+
+  export default {
       name: "step3",
       props: ['deposit','step3Status','step4Status'],
       data(){
@@ -46,6 +49,7 @@
           isBond : false ,
           dialogVisible: false ,
           dialogVisibleQuestion: false ,
+          token: getToken(),
         }
       },
       mounted(){
@@ -72,38 +76,64 @@
               return false ;
           }else{
             let payStatus = false ;
+            let _this = this ;
             let formData = new FormData ;
-            formData.append('returnUrl',window.location.href)
-            rechargeBond(formData).then(res=> {
-              var __div = document.getElementById('myForm');
-              if(__div){
-                document.body.removeChild(__div);
-              }
-              if(res.data.status === '000000000'){
-                // console.log(res);
-                var _div = document.createElement('div');
-                _div.setAttribute('id', 'myForm');
-                _div.innerHTML = res.data.data;
-                document.body.appendChild(_div);
-                document.getElementById('myForm').getElementsByTagName("form")[0].setAttribute('target',
-                  "_blank");
-                payStatus = true ;
+            formData.append('returnUrl',window.location.href);
+            $.ajax({
+                url: process.env.BASE_API+"/center/recharge/deposit",
+                type: 'POST',
+                data: formData ,
+                async: false,
+                processData: false,
+                contentType: false,
+                headers: {
+                  'yb-tryout-merchant-token':  this.token
+                },
+                // contentType: "application/json",
+                success: function (res) {
+                  // rechargeBond(formData).then(res=> {
+                  var __div = document.getElementById('myForm');
+                  if (__div) {
+                    document.body.removeChild(__div);
+                  }
+                  if (res.status === '000000000') {
+                    // console.log(res);
+                    var _div = document.createElement('div');
+                    _div.setAttribute('id', 'myForm');
+                    _div.innerHTML = res.data;
+                    document.body.appendChild(_div);
+                    document.getElementById('myForm').getElementsByTagName("form")[0].setAttribute('target',
+                      "_blank");
+                    payStatus = true;
 
-              }else{
-                payStatus = false ;
-              }
-              __div = document.getElementById('myForm');
-              if ( payStatus) {
-                this.$message({
-                  message : '支付成功，请稍后确认',
-                  center: true ,
-                  type : 'success'
-                });
-                this.dialogVisible = true;
-                document.getElementById('myForm').getElementsByTagName("form")[0].submit()
-                document.body.removeChild(__div);
-              }
-            })
+                  } else {
+                    payStatus = false;
+                    _this.$message({
+                      message: res.message,
+                      type: 'error',
+                      center: true
+                    });
+                    return
+                  }
+
+                },
+                error: function(err){
+                  payStatus = false;
+                  alert('服务器开小差啦，请稍等~');
+                  return
+                }
+            });
+            var __div = document.getElementById('myForm');
+            if (payStatus) {
+              this.$message({
+                message: '支付成功，请稍后确认',
+                center: true,
+                type: 'success'
+              });
+              this.dialogVisible = true;
+              document.getElementById('myForm').getElementsByTagName("form")[0].submit()
+              document.body.removeChild(__div);
+            }
           }
 
         },

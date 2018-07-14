@@ -93,7 +93,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <div class="setting"><span>批量设置佣金：</span><el-input size="mini" v-model.trim="commonRatio" @change="handleApart(chooseList)"></el-input></div>
+        <div class="setting"><span>批量设置佣金：</span><el-input size="mini" type="number" v-model.number="commonRatio" @change="handleApart(chooseList)"></el-input></div>
         <div class="block2">
           <el-pagination
             @size-change="handleSubSizeChange"
@@ -116,7 +116,7 @@
 
       <el-dialog class="file_dialog" title="修改佣金" top="20%" :visible.sync="editDialog" width="30%" center>
        <ul>
-         <li>当前修改为：{{ currentRatio }}</li>
+         <li>当前修改为：{{ currentRatio }}%</li>
          <li>佣金范围：{{ range }}</li>
          <li>确认修改{{ hour }}个小时后生效</li>
        </ul>
@@ -449,8 +449,25 @@
           saveEdit(index,ratio,id){
 
           if(!this.validPercent(ratio)){
+            if(ratio < 1.5){
+              this.$set(this.tableData[index],'brokerageRate' ,1.5);
+            }else if(ratio > 70){
+              this.$set(this.tableData[index],'brokerageRate' ,70);
 
-            return false ;
+            }else if(ratio+''.indexOf('.')!==-1){
+              ratio = Math.round(ratio*100)/100;
+              this.$set(this.tableData[index],'brokerageRate' ,ratio);
+
+            }else{
+              this.$set(this.tableData[index],'brokerageRate' ,'');
+
+            }
+            // this.$refs.multipleTable.tableData.map( (i,index) =>{
+            //
+            //   this.$set(this.tableData,index ,i);
+            //
+            // } )
+            // return false ;
 
           }else{
 

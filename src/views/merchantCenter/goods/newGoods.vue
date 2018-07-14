@@ -313,10 +313,8 @@
         },
 
         mounted(){
-          this.getFirstList();
           // window.tinymce.init({});
           this.getBondInfo();
-          this.createEditor();
 
         },
 
@@ -353,6 +351,9 @@
                 this.hasShop = false ;
                 this.shopName = res.data.data.name;
                 this.copyGoods();
+                this.getFirstList();
+                this.createEditor();
+
                 return true ;
 
 
@@ -459,7 +460,7 @@
               //   this.getSecondList(this.form.class1Id);
               //
               // }
-              if(!validName(this.form.firstType)){
+              if(!validName(this.form.firstType)&&this.form.firstType!== ''){
                 this.getSecondList(this.form.firstType)
               }
             })
@@ -474,7 +475,7 @@
               //   this.getThirdList(this.form.class2Id);
               //
               // }
-              if(!validName(this.form.secondType)){
+              if(!validName(this.form.secondType)&&this.form.secondType!== ''){
                 this.getThirdList(this.form.secondType)
               }
             })

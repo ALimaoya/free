@@ -180,6 +180,7 @@
         //判断是否已有店铺
         getShop(){
           getShopInfo().then(res=> {
+
             this.loading= false ;
 
             if(res.data.status === '000000000'){
@@ -202,6 +203,9 @@
 
             }
           })
+          //   .catch( err =>{
+          //   console.log(err);
+          // })
         },
           //获取地址列表
           getAddressList(){

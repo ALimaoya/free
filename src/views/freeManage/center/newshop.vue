@@ -275,25 +275,30 @@
             if(type === '1'){
               formData.append('shopId',this.shopId);
               changeInfo(formData).then( res => {
-                this.$message({
+                if(res.data.status === '000000000'){
+                  this.$message({
                     type : 'success',
                     message : '提交成功',
                     center : true ,
                     duration : 500
                   })
-                  this.$router.push('/shop')
+                  this.$router.push('/freeManage/shop')
+                }
+
               })
             }else{
 
               shopInfo(formData).then( res => {
-                this.$message({
+                if(res.data.status === '000000000'){
+                  this.$message({
                     type : 'success',
                     message : '提交成功',
                     center : true ,
                     duration : 500
 
                   })
-                  this.$router.push('/shop')
+                  this.$router.push('/freeManage/shop')
+                }
               })
 
             }

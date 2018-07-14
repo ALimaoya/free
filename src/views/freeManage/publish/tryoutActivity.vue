@@ -1433,7 +1433,8 @@
             publishActivity(form).then(res => {
               this.loading = false ;
 
-              this.$message({
+              if(res.data.status === '000000000'){
+                this.$message({
                   type: 'success',
                   message: '提交成功',
                   center: true,
@@ -1441,6 +1442,7 @@
 
                 });
                 this.$router.push({name: 'TryoutPay', params: {id: res.data.data.activityId}});
+              }
 
             })
           } else {
@@ -1449,13 +1451,15 @@
 
               changeDetail(form).then(res => {
                 this.loading = false ;
-                this.$message({
+                if(res.data.status === '000000000'){
+                  this.$message({
                     type: 'success',
                     message: '提交成功',
                     center: true,
                     duration: 500
                   });
                   this.$router.push({name: 'TryoutPay', params: {id: this.order}});
+                }
 
               })
             }
