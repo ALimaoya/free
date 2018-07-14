@@ -46,23 +46,23 @@
     </div>
     <el-table  :data="tableData"  border fit >
       <el-table-column prop="id" label="商品序号" width="75"></el-table-column>
-      <el-table-column prop="code" label="商品编号" ></el-table-column>
+      <el-table-column prop="code" label="商品编号" width="100"></el-table-column>
       <!--<el-table-column prop="shopName" label="所属店铺" ></el-table-column>-->
-      <el-table-column prop="brandCnName" label="商品品牌" ></el-table-column>
-      <el-table-column prop="productName" label="商品名称" ></el-table-column>
-      <el-table-column prop="productImages" label="商品主图" max-width="100">
+      <el-table-column prop="brandCnName" label="商品品牌" width="100"></el-table-column>
+      <el-table-column prop="productName" label="商品名称" width="100"></el-table-column>
+      <el-table-column prop="productImages" label="商品主图" width="100">
         <template slot-scope="scope">
           <img v-if="scope.row.productImages!==null&&scope.row.productImages.length >0"
                :src="imageDomain+ scope.row.productImages[0]" :onerror="errorImg" @click="bigImg = scope.row.productImages[0] ;mask = true ;"/>
           <img  :src="failImg" v-else>
         </template>
       </el-table-column>
-      <el-table-column label="分类" width="190">
+      <el-table-column label="分类" width="180">
         <template slot-scope="scope">
           <span style="font-size: 0.12rem ;" v-if="scope.row.cateGoryMap!== {}">{{ scope.row.cateGoryMap.categoryName1}}>{{ scope.row.cateGoryMap.categoryName2}}>{{ scope.row.cateGoryMap.categoryName3}} </span>
         </template>
       </el-table-column>
-      <el-table-column label="规格" width="225" show-overflow-tooltip>
+      <el-table-column label="规格" show-overflow-tooltip min-width="240">
         <template slot-scope="scope">
           <!--<el-table :data="scope.row.size"  border fit :header-row-class-name="thColor" :row-style="tbColor">-->
             <!--<el-table-column prop="size" label="尺码" ></el-table-column>-->
@@ -78,14 +78,14 @@
           </table>
         </template>
       </el-table-column>
-      <el-table-column prop="price" label="价格（元）" ></el-table-column>
-      <el-table-column prop="createTime" label="创建时间" ></el-table-column>
+      <el-table-column prop="price" label="价格（元）" width="70"></el-table-column>
+      <el-table-column prop="createTime" label="创建时间" width="100"></el-table-column>
       <el-table-column  label="状态" width="80">
         <template slot-scope="scope">
           <span v-if="scope.row.status !== ''">{{ statusList[(scope.row.status*1+1)*1].name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" >
+      <el-table-column label="操作" width="100">
         <template slot-scope="scope">
           <el-button size="mini" type="warning" v-if="scope.row.status === '1'&& scope.row.shelveStatus === '1'"  @click="handleShelves(scope.$index,scope.row.id,0)">下架</el-button>
           <el-button size="mini" type="warning" :disabled="limit" v-if="scope.row.status === '1'&& scope.row.shelveStatus === '0'" @click="handleShelves(scope.$index,scope.row.id,1)">上架</el-button>

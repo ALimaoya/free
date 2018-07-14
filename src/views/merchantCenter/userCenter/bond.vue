@@ -35,7 +35,7 @@
         <!--<el-button type="primary" size="mini" @click="handleBond">确定缴纳</el-button>-->
       <!--</el-form-item>-->
     </el-form>
-    <el-dialog title="申请解冻保证金" :visible.sync="dialogVisible" width="60%" >
+    <el-dialog title="申请解冻保证金" :visible.sync="dialogVisible" width="60%"  style="margin-top:10vh" >
       <div class="dialog_content">
         <h3>确定进行保证金解冻操作？</h3>
         <p>保证金解冻以后，所有商品自动下架，不可售卖。</p>
@@ -53,14 +53,14 @@
         <el-button plain @click="goBond">前往缴纳保证金</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="提示" :visible.sync="payVisible" width="40%" :before-close="handleClose" style="margin-top:20vh" >
+    <el-dialog title="提示" :visible.sync="payVisible" width="40%" :before-close="handleClose" style="margin-top:10vh" >
       <span style="text-align:center;width: 70%; display: block; margin: 0 auto;">请在新窗口完成支付，支付成功后请点击“已完成支付” 若支付遇到问题请点击“支付遇到问题”</span>
       <span slot="footer" class="dialog-footer" style="text-align:center;display:block">
         <el-button style="background:#3a8ee6;;color:white;margin-rigth:20px" @click="finishPay()">已完成支付</el-button>
         <el-button style="background:#3a8ee6;;color:white;" @click="hasQuestion()">支付遇到问题</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="支付遇到问题" :visible.sync="dialogVisibleQuestion" width="40%" :before-close="handleClose" style="margin-top:20vh">
+    <el-dialog title="支付遇到问题" :visible.sync="dialogVisibleQuestion" width="40%" :before-close="handleClose" style="margin-top:10vh">
       <span style="width: 80%; display: block; margin: 0 auto;">付款遇到问题支付未成功，付款遇到问题了？先看看是不是由于下面的原因:
         <br> 1、所需支付的金额超过了银行支付限额？建议您登录网上银行提高上限额度，或者先分若干次充值到新试客余额，即能轻松支付。
         <br> 2、支付宝或网银页面显示错误或空白？部分网银对不同浏览器的兼容性有限，导致无法正常支付，建议您使用IE7及以上版本浏览器进行支付操作！
@@ -70,11 +70,12 @@
         <el-button style="background:#3a8ee6;;color:white;" @click="dialogVisibleQuestion = false">确定</el-button>
       </span>
     </el-dialog>
-    <el-dialog class="bondDialog" title="提示" :visible.sync="infoTip" width="40%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+    <el-dialog class="bondDialog" title="提示" :visible.sync="infoTip" width="40%" center
+               :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"   >
       <!--<img :src="ImgSrc" alt="" />-->
       <p class="tips" v-if="infoStatus === '0'">您还未上传资质信息，请先前往上传资质信息</p>
-      <p class="tips" v-else-if="infoStatus === '1'">您上传的资质信息正在审核中，审核通过后即可绑定店铺</p>
-      <p class="tips" v-else-if="infoStatus === '3'">您上传的资质信息未通过审核，请先前往修改资质信息，待通过后即可绑定店铺</p>
+      <p class="tips" v-else-if="infoStatus === '1'">您上传的资质信息正在审核中，审核通过后即可进行保证金相关操作</p>
+      <p class="tips" v-else-if="infoStatus === '3'">您上传的资质信息未通过审核，请先前往修改资质信息，待通过后即可进行保证金相关操作</p>
 
       <div slot="footer">
         <el-button plain @click="goUpload" >前往资质上传</el-button>
@@ -261,7 +262,7 @@
               duration: 1000
             });
 
-            this.dialogVisible = true;
+            this.payVisible = true;
             document.getElementById('myForm').getElementsByTagName("form")[0].submit()
             document.body.removeChild(__div);
             setTimeout(() => {
@@ -271,7 +272,7 @@
           }
         },
         finishPay() {
-          this.dialogVisible = false;
+          this.payVisible = false;
           setTimeout(() => {
             window.location.reload();
 
@@ -279,12 +280,12 @@
           // this.$router.push("/freeManage/userInfor/vip")
         },
         hasQuestion() {
-          this.dialogVisible = false;
+          this.payVisible = false;
           this.dialogVisibleQuestion = true;
           // this.getDepositMoney();
         },
         handleClose() {
-          this.dialogVisible = false;
+          this.payVisible = false;
           this.dialogVisibleQuestion = false;
           setTimeout(() => {
             window.location.reload();
