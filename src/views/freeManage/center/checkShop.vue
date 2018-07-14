@@ -23,9 +23,9 @@
     margin : 0 auto;
     .title{
       width : 100% ;
-      height : 0.5rem ;
-      line-height : 0.5rem ;
-      font-size : 0.22rem ;
+      height : 150px ;
+      line-height : 150px;
+      font-size : 0.26rem ;
       font-weight : bold ;
       color : #333 ;
       margin-top : 0.2rem ;

@@ -1,5 +1,5 @@
 <template>
-  <div class="changeGoods new"  v-loading="loading"  element-loading-text="拼命加载中">
+  <div class="changeGoods new goods"  v-loading="loading"  element-loading-text="拼命加载中">
     <h1>修改商品</h1>
     <el-form :model="form" ref="form" :rules="formRule" label-position="right">
       <h2>商品表单</h2>
@@ -263,13 +263,6 @@
 
     },
 
-    // computed:{
-    //   showImg(){
-    //     console.log(this.form.images);
-    //     return this.form.images
-    //   }
-    //
-    // },
     methods: {
       //判断是否已有店铺
       getShop(){
@@ -414,7 +407,7 @@
       //添加商品规格
       addSize() {
         let _this = this;
-        if (this.form.ybProductItemReqDto.length < 5) {
+        if (this.form.ybProductItemReqDto.length < 10) {
           let index = this.form.ybProductItemReqDto.length ;
           // _this.$nextTick(() =>{
           // console.log(this.form.ybProductItemReqDto)
@@ -592,129 +585,7 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
   @import '../../../styles/new';
-  @import '../../../styles/table';
-
-  .el-form{
-    width  : 90%!important;
-    .showBrand{
-      width : 100px;
-      display: inline-block;
-      margin-left : 0.2rem ;
-
-      svg{
-        width : 0.3rem ;
-        height : 0.3rem ;
-      }
-      span{
-        margin-left : 0.1rem ;
-        color : #aaa ;
-        font-size : 0.14rem ;
-        display : inline-block;
-        line-height : 41px;
-        height : 41px;
-      }
-    }
-    .wrap{
-      width: 70%;
-      margin: 0.3rem auto;
-      display: flex;
-      flex-wrap: nowrap;
-      flex-direction: row;
-      .tag{
-        width: 130px;
-        height: 40px;
-        line-height: 40px;
-        display: inline-block;
-        padding-right: 0.3rem;
-        text-align: right;
-        font-size: 14px;
-        color: #606266;
-        position: absolute ;
-        /*box-sizing: border-box;*/
-      }
-      .tag:before{
-        content: '*';
-        color: #f56c6c;
-        margin-right: 4px;
-      }
-      .size{
-        display: flex;
-        flex-direction: column;
-        /*justify-content: flex-start;*/
-        position: relative;
-        .itemContent{
-          width: 100% ;
-          display: flex;
-          flex-direction: row;
-          justify-content: flex-start;
-          margin-left: 130px!important;
-
-          .el-form-item{
-
-            width : 20% ;
-            margin: 0 0.2rem 0 0!important;
-            .el-input{
-
-              /*width : 85% ;*/
-            }
-            .el-button {
-              height : 30px;
-              margin : 2px 0!important;
-            }
-          }
-
-          .el-form-item:nth-child(3){
-            width: 60%;
-            .el-input{
-              width: 50%;
-              margin-right: 0.1rem ;
-            }
-          }
-        }
-
-      }
-    }
+  @import '../../../styles/goods';
 
 
-    .imgList{
-      display : flex ;
-      flex-direction: row;
-      justify-content: space-around;
-      margin-bottom : 0.3rem ;
-      position: relative ;
-      li{
-        width : 20% ;
-
-        .el-upload{
-          img{
-            width : 100% ;
-          }
-
-        }
-      }
-      .imgWarn{
-        position: absolute;
-        top: 95%!important;
-        left: 0;
-        display: inline;
-        font-size: 0.12rem ;
-      }
-
-    }
-  }
-  .dialogTop{
-    margin : 0 auto 0.3rem ;
-    width: 90% ;
-    .el-button {
-      margin-left : 0.12rem ;
-    }
-  }
-  .shop_dialog{
-    p{
-      height : 10vh;
-      font-size : 0.3rem ;
-      text-align : center ;
-      line-height : 10vh ;
-    }
-  }
 </style>

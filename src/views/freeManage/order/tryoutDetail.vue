@@ -235,7 +235,7 @@
       justify-content: center;
       z-index : 20000;
       img{
-         max-height : 100% ;
+         max-height : 60% ;
 
       }
     }

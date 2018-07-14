@@ -22,7 +22,7 @@
     <div class="result">您当前的押金余额为：<span>{{ shop.totalDeposit }}</span> 元，本次总共要支付的金额为：<span>{{ shop.payAmount }}</span> 元。</div>
     <div class="payPsw">
       <span>支付密码：</span>
-      <el-input :type="pwdType"  v-model.trim="password" auto-complete="off" placeholder="请输入支付密码" >
+      <el-input :type="pwdType" size="mini" v-model.trim="password" auto-complete="off" placeholder="请输入支付密码" >
         <span slot="suffix" class="show-pwd" @click="showPwd">
           <svg-icon icon-class="eyeopen" v-if="pwdType===''" /><svg-icon v-else="pwdType==='password'" icon-class="eyeclose" />
       </span>
@@ -83,13 +83,15 @@
             if( reg.test(password)){
 
               buyShop({ shopId : id+'' ,payPassword : password }).then( res => {
-                for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
+                if(res.data.status === '000000000'){
+                  for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
                     if (v.path === this.$route.path) {
                       this.$store.state.tagsView.visitedViews.splice(i, 1);
                       this.$router.push('/freeManage/checkshop');
 
                     }
                   }
+                }
 
               })
             }else{
@@ -108,7 +110,7 @@
 
         //跳转到押金充值页面
         goRecharge(){
-          this.$router.push('/freeManage/fund/recharge')
+          this.$router.push('/accountManage/fund/recharge')
 
         },
 
@@ -214,8 +216,8 @@
       }
       .show-pwd{
         width : 0.3rem ;
-        height : 0.4rem ;
-        line-height : 0.4rem ;
+        height : 28rem ;
+        line-height :28px;
         /*text-align : right ;*/
         /*position : absolute ;*/
         /*right : 0.2rem;*/

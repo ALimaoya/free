@@ -156,7 +156,7 @@ export function applyBond(){
     method : 'get'
   })
 }
-//保证金相关操作
+//补缴保证金操作
 export function addBond(data){
   return request({
     url : '/center/recharge/addDeposit',

@@ -103,7 +103,7 @@
 
       //跳转到押金充值页面
       goRecharge(){
-        this.$router.push('/freeManage/fund/recharge')
+        this.$router.push('/accountManage/fund/recharge')
 
       },
 

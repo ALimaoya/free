@@ -656,5 +656,5 @@
 </script>
 <style scoped lang="scss" rel="stylesheet/scss">
   @import 'src/styles/activityTable' ;
-  .approval{}
+
 </style>

@@ -18,7 +18,7 @@
         <li>
           <div class="title">
             <span>您的专属运营顾问：</span>
-            <img fv-if="attendant.avator!==null" :src=" imageDomain + attendant.avator" />
+            <img v-if="attendant.avator!==null" :src=" imageDomain + attendant.avator" />
 
 
           </div>
@@ -43,7 +43,7 @@
       </ul>
       <div class="money">
         <ul class="gold">
-          <li class="useful"><span>可用押金</span><i></i></li>
+          <li class="useful"><strong>可用押金</strong><i></i></li>
           <li class="cash">{{ wallet.deposit }}元
             <el-button size="small" class="btn" @click="recharge(2)">提现</el-button>
             <el-button size="small" class="btn" @click="recharge(1)">充值</el-button>
@@ -51,7 +51,7 @@
           <li><strong>冻结押金<i></i>:</strong><span>{{ wallet.freeze_deposit}}元</span></li>
         </ul>
         <ul class="gold">
-          <li class="useful"><span>可用金币</span><i></i></li>
+          <li class="useful"><strong>可用金币</strong><i></i></li>
           <li class="cash">{{ wallet.gold }}元</li>
           <!--<li><el-button size="small" class="btn" @click="recharge(3)">充值</el-button></li>-->
         </ul>
@@ -78,7 +78,6 @@
 
 <script>
   // import store from '@/store'
-  import { getToken } from '@/utils/auth'
   import userPhoto from '@/assets/404_images/fail.png'
 
   export default {
@@ -118,9 +117,9 @@
           //充值/提现
           recharge(type){
             if(type === 2){
-              this.$router.push('/freeManage/fund/cash')
+              this.$router.push('/accountManage/fund/cash')
             }else{
-              this.$router.push('/freeManage/fund/recharge')
+              this.$router.push('/accountManage/fund/recharge')
             }
           },
 
@@ -270,7 +269,7 @@
       float : left ;
       .gold{
         width : 50% ;
-        height : 1.3rem ;
+        /*height : 1.3rem ;*/
         float : left ;
         margin : 0.1rem 0;
         padding : 0.1rem 0.4rem ;
@@ -279,19 +278,24 @@
           width : 100% ;
           font-size : 0.18rem ;
           font-weight : bold ;
-          span,i{
-            float : left ;
+          span{
+            /*float : left ;*/
+            width: 100% ;
+            display: block;
+            text-indent: 0.38rem ;
+            color: #999;
+            margin: 0.1rem 0;
           }
-          i{
-            width : 0.12rem ;
-            height : 0.12rem ;
-            display : block ;
-            margin : 0 0.08rem ;
-            background : url('../../../assets/imgs/tips.png') no-repeat center top;
-            background-size : 114% ;
-            border-radius: 50%;
-            box-shadow: 0 0.03rem 0.03rem #454545;
-          }
+          /*i{*/
+            /*width : 0.12rem ;*/
+            /*height : 0.12rem ;*/
+            /*display : block ;*/
+            /*margin : 0 0.08rem ;*/
+            /*background : url('../../../assets/imgs/tips.png') no-repeat center top;*/
+            /*background-size : 114% ;*/
+            /*border-radius: 50%;*/
+            /*box-shadow: 0 0.03rem 0.03rem #454545;*/
+          /*}*/
         }
         .useful{
           height : 0.38rem ;

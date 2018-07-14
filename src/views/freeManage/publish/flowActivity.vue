@@ -1032,7 +1032,8 @@
 
             publishActivity(form).then(res => {
               this.loading = false ;
-              this.$message({
+              if(res.data.status === '000000000'){
+                this.$message({
                   type: 'success',
                   message: '提交成功',
                   center: true,
@@ -1040,6 +1041,7 @@
 
                 });
                 this.$router.push({name: 'FlowPay', params: {id: res.data.data.activityId}});
+              }
             })
           } else {
             if (index === 2) {
@@ -1047,13 +1049,15 @@
 
               changeDetail(form).then(res => {
                 this.loading = false ;
-                this.$message({
+                if(res.data.status === '000000000'){
+                  this.$message({
                     type: 'success',
                     message: '提交成功',
                     center: true,
                     duration: 500
                   });
                   this.$router.push({name: 'FlowPay', params: {id: this.order}});
+                }
               })
             }
           }

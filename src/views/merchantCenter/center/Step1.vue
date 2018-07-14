@@ -242,7 +242,7 @@
         },
 
         //限制上传图片大小
-        limitImg(file){
+        limitImage(file,type){
           let reader = new FileReader();
           let _this = this;
           const isImg = file.type === 'image/jpeg'|| file.type === 'image/png';
@@ -253,126 +253,100 @@
               const isWidth = this.width;
               if (isWidth > 800 || isHeight > 800) {
                 _this.$message.error('图片尺寸过大，请重新选择后上传');
-                return false;
+                _this.limitImg = false;
+
+                return false ;
 
               }else if(!isImg){
                 _this.$message.error('图片必须为jpg或者png格式，请重新选择后上传');
-                return false;
+                _this.limitImg = false;
+                return false ;
+
+              }else{
+                let formData = new FormData();
+                formData.append('image', file);
+
+                uploadImage(formData).then(res => {
+                  if (res.data.status === '000000000') {
+                    if(type === 1){
+                      _this.form.businessImage = res.data.data.fileName;
+                      // console.log(_this.form.businessImage,1)
+                      _this.businessImageWarn = false;
+                    }
+                    if(type ===2){
+                      _this.form.authorizeImage = res.data.data.fileName;
+                      // console.log(_this.form.authorizeImage,2)
+                      _this.authorizeImageWarn = false;
+                    }
+                    if(type ===3){
+                      _this.form.cardFaceImage = res.data.data.fileName;
+                      // console.log(_this.form.cardFaceImage,3)
+                      _this.cardFaceImageWarn = false;
+                    }
+                    if(type ===4){
+                      _this.form.cardBackImage = res.data.data.fileName;
+                      // console.log(_this.form.cardBackImage,4)
+                      _this.cardBackImageWarn = false;
+                    }
+
+                  } else {
+                    _this.tipsWarn(type);
+
+
+                  }
+                }).catch(err => {
+                  // console.log(err) ;
+                  _this.tipsWarn(type);
+                })
 
               }
-            };
 
+            };
             image.src = e.target.result;
+
           };
           reader.readAsDataURL(file);
-          return true ;
+          // console.log(this.limitImg,5)
+
+
+        },
+        tipsWarn(type){
+          if(type === 1){
+            this.businessImageWarn = true;
+
+          }
+          if(type === 2){
+            this.authorizeImageWarn = true;
+
+          }
+          if(type === 3){
+            this.cardFaceImageWarn = true;
+
+          }
+          if(type === 4){
+            this.cardBackImageWarn = true;
+
+          }
         },
         // 上传图片
         beforeBusinessUpload(file) {
-            let that = this ;
-          if (this.limitImg(file)) {
-            let formData = new FormData();
-            formData.append('image', file);
-            uploadImage(formData).then(res => {
-              if (res.data.status === '000000000') {
 
-                that.form.businessImage = res.data.data.fileName;
-
-                that.businessImageWarn = false;
-              } else {
-                that.businessImageWarn = true;
-
-              }
-            }).catch(err => {
-              // console.log(err) ;
-              that.businessImageWarn = true;
-
-            })
-          }
+          this.limitImage(file,1);
 
         },
         beforeAuthorizeUpload(file) {
-          let that = this ;
-          if (this.limitImg(file)) {
-            let formData = new FormData();
-            formData.append('image', file);
-            uploadImage(formData).then(res => {
-              if (res.data.status === '000000000') {
+          this.limitImage(file,2);
 
-                that.form.authorizeImage = res.data.data.fileName;
-
-                that.authorizeImageWarn = false;
-              } else {
-                that.$message({
-                  message: res.data.message,
-                  center: true,
-                  type: 'error'
-                });
-                that.authorizeImageWarn = true;
-
-              }
-            }).catch(err => {
-              // console.log(err) ;
-              that.authorizeImageWarn = true;
-
-            })
-          }
 
         },
         beforeCardFaceImgUpload(file) {
-          let that = this ;
-          if (this.limitImg(file)) {
-            let formData = new FormData();
-            formData.append('image', file);
-            uploadImage(formData).then(res => {
-              if (res.data.status === '000000000') {
 
-                that.form.cardFaceImage = res.data.data.fileName;
+          this.limitImage(file,3);
 
-                that.cardFaceImageWarn = false;
-              } else {
-                that.$message({
-                  message: res.data.message,
-                  center: true,
-                  type: 'error'
-                });
-                that.cardFaceImageWarn = true;
-
-              }
-            }).catch(err => {
-              // console.log(err) ;
-              that.cardFaceImageWarn = true;
-
-            })
-          }
 
         },
         beforeCardBackImgUpload(file) {
-          let that = this ;
-          if (this.limitImg(file)) {
-            let formData = new FormData();
-            formData.append('image', file);
-            uploadImage(formData).then(res => {
-              if (res.data.status === '000000000') {
-
-                that.form.cardBackImage = res.data.data.fileName;
-
-                that.cardBackImageWarn = false;
-              } else {
-                that.$message({
-                  message: res.data.message,
-                  center: true,
-                  type: 'error'
-                });
-                that.cardBackImageWarn = true;
-
-              }
-            }).catch(err => {
-              // console.log(err) ;
-              that.cardBackImageWarn = true;
-
-            })
-          }
+          this.limitImage(file,4);
 
         },
         submit(formName){

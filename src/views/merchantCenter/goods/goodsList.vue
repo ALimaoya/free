@@ -47,9 +47,16 @@
     <el-table  :data="tableData"  border fit >
       <el-table-column prop="id" label="商品序号" width="75"></el-table-column>
       <el-table-column prop="code" label="商品编号" ></el-table-column>
-      <el-table-column prop="shopName" label="所属店铺" ></el-table-column>
-      <el-table-column prop="productName" label="商品名称" ></el-table-column>
+      <!--<el-table-column prop="shopName" label="所属店铺" ></el-table-column>-->
       <el-table-column prop="brandCnName" label="商品品牌" ></el-table-column>
+      <el-table-column prop="productName" label="商品名称" ></el-table-column>
+      <el-table-column prop="productImages" label="商品主图" max-width="100">
+        <template slot-scope="scope">
+          <img v-if="scope.row.productImages!==null&&scope.row.productImages.length >0"
+               :src="imageDomain+ scope.row.productImages[0]" :onerror="errorImg" @click="bigImg = scope.row.productImages[0] ;mask = true ;"/>
+          <img  :src="failImg" v-else>
+        </template>
+      </el-table-column>
       <el-table-column label="分类" width="190">
         <template slot-scope="scope">
           <span style="font-size: 0.12rem ;" v-if="scope.row.cateGoryMap!== {}">{{ scope.row.cateGoryMap.categoryName1}}>{{ scope.row.cateGoryMap.categoryName2}}>{{ scope.row.cateGoryMap.categoryName3}} </span>
@@ -64,9 +71,9 @@
           <!--</el-table>-->
           <table class="tableC" v-if="scope.row.productItems.length!== 0">
             <tr class="thColor"><th>尺寸</th><th>颜色</th><th>库存</th></tr>
-            <tr class="tbColor"><td>{{ scope.row.productItems[0].size }}</td>
-              <td>{{ scope.row.productItems[0].color }}</td>
-              <td>{{ scope.row.productItems[0].stock }}</td>
+            <tr class="tbColor" v-for="(item,index) in scope.row.productItems" :key="index"><td>{{ item.size }}</td>
+              <td>{{ item.color }}</td>
+              <td>{{ item.stock }}</td>
             </tr>
           </table>
         </template>
@@ -80,10 +87,11 @@
       </el-table-column>
       <el-table-column label="操作" >
         <template slot-scope="scope">
-        <el-button size="mini" type="warning" v-if="scope.row.status === '1'&& scope.row.shelveStatus === '1'"  @click="handleShelves(scope.$index,scope.row.id,0)">下架</el-button>
-        <el-button size="mini" type="warning" :disabled="limit" v-if="scope.row.status === '1'&& scope.row.shelveStatus === '0'" @click="handleShelves(scope.$index,scope.row.id,1)">上架</el-button>
-        <el-button size="mini" type="primary" v-if="scope.row.status === '0'|| scope.row.status === '2'|| scope.row.status === '1'&& scope.row.shelveStatus === '0'" @click="editor(scope.$index,scope.row.id)">修改</el-button>
-        <el-button size="mini" type="warning" v-if="scope.row.status === '2'" @click="handleReason(scope.$index,scope.row.reason)">查看原因</el-button>
+          <el-button size="mini" type="warning" v-if="scope.row.status === '1'&& scope.row.shelveStatus === '1'"  @click="handleShelves(scope.$index,scope.row.id,0)">下架</el-button>
+          <el-button size="mini" type="warning" :disabled="limit" v-if="scope.row.status === '1'&& scope.row.shelveStatus === '0'" @click="handleShelves(scope.$index,scope.row.id,1)">上架</el-button>
+          <el-button size="mini" type="primary" v-if="scope.row.status === '0'|| scope.row.status === '2'|| scope.row.status === '1'&& scope.row.shelveStatus === '0'" @click="editor(scope.$index,scope.row.id)">修改</el-button>
+          <el-button size="mini" type="warning" v-if="scope.row.status === '2'" @click="handleReason(scope.$index,scope.row.reason)">查看原因</el-button>
+          <el-button size="mini" type="primary" @click="copyGoods(scope.$index,scope.row.id)">复制</el-button>
 
         </template>
       </el-table-column>
@@ -110,6 +118,9 @@
 
       </span>
     </el-dialog>
+    <div v-if="mask" @click="mask = false ;" class="mask">
+      <img :src=" imageDomain + bigImg" alt="" />
+    </div>
   </div>
 </template>
 
@@ -118,6 +129,7 @@
   import { getMobile } from "@/utils/auth"
   import { getGoodsList,firstList,secondList,thirdList,changeStatus ,changeGoods} from "@/api/merchant"
   import { getBond } from "@/api/userCenter"
+  import userPhoto from '@/assets/404_images/fail.png'
 
   export default {
         name: "goods-list",
@@ -165,7 +177,12 @@
             user: getMobile(),
             loading : true ,
             limit: false,
-      }
+            errorImg:'this.src="' + userPhoto + '"',
+            failImg: userPhoto,
+            imageDomain : process.env.IMAGE_DOMAIN ,
+            mask : false ,
+            bigImg : '',
+          }
       },
       mounted(){
         this.time = parseTime(new Date());
@@ -299,6 +316,10 @@
           this.$router.push('/merchantCenter/goods/newGoods')
 
         },
+        copyGoods(index,id){
+          this.$router.push('/merchantCenter/goods/newGoods?order='+id);
+
+        },
         handleSizeChange(val) {
 
           this.pageSize = val ;
@@ -331,6 +352,11 @@
 
     .cell{
       height : 0.5rem ;
+      img{
+        width : 0.7rem ;
+        height: 0.7rem ;
+        margin : auto ;
+      }
     }
     .el-button{
       margin : 0.1rem auto;
