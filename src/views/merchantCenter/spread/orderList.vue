@@ -37,9 +37,9 @@
             <el-table-column prop="createTime" label="创建时间" width="100"></el-table-column>
             <el-table-column prop="dealPrice" label="实际成交价格(元)" width="70"></el-table-column>
             <el-table-column prop="dealNum" label="成交商品数量" width="80"></el-table-column>
-            <el-table-column prop="brokerageRate" label="佣金比例" width="90">
+            <el-table-column prop="brokerageRate" label="佣金比例(%)" width="90">
               <template slot-scope="scope">
-                <span>{{scope.row.brokerageRate}}%</span>
+                <span>{{scope.row.brokerageRate}}</span>
               </template>
             </el-table-column>
             <el-table-column prop="brokerage" label="佣金(元)" width="80"></el-table-column>

@@ -35,7 +35,7 @@
         <!--<el-button type="primary" size="mini" @click="handleBond">确定缴纳</el-button>-->
       <!--</el-form-item>-->
     </el-form>
-    <el-dialog title="申请解冻保证金" :visible.sync="dialogVisible" width="60%"  style="margin-top:10vh" >
+    <el-dialog title="申请解冻保证金" :visible.sync="dialogVisible" width="60%"  >
       <div class="dialog_content">
         <h3>确定进行保证金解冻操作？</h3>
         <p>保证金解冻以后，所有商品自动下架，不可售卖。</p>
@@ -53,14 +53,14 @@
         <el-button plain @click="goBond">前往缴纳保证金</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="提示" :visible.sync="payVisible" width="40%" :before-close="handleClose" style="margin-top:10vh" >
+    <el-dialog title="提示" :visible.sync="payVisible" width="40%" :before-close="handleClose" style="margin-top:0" >
       <span style="text-align:center;width: 70%; display: block; margin: 0 auto;">请在新窗口完成支付，支付成功后请点击“已完成支付” 若支付遇到问题请点击“支付遇到问题”</span>
       <span slot="footer" class="dialog-footer" style="text-align:center;display:block">
         <el-button style="background:#3a8ee6;;color:white;margin-rigth:20px" @click="finishPay()">已完成支付</el-button>
         <el-button style="background:#3a8ee6;;color:white;" @click="hasQuestion()">支付遇到问题</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="支付遇到问题" :visible.sync="dialogVisibleQuestion" width="40%" :before-close="handleClose" style="margin-top:10vh">
+    <el-dialog title="支付遇到问题" :visible.sync="dialogVisibleQuestion" width="40%" :before-close="handleClose" style="margin-top:0">
       <span style="width: 80%; display: block; margin: 0 auto;">付款遇到问题支付未成功，付款遇到问题了？先看看是不是由于下面的原因:
         <br> 1、所需支付的金额超过了银行支付限额？建议您登录网上银行提高上限额度，或者先分若干次充值到新试客余额，即能轻松支付。
         <br> 2、支付宝或网银页面显示错误或空白？部分网银对不同浏览器的兼容性有限，导致无法正常支付，建议您使用IE7及以上版本浏览器进行支付操作！

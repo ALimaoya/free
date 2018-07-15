@@ -57,13 +57,13 @@
           <img  :src="failImg" v-else>
         </template>
       </el-table-column>
-      <el-table-column label="分类" width="180">
+      <el-table-column label="分类" width="90">
         <template slot-scope="scope">
           <span style="font-size: 0.12rem ;" v-if="scope.row.cateGoryMap!== {}">{{ scope.row.cateGoryMap.categoryName1}}>{{ scope.row.cateGoryMap.categoryName2}}>{{ scope.row.cateGoryMap.categoryName3}} </span>
         </template>
       </el-table-column>
-      <el-table-column label="规格" show-overflow-tooltip min-width="240">
-        <template slot-scope="scope">
+      <el-table-column label="规格"  min-width="240">
+          <template slot-scope="scope">
           <!--<el-table :data="scope.row.size"  border fit :header-row-class-name="thColor" :row-style="tbColor">-->
             <!--<el-table-column prop="size" label="尺码" ></el-table-column>-->
             <!--<el-table-column prop="color" label="颜色"></el-table-column>-->

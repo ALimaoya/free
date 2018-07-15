@@ -35,7 +35,7 @@
     </div>
     <div class="addressList" v-else >
       <div class="tableTitle">
-        <h2>地址列表</h2>isNew
+        <h2>地址列表</h2>
         <el-button type="primary" size="mini" @click="newAddr">新增</el-button>
       </div>
 
@@ -102,10 +102,10 @@
           };
           const validTel = ( rule,value,callback) => {
             if(value === ''){
-              callback(new Error('请填写联系电话'))
+              callback(new Error('请填写联系人手机号码'))
             }else{
               if(!validatePhone(value)){
-                callback(new Error('请填写正确格式的联系电话'))
+                callback(new Error('请填写正确格式的手机号码'))
               }
               callback()
             }

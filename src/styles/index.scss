@@ -137,14 +137,17 @@ a:hover {
   border : 0;
   margin : auto ;
   width: 90% ;
+  table-layout: fixed;
   th,td{
     padding : 0 0.1rem ;
     border : 0;
     text-align: center ;
-
+    white-space:normal;
   }
   td{
     font-size: 0.12rem ;
+    //word-wrap:break-word!important;
+    //width: 1rem!important;
   }
   th{
     height: 30px;
