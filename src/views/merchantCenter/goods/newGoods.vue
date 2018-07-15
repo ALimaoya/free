@@ -59,8 +59,8 @@
                            :maxlength="40"  v-model.trim="item.color" size="small" ></el-input>
               </el-form-item>
               <el-form-item class="subItem" :prop="'ybProductItemReqDto.'+ index + '.stock'" :rules="{ message : '请输入商品库存', trigger : 'blur' , required : true }">
-                <el-input  class="key" placeholder="库存量" type="number"
-                           :maxlength="11"  v-model.number="item.stock" size="small" ></el-input>
+                <el-input  class="key" placeholder="库存量" type="tel"
+                           :maxlength="11"  v-model.trim="item.stock" size="small" ></el-input>
                 <el-button slot type="primary" size="mini" @click="addSize">添加</el-button>
                 <el-button  slot plain size="mini" @click="deleteSize(item)">删除</el-button>
               </el-form-item>
@@ -76,7 +76,7 @@
         </el-form-item>
         <el-form-item labelWidth="130px" label="图片" prop="imagesList">
           <ul class="imgList">
-            <li v-for="(item,index) in form.imagesList" @change="getImg(index)">
+            <li v-for="(item,index) in form.imagesList" @change="getImg(index)" :key="index">
               <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.imagesList[index]"
                           :headers="{'yb-tryout-merchant-token':token}"  :show-file-list="false"  :before-upload="beforeImgUpload">
                 <img v-if="form.imagesList[index]" :src="imageDomain + form.imagesList[index]" class="avatar">

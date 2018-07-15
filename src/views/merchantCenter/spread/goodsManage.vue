@@ -364,7 +364,8 @@
               this.chooseList.map( i =>{
                 arr.push( { productId: i.id ,brokerageRate: i.brokerageRate})
               })
-              addSpread(arr).then( res => {
+              if(arr.length > 0){
+                addSpread(arr).then( res => {
                   if(res.data.status === '000000000'){
                     this.$message({
                       message:'添加成功',
@@ -375,7 +376,14 @@
                     this.getList();
                     this.close() ;
                   }
-              });
+                });
+              }else{
+                this.$message({
+                  message:'请选择需要添加的推广商品',
+                  type: 'error',
+                  center: true
+                })
+              }
 
 
             // }
@@ -415,6 +423,12 @@
 
                 }
 
+              })
+            }else{
+              this.$message({
+                message: '请先选择需要删除的推广商品',
+                center: true ,
+                type: 'error'
               })
             }
 

@@ -8,7 +8,7 @@
         <li v-for="(item ,index) in carriageForm.regulation" :key="index">
           <el-form-item :prop="'regulation.' + index + '.reachQuantity'"
                           :rules="rule.reachQuantity">
-              满<el-input class="inputInfo" size="small" :maxLength="11" type="number" v-model.number="item.reachQuantity"></el-input>件
+              满<el-input class="inputInfo" size="small" :maxlength="11" type="number" v-model.number="item.reachQuantity"></el-input>件
           </el-form-item>
           <el-form-item :prop="'regulation.' + index + '.carriageAmount'"
                           :rules="rule.carriageAmount">

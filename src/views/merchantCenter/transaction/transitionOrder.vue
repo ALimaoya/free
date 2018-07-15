@@ -29,8 +29,8 @@
             <tr class="tbColor">
               <td><el-button plain size="mini" disabled="disabled" v-if="form.deliverOrder.status!==null" :type="statusList[form.deliverOrder.status*1].type">{{ statusList[form.deliverOrder.status*1].name }}</el-button></td>
               <td>{{form.deliverOrder.createTime}}</td>
-              <td v-if="form.deliverOrder.status!='0'">支付宝</td>
-              <td v-else></td>
+              <td v-if="form.deliverOrder.status!='0'&&form.deliverOrder.status!='6'">{{ payList[form.deliverOrder.payType-0] }}</td>
+              <td v-else>--</td>
               <td v-if="form.deliverOrder.payTime!==null">{{form.deliverOrder.payTime}}</td>
               <td v-else></td>
             </tr>
@@ -144,14 +144,7 @@
                 street:''
               },
 
-            payList:[
-              {
-                  name : '支付宝',
-                },
-                {
-                  name : '微信支付',
-                },
-            ],
+            payList:['支付宝', '微信支付'],
               statusList:[
                 // {
                 //   name:'',

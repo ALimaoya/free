@@ -257,11 +257,11 @@
           allData(val){
             this.subTableData = val ;
 
-            console.log(val,1)
+            // console.log(val,1)
           },
           //批量选择
           handleCurrentChange(row){
-            console.log(row,2);
+            // console.log(row,2);
             this.subTableData = row ;
 
           },
