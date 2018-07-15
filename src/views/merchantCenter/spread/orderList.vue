@@ -39,7 +39,7 @@
             <el-table-column prop="dealNum" label="成交商品数量" width="80"></el-table-column>
             <el-table-column prop="brokerageRate" label="佣金比例" width="90">
               <template slot-scope="scope">
-                <span>{{(scope.row.brokerageRate)*100}}%</span>
+                <span>{{scope.row.brokerageRate}}%</span>
               </template>
             </el-table-column>
             <el-table-column prop="brokerage" label="佣金(元)" width="80"></el-table-column>
