@@ -1,5 +1,5 @@
 import Vue from 'vue'
-
+import 'babel-polyfill'
 import 'normalize.css/normalize.css'// A modern alternative to CSS resets
 
 import ElementUI from 'element-ui'
@@ -13,6 +13,9 @@ import store from './store'
 import '@/icons' // icon
 import '@/permission' // permission control
 import '@/utils/rem.js'
+import promise  from 'es6-promise';
+promise.polyfill();
+import 'es6-promise/auto'
 Vue.use(ElementUI)
 
 Vue.config.productionTip = false ;
