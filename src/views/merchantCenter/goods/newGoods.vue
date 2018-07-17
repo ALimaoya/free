@@ -850,7 +850,7 @@
       height : 10vh;
       font-size : 0.3rem ;
       text-align : center ;
-      line-height : 10vh ;
+      line-height : 5vh ;
     }
   }
   .taoDetail{

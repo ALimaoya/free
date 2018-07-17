@@ -5,7 +5,7 @@
         <el-button type="primary" size="small" @click="getGoods">新增主推商品</el-button>
         <el-button type="primary" size="small" @click="deleteChoose">删除选中项</el-button>
       </div>
-      <el-table :data="tableData"  border fit @select="chooseApart" @select-all="chooseAll">
+      <el-table :data="tableData" ref="multipleDelete" border fit @select="chooseApart" @select-all="chooseAll">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column label="商品信息" >
           <template slot-scope="scope">
@@ -89,7 +89,9 @@
           </el-table-column>
           <el-table-column label="设置佣金比率(%)" prop="brokerageRate">
             <template slot-scope="scope">
-              <el-input placeholder="1.5%(默认)" type="number" v-model.number="scope.row.brokerageRate"  size="mini" @change="setPercent(scope.$index,scope.row.brokerageRate)"></el-input>
+              <el-input placeholder="1.5%(默认)" type="number" v-model.number="scope.row.brokerageRate"  size="mini" @change="setPercent(scope.$index,scope.row.brokerageRate)">
+              </el-input>
+              <span class="tip">(设置范围：1.5~70)</span>
             </template>
           </el-table-column>
         </el-table>
@@ -101,6 +103,7 @@
             :current-page.sync="subCurrentPage"
             :page-sizes="[10, 15, 20]"
             :page-size="subPageSize"
+            :pager-count="5"
             layout=" sizes, prev, pager, next, jumper"
             :total="subTotalElements">
           </el-pagination>
@@ -123,6 +126,13 @@
         <span slot="footer" class="dialog-footer">
         <el-button type="primary" size="small" @click="confirm">确定</el-button>
         <el-button plain size="small" @click="editDialog= false ;">取消</el-button>
+      </span>
+      </el-dialog>
+      <el-dialog class="file_dialog" title="提示" top="20%" :visible.sync="tipsDialog" width="30%" center>
+        <p>{{ tips }}</p>
+        <span slot="footer" class="dialog-footer">
+        <el-button type="primary" size="small" @click="confirmDelete">确定</el-button>
+        <el-button plain size="small" @click="cancel">取消</el-button>
       </span>
       </el-dialog>
     </div>
@@ -184,6 +194,13 @@
               updateId: '',
               errorImg:'this.src="' + userPhoto + '"',
               failImg: userPhoto,
+              tipsDialog: false ,
+              tips: '',
+              deleteType: '',
+              deleteObj: {
+                id : '',
+                productId: ''
+              }
             }
         },
         mounted() {
@@ -394,7 +411,15 @@
             this.commonRatio = '';
             this.goodsCode = '';
             this.shopName = '';
+            this.tipsDialog= false ;
+            this.deleteList = [];
             this.$refs.multipleTable.clearSelection();
+          },
+          //取消批量删除
+          cancel(){
+            this.tipsDialog= false ;
+            this.deleteList = [];
+            this.$refs.multipleDelete.clearSelection();
           },
           chooseAll(val){
             this.deleteList = val ;
@@ -405,25 +430,12 @@
           },
           //批量删除
           deleteChoose(){
-            let arr = [];
             if(this.deleteList.length> 0){
-              this.deleteList.map( i => {
-                arr.push( { id: i.id ,productId: i.productId ,brokerageRate: 0 })
-              });
-              this.loading = true ;
-              batchDelete(arr).then( res => {
-                this.loading = false ;
-                if(res.data.status === '000000000'){
-                  this.$message({
-                    message: '批量删除成功，请稍后确认',
-                    center: true ,
-                    type: 'success'
-                  });
-                  this.getList();
+              this.tipsDialog = true ;
+              this.tips = '确定删除所有选中项推广商品？';
+              this.deleteType = '2' ;
 
-                }
 
-              })
             }else{
               this.$message({
                 message: '请先选择需要删除的推广商品',
@@ -437,20 +449,56 @@
           },
           //删除选中项
           deleteItem(index,id,productId){
-            this.loading = true ;
-            deleteGoods(id,productId).then( res => {
-              this.loading = false ;
-              if(res.data.status === '000000000'){
-                this.$message({
-                  message: '删除成功',
-                  center: true,
-                  type: "success"
-                });
-                this.getList();
+            this.tipsDialog = true ;
+            this.tips = '确定删除该推广商品？';
+            this.deleteType = '1' ;
+            this.deleteObj = {
+              id : id,
+              productId: productId
+            }
+          },
+          //确定删除
+          confirmDelete(){
+            if(this.deleteType === '1'){
+              this.loading = true ;
+              deleteGoods(this.deleteObj.id,this.deleteObj.productId).then( res => {
+                this.loading = false ;
+                if(res.data.status === '000000000'){
+                  this.$message({
+                    message: '删除成功',
+                    center: true,
+                    type: "success"
+                  });
+                  this.getList();
+                  this.tipsDialog = false ;
 
-              }
+                }
 
-            })
+              })
+            }else if(this.deleteType === '2'){
+              let arr = [];
+              this.deleteList.map( i => {
+                arr.push( { id: i.id ,productId: i.productId ,brokerageRate: 0 })
+              });
+              this.loading = true ;
+              batchDelete(arr).then( res => {
+                this.loading = false ;
+                if(res.data.status === '000000000'){
+                  this.$message({
+                    message: '批量删除成功，请稍后确认',
+                    center: true ,
+                    type: 'success'
+                  });
+                  this.getList();
+                  this.deleteList = [];
+                  this.tipsDialog = false ;
+
+                }
+
+              })
+
+            }
+
           },
           //编辑佣金比率
           editRatio(index,ratio){
@@ -524,7 +572,7 @@
                   message: '请输入' + this.range + '之间的数字',
                   center: true,
                   type: 'error',
-                  duration: 1500
+                  duration: 2000
                 });
                 return false ;
 
@@ -658,7 +706,23 @@
   }
   .el-pagination{
     white-space: pre!important;
-  }
 
+  }
+  .el-pagination__sizes{
+    margin-right: 0!important;
+  }
+  .file_dialog p{
+    /*height : 10vh;*/
+    font-size : 0.3rem ;
+    text-align : center ;
+    line-height : 2 ;
+    width: 100% ;
+  }
+  .tip{
+    font-size: 0.12rem ;
+    color: #f18531;
+    width: 100% ;
+    display: inline-block;
+  }
 
 </style>

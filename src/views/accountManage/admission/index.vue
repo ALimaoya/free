@@ -78,6 +78,9 @@
       background : rgba(255, 0, 0, 0.6);
       color : #fff ;
       margin : 0.5rem auto ;
+      width: 90%;
+      font-size: 0.14rem;
+      padding: 0.2rem;
 
     }
     .el-button:hover{
