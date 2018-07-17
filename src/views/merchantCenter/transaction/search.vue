@@ -242,7 +242,7 @@
               {
                 name : '未支付',
                 value : '0',
-                type:'danger'
+                type:'warning'
               },
               {
                 name : '已支付',
@@ -266,19 +266,19 @@
               {
                 name : '退款中',
                 value : '4',
-                type: 'danger'
+                type: 'warning'
 
               },
               {
                 name : '已退款',
                 value : '5',
-                type: 'info'
+                type: 'danger'
 
               },
               {
                 name : '已取消',
                 value : '6',
-                type: 'danger'
+                type: 'info'
 
               },
               {
