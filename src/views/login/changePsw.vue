@@ -1,7 +1,7 @@
 <template>
     <div class="login-container">
       <el-form autoComplete="on" :model="RegForm" :rules="RegRules" ref="RegForm" label-position="left" label-width="0px" class="card-box login-form">
-        <h3 class="title">丫贝试客商家中心<span>找回密码</span></h3>
+        <h3 class="title">丫贝商家中心<span>找回密码</span></h3>
         <el-form-item prop="mobile">
           <span class="svg-container svg-container_login">
             <svg-icon icon-class="user" />

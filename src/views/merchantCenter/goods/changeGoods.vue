@@ -73,11 +73,13 @@
       <el-form-item labelWidth="130px" label="图片" prop="imagesList">
         <ul class="imgList">
           <li v-for="(item,index) in form.imagesList" @change="getImg(index)">
-            <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.imagesList[index]"
+            <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.imagesList[index].imgUrl"
                         :headers="{'yb-tryout-merchant-token':token}"  :show-file-list="false"  :before-upload="beforeImgUpload">
-              <img v-if="form.imagesList[index]" :src="imageDomain + form.imagesList[index]" class="avatar">
+              <img v-if="form.imagesList[index].imgUrl" :src="imageDomain + form.imagesList[index].imgUrl" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
+            <span  class="deleteImg" @click="deleteImage(item)"></span>
+
           </li>
           <!--<span class="imgWarn tips_warn" v-if="goodsImgWarn">请上传商品图片</span>-->
         </ul>
@@ -113,9 +115,11 @@
   import { getToken,getMobile } from '@/utils/auth'
   import { getQueryString,checkFloat } from "@/utils/validate"
   import E from 'wangeditor'
+  import SvgIcon from "../../../components/SvgIcon/index";
 
   export default {
 
+    components: {SvgIcon},
     name: "change-goods",
     data() {
 
@@ -175,7 +179,7 @@
           carriage:'',
           ybProductItemReqDto : [{ size: '', color : '', stock: ''}],
           // sizeList : [{ size: '', color : '', stock: ''}],
-          imagesList : ['','','','',''],
+          imagesList : [{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''}],
           describes: '',
         },
         formRule : {
@@ -309,14 +313,17 @@
                 }  ;
                 if(this.form.imagesList.length < 5){
                   if(this.form.imagesList.length === 0){
-                    this.form.imagesList =   ['','','','','']
+                    this.form.imagesList =   [{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''}]
 
                   }else {
                     for(let i = this.form.imagesList.length ; i< 5;i++){
-                      this.form.imagesList.push('');
+                      this.form.imagesList.push({ id: '', imgUrl:''});
                     }
                   }
                 }
+                  this.form.imagesList.map( i => {
+                    i.id = '';
+                  })
                 this.word = this.form.describes ;
                 this.brandCnName = res.data.data.brandCnName ;
                 this.thirdName = res.data.data.cateGoryMap.categoryId3;
@@ -385,7 +392,7 @@
               let formData = new FormData();
               formData.append('image', file);
               uploadImage(formData).then(res => {
-                _this.$set(_this.form.imagesList,_this.imgIndex,  res.data.data.fileName);
+                _this.$set(_this.form.imagesList[_this.imgIndex], 'imgUrl' ,  res.data.data.fileName);
               })
             }
           };
@@ -393,6 +400,16 @@
           image.src = e.target.result;
         };
         reader.readAsDataURL(file);
+      },
+      //删除图片
+      deleteImage(item){
+
+        if(this.form.imagesList.indexOf(item) !== -1){
+          let index = this.form.imagesList.indexOf(item) ;
+          this.$set(this.form.imagesList,index ,{ id : '', imgUrl: ''})
+          // this.form.imagesList[index] = { id : '', imgUrl: ''};
+        }
+
       },
       //删除商品规格
       deleteSize(item) {
@@ -473,9 +490,10 @@
                   duration: 1000
                 });
                 setTimeout(() => {
-                  window.location.reload();
+                  this.$router.push('/merchantCenter/goods/goodsList')
 
-                },1500)
+
+                },2000)
             })
           }else{
 
