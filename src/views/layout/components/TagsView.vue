@@ -119,7 +119,7 @@ export default {
     top : 110px;
     background: #fff;
     height: 34px;
-    z-index : 2000 ;
+    z-index : 20000 ;
     border-bottom: 0.01rem solid #d8dce5;
     box-shadow: 0 0.01rem 0.03rem 0 rgba(0, 0, 0, .12), 0 0 0.03rem 0 rgba(0, 0, 0, .04);
     .tags-view-item {

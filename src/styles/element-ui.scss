@@ -24,6 +24,7 @@
    width : 8% ;
  }
 
+
  .el-button{
    //padding : 0 ;
    text-align : center ;
@@ -46,6 +47,9 @@
   //height : auto ;
   overflow : hidden ;
 }
+ .user-dropdown{
+   z-index: 20000!important;
+ }
  .el-dropdown-menu__item{
    text-align : center ;
  }
@@ -77,7 +81,7 @@
    content : '';
  }
  .el-pagination__sizes{
-   margin-right : 4rem ;
+   margin-right : 1rem ;
  }
  .el-popover{
    color : #8f949a;
@@ -100,6 +104,16 @@
  //.el-table td{
  //  padding : 0.08rem  0;
  //}
+ .el-dialog__wrapper{
+   z-index: 20000!important;
+   left : 170px ;
+   top: 143px;
+   //height: 100% ;
+ }
+ .el-dialog--center{
+   margin-top: 1vh!important;
+
+ }
  .el-table__row{
    td{
      padding : 0.05rem  0;
@@ -135,4 +149,27 @@
   height : 0.4rem ;
   line-height : 0.4rem ;
 }
+
+ .el-form-item__label{
+   padding-right : 0.3rem!important; ;
+ }
+ .el-checkbox-button .el-checkbox-button__inner {
+   border: 1px solid #dcdfe6;
+   border-radius: 0.05rem!important;
+   width : 100px;
+   height : 40px;
+   font-size : 0.18rem;
+   line-height : 40px;
+   padding : 0;
+   text-align : center;
+ }
+ .el-tooltip__popper{
+   max-width: 3rem!important;
+ }
+ .el-message{
+   z-index: 25000 !important;
+ }
+ .el-select-dropdown{
+   z-index: 20000!important;
+ }
 

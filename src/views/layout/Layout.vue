@@ -1,32 +1,21 @@
 <template>
-  <div class="app-wrapper" :class="{hideSidebar:!sidebar.opened}">
+  <div class="app-wrapper" >
     <top></top>
-    <sidebar class="sidebar-container"></sidebar>
-    <div class="main-container">
-      <navbar></navbar>
-      <tags-view></tags-view>
-      <app-main></app-main>
-    </div>
+    <main-container></main-container>
   </div>
 </template>
 
 <script>
-  import Top from "@/components/top"
-import { Navbar, Sidebar, AppMain , TagsView  } from '@/views/layout/components'
-export default {
+  import Top from "@/components/top";
+  import   { MainContainer }  from '@/views/layout/components'
+
+  export default {
   name: 'layout',
   components: {
-    Navbar,
-    Sidebar,
-    AppMain ,
-    TagsView ,
-    Top
+    Top,
+    MainContainer
   },
-  computed: {
-    sidebar() {
-      return this.$store.state.app.sidebar
-    }
-  }
+
 }
 </script>
 
@@ -37,6 +26,6 @@ export default {
   position: relative;
   height: 100%;
   width: 100%;
-
+  /*display: flex;*/
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <el-breadcrumb class="app-breadcrumb" separator="/">
-    <span class="home">丫贝试客</span>
+    <span class="home">{{ title }}</span>
     <transition-group name="breadcrumb">
       <el-breadcrumb-item v-for="(item,index)  in levelList" :key="item.path" v-if="item.meta.title">
         <span class="no-redirect">{{item.meta.title}}</span>
@@ -18,7 +18,7 @@ export default {
   },
   data() {
     return {
-      levelList: null
+      levelList: null ,
     }
   },
   watch: {
@@ -26,11 +26,30 @@ export default {
       this.getBreadcrumb()
     }
   },
+  mounted(){
+    this.getTitle();
+  },
+  computed:{
+    title: function(){
+      if(this.$route.path.indexOf('merchantCenter') !== -1){
+
+          return  '特卖商城'
+      }
+
+      if(this.$route.path.indexOf('freeManage') !== -1){
+
+        return '试用中心'
+      }
+    }
+  },
   methods: {
     getBreadcrumb() {
       let matched = this.$route.matched.filter(item => item.name)
 
       this.levelList = matched
+    },
+    getTitle(){
+
     }
   }
 }

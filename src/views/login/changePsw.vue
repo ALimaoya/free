@@ -1,7 +1,7 @@
 <template>
     <div class="login-container">
       <el-form autoComplete="on" :model="RegForm" :rules="RegRules" ref="RegForm" label-position="left" label-width="0px" class="card-box login-form">
-        <h3 class="title">丫贝试客商家中心<span>找回密码</span></h3>
+        <h3 class="title">丫贝商家中心<span>找回密码</span></h3>
         <el-form-item prop="mobile">
           <span class="svg-container svg-container_login">
             <svg-icon icon-class="user" />
@@ -13,7 +13,7 @@
             <svg-icon icon-class="verify" />
           </span>
           <el-input type="text" v-model="RegForm.imgNum" autoComplete="on" placeholder="请输入图形验证码" />
-          <img class="show-captcha" :src="'data:image/png;base64,'+imgCode" alt="" @click="changeCaptcha" />
+          <img class="show-captcha" :src="'data:image/png;base64,'+imgCode" @click="changeCaptcha" />
         </el-form-item>
         <el-form-item prop="message" class="validateCode">
           <span class="svg-container">
@@ -197,12 +197,8 @@
         changeCaptcha() {
           getCaptcha().then(res => {
             // console.log(res);
-            if (res.data.status === '000000000') {
-              this.imgCode = res.data.data.image;
+            this.imgCode = res.data.data.image;
               this.userToken = res.data.data.token;
-            }
-          }).catch(err => {
-            alert('服务器开小差啦，请稍等~')
           })
         },
         //获取短信验证码
@@ -251,7 +247,7 @@
           }).catch(err => {
             this.RegForm.imgNum = '' ;
             this.changeCaptcha() ;
-            alert('服务器开小差啦，请稍等~')
+
           });
         },
 
@@ -278,11 +274,6 @@
 
                 } else {
                   this.loading = false;
-                  this.$message({
-                    message: res.data.message,
-                    type: 'error',
-                    center: 'true'
-                  });
                   this.RegForm.imgNum = '' ;
                   this.changeCaptcha() ;
                 }

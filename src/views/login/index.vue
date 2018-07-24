@@ -2,7 +2,7 @@
   <div class="login-container">
     <el-form autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left" label-width="0px"
       class="card-box login-form">
-      <h3 class="title">丫贝试客商家中心<span>欢迎登录</span></h3>
+      <h3 class="title">丫贝商家中心<span>欢迎登录</span></h3>
       <el-form-item prop="mobile">
         <span class="svg-container svg-container_login">
           <svg-icon icon-class="user" />
@@ -22,10 +22,10 @@
       </el-form-item>
       <el-form-item prop="captcha" v-if="examine">
         <span class="svg-container">
-          <img src="../../assets/imgs/verify2.png" alt="" />
+          <img src="../../assets/imgs/verify2.png"  />
         </span>
         <el-input style="width : 150px;"  v-model="loginForm.captcha" @keyup.enter.native="handleLogin('loginForm')" autoComplete="on" placeholder="请输入验证码"></el-input>
-        <img class="show-captcha" :src="'data:image/png;base64,'+ imgCode" alt="" @click="changeCaptcha" />
+        <img class="show-captcha" :src="'data:image/png;base64,'+ imgCode"  @click="changeCaptcha" />
 
       </el-form-item>
       <el-form-item class="remember">
@@ -51,7 +51,7 @@
 <script>
   import {
     validatePhone,
-    validPassWord,
+    validLoginPassWord,
     validateCaptcha
   } from '@/utils/validate'
   import {
@@ -74,7 +74,7 @@
         }
       };
       const validatePass = (rule, value, callback) => {
-        if (!validPassWord(value)) {
+        if (!validLoginPassWord(value)) {
           callback(new Error('密码为8-16位的数字、字母组合'))
         } else {
 
@@ -245,7 +245,7 @@
             this.userToken = res.data.data.token;
           }
         }).catch(err => {
-          alert('服务器开小差啦，请稍等~')
+          // alert('服务器开小差啦，请稍等~')
         })
       }
     },

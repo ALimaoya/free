@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <el-form autoComplete="on" :model="RegForm" :rules="RegRules" ref="RegForm" label-position="left" label-width="0px" class="card-box login-form">
-      <h1 class="title">丫贝试客商家中心<span>欢迎注册</span></h1>
+      <h1 class="title">丫贝商家中心<span>欢迎注册</span></h1>
       <el-form-item prop="mobile">
         <span class="svg-container svg-container_login">
           <svg-icon icon-class="user" />
@@ -357,12 +357,8 @@
       changeCaptcha() {
         getCaptcha().then(res => {
           // console.log(res);
-          if (res.data.status === '000000000') {
-            this.imgCode = res.data.data.image;
+          this.imgCode = res.data.data.image;
             this.userToken = res.data.data.token;
-          }
-        }).catch(err => {
-          alert('服务器开小差啦，请稍等~')
         })
       },
       //获取短信验证码
@@ -400,16 +396,10 @@
 
             }, 1000);
           } else {
-            this.$message({
-              message: res.data.message,
-              center: true,
-              type: 'error'
-            });
             this.RegForm.imgNum = '' ;
             this.changeCaptcha();
           }
         }).catch(err => {
-          alert('服务器开小差啦，请稍等~');
           this.RegForm.imgNum = '' ;
           this.changeCaptcha();
         });
@@ -444,12 +434,6 @@
 
               } else {
                 this.loading = false;
-                this.$message({
-                  title: '信息错误',
-                  message: res.data.message,
-                  type: 'error',
-                  center : true
-                });
                 this.RegForm.imgNum = '' ;
                 this.changeCaptcha();
               }

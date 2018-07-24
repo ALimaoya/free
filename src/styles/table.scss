@@ -1,3 +1,5 @@
+@import './variables';
+
 .tableBox{
   h1{
     margin : 0 ;
@@ -126,9 +128,9 @@
     display : flex ;
     align-items: center;
     justify-content: center;
-    z-index : 10000;
+    z-index : 20000;
     img{
-      max-height : 100% ;
+      max-height : 60% ;
 
     }
   }
@@ -138,3 +140,28 @@
   flex-direction: row;
   justify-content: space-between;
 }
+.tableTitle{
+  height : 40px ;
+  margin :  0.4rem auto ;
+  width : 95% ;
+  background:$title ;
+  box-sizing: border-box;
+  /*border-top : 1px solid #aaa ;*/
+  border-bottom : 1px solid #aaa ;
+  h2{
+    width : 50% ;
+    height : 100% ;
+    line-height : 40px ;
+    font-weight : 100 ;
+    float : left ;
+    text-indent : 0.3rem ;
+    color : #fff ;
+
+  }
+  .el-button{
+    float : right ;
+    margin : 5px 0.2rem;
+    height : 30px ;
+  }
+}
+

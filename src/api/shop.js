@@ -3,7 +3,7 @@ import request from '@/utils/request'
 //获取商铺列表
 export function shopList(data){
   return request({
-    url : '/tryout/shop/list',
+    url : '/shop/list',
     method : 'post',
     data : data ,
     headers : {
@@ -15,7 +15,7 @@ export function shopList(data){
 // //获取下拉框商铺列表
 // export function selectShopList(data){
 //   return request({
-//     url : '/tryout/shop/select/list',
+//     url : '/shop/select/list',
 //     method : 'post',
 //     data : data ,
 //     headers : {
@@ -27,7 +27,7 @@ export function shopList(data){
 //添加商店信息
 export function shopInfo(data){
   return request({
-    url : '/tryout/shop/save',
+    url : '/shop/save',
     method : 'post',
     data ,
     headers : {
@@ -39,7 +39,7 @@ export function shopInfo(data){
 //修改商店信息
 export function changeInfo(data){
   return request({
-    url : '/tryout/shop/update',
+    url : '/shop/update',
     method : 'post',
     data ,
     headers : {
@@ -51,7 +51,7 @@ export function changeInfo(data){
 //获取店铺支付信息
 export function shopPayDetail(id){
   return request({
-    url : '/tryout/shop/payParams',
+    url : '/shop/payParams',
     method : 'get',
     params : {
       shopId : id
@@ -62,7 +62,7 @@ export function shopPayDetail(id){
 //支付店铺
 export function buyShop(data){
   return request({
-    url : '/tryout/shop/pay',
+    url : '/shop/pay',
     method : 'post' ,
     data
   })
@@ -72,7 +72,7 @@ export function buyShop(data){
 //获取店铺详情
 export function shopDetail(data){
   return request({
-    url : `/tryout/shop/detail/${data}`,
+    url : `/shop/detail/${data}`,
     method : 'get',
   })
 
@@ -81,8 +81,7 @@ export function shopDetail(data){
 //获取店铺验证码
 export function shopCaptcha(){
   return request({
-    // url : '/GET/tryout/shop/captcha',
-    url : '/tryout/shop/captcha',
+    url : '/shop/captcha',
     method : 'get'
   })
 }

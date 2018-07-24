@@ -18,6 +18,10 @@ html {
    font-size : 100px;
 
 }
+#app .mainContainer{
+  min-height : 100% ;
+  margin-top : 60px;
+}
 #app .el-menu-item, #app .el-submenu__title{
   //height: .56rem;
   //  line-height: .56rem;
@@ -26,16 +30,16 @@ html {
 
 }
 #app .el-menu-item{
-  padding-left: 40px !important;
+  padding-left: 30px !important;
 }
 #app .el-submenu>.el-submenu__title{
   padding-left:20px !important;
 }
 #app .nest-menu .el-submenu__title{
-  padding-left: 40px !important;
+  padding-left: 30px !important;
 }
 #app .nest-menu .el-menu .el-menu-item{
-  padding-left: 60px !important;
+  //padding-left: 60px !important;
 }
 #app .el-button{
   //padding: .12rem .2rem ;
@@ -43,7 +47,7 @@ html {
 .settings .el-dialog__headerbtn{display: none}
 #app .el-form-item__label{
   padding: 0 12px 0 0;
-  font-size: 14px;
+  font-size: 0.14rem;
 }
 #app .el-radio__label{    font-size: .14rem;
   padding-left: 10px;}
@@ -89,7 +93,7 @@ a:hover {
   }
 }
 
-//main-container全局样式
+//sub-container全局样式
 .app-main{
   min-height: 100%
 }
@@ -113,7 +117,7 @@ a:hover {
   }
 }
 .money_color{color: #ff0011}
-.tips_warn{ color : #f10110!important; }
+.tips_warn{ color : #f56c6c!important; font-size: 12px;}
 .c666{color: #666}
 .f18{font-size: 0.18rem}
 .f14{font-size: 0.14rem}
@@ -121,3 +125,72 @@ a:hover {
 .ml10{margin-left: .1rem}
 .line_through{text-decoration: line-through}
 .text-center{text-align: center}
+.h_title{
+    margin : 0 ;
+    padding : 0.2rem  0.4rem ;
+    border-bottom : 1px solid #666 ;
+    font-size : 0.22rem ;
+    line-height : 0.4rem ;
+}
+.tableC{
+  border-collapse: collapse;
+  border : 0;
+  margin : auto ;
+  width: 90% ;
+  table-layout: fixed;
+  th,td{
+    padding : 0 0.1rem ;
+    border : 0;
+    text-align: center ;
+    white-space:normal;
+  }
+  td{
+    font-size: 0.12rem ;
+    //word-wrap:break-word!important;
+    //width: 1rem!important;
+  }
+  th{
+    height: 30px;
+    font-weight: bold!important;
+    color: #666;
+  }
+  .thColor {
+    background : #cee ;
+  }
+  .tbColor {
+    background : #fdebd1 ;
+    border-bottom: 1px solid #fbd7a3 ;
+  }
+  tr:hover>td{
+    background : #fdebd1!important; ;
+  }
+
+}
+.subOrder{
+  color: #f59c1a!important;
+  font-size : 0.12rem ;
+  width : 100% ;
+  text-align: center;
+  display: inline-block;
+
+}
+.w-e-toolbar{
+  flex-wrap: wrap!important;
+}
+.w-e-text-container{
+  z-index: 0!important;
+  height: 500px!important;
+
+}
+.w-e-menu{
+  z-index: 1000!important;
+}
+.w-e-droplist,.w-e-list{
+  z-index: 20000!important;
+
+}
+.w-e-list:hover .w-e-droplist{
+  display: block!important;
+}
+
+

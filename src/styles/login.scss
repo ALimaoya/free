@@ -1,7 +1,4 @@
-$bg:#2d3a4b;
-$dark_gray:#889aa4;
-$light_gray:#eee;
-
+@import './variables.scss';
 .login-container {
   position: fixed;
   height: 100%;
@@ -114,7 +111,7 @@ $light_gray:#eee;
   .show-captcha{
     display : inline-block ;
     height: 50px ;
-    width : 1rem ;
+    width : 1.2rem ;
     float : right ;
     margin : auto 0;
 

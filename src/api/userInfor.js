@@ -4,14 +4,14 @@ import request from '@/utils/request'
 export function getThirdAccount(data) {
   return request({
 
-    url: 'tryout/settings/data',
+    url: '/settings/data',
 
 })
 }
 //设置第三方账号
 export function setThirdAccount(data) {
   return request({
-    url: 'tryout/settings/editThirdAccount',
+    url: '/settings/editThirdAccount',
     method: 'post',
     data
 })
@@ -19,7 +19,7 @@ export function setThirdAccount(data) {
 //修改绑定支付宝账号
 export function setApilyAccount(data) {
   return request({
-    url: '/tryout/settings/alipay',
+    url: '/settings/alipay',
     method: 'post',
     data
 })
@@ -27,7 +27,7 @@ export function setApilyAccount(data) {
 //查询第三方账号信息
 export function getThirdInfo(type) {
   return request({
-    url: '/tryout/settings/third/'+type,
+    url: '/settings/third/'+type,
     method: 'get',
 })
 }
@@ -35,8 +35,8 @@ export function getThirdInfo(type) {
 export function changeMobile(data){
   return request({
 
-    // url : '/POST/tryout/settings/editMobile',
-    url : 'tryout/settings/editMobile',
+    // url : '/POST/settings/editMobile',
+    url : '/settings/editMobile',
     method : 'post',
     data : data
   })
@@ -44,7 +44,7 @@ export function changeMobile(data){
 //修改登录密码
 export function editLoginPsw(data){
   return request({
-    url : '/tryout/settings/editPassword',
+    url : '/settings/editPassword',
     method : 'post',
     data : data
   })
@@ -52,8 +52,8 @@ export function editLoginPsw(data){
 //修改设置支付密码
 export function editPayPsw(data){
   return request({
-    url : '/tryout/settings/editPayPassword',
-    // url : '/POST/tryout/settings/editPayPassword',
+    url : '/settings/editPayPassword',
+    // url : '/POST/settings/editPayPassword',
     method : 'post',
     data : data
   })
@@ -61,22 +61,24 @@ export function editPayPsw(data){
 //获取验证码
 export function getCaptcha(){
   return request({
-    url : 'tryout/loginStatus/captcha',
+    url : '/loginStatus/captcha',
     method : 'get',
+    needFailResponse:true,
   })
 }
 
 //获取会员信息
 export function getMember(){
   return request({
-    url : 'tryout/member/data',
+    url : '/member/data',
     method : 'get',
+    needFailResponse:true,   
   })
 }
 //获取会员订单列表
 export function getMemberOrder(data){
   return request({
-    url : '/tryout/member/orders',
+    url : '/member/orders',
     method : 'post',
     data:data
   })
@@ -84,15 +86,16 @@ export function getMemberOrder(data){
 //获取会员类型列表
 export function getVipType(){
   return request({
-    url : '/tryout/vip/list',
+    url : '/vip/list',
     method : 'get',
   })
 }
 //购买会员
 export function buyVip(data){
   return request({
-    url : 'tryout/vip/buy',
+    url : '/vip/buy',
     method : 'post',
-    data:data
+    data:data,
+    needFailResponse:true,
   })
 }

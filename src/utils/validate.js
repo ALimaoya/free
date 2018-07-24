@@ -10,6 +10,17 @@ export function validateURL(textval) {
   // const urlregex = /^(https?|ftp):\/\/([a-zA-Z0-9.-]+(:[a-zA-Z0-9.&%$-]+)*@)*((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}|([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(:[0-9]+)*(\/($|[a-zA-Z0-9.,?'\\+&%$#=~_-]+))*$/
   return urlregex.test(textval)
 }
+/*获取字符串中多个url*/
+export function httpString(s) {
+  // var reg = /(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|&|-)+)/g;
+  var reg= /(https?|http|ftp|file):\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/g;
+  //var reg= /^((ht|f)tps?):\/\/[\w\-]+(\.[\w\-]+)+([\w\-\.,@?^=%&:\/~\+#]*[\w\-\@?^=%&\/~\+#])?$/;
+  //v = v.replace(reg, "<a href='$1$2'>$1$2</a>"); //这里的reg就是上面的正则表达式
+  //s = s.replace(reg, "$1$2"); //这里的reg就是上面的正则表达式
+  s = s.match(reg);
+  // console.log(s)
+  return(s)
+}
 /*QQ号验证*/
 export function validQQ(str){
   const reg = /^[1-9][0-9]{4,16}$/;
@@ -30,6 +41,16 @@ export function validatePhone(val){
 export function validateEmail(val){
   const email = /^([a-zA-Z0-9._-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/ ;
   return email.test(val)
+}
+/*邮编验证*/
+export function validateZipCode(val){
+  const reg = /^[1-9][0-9]{5}$/ ;
+  return reg.test(val)
+}
+/*身份证号验证*/
+export function validateIDCard(val){
+  const reg =  /^[1-9]{1}[0-9]{14}$|^[1-9]{1}[0-9]{16}([0-9]|[xX])$/ ;
+  return reg.test(val);
 }
 /* 小写字母*/
 export function validateLowerCase(str) {
@@ -59,9 +80,16 @@ export function validateCaptcha(str){
     const reg =  /^[0-9A-Za-z]{4}$/;
     return reg.test(str)
 }
-/*登录注册密码*/
+/*登录密码*/
+export function validLoginPassWord(str){
+  // const reg =  /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}/;
+  const reg = /^(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}/
+  return reg.test(str)
+}
+/*注册、修改登录密码*/
 export function validPassWord(str){
-  const reg =  /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}/;
+  const reg =  /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}/;
+  // const reg = /^(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}/
   return reg.test(str)
 }
 /*验证姓名*/
@@ -95,4 +123,20 @@ export function checkInput(value){
 export function checkFloat(value){
   const reg = /^(0|[1-9][0-9]*)+(\.\d{1,2})?$/ ;
   return reg.test(value) ;
+}
+/*验证社会统一信用代码*/
+export function validCreditCode(value){
+  const reg = /[^_IOZSVa-z\W]{2}\d{6}[^_IOZSVa-z\W]{10}$/ ;
+  return reg.test(value);
+}
+/*验证大于0的整数*/
+export function int(value){
+  const reg = /^\+?[1-9]\d*$/;
+  return reg.test(value);
+}
+
+/*验证输入百分数*/
+export function validPercent(value){
+  const reg = /^(100|[1-9]?\d(\.\d\d?\d?)?)%$/;
+  return reg.test(value)
 }
