@@ -293,7 +293,7 @@ export const constantRouterMap = [
             {
               path: 'index',
               name: 'MerchantCenter-home',
-              component:() => import('@/views/merchantCenter/center/index'),
+              component:() => import('@/views/merchantCenter/index'),
               hidden : true ,
               meta: { title: '商户中心首页', icon: 'merchantCenter' },
 
