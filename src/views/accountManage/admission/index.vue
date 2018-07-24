@@ -29,7 +29,7 @@
           this.$router.push({ name : 'TryoutActivity'})
         },
         goShop(){
-          this.$router.push({ name : 'MerchantCenter-home'})
+          this.$router.push({ name : 'AdmissionShop'})
         }
       }
     }

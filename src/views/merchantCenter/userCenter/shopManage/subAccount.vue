@@ -263,7 +263,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  @import '../../../styles/table';
+  @import '../../../../styles/table';
   .h_title{
     .el-button{
       float : right ;

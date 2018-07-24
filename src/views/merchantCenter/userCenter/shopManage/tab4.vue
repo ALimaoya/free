@@ -72,7 +72,7 @@
           </el-upload>
         </el-form-item>
         <el-form-item labelWidth="200px" label="品牌授权证明：">
-          <el-upload v-for="(item,index) in grantImgList" :key="index" class="upload"  :action="imgUrl" :multiple="false" v-model.trim="form.grantImgList"
+          <el-upload v-for="(item,index) in form.grantImgList" :key="index" class="upload"  :action="imgUrl" :multiple="false" v-model.trim="form.grantImgList"
                       :show-file-list="false"  >
             <img v-if="item" :src="imageDomain + item" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -121,7 +121,7 @@
           companyTime:'',
           creditCode:'' ,
           registerImg: '',
-          grantImgList: ''
+          grantImgList: []
         },
         imageDomain : process.env.IMAGE_DOMAIN , //获取图片的外链域名
         imgUrl: process.env.BASE_API+'/file/upload',   // 上传图片的域名
@@ -141,6 +141,6 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  @import '../../../styles/tab';
+  @import '../../../../styles/tab';
 
 </style>

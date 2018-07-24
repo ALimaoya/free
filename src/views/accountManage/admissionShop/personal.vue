@@ -17,9 +17,9 @@
 
 <script>
   import {  getUser,getToken } from '@/utils/auth'
-  import Personal1 from "@/views/merchantCenter/userCenter/admissionShop/personal1"
-  import Personal2 from "@/views/merchantCenter/userCenter/admissionShop/personal2"
-  import SuccessAdd from "@/views/merchantCenter/userCenter/admissionShop/successAdd"
+  import Personal1 from "@/views/accountManage/admissionShop/personal1"
+  import Personal2 from "@/views/accountManage/admissionShop/personal2"
+  import SuccessAdd from "@/views/accountManage/admissionShop/successAdd"
 
 
   export default {
@@ -51,6 +51,6 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  @import '../../../../styles/step';
+  @import '../../../styles/step';
 
 </style>

@@ -62,9 +62,9 @@
       </el-dialog>
       <el-dialog title="丫贝网合作协议" :visible.sync="readRule" width="60%" center>
         <div class="wrap">
-          <img src="../../../../assets/imgs/logo.png" />
+          <img src="../../../assets/imgs/logo.png" />
           <div slot="footer" class="dialog-footer">
-            <el-button type="warning" @click="readRule = false;">我知道了</el-button>
+            <el-button type="danger" @click="readRule = false;">我知道了</el-button>
           </div>
         </div>
       </el-dialog>
@@ -183,7 +183,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  @import '../../../../styles/new';
+  @import '../../../styles/new';
   .inputInfo{
     float: left;
     width : 80%!important ;

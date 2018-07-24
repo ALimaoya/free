@@ -364,49 +364,27 @@ export const constantRouterMap = [
         component: FreeManage,
         meta: { title: '商户中心', icon: 'userCenter' },
         children : [
+              {
+                path: 'shopInfo',
+                name: 'ShopInfo',
+                component: () => import('@/views/merchantCenter/userCenter/shopManage/shopInfo'),
+                meta: { title: '商家/店铺信息', icon: 'shopInfo' },
+
+              },
           // {
-          //   path: 'admissionShop/index',
-          //   // redirect: 'admissionShop/index',
-          //   name: 'AdmissionShop',
-          //   component: () => import('@/views/merchantCenter/userCenter/admissionShop/index'),
-          //   meta: { title: '入驻商城', icon: 'admissionShop' },
+          //   path: 'infoUpload',
+          //   name: 'InfoUpload',
+          //   component: () => import('@/views/merchantCenter/userCenter/infoUpload'),
+          //   meta: { title: '资质上传', icon: 'infoUpload' },
           //
           // },
           // {
-          //   path: 'admissionShop/personal',
-          //   name: 'Personal1',
-          //   component: () => import('@/views/merchantCenter/userCenter/admissionShop/personal'),
-          //   meta: { title: '个人入驻', icon: 'personal' },
-          //   hidden: true ,
+          //   path: 'openShop',
+          //   name: 'OpenShop',
+          //   component: () => import('@/views/merchantCenter/userCenter/OpenShop'),
+          //   meta: { title: '我要开店', icon: 'OpenShop' },
+          //
           // },
-          // {
-          //   path: 'admissionShop/enterprise',
-          //   name: 'Enterprise',
-          //   component: () => import('@/views/merchantCenter/userCenter/admissionShop/enterprise'),
-          //   meta: { title: '企业入驻', icon: 'enterprise' },
-          //   hidden: true ,
-          // },
-          // {
-          //   path: 'admissionShop/successAdd',
-          //   name: 'SuccessAdd',
-          //   component: () => import('@/views/merchantCenter/userCenter/admissionShop/successAdd'),
-          //   meta: { title: '入驻成功', icon: 'success' },
-          //   hidden: true ,
-          // },
-          {
-            path: 'infoUpload',
-            name: 'InfoUpload',
-            component: () => import('@/views/merchantCenter/userCenter/infoUpload'),
-            meta: { title: '资质上传', icon: 'infoUpload' },
-
-          },
-          {
-            path: 'openShop',
-            name: 'OpenShop',
-            component: () => import('@/views/merchantCenter/userCenter/OpenShop'),
-            meta: { title: '我要开店', icon: 'OpenShop' },
-
-          },
           // {
           //   path: 'settlement',
           //   name: 'Settlement',
@@ -590,8 +568,35 @@ export const constantRouterMap = [
             meta: { title: '入驻管理', icon: 'register' },
 
           },
+          {
+            path: 'admissionShop/index',
+            // redirect: 'admissionShop/index',
+            name: 'AdmissionShop',
+            component: () => import('@/views/accountManage/admissionShop/index'),
+            meta: { title: '入驻商城', icon: 'admissionShop' },
 
-
+          },
+          {
+            path: 'admissionShop/personal',
+            name: 'Personal1',
+            component: () => import('@/views/accountManage/admissionShop/personal'),
+            meta: { title: '个人入驻', icon: 'personal' },
+            hidden: true ,
+          },
+          {
+            path: 'admissionShop/enterprise',
+            name: 'Enterprise',
+            component: () => import('@/views/accountManage/admissionShop/enterprise'),
+            meta: { title: '企业入驻', icon: 'enterprise' },
+            hidden: true ,
+          },
+          {
+            path: 'admissionShop/successAdd',
+            name: 'SuccessAdd',
+            component: () => import('@/views/accountManage/admissionShop/successAdd'),
+            meta: { title: '入驻成功', icon: 'success' },
+            hidden: true ,
+          },
         ]
       },
       {

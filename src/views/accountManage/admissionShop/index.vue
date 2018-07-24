@@ -40,10 +40,10 @@
 </template>
 
 <script>
-    import ElRadioGroup from "element-ui/packages/radio/src/radio-group";
+    // import ElRadioGroup from "element-ui/packages/radio/src/radio-group";
 
     export default {
-      components: {ElRadioGroup},
+      // components: {ElRadioGroup},
       name: "AdmissionShop",
         data() {
             return {
@@ -74,10 +74,10 @@
         },
         methods: {
           goPersonal(){
-            this.$router.push('/merchantCenter/userCenter/admissionShop/personal')
+            this.$router.push('/accountManage/admission/admissionShop/personal')
           },
           goEnterPrise(){
-            this.$router.push('/merchantCenter/userCenter/admissionShop/enterprise')
+            this.$router.push('/accountManage/admission/admissionShop/enterprise')
 
           },
 
@@ -93,13 +93,13 @@
     flex-direction: row;
     justify-content: space-around;
     .personalAdd,.enterPriseAdd{
-      width :35% ;
+      width :45% ;
       border : 1px solid #999;
       border-radius : 0.1rem ;
       justify-content: space-around;
       display: flex;
       flex-direction: column;
-      padding : 0.3rem ;
+      padding : 0.5rem 0.3rem;
       box-sizing: border-box;
       p{
         font-size : 0.28rem ;
@@ -203,7 +203,7 @@
           color : #66CC00;
         }
         .wrong{
-          color : rgba(255, 0, 0, 0.6) ;
+          color : rgba(255, 0, 0, 0.6) !important ;
         }
       }
       .note{

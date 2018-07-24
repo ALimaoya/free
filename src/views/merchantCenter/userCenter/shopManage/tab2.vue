@@ -120,6 +120,6 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  @import '../../../styles/tab';
+  @import '../../../../styles/tab';
 
 </style>

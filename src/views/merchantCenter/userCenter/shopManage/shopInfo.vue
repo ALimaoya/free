@@ -9,10 +9,10 @@
 
 <script>
   import {  getUser,getToken } from '@/utils/auth'
-  import Tab1 from "@/views/merchantCenter/shopManage/tab1"
-  import Tab2 from "@/views/merchantCenter/shopManage/tab2"
-  import Tab3 from "@/views/merchantCenter/shopManage/tab3"
-  import Tab4 from "@/views/merchantCenter/shopManage/tab4"
+  import Tab1 from "@/views/merchantCenter/userCenter/shopManage/tab1"
+  import Tab2 from "@/views/merchantCenter/userCenter/shopManage/tab2"
+  import Tab3 from "@/views/merchantCenter/userCenter/shopManage/tab3"
+  import Tab4 from "@/views/merchantCenter/userCenter/shopManage/tab4"
 
   export default {
         name: "shop-info",

@@ -14,9 +14,9 @@
 </template>
 
 <script>
-  import Enterprise1 from "@/views/merchantCenter/userCenter/admissionShop/enterprise1"
-  import Enterprise2 from "@/views/merchantCenter/userCenter/admissionShop/enterprise2"
-  import SuccessAdd from "@/views/merchantCenter/userCenter/admissionShop/successAdd"
+  import Enterprise1 from "@/views/accountManage/admissionShop/enterprise1"
+  import Enterprise2 from "@/views/accountManage/admissionShop/enterprise2"
+  import SuccessAdd from "@/views/accountManage/admissionShop/successAdd"
 
   export default {
       name: "enterprise",
@@ -49,6 +49,6 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  @import '../../../../styles/step';
+  @import '../../../styles/step';
 
 </style>

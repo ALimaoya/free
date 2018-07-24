@@ -40,11 +40,11 @@
         width : 100% ;
         height : 100%;
         display: inline-block;
-        background : url('../../../../assets/imgs/u1810.png') no-repeat center ;
+        background : url('../../../assets/imgs/u1810.png') no-repeat center ;
         background-size : 90% ;
         position : relative ;
         i{
-          background : url('../../../../assets/imgs/u1811.png') no-repeat center ;
+          background : url('../../../assets/imgs/u1811.png') no-repeat center ;
           background-size : 50% ;
           position : absolute ;
           top : 0 ;

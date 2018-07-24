@@ -106,7 +106,7 @@
         </el-form-item>
         <el-form-item class="bottom">
           <el-button plain @click="goBack">上一步</el-button>
-          <el-button type="warning" @click="goNext('form')">下一步</el-button>
+          <el-button type="danger" @click="goNext('form')">下一步</el-button>
         </el-form-item>
       </el-form>
       <el-dialog title="温馨提示" :visible.sync="dialogVisible" width="80%" center>
@@ -142,7 +142,7 @@
       </el-dialog>
       <el-dialog title="丫贝网合作协议" :visible.sync="readRule" width="60%" center>
         <div class="wrap">
-          <img src="../../../../assets/imgs/logo.png" />
+          <img src="../../../assets/imgs/logo.png" />
           <div slot="footer" class="dialog-footer">
             <el-button type="warning" @click="readRule = false;">我知道了</el-button>
           </div>
@@ -150,10 +150,10 @@
       </el-dialog>
       <el-dialog title="示例" :visible.sync="imgVisible" width="60%" center>
         <div class="wrap">
-          <img v-if="showImg === '1'" src="../../../../assets/imgs/u923.png" />
-          <img v-else-if="showImg === '2'" src="../../../../assets/imgs/u922.png" />
-          <img v-else-if="showImg === '3'" src="../../../../assets/imgs/u924.png" />
-          <img v-else-if="showImg === '4'" src="../../../../assets/imgs/u1810.png" />
+          <img v-if="showImg === '1'" src="../../../assets/imgs/u923.png" />
+          <img v-else-if="showImg === '2'" src="../../../assets/imgs/u922.png" />
+          <img v-else-if="showImg === '3'" src="../../../assets/imgs/u924.png" />
+          <img v-else-if="showImg === '4'" src="../../../assets/imgs/u1810.png" />
           <div slot="footer" class="dialog-footer">
             <el-button type="warning" @click="imgVisible = false ;">我知道了</el-button>
           </div>
@@ -465,7 +465,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  @import '../../../../styles/new';
+  @import '../../../styles/new';
   .el-form-item{
     width : 90%!important;
   }
