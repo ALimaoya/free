@@ -10,7 +10,7 @@
         <el-table-column label="商品信息" >
           <template slot-scope="scope">
             <div class="goodsWrap">
-              <img v-if="scope.row.productImage!==null&&scope.row.productImage!==''" :src="imageDomain + scope.row.productImage" :onerror="errorImg" />
+              <img v-if="scope.row.productImage!==undefined&&scope.row.productImage!==''" :src="imageDomain + scope.row.productImage" :onerror="errorImg" />
               <img  :src="failImg" v-else>
               <div class="detailWrap">
                 <span>{{ scope.row.productName }}</span>
@@ -77,7 +77,7 @@
           <el-table-column label="商品名称">
             <template slot-scope="scope">
               <div class="goodsWrap">
-                <img v-if="scope.row.productImages!==null&&scope.row.productImages[0]!==''" :src="imageDomain+ scope.row.productImages[0]" :onerror="errorImg"/>
+                <img v-if="scope.row.mainImageUrl!== undefined &&scope.row.mainImageUrl!==''" :src="imageDomain+ scope.row.mainImageUrl" :onerror="errorImg"/>
                 <img  :src="failImg" v-else>
                 <div class="detailWrap">
                   <span>{{ scope.row.productName}}</span>

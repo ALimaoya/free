@@ -50,10 +50,10 @@
       <!--<el-table-column prop="shopName" label="所属店铺" ></el-table-column>-->
       <el-table-column prop="brandCnName" label="商品品牌" width="100"></el-table-column>
       <el-table-column prop="productName" label="商品名称" width="100"></el-table-column>
-      <el-table-column prop="productImages" label="商品主图" width="100">
+      <el-table-column label="商品主图" width="100">
         <template slot-scope="scope">
-          <img v-if="scope.row.productImages!==null&&scope.row.productImages.length >0"
-               :src="imageDomain+ scope.row.productImages[0]" :onerror="errorImg" @click="bigImg = scope.row.productImages[0] ;mask = true ;"/>
+          <img v-if="scope.row.mainImageUrl!==''||scope.row.mainImageUrl!== null"
+               :src="imageDomain+ scope.row.mainImageUrl" :onerror="errorImg" @click="bigImg = scope.row.mainImageUrl ;mask = true ;"/>
           <img  :src="failImg" v-else>
         </template>
       </el-table-column>
@@ -287,17 +287,17 @@
         //上/下架操作
         handleShelves(index,order,type){
           this.loading = true ;
-
           changeStatus(order,type,this.user).then(res=> {
             this.loading = false ;
-            this.$message({
+            if(res.data.status === '000000000'){
+              this.$message({
                 message : '操作成功',
                 type : 'success',
                 center : true ,
                 duration : 1000
               });
-              // setTimeout(() => {
-                this.getList();
+              this.getList();
+            }
           })
 
         },

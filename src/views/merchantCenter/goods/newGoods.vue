@@ -77,13 +77,15 @@
         <el-form-item labelWidth="130px" label="图片" prop="imagesList">
           <ul class="imgList">
             <li v-for="(item,index) in form.imagesList" @change="getImg(index)" :key="index">
-              <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.imagesList[index]"
+              <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.imagesList[index].imgUrl"
                           :headers="{'yb-tryout-merchant-token':token}"  :show-file-list="false"  :before-upload="beforeImgUpload">
-                <img v-if="form.imagesList[index]" :src="imageDomain + form.imagesList[index]" class="avatar">
+                <img v-if="form.imagesList[index].imgUrl" :src="imageDomain + form.imagesList[index].imgUrl" class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
+              <span  class="deleteImg" @click="deleteImage(item)"></span>
+
             </li>
-            <span class="imgWarn tips_warn" v-if="goodsImgWarn">请上传商品图片</span>
+            <!--<span class="imgWarn tips_warn" v-if="goodsImgWarn">请上传商品图片</span>-->
           </ul>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="描述" prop="describes">
@@ -232,7 +234,7 @@
                 price:'',
                 carriage:'',
                 ybProductItemReqDto : [{ size: '', color : '', stock: ''}],
-                imagesList : ['','','','',''],
+                imagesList : [{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''}],
                 describes: '',
               },
               formRule : {
@@ -288,7 +290,7 @@
               user: getMobile(),
               autoUpload : true ,
               imgUrl : process.env.BASE_API+'/file/upload',
-              goodsImgWarn : false ,
+              // goodsImgWarn : false ,
               imageDomain : process.env.IMAGE_DOMAIN ,
               imgIndex : '',
               dialogVisible: false,
@@ -383,21 +385,28 @@
                   class3Id:res.data.data.cateGoryMap.categoryName3,
                   price:res.data.data.price,
                   carriage:res.data.data.carriage,
+                  imagesList : [{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''}] ,
                   ybProductItemReqDto : res.data.data.productItems,
-                  imagesList : res.data.data.productImages,
                   describes: res.data.data.describes,
                   id: ''
                 }  ;
-                if(this.form.imagesList.length < 5){
-                  if(this.form.imagesList.length === 0){
-                    this.form.imagesList =   ['','','','','']
 
-                  }else {
-                    for(let i = this.form.imagesList.length ; i< 5;i++){
-                      this.form.imagesList.push('');
-                    }
-                  }
+                if(res.data.data.productImages.length > 0){
+                  res.data.data.productImages.map( (i,index) => {
+                    this.form.imagesList[index] = { id : '', imgUrl: i.imgUrl }  ;
+                  })
                 }
+
+                // if(this.form.imagesList.length < 5){
+                //   if(this.form.imagesList.length === 0){
+                //     this.form.imagesList =   [{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''}]
+                //
+                //   }else {
+                //     for(let i = this.form.imagesList.length ; i< 5;i++){
+                //       this.form.imagesList.push({ id: '', imgUrl:''});
+                //     }
+                //   }
+                // };
                 this.word = this.form.describes ;
                 this.brandCnName = res.data.data.brandCnName ;
                 this.thirdName = res.data.data.cateGoryMap.categoryId3;
@@ -525,7 +534,7 @@
                   let formData = new FormData();
                   formData.append('image', file);
                   uploadImage(formData).then(res => {
-                    _this.$set(_this.form.imagesList,_this.imgIndex,  res.data.data.fileName);
+                    _this.$set(_this.form.imagesList[_this.imgIndex], 'imgUrl',  res.data.data.fileName);
                   })
                 }
               };
@@ -533,6 +542,16 @@
               image.src = e.target.result;
             };
             reader.readAsDataURL(file);
+          },
+          //删除图片
+          deleteImage(item){
+
+            if(this.form.imagesList.indexOf(item) !== -1){
+              let index = this.form.imagesList.indexOf(item) ;
+              this.$set(this.form.imagesList,index ,{ id : '', imgUrl: ''})
+              // this.form.imagesList[index] = { id : '', imgUrl: ''};
+            }
+
           },
           //删除商品规格
           deleteSize(item) {
@@ -764,7 +783,7 @@
           getDetail(params){
             this.form.describe = '';
             this.editor.txt.html('');
-            this.form.imagesList = ['','','','',''];
+            this.form.imagesList = [{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''}];
             this.form.productName = '';
             this.form.ybProductItemReqDto = [{ size: '', color : '', stock: ''}];
             getTao(params).then( res => {
@@ -789,14 +808,18 @@
 
               }
               if(res.data.data.showImages!== null &&res.data.data.showImages.length > 0){
-                this.form.imagesList = res.data.data.showImages ;
+                this.form.imagesList = [];
+                res.data.data.showImages.map( i => {
+                  this.form.imagesList.push({ id: '', imgUrl:i })
+                })
+                // this.form.imagesList = res.data.data.showImages ;
                 if(this.form.imagesList.length < 5){
                   if(this.form.imagesList.length === 0){
-                    this.form.imagesList =   ['','','','','']
+                    this.form.imagesList =   [{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''}]
 
                   }else {
                     for(let i = this.form.imagesList.length ; i< 5;i++){
-                      this.form.imagesList.push('');
+                      this.form.imagesList.push({ id: '', imgUrl:''});
                     }
                   }
                 };

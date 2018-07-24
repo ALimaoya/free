@@ -8,7 +8,7 @@
           <!--<div class="navBar-list">-->
             <!--<span><a class="active">首页</a></span>-->
             <!--&lt;!&ndash;<span class="line">|</span>&ndash;&gt;-->
-            <!--<span><a href="shopenter.html">试客商家入驻</a></span>-->
+            <!--<span><a href="shopenter.html">商家入驻</a></span>-->
             <!--&lt;!&ndash;<span class="line">|</span>&ndash;&gt;-->
             <!--<span><a href="download.html">下载App</a></span>-->
             <!--&lt;!&ndash;<span class="line">|</span>&ndash;&gt;-->
