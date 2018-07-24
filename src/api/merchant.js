@@ -223,7 +223,14 @@ export function exportList(data){
     data
   })
 }
-
+//获取京东商品详情
+export function getJD(data){
+  return request({
+    url: '',
+    method: 'post',
+    data
+  })
+}
 //获取淘宝商品详情
 export function getTao(data){
   return request({
@@ -231,7 +238,6 @@ export function getTao(data){
     method:'post',
     headers: {
       'Content-Type': 'application/json',
-
     },
     data
   })
