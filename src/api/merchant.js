@@ -226,9 +226,8 @@ export function exportList(data){
 //获取京东商品详情
 export function getJD(data){
   return request({
-    url: '',
-    method: 'post',
-    data
+    url: '/thirdProduct/detail/jdProduct?productUrl='+data,
+    method: 'get'
   })
 }
 //获取淘宝商品详情

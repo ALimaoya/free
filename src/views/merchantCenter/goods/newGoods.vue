@@ -4,8 +4,8 @@
       <el-form :model="form" ref="form" :rules="formRule" label-position="right">
         <h2>商品表单</h2>
         <el-form-item  labelWidth="130px"  >
-          <el-button type="primary" size="small" @click="taoVisible=true;platformType='淘宝';platformTitle = '获取淘宝商品信息'">获取淘宝商品信息</el-button>
-          <el-button type="primary" size="small" @click="taoVisible=true;platformType='京东';platformTitle = '获取京东商品信息'">获取京东商品信息</el-button>
+          <el-button type="primary" size="small" @click="getPlatform('1')">获取淘宝商品信息</el-button>
+          <el-button type="primary" size="small" @click="getPlatform('2')">获取京东商品信息</el-button>
         </el-form-item>
         <el-form-item  labelWidth="130px" label="店铺" >
           <div class="inputInfo">{{shopName}}</div>
@@ -707,7 +707,18 @@
             this.editor.create()
 
           },
+          getPlatform(type){
+            if(type === '1'){
+              this.taoVisible=true;
+              this.platformType='淘宝';
+              this.platformTitle = '获取淘宝商品信息';
+            }else if( type === '2'){
+              this.taoVisible=true;
+              this.platformType='京东';
+              this.platformTitle = '获取京东商品信息';
 
+            }
+          },
           //获取淘宝商品详情
           getLinkInfo(url){
             if(url === ''){
@@ -717,10 +728,20 @@
                 type: 'error'
               });
             }else{
-              if(url.indexOf('item.jd.com') !== -1){
-                this.getJDLink(url);
+              if(this.platformType ==='京东'){
+                if(url.indexOf('item.jd.com') !== -1){
+                  this.getJDLink(url);
 
-              }else{
+                }else{
+                  this.$message({
+                    message : '请输入对应平台的正确链接',
+                    center : true ,
+                    type : 'error'
+                  });
+                  this.taoLink = '';
+
+                }
+              }else if(this.platformType === '淘宝'){
                 this.getTaoLink(url);
               }
             }
@@ -731,6 +752,7 @@
             getJD(url).then( res => {
               if(res.data.status === '000000000'){
                 this.taoLink = '';
+                // console.log(res);
                 this.getGoodsInfo(res.data.data);
               }
             })
