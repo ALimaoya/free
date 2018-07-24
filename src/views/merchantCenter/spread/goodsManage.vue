@@ -413,6 +413,7 @@
             this.shopName = '';
             this.tipsDialog= false ;
             this.deleteList = [];
+            this.chooseList = [];
             this.$refs.multipleTable.clearSelection();
           },
           //取消批量删除

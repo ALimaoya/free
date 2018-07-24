@@ -38,7 +38,7 @@
         <div class="inputWrap">
           <el-button  size="mini" type="primary"  @click="getList()" class="searchOrder">查询</el-button>
           <el-button  size="mini" type="primary"  @click="exportOrder()" class="searchOrder">导出</el-button>
-          <a style="display: none" id="orderFile"  :href="baseUrl+'/center/order/export?merchantId='+ merchantId+'&EQ_payOrder.code='+ transition.EQ_payOrder +'&EQ_code='+ transition.EQ_code+'&productCode='+ transition.productCode+'&LIKE_payOrder.user.accountName='+transition.LIKE_payOrder+ '&GT_createTime='+transition.GT_createTime+ '&LT_createTime='+transition.LT_createTime+ '&EQ_status='+transition.EQ_status"></a>
+          <a style="display: none" id="orderFile"  :href="baseUrl+'/center/order/export?merchantId='+ merchantId+ '&EQ_activityType='+ transition.EQ_activityType+'&EQ_payOrder.code='+ transition.EQ_payOrder +'&EQ_code='+ transition.EQ_code+'&productCode='+ transition.productCode+'&LIKE_payOrder.user.accountName='+transition.LIKE_payOrder+ '&GT_createTime='+transition.GT_createTime+ '&LT_createTime='+transition.LT_createTime+ '&EQ_status='+transition.EQ_status"></a>
           <el-button  size="mini" type="primary" style="padding: 0;text-align: center;height : 28px;"  @click="deliverDialog= true;excelTitle = '';" class="searchOrder">导入发货</el-button>
           <el-button  size="mini" type="primary"  @click="reset()" class="searchOrder">重置</el-button>
         </div>
@@ -235,7 +235,7 @@
               },
               {
                 value: '2',
-                name: '助力享面单'
+                name: '助力享免单'
               },
             ],
             statusList:[
