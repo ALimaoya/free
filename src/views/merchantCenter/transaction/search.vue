@@ -28,17 +28,17 @@
         <div class="inputWrap">
         <div class="block">
           <span class="demonstration">交易开始时间：</span>
-          <el-date-picker size="small" v-model="transition.GT_createTime" value-format="yyyy-MM-dd" type="date" placeholder="开始时间"></el-date-picker>
+          <el-date-picker size="small" v-model="transition.GT_createTime" value-format="yyyy-MM-dd" type="date" placeholder="开始时间" ></el-date-picker>
         </div>
         <div class="block">
           <span class="demonstration">交易结束时间：</span>
-          <el-date-picker size="small" v-model="transition.LT_createTime" value-format="yyyy-MM-dd" type="date" placeholder="结束时间"></el-date-picker>
+          <el-date-picker size="small" v-model="transition.LT_createTime" value-format="yyyy-MM-dd" type="date" placeholder="结束时间" ></el-date-picker>
         </div>
         </div>
         <div class="inputWrap">
           <el-button  size="mini" type="primary"  @click="getList()" class="searchOrder">查询</el-button>
           <el-button  size="mini" type="primary"  @click="exportOrder()" class="searchOrder">导出</el-button>
-          <a style="display: none" id="orderFile"  :href="baseUrl+'/center/order/export?merchantId='+ merchantId+ '&EQ_activityType='+ transition.EQ_activityType+'&EQ_payOrder.code='+ transition.EQ_payOrder +'&EQ_code='+ transition.EQ_code+'&productCode='+ transition.productCode+'&LIKE_payOrder.user.accountName='+transition.LIKE_payOrder+ '&GT_createTime='+transition.GT_createTime+ '&LT_createTime='+transition.LT_createTime+ '&EQ_status='+transition.EQ_status"></a>
+          <a style="display: none" id="orderFile"  :href="baseUrl+'/center/order/export?merchantId='+ merchantId+ '&EQ_activityType='+ transition.EQ_activityType+'&EQ_payOrder.code='+ transition.EQ_payOrder +'&EQ_code='+ transition.EQ_code+'&productCode='+ transition.productCode+'&LIKE_payOrder.user.accountName='+transition.LIKE_payOrder+ '&GT_createTime='+ this.gt_time + '&LT_createTime='+ this.lt_time + '&EQ_status='+transition.EQ_status"></a>
           <el-button  size="mini" type="primary" style="padding: 0;text-align: center;height : 28px;"  @click="deliverDialog= true;excelTitle = '';" class="searchOrder">导入发货</el-button>
           <el-button  size="mini" type="primary"  @click="reset()" class="searchOrder">重置</el-button>
         </div>
@@ -357,6 +357,35 @@
       mounted(){
         this.getList();
       },
+      computed: {
+        lt_time : function() {
+
+          if(this.transition !== undefined  ){
+            if( this.transition.LT_createTime === null){
+              this.transition.LT_createTime = '';
+            }
+            return this.transition.LT_createTime ;
+
+          }
+          // else{
+          //   // return '';
+          // }
+        },
+        gt_time : function(){
+
+          if(this.transition !== undefined ){
+            if( this.transition.GT_createTime === null){
+              this.transition.GT_createTime = '';
+            }
+
+            return this.transition.GT_createTime ;
+
+          }
+          // else{
+          //   // return '';
+          // }
+        }
+      },
       methods: {
         //  获取交易列表
         getList(){
@@ -367,8 +396,8 @@
           formData.append('EQ_code',this.transition.EQ_code);
           formData.append('productCode',this.transition.productCode);
           formData.append('LIKE_payOrder.user.accountName',this.transition.LIKE_payOrder);
-          formData.append('GT_createTime',this.transition.GT_createTime);
-          formData.append('LT_createTime',this.transition.LT_createTime);
+          formData.append('GT_createTime',this.transition.GT_createTime===null?'':this.transition.GT_createTime);
+          formData.append('LT_createTime',this.transition.LT_createTime===null?'':this.transition.LT_createTime);
           formData.append('EQ_status',this.transition.EQ_status);
           formData.append('EQ_activityType',this.transition.EQ_activityType);
 
@@ -380,13 +409,25 @@
              this.deliverList=  res.data.data.tExpressResDtos ;
               this.tableData = res.data.data.pageResultDto.data ;
               this.totalElements = res.data.data.pageResultDto.totalElements;
-              this.totalPages = res.data.data.pageResultDto.totalPages
+              this.totalPages = res.data.data.pageResultDto.totalPages;
               this.merchantId = res.data.data.merchantId;
           })
 
         },
 
+        getTime(value,type){
+          if(value === null){
+            if(type === 1){
+              // this.$set(this.transition,'GT_createTime',' ');
+              this.transition.GT_createTime = '';
 
+            }
+            if(type === 2){
+              this.transition.LT_createTime = '';
+
+            }
+          }
+        },
         //导出订单列表
         exportOrder(){
           document.getElementById('orderFile').click()
