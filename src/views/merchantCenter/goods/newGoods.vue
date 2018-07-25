@@ -472,7 +472,7 @@
               //   this.getSecondList(this.form.class1Id);
               //
               // }
-              if(!validName(this.form.firstType)&&this.form.firstType!== ''){
+              if(/^[0-9]+$/.test(this.form.firstType*1)&&this.form.firstType!== ''){
                 this.getSecondList(this.form.firstType)
               }
             })
@@ -487,7 +487,7 @@
               //   this.getThirdList(this.form.class2Id);
               //
               // }
-              if(!validName(this.form.secondType)&&this.form.secondType!== ''){
+              if(/^[0-9]+$/.test(this.form.secondType*1)&&this.form.secondType!== ''){
                 this.getThirdList(this.form.secondType)
               }
             })
@@ -595,6 +595,7 @@
             // console.log(JSON.stringify(this.form));
             this.$refs[formName].validate((valid) => {
               if(valid){
+
                 let data = {
                   id: '',
                   productName:this.form.productName,
@@ -606,9 +607,10 @@
                   imagesList : this.form.imagesList,
                   describes: this.form.describes,
                 };
-                if(validName(data.class3Id) ){
-                  data.class3Id = this.thirdName ;
-                }
+
+            if( !/^[0-9]+$/.test(data.class3Id*1) ){
+              data.class3Id = this.thirdName*1 ;
+            }
                 // data = JSON.stringify(data);
                 // console.log(data,this.form);
                 newGoogds(data,this.user).then( res => {
@@ -632,24 +634,24 @@
           },
           createEditor(){
 
-            this.editor = new E('#wangeditor')        //创建富文本实例
+            this.editor = new E('#wangeditor') ;       //创建富文本实例
 
 
             this.editor.customConfig.onchange = (html) => {
               this.form.describes = html ;
               // this.catchData(html)  //把这个html通过catchData的方法传入父组件
-            }
-            this.editor.customConfig.uploadImgServer = this.dataInterface.editorUpImgUrl
-            this.editor.customConfig.uploadFileName = 'sourcePic'
+            };
+            this.editor.customConfig.uploadImgServer = this.dataInterface.editorUpImgUrl;
+            this.editor.customConfig.uploadFileName = 'sourcePic';
             this.editor.customConfig.showLinkImg = false;
             this.editor.customConfig.uploadImgMaxLength = 10;
             this.editor.customConfig.uploadImgHeaders = {
               'ContentType': 'application/json',
               'yb-tryout-merchant-token':this.token    //头部token
-            }
+            };
             this.editor.customConfig.uploadImgParams = {
               token : 'abcdef12345'
-            }
+            };
             this.editor.customConfig.menus = [          //菜单配置
               'head',
               'list',  // 列表
@@ -668,7 +670,7 @@
               'video',  // 插入视频
               'undo',  // 撤销
               'redo'  // 重复
-            ]
+            ];
             this.editor.customConfig.uploadImgHooks = {
               before: function (xhr, editor, files) {
               },
