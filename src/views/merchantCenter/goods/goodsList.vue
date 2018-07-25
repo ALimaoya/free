@@ -276,12 +276,12 @@
             EQ_code: '',
             LIKE_productName: '',
             EQ_status: ''
-          },
-            this.firstType = '',
-            this.secondType = '',
-            this.thirdType = '',
-            this.currentPage = 1,
-            this.pageSize = 10,
+          };
+            this.firstType = '';
+            this.secondType = '';
+            this.thirdType = '';
+            this.currentPage = 1;
+            this.pageSize = 10;
           this.getList();
         },
         //上/下架操作

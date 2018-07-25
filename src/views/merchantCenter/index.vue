@@ -32,14 +32,23 @@
             <li><span>待付款</span><span>15单</span></li>
             <li><span>待发货</span><span>15单</span></li>
             <li><span>待评价</span><span>15单</span></li>
-            <li><span>退款/退货</span><span>待处理</span><span>15单</span></li>
-            <li><span>已退货</span><span>待处理</span><span>15单</span></li>
+            <li><span>退款/待处理</span><span>15单</span></li>
+            <li><span>退款/已处理</span><span>15单</span></li>
           </ul>
         </div>
       </div>
       <div class="flowInfo">
-        <p class="title">宝贝管理</p>
-        <div><span @click="getType('1')">近7天数据</span><span @click="getType('1')">近30天数据</span></div>
+        <p class="title">近期数据</p>
+        <div class="dataChange"><button :class="{active: changeBtn === '1'}" @click="getType('1')">近7天数据</button><button :class="{active: changeBtn === '2' }" @click="getType('2')">近30天数据</button>
+        <el-select size="mini" v-model="chartsType" @change="changeType(chartsType)">
+          <el-option
+            v-for="item in chartsOptions"
+            :key="item.value"
+            :label="item.name"
+            :value="item.value">
+          </el-option>
+        </el-select>
+        </div>
         <div id="myChart" ></div>
       </div>
     </div>
@@ -52,33 +61,54 @@
         data() {
             return {
               dateArr: [],
+              chartData : [],
+              chartsType: 1,
+              changeBtn: '1',
+              chartsOptions: [
+                {
+                  value: 1,
+                  name : '销售额'
+                },
+                {
+                  value : 2,
+                  name : '销售量'
+                }
+              ]
             }
         },
         mounted() {
           this.getType('1');
-          this.initChart();
         },
-      beforeDestroy() {
-        if (!this.chart) {
-          return
-        }
-        this.chart.dispose();
-        this.chart = null
-      },
+        beforeDestroy() {
+          if (!this.chart) {
+            return
+          }
+          this.chart.dispose();
+          this.chart = null
+        },
+
         methods: {
           getType(type){
+            this.changeBtn = type ;
             let arr = [];
-            for(let i = 0 ; i< 30 ;i++){
+            for(let i = 1 ; i<= 30 ;i++){
               let num = this.getDate(i);
               arr.unshift(num);
             }
-            let subDateArr = arr.slice(0,7);
+            let subDateArr = arr.slice(23,30);
             if(type ==='1'){
               this.dateArr = subDateArr ;
             }else if(type === '2'){
               this.dateArr = arr ;
 
             }
+            this.chartData = [300,577,654,543,564,454,453] ;
+            this.initChart(this.chartData,this.chartsOptions[this.chartsType-1].name);
+
+          },
+          changeType(type){
+            console.log(type);
+            this.initChart(this.chartData ,this.chartsOptions[type-1].name)
           },
           getDate(index){
             let now = new Date();
@@ -88,7 +118,7 @@
             let day = date.getDate();
             return month+ '/'+ day;
           },
-          initChart(){
+          initChart(value,type){
 
             this.chart = echarts.init(document.getElementById('myChart'));
             this.chart.setOption({
@@ -114,17 +144,37 @@
               xAxis: [{
                 type : 'category',
                 name: '日期',
-                boundaryGap: false,
+                // boundaryGap: false,
                 data: this.dateArr
               }],
               yAxis: [{
                 type : 'value',
-                name: '金额/件数',
-                date : [200,400,600,800,1000]
+                name: type,
+                axisTick: {
+                  show: false
+                },
+                axisLine: {
+                  lineStyle: {
+                    color: '#57617B'
+                  }
+                },
               }],
               series: [
                 {
                   type : 'line',
+                  data : value,
+                  itemStyle: {
+                    normal: {
+                      color: '#3888fa',
+                      lineStyle: {
+                        color: '#57617B',
+                        width: 2
+                      },
+                      areaStyle: {
+                        color: '#f3f8ff'
+                      }
+                    }
+                  },
                 },
 
               ]
@@ -304,6 +354,28 @@
       box-sizing: border-box;
     }
     .flowInfo{
+      .dataChange{
+        button{
+          background : 0;
+          width : 1.4rem ;
+          height : 0.5rem ;
+          line-height : 0.5rem ;
+          font-size : 0.2rem ;
+          color : #666 ;
+          border : 2px solid #b3d8ff ;
+        }
+        button:nth-child(1){
+          border-right : 0;
+        }
+        .active{
+          color : #f56c6c ;
+          border-bottom: 0!important ;
+        }
+        .el-select{
+          float : right ;
+          width : 1.6rem ;
+        }
+      }
       #myChart{
         width : 100% ;
         height: 6rem ;

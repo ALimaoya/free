@@ -603,7 +603,7 @@
                   imagesList : this.form.imagesList,
                   describes: this.form.describes,
                 };
-                if(validName(data.class3Id) ){
+                if( typeof(data.class3Id*1) !== Number ){
                   data.class3Id = this.thirdName ;
                 }
                 // data = JSON.stringify(data);
