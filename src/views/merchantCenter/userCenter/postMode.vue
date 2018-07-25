@@ -34,18 +34,20 @@
         </el-form-item>
         <el-form-item  label="计费方式：" :labelWidth="labelWidth">
           <span class="tips_warn">按件数计费</span>
-          <span class="note">备注：除指定地区外，其余地区的运费采用“默认运费”</span>
         </el-form-item>
         <el-form-item></el-form-item>
         <el-form class="self" v-if="selfSetting==='1'" :model="selfCarriage" ref="selfCarriage" :rules="subRule">
+          <el-form-item :labelWidth="labelWidth">
+            <span class="note">备注：除指定地区外，其余地区的运费采用“默认运费”</span>
+          </el-form-item>
           <el-form-item label="默认运费：" prop="default" :labelWidth="labelWidth">
-            <el-input class="defaultInput" size="small" :maxlength="10" v-model.tel="carriageForm.num"></el-input>件内
-            <el-input class="defaultInput" size="small" :maxlength="10" v-model.tel="carriageForm.money"></el-input>元，
-            每增加<el-input class="defaultInput" size="small" :maxlength="10" v-model.tel="carriageForm.addNum"></el-input>，增加运费
-            <el-input class="defaultInput" size="small" :maxlength="10" v-model.tel="carriageForm.addMoney"></el-input>元，
+            <el-input class="defaultInput" size="small" :maxlength="10" v-model.tel="selfCarriage.specialList[0].firstPieces"></el-input>件内
+            <el-input class="defaultInput" size="small" :maxlength="10" v-model.tel="selfCarriage.specialList[0].firstFee"></el-input>元，
+            每增加<el-input class="defaultInput" size="small" :maxlength="10" v-model.tel="selfCarriage.specialList[0].addPieces"></el-input>，增加运费
+            <el-input class="defaultInput" size="small" :maxlength="10" v-model.tel="selfCarriage.specialList[0].addFee"></el-input>元，
           </el-form-item>
           <el-form-item :labelWidth="labelWidth">
-            <el-table v-if="specialList.length> 0" :data="specialList"  border fit >
+            <el-table v-if="selfCarriage.specialList.length> 1" :data="selfCarriage.specialList.slice(1)"  border fit >
               <el-table-column label="运送到" >
                 <template slot-scope="scope">
                   <span v-if="scope.row.area.length === 0">未选择地区</span>
@@ -88,19 +90,19 @@
             </el-table>
             <el-button type="info" @click="addAppoint">为指定地址设置运费</el-button>
           </el-form-item>
-          <el-form-item >
-            <el-checkbox v-model="appoint">指定条件包邮：</el-checkbox>
-            <el-select filterable clearable v-model="carriageForm.appointType" size="small" :disabled="!appoint" placeholder="请选择">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.name"
-                :value="item.value">
-              </el-option>
-            </el-select>
-            满<el-input class="defaultInput" size="small" :disabled="!appoint" :maxlength="10" v-model.tel="carriageForm.free"></el-input>件包邮
+          <!--<el-form-item >-->
+            <!--<el-checkbox v-model="appoint">指定条件包邮：</el-checkbox>-->
+            <!--<el-select filterable clearable v-model="carriageForm.appointType" size="small" :disabled="!appoint" placeholder="请选择">-->
+              <!--<el-option-->
+                <!--v-for="item in options"-->
+                <!--:key="item.value"-->
+                <!--:label="item.name"-->
+                <!--:value="item.value">-->
+              <!--</el-option>-->
+            <!--</el-select>-->
+            <!--满<el-input class="defaultInput" size="small" :disabled="!appoint" :maxlength="10" v-model.tel="carriageForm.free"></el-input>件包邮-->
 
-          </el-form-item>
+          <!--</el-form-item>-->
         </el-form>
         <el-form-item :labelWidth="labelWidth">
           <el-button type="danger" @click="saveNew('carriageForm')">保存并返回</el-button>
@@ -135,6 +137,7 @@
 
   // import ElFormItem from "element-ui/packages/form/src/form-item";
   import { carriageList , deleteCarriage,  addCarriage } from "@/api/userCenter"
+  import ElFormItem from "element-ui/packages/form/src/form-item";
   // import ElCheckbox from "element-ui/packages/checkbox/src/checkbox";
   // import ElSelect from "element-ui/packages/select/src/select";
   export default {
@@ -142,6 +145,7 @@
     //   ElSelect,
     //   ElCheckbox,
     //   ElFormItem},
+    components: {ElFormItem},
     name: "post-mode",
     data(){
       const validQuantity = ( rule,value,callback) => {
@@ -180,6 +184,9 @@
           carriageType: [ { required : true ,trigger: 'change', message : '请选择是否包邮'}]
         },
         selfCarriage:{
+          specialList:[
+            { area: '',firstPieces: '',firstFee: '', addPieces: '', addFee: '',}
+          ],
 
         },
         subRule: {
@@ -187,7 +194,6 @@
         },
         labelWidth: '128px',
         selfSetting: '0',
-        specialList:[],
         appoint: true ,
         options: [
           { name : '件数' , value : '1'},
@@ -344,8 +350,8 @@
       },
       //设置指定地区运费
       addAppoint(){
-        if(this.specialList.length < 10){
-          this.specialList.push({ area: '',firstPieces: '',firstFee: '', addPieces: '', addFee: '',})
+        if(this.selfCarriage.specialList.length < 10){
+          this.selfCarriage.specialList.push({ area: '',firstPieces: '',firstFee: '', addPieces: '', addFee: '',})
 
         }else{
           this.$message({
@@ -357,7 +363,7 @@
       },
       //删除指定地址运费
       deleteItem(index){
-        this.specialList.splice(index,1);
+        this.selfCarriage.specialList.splice((index+1)*1,1);
       },
       //编辑指定地区
       editorArea(index){
@@ -369,7 +375,7 @@
       //保存指定运费地区
       saveArea(){
         if(this.getArea.length> 0){
-          this.specialList[this.chooseArea].area = this.getArea ;
+          this.selfCarriage.specialList[this.chooseArea].area = this.getArea ;
           this.areaDialog = false;
         }else{
           this.$message({
@@ -390,14 +396,15 @@
       cancel(){
         this.isNew = '0';
         this.selfSetting =  '0';
-        this.specialList = [] ;
+        this.selfCarriage.specialList = [] ;
         this.$refs.carriageForm.resetFields();
       },
       //改变包邮类型
       chooseCarriage(value){
         if(value === '1'){
           this.selfSetting = '0';
-          this.specialList = [] ;
+          this.selfCarriage.specialList = [];
+          this.selfCarriage.specialList.push({ area: '',firstPieces: '1',firstFee: '0', addPieces: '1', addFee: '0',})
         }else if(value === '2'){
           this.selfSetting = '1';
 
@@ -466,6 +473,11 @@
       .el-radio-button:nth-child(1){
           margin-right : 0.2rem ;
       }
+
+    }
+    .self{
+      width : 100% ;
+      margin-top: 0;
       .note{
         width: 100%;
         font-size : 0.14rem ;
@@ -475,10 +487,6 @@
         height : 0.3rem ;
       }
 
-    }
-    .self{
-      width : 100% ;
-
       .el-form-item{
         width : 100% !important;
         color : #606266;
@@ -486,6 +494,9 @@
           width : 100px;
           margin-right : 0.1rem ;
         }
+      }
+      .el-form-item:nth-child(1){
+        margin-bottom: 0;
       }
       .defaultInput{
         width : 100px ;

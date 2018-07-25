@@ -1,7 +1,7 @@
 <template>
     <div class="merchantCenterHome">
       <div class="mainInfo">
-        <div class="userInfo">
+        <div class="userInfo" @click="goShopInfo">
           <div><img src="../../assets/imgs/logo.png" /><dl><dd>童趣母婴店</dd><dt>主营类目：</dt></dl></div>
           <ul>
             <li><span>描述相符</span><span class="tips_warn">5.0</span></li>
@@ -9,10 +9,10 @@
             <li><span>物流服务</span><span class="tips_warn">5.0</span></li>
           </ul>
         </div>
-        <ul class="flowDetail">
-          <li><span><img src="../../assets/imgs/home1.png" alt="" /></span><span>今日成交金额</span><span class="tips_warn">1231221</span></li>
-          <li><span><img src="../../assets/imgs/home2.png" alt="" /></span><span>近20天出货量</span><span class="tips_warn">123212</span></li>
-          <li><span><img src="../../assets/imgs/home3.png" alt="" /></span><span>近20天成交金额</span><span class="tips_warn">342312</span></li>
+        <ul class="flowDetail" >
+          <li @click="goTransition"><span><img src="../../assets/imgs/home1.png" alt="" /></span><span>今日成交金额</span><span class="tips_warn">1231221</span></li>
+          <li @click="goTransition"><span><img src="../../assets/imgs/home2.png" alt="" /></span><span>近20天出货量</span><span class="tips_warn">123212</span></li>
+          <li @click="goTransition"><span><img src="../../assets/imgs/home3.png" alt="" /></span><span>近20天成交金额</span><span class="tips_warn">342312</span></li>
           <li><span><img src="../../assets/imgs/home4.png" alt="" /></span><span>今日访客数</span><span class="tips_warn">1312321</span></li>
           <li><span><img src="../../assets/imgs/home5.png" alt="" /></span><span>今日浏览量</span><span class="tips_warn">423422</span></li>
           <li></li>
@@ -29,11 +29,11 @@
         <div class="manage">
           <p class="title">订单提醒</p>
           <ul>
-            <li><span>待付款</span><span>15单</span></li>
-            <li><span>待发货</span><span>15单</span></li>
-            <li><span>待评价</span><span>15单</span></li>
-            <li><span>退款/待处理</span><span>15单</span></li>
-            <li><span>退款/已处理</span><span>15单</span></li>
+            <li @click="goTransition"><span>待付款</span><span>15单</span></li>
+            <li @click="goTransition"><span>待发货</span><span>15单</span></li>
+            <li @click="goTransition"><span>待评价</span><span>15单</span></li>
+            <li @click="goRefund('0')"><span>退款/待处理</span><span>15单</span></li>
+            <li @click="goRefund('1')"><span>退款/已处理</span><span>15单</span></li>
           </ul>
         </div>
       </div>
@@ -179,6 +179,17 @@
 
               ]
             })
+          },
+          goShopInfo(){
+            this.$router.push('/merchantCenter/userCenter/shopInfo')
+          },
+          goTransition(){
+            this.$router.push('/merchantCenter/transaction/search');
+          },
+          goRefund(type){
+
+            this.$router.push('/merchantCenter/transaction/refund?type='+ type);
+
           }
         }
     }
