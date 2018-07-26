@@ -51,6 +51,20 @@
         </div>
         <div id="myChart" ></div>
       </div>
+      <div class="mask" v-if="shopPass==='1'">
+        <div class="boxWrap">
+          <div class="success_icon"></div>
+          <div class="box_content">
+            <p class="box_title">恭喜您的店铺申请通过审核</p>
+            <p class="tips_warn">吧啦啦啦啦</p>
+            <p class="box_note">您可在商户中心 - 商家/店铺信息 内查看您的店铺信息</p>
+            <div class="box_footer">
+              <el-button type="danger" @click="goShopInfo">立即查看</el-button>
+              <div class="box_close" @click="closeMask">关闭此页面</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 </template>
 
@@ -73,11 +87,12 @@
                   value : 2,
                   name : '销售量'
                 }
-              ]
+              ],
+              shopPass: '0',
             }
         },
         mounted() {
-          this.getType('1');
+          this.getShopStatus();
         },
         beforeDestroy() {
           if (!this.chart) {
@@ -88,6 +103,17 @@
         },
 
         methods: {
+          //获取店铺审核状态
+          getShopStatus(){
+            this.shopPass = '1';
+            if(this.shopPass === '0'){
+              this.$router.push('')
+            }else{
+              this.getType('1');
+
+            }
+
+          },
           getType(type){
             this.changeBtn = type ;
             let arr = [];
@@ -179,6 +205,9 @@
 
               ]
             })
+          },
+          closeMask(){
+            this.shopPass = '0';
           },
           goShopInfo(){
             this.$router.push('/merchantCenter/userCenter/shopInfo')
@@ -391,6 +420,68 @@
       #myChart{
         width : 100% ;
         height: 6rem ;
+      }
+    }
+    .mask{
+      position: absolute ;
+      top: 0 ;
+      left : 170px;
+      width: 100% ;
+      height: 100% ;
+      background : rgba(0,0,0,0.3);
+      z-index: 20000;
+      .boxWrap{
+        width:60% ;
+        height : 40%;
+        margin : 1.5rem auto;
+        background : #fff;
+        position: relative ;
+        padding :1rem 0.4rem;
+        .success_icon{
+          width : 1.3rem ;
+          height : 1.3rem ;
+          background : url('../../assets/imgs/success.png') no-repeat center #fff ;
+          background-size : 70% ;
+          position : absolute ;
+          left : 0;
+          right : 0;
+          top: -0.65rem ;
+          margin : auto ;
+          border-radius: 50%;
+        }
+        .box_content{
+          margin : auto;
+          width : 80% ;
+          p{
+            text-align: center ;
+            font-size : 0.24rem ;
+            line-height : 0.8rem ;
+
+          }
+          .box_title{
+            font-size : 0.3rem!important ;
+            font-weight : bold ;
+            line-height : 0.8rem;
+            color : #333 ;
+          }
+          .box_note,.box_close{
+            color : #999;
+          }
+          .box_footer{
+            width : 60% ;
+            margin : 0.3rem auto ;
+            display: flex ;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+            .el-button{
+              margin-right : 0.3rem ;
+            }
+            /*.box_close{*/
+              /**/
+            /*}*/
+          }
+        }
       }
     }
   }

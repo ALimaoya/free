@@ -6,37 +6,37 @@
       <div class="tableWrap" v-for="(item,index) in tableData" :key="index">
         <div class="tableTitle">
           <b>模板名称</b><span>最后编辑时间：</span>
-          <el-button type="text" @click="saveMode(index)" v-if="item.editorStatus === '1'">保存</el-button>
+          <el-button type="text" @click="saveMode(index)" v-if="readList[index] == '1'">保存</el-button>
           <el-button type="text" @click="editMode(index,item)" v-else="">修改</el-button>
           |<el-button type="text" @click="deleteMode(item)">删除</el-button>
         </div>
         <el-table  :data="item"  border fit >
           <el-table-column  label="运送方式" ></el-table-column>
-          <el-table-column prop="area" label="运送到" >
+          <el-table-column label="运送到" >
             <template slot-scope="scope">
-              <span v-if="scope.row.area.length> 0" v-for="(k,i) in scope.row.area" :key="i">{{ k.name }}
-                <span v-if="i !== scope.row.area.length-1">、</span>
+              <span v-if="scope.row[0].area.length> 0" v-for="(k,i) in scope.row[0].area" :key="i">{{ k.name }}
+                <span v-if="i !== scope.row[0].area.length-1">、</span>
               </span>
             </template>
           </el-table-column>
           <el-table-column  label="首件（个）" width="100">
             <template slot-scope="scope">
-              <el-input  size="mini" :max="1000000000" type="number" v-model.number="scope.row.firstPieces" @blur="test(scope.$index,scope.row.firstPieces)" :readonly="readList[index] === '0'"></el-input>
+              <el-input  size="mini" :max="1000000000" type="number" v-model.number="scope.row[0].firstPieces"  :readonly="readList[index] === '0'"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="运费（元）" width="100">
             <template slot-scope="scope">
-              <el-input  size="mini" :max="1000000000" type="number" v-model.number="scope.row.firstFee" :readonly="readList[index] === '0'"></el-input>
+              <el-input  size="mini" :max="1000000000" type="number" v-model.number="scope.row[0].firstFee" :readonly="readList[index] === '0'"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="续件（个）" width="100">
             <template slot-scope="scope">
-              <el-input  size="mini" :max="1000000000" type="number" v-model.number="scope.row.addPieces" :readonly="readList[index] === '0'"></el-input>
+              <el-input  size="mini" :max="1000000000" type="number" v-model.number="scope.row[0].addPieces" :readonly="readList[index] === '0'"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="运费（元）" width="100">
             <template slot-scope="scope">
-              <el-input  size="mini" :readonly="readList[index] === '0'" :max="1000000000" type="number" v-model.number="scope.row.addFee" @blur="checkedFee((scope.$index+1)*1,scope.row.addFee)"></el-input>
+              <el-input  size="mini" :readonly="readList[index] === '0'" :max="1000000000" type="number" v-model.number="scope.row[0].addFee" @blur="checkedFee((scope.$index+1)*1,scope.row.addFee)"></el-input>
             </template>
           </el-table-column>
         </el-table>
@@ -186,10 +186,10 @@
                 value : '1'
               },
                 {
-                  name : '安徽',
+                  name : '河南',
                   value : '2'
                 },],
-              firstPieces: '1',firstFee: 0, addPieces: '1', addFee: 0,}
+              firstPieces: '10',firstFee: 0, addPieces: '2', addFee: 0,}
             ],
           [{ area:
               [{
@@ -369,32 +369,31 @@
           },
         ],
         readList: [],
-
       }
     },
     mounted(){
       this.getList();
     },
     methods : {
-      test(index,value){
-        console.log(index,value);
-      },
+
       getList(){
         // this.tableData =
         for(let i = 0 ,j= this.tableData.length ; i < j ;i ++ ){
-          this.readList.push('0');
+          this.readList[i] = '0';
         }
       },
       editMode(index,item){
-        this.readList[index] = '1';
-        this.$set(this.tableData[index],'editorStatus' , '1');
-        console.log(item)
+        // this.readList[index] = '1';
+        this.$set(this.readList,index , '1');
+        console.log(this.readList[index])
       },
       deleteMode(item){
 
       },
       saveMode(index){
-        this.$set(this.tableData[index],'editorStatus' , '0');
+        // this.readList[index] = '0';
+
+        this.$set(this.readList,index , '0');
         // delete this.tableData[index].editorStatus;
 
       },
