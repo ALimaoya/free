@@ -38,7 +38,7 @@ export default {
   top : 60px;
   width : 100% ;
   background : #fff ;
-  z-index : 20000 ;
+  z-index : 20001 ;
 
   .hamburger-container {
     /*line-height: 2px;*/

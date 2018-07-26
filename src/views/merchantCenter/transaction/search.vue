@@ -28,11 +28,11 @@
         <div class="inputWrap">
         <div class="block">
           <span class="demonstration">交易开始时间：</span>
-          <el-date-picker size="small" v-model="transition.GT_createTime"  type="datetime" placeholder="开始时间" ></el-date-picker>
+          <el-date-picker size="small" v-model="transition.GT_createTime" value-format="yyyy-MM-dd HH:mm:00" type="datetime" placeholder="开始时间" ></el-date-picker>
         </div>
         <div class="block">
           <span class="demonstration">交易结束时间：</span>
-          <el-date-picker size="small" v-model="transition.LT_createTime"  type="datetime" placeholder="结束时间" ></el-date-picker>
+          <el-date-picker size="small" v-model="transition.LT_createTime" value-format="yyyy-MM-dd HH:mm:00" type="datetime" placeholder="结束时间" ></el-date-picker>
         </div>
         </div>
         <div class="inputWrap">
@@ -97,7 +97,7 @@
       <el-table-column prop="action" label="操作" width="100">
         <template slot-scope="scope">
           <el-button type='primary'  @click="goDetail(scope.$index,scope.row.id)" size="mini">详情</el-button>
-          <el-button type="warning" v-if="scope.row.status === '1'" @click="deliver(scope.$index,scope.row.id)" size="mini">发货</el-button>
+          <el-button type="warning" v-if="scope.row.status === '1'|| scope.row.status === '7'" @click="deliver(scope.$index,scope.row.id)" size="mini">发货</el-button>
           <el-button type='warning' v-if="scope.row.status === '2'" @click="changeWay(scope.$index,scope.row.id)" size="mini">修改快递</el-button>
         </template>
       </el-table-column>
@@ -484,7 +484,7 @@
                     message: '导入发货列表成功' ,
                     center : true ,
                     type: 'success'
-                  })
+                  });
                   this.deliverDialog = false ;
                   this.getList();
                 }else{
@@ -514,23 +514,7 @@
         //下载错误列表
         importWrong(){
           document.getElementById('wrongFile').click()
-          // let formData = new FormData();
-          // formData.append('fileAddress',this.wrongPath)
-          // console.log(this.wrongPath)
-          // wrongDemo(this.wrongPath).then( res => {
-          //         if( res.data.status === '000000000'){
-          //           // window.location.href = res.data.data
-          //         }else{
-          //           this.$message({
-          //             message: res.data.message ,
-          //             center : true ,
-          //             type: 'error'
-          //           })
-          //         }
-          //       }).catch( err => {
-          //         alert('服务器开小差啦，请稍等~')
-          //
-          //       })
+
         },
 
         //重置搜索条件
@@ -543,6 +527,7 @@
             GT_createTime: '',
             LT_createTime: '',
             EQ_status: '',
+            EQ_activityType:'',
           };
           this.currentPage = 1 ;
           this.pageSize = 10 ;

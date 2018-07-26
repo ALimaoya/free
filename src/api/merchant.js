@@ -218,7 +218,7 @@ export function wrongDemo(data){
 //判断是否可导出
 export function isExport(data){
   return request({
-    url: '',
+    url: '/center/order/export/validate',
     method:'post',
     data,
     needFailResponse:true
