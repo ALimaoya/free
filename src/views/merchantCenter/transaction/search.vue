@@ -28,11 +28,11 @@
         <div class="inputWrap">
         <div class="block">
           <span class="demonstration">交易开始时间：</span>
-          <el-date-picker size="small" v-model="transition.GT_createTime" value-format="yyyy-MM-dd" type="date" placeholder="开始时间" ></el-date-picker>
+          <el-date-picker size="small" v-model="transition.GT_createTime"  type="datetime" placeholder="开始时间" ></el-date-picker>
         </div>
         <div class="block">
           <span class="demonstration">交易结束时间：</span>
-          <el-date-picker size="small" v-model="transition.LT_createTime" value-format="yyyy-MM-dd" type="date" placeholder="结束时间" ></el-date-picker>
+          <el-date-picker size="small" v-model="transition.LT_createTime"  type="datetime" placeholder="结束时间" ></el-date-picker>
         </div>
         </div>
         <div class="inputWrap">
@@ -183,7 +183,7 @@
 
 <script>
   import {  validPassWord } from '@/utils/validate'
-  import { getOrderList,confirmDeliver,importDeliver,deliverDemo,wrongDemo,exportList } from "@/api/merchant"
+  import { getOrderList,confirmDeliver,importDeliver,deliverDemo,wrongDemo,exportList,isExport } from "@/api/merchant"
     export default {
       name: "search",
       data(){
@@ -198,7 +198,7 @@
             }
             callback();
           }
-        }
+        };
         // const validPassword = ( rule,value,callback) => {
         //   if(value === ''){
         //     callback(new Error('请输入登录密码'))
@@ -400,7 +400,6 @@
           formData.append('LT_createTime',this.transition.LT_createTime===null?'':this.transition.LT_createTime);
           formData.append('EQ_status',this.transition.EQ_status);
           formData.append('EQ_activityType',this.transition.EQ_activityType);
-
           this.loading = true ;
 
           getOrderList(formData).then( res => {
@@ -430,7 +429,30 @@
         },
         //导出订单列表
         exportOrder(){
-          document.getElementById('orderFile').click()
+          let formData = new FormData();
+          formData.append('EQ_payOrder.code',this.transition.EQ_payOrder);
+          formData.append('EQ_code',this.transition.EQ_code);
+          formData.append('productCode',this.transition.productCode);
+          formData.append('LIKE_payOrder.user.accountName',this.transition.LIKE_payOrder);
+          formData.append('GT_createTime',this.transition.GT_createTime===null?'':this.transition.GT_createTime);
+          formData.append('LT_createTime',this.transition.LT_createTime===null?'':this.transition.LT_createTime);
+          formData.append('EQ_status',this.transition.EQ_status);
+          formData.append('EQ_activityType',this.transition.EQ_activityType);
+          this.loading = true ;
+          isExport(formData).then( res => {
+            this.loading = false ;
+
+            if(res.data.status === '000000000'){
+              document.getElementById('orderFile').click()
+
+            }else{
+              this.$message({
+                message : res.data.message,
+                center : true ,
+                type : 'error'
+              })
+            }
+          });
         },
         //选择文件
         handelFile(){
@@ -630,7 +652,7 @@
 
       }
       .el-input{
-        width : 160px!important;
+        width : 190px!important;
 
       }
     }

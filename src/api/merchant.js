@@ -215,6 +215,15 @@ export function wrongDemo(data){
     }
   })
 }
+//判断是否可导出
+export function isExport(data){
+  return request({
+    url: '',
+    method:'post',
+    data,
+    needFailResponse:true
+  })
+}
 //导出订单列表
 export function exportList(data){
   return request({
