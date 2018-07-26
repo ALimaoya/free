@@ -105,7 +105,7 @@
     height : 60px ;
     position : fixed ;
     top : 0;
-    z-index : 20000 ;
+    z-index : 20001 ;
     background : $bg ;
     /*border-bottom : 1px solid #d8dce5 ;*/
     img,h1{

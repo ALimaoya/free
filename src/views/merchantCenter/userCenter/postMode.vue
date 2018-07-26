@@ -6,15 +6,39 @@
       <div class="tableWrap" v-for="(item,index) in tableData" :key="index">
         <div class="tableTitle">
           <b>模板名称</b><span>最后编辑时间：</span>
-          <el-button type="text" @click="editMode(item)">修改</el-button>|<el-button type="text" @click="deleteMode(item)">删除</el-button>
+          <el-button type="text" @click="saveMode(index)" v-if="item.editorStatus === '1'">保存</el-button>
+          <el-button type="text" @click="editMode(index,item)" v-else="">修改</el-button>
+          |<el-button type="text" @click="deleteMode(item)">删除</el-button>
         </div>
         <el-table  :data="item"  border fit >
-          <el-table-column prop="id" label="运送方式" ></el-table-column>
-          <el-table-column prop="id" label="运送到" ></el-table-column>
-          <el-table-column prop="id" label="首件（个）" width="100"></el-table-column>
-          <el-table-column prop="id" label="运费（元）" width="100"></el-table-column>
-          <el-table-column prop="id" label="续件（个）" width="100"></el-table-column>
-          <el-table-column prop="id" label="运费（元）" width="100"></el-table-column>
+          <el-table-column  label="运送方式" ></el-table-column>
+          <el-table-column prop="area" label="运送到" >
+            <template slot-scope="scope">
+              <span v-if="scope.row.area.length> 0" v-for="(k,i) in scope.row.area" :key="i">{{ k.name }}
+                <span v-if="i !== scope.row.area.length-1">、</span>
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column  label="首件（个）" width="100">
+            <template slot-scope="scope">
+              <el-input  size="mini" :max="1000000000" type="number" v-model.number="scope.row.firstPieces" @blur="test(scope.$index,scope.row.firstPieces)" :readonly="readList[index] === '0'"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="运费（元）" width="100">
+            <template slot-scope="scope">
+              <el-input  size="mini" :max="1000000000" type="number" v-model.number="scope.row.firstFee" :readonly="readList[index] === '0'"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="续件（个）" width="100">
+            <template slot-scope="scope">
+              <el-input  size="mini" :max="1000000000" type="number" v-model.number="scope.row.addPieces" :readonly="readList[index] === '0'"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="运费（元）" width="100">
+            <template slot-scope="scope">
+              <el-input  size="mini" :readonly="readList[index] === '0'" :max="1000000000" type="number" v-model.number="scope.row.addFee" @blur="checkedFee((scope.$index+1)*1,scope.row.addFee)"></el-input>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
     </div>
@@ -36,18 +60,18 @@
           <span class="tips_warn">按件数计费</span>
         </el-form-item>
         <el-form-item></el-form-item>
-        <el-form class="self" v-if="selfSetting==='1'" :model="selfCarriage" ref="selfCarriage" :rules="subRule">
+        <div class="self" v-if="selfSetting==='1'" >
           <el-form-item :labelWidth="labelWidth">
             <span class="note">备注：除指定地区外，其余地区的运费采用“默认运费”</span>
           </el-form-item>
-          <el-form-item label="默认运费：" prop="default" :labelWidth="labelWidth">
-            <el-input class="defaultInput" size="small" :maxlength="10" v-model.tel="selfCarriage.specialList[0].firstPieces"></el-input>件内
-            <el-input class="defaultInput" size="small" :maxlength="10" v-model.tel="selfCarriage.specialList[0].firstFee"></el-input>元，
-            每增加<el-input class="defaultInput" size="small" :maxlength="10" v-model.tel="selfCarriage.specialList[0].addPieces"></el-input>，增加运费
-            <el-input class="defaultInput" size="small" :maxlength="10" v-model.tel="selfCarriage.specialList[0].addFee"></el-input>元，
+          <el-form-item label="默认运费："  :labelWidth="labelWidth">
+            <el-input class="defaultInput" size="small" :max="1000000000" type="number" v-model.number="carriageForm.specialList[0].firstPieces"></el-input>件内
+            <el-input class="defaultInput" size="small" :max="1000000000" type="number" v-model.number="carriageForm.specialList[0].firstFee" @blur="validFee(0,carriageForm.specialList[0].firstFee)"></el-input>元，
+            每增加<el-input class="defaultInput" size="small" :max="1000000000" type="number" v-model.number="carriageForm.specialList[0].addPieces"></el-input>，增加运费
+            <el-input class="defaultInput" size="small" :max="1000000000" type="number" v-model.number="carriageForm.specialList[0].addFee" @blur="checkedFee(0,carriageForm.specialList[0].addFee)"></el-input>元
           </el-form-item>
           <el-form-item :labelWidth="labelWidth">
-            <el-table v-if="selfCarriage.specialList.length> 1" :data="selfCarriage.specialList.slice(1)"  border fit >
+            <el-table v-if="carriageForm.specialList.length> 1" :data="carriageForm.specialList.slice(1)"  border fit >
               <el-table-column label="运送到" >
                 <template slot-scope="scope">
                   <span v-if="scope.row.area.length === 0">未选择地区</span>
@@ -63,22 +87,22 @@
               </el-table-column>
               <el-table-column prop="firstPieces" label="首件数（件）" >
                   <template slot-scope="scope">
-                    <el-input  size="mini" :maxlength="10" v-model.tel="scope.row.firstPieces"></el-input>
+                    <el-input  size="mini" :max="1000000000" type="number" v-model.number="scope.row.firstPieces"></el-input>
                   </template>
               </el-table-column>
               <el-table-column prop="firstFee" label="首费(元)" >
                 <template slot-scope="scope">
-                  <el-input  size="mini" :maxlength="10" v-model.tel="scope.row.firstFee"></el-input>
+                  <el-input  size="mini" :max="1000000000" type="number" v-model.number="scope.row.firstFee" @blur="validFee((scope.$index+1)*1,scope.row.firstFee)"></el-input>
                 </template>
               </el-table-column>
               <el-table-column prop="addPieces" label="续件数（件）" >
                 <template slot-scope="scope">
-                  <el-input  size="mini" :maxlength="10" v-model.tel="scope.row.addPieces"></el-input>
+                  <el-input  size="mini" :max="1000000000" type="number" v-model.number="scope.row.addPieces" ></el-input>
                 </template>
               </el-table-column>
               <el-table-column prop="addFee" label="续费（元）" >
                 <template slot-scope="scope">
-                  <el-input  size="mini" :maxlength="10" v-model.tel="scope.row.addFee"></el-input>
+                  <el-input  size="mini" :max="1000000000" type="number" v-model.number="scope.row.addFee" @blur="checkedFee((scope.$index+1)*1,scope.row.addFee)"></el-input>
                 </template>
               </el-table-column>
               <el-table-column label="操作" >
@@ -100,10 +124,10 @@
                 <!--:value="item.value">-->
               <!--</el-option>-->
             <!--</el-select>-->
-            <!--满<el-input class="defaultInput" size="small" :disabled="!appoint" :maxlength="10" v-model.tel="carriageForm.free"></el-input>件包邮-->
+            <!--满<el-input class="defaultInput" size="small" :disabled="!appoint" :maxlength="10" v-model.trim="carriageForm.free"></el-input>件包邮-->
 
           <!--</el-form-item>-->
-        </el-form>
+        </div>
         <el-form-item :labelWidth="labelWidth">
           <el-button type="danger" @click="saveNew('carriageForm')">保存并返回</el-button>
           <el-button plain @click="cancel">取消</el-button>
@@ -114,7 +138,7 @@
 
     <el-dialog class="shop_dialog" title="选择区域" top="20%" :visible.sync="areaDialog" width="70%" center :before-close="cancelArea">
       <el-checkbox-group v-model="getArea" fill="#f56c6c">
-        <el-checkbox-button v-for="(item,index) in areaList" :label="item.value" :key="index">{{item.name }}</el-checkbox-button>
+        <el-checkbox-button v-for="(item,index) in areaList" :label="item.value" :key="index" :disabled="areaList[index].checked !== undefined && areaList[index].checked === true">{{item.name }}</el-checkbox-button>
       </el-checkbox-group>
     <span slot="footer" class="dialog-footer">
       <el-button size="mini" type="danger" @click="saveArea">保存</el-button>
@@ -138,6 +162,7 @@
   // import ElFormItem from "element-ui/packages/form/src/form-item";
   import { carriageList , deleteCarriage,  addCarriage } from "@/api/userCenter"
   import ElFormItem from "element-ui/packages/form/src/form-item";
+  import ElForm from "element-ui/packages/form/src/form";
   // import ElCheckbox from "element-ui/packages/checkbox/src/checkbox";
   // import ElSelect from "element-ui/packages/select/src/select";
   export default {
@@ -145,53 +170,54 @@
     //   ElSelect,
     //   ElCheckbox,
     //   ElFormItem},
-    components: {ElFormItem},
+    components: {
+      ElForm,
+      ElFormItem},
     name: "post-mode",
     data(){
-      const validQuantity = ( rule,value,callback) => {
-        if(value === ''){
-          callback(new Error('请输入运送货物的件数'))
-        }else{
-          let reg = /^[0-9]{1,11}$/;
-          if (!reg.test(value)|| value == 0) {
-            callback(new Error('货物件数只能为大于0的整数'))
-          }
-          callback();
-        }
-      };
-      const validCarrage = ( rule,value,callback) => {
-        if(value === ''){
-          callback(new Error('请输入运费'))
-        }else{
-          if (value <= 0) {
-            callback(new Error('运费应为大于0且小于100的整数'))
-          }
-          callback();
-        }
-      };
+
       return{
-        isNew: '1',
-        tableData: [[],[]],
+        isNew: '0',
+        tableData: [
+          [
+            [{ area:
+                [{
+                name : '北京',
+                value : '1'
+              },
+                {
+                  name : '安徽',
+                  value : '2'
+                },],
+              firstPieces: '1',firstFee: 0, addPieces: '1', addFee: 0,}
+            ],
+          [{ area:
+              [{
+                name : '北京',
+                value : '1'
+              },
+                {
+                  name : '安徽',
+                  value : '2'
+                },],
+            firstPieces: '1',firstFee: 0, addPieces: '1', addFee: 0,}]
+          ],[]
+          ],
         carriageForm:{
           name: '',
           carriageType: '1',
-          default: '',
-          appointType: '1',
-          free: '',
+          // appointType: '1',
+          // free: '',
+          specialList:[
+            { area: [],firstPieces: '1',firstFee: 0, addPieces: '1', addFee: 0,}
+          ],
         },
         rule: {
           name: [ { required: true , trigger: 'blur', message : '请输入模板名称'}],
-          carriageType: [ { required : true ,trigger: 'change', message : '请选择是否包邮'}]
-        },
-        selfCarriage:{
-          specialList:[
-            { area: '',firstPieces: '',firstFee: '', addPieces: '', addFee: '',}
-          ],
+          carriageType: [ { required : true ,trigger: 'change', message : '请选择是否包邮'}],
 
         },
-        subRule: {
 
-        },
         labelWidth: '128px',
         selfSetting: '0',
         appoint: true ,
@@ -203,6 +229,7 @@
         chooseArea: '' ,
         areaDialog: false ,
         getArea: [],
+        chooseList: [],
         areaList: [
           {
             name : '北京',
@@ -328,30 +355,75 @@
             name : '重庆',
             value : '31'
           },
-        ]
+          {
+            name : '云南',
+            value : '32'
+          },
+          {
+            name : '浙江',
+            value : '33'
+          },
+          {
+            name : '重庆',
+            value : '34'
+          },
+        ],
+        readList: [],
+
       }
     },
     mounted(){
-
+      this.getList();
     },
     methods : {
-
-      editMode(item){
-
+      test(index,value){
+        console.log(index,value);
+      },
+      getList(){
+        // this.tableData =
+        for(let i = 0 ,j= this.tableData.length ; i < j ;i ++ ){
+          this.readList.push('0');
+        }
+      },
+      editMode(index,item){
+        this.readList[index] = '1';
+        this.$set(this.tableData[index],'editorStatus' , '1');
+        console.log(item)
       },
       deleteMode(item){
 
       },
+      saveMode(index){
+        this.$set(this.tableData[index],'editorStatus' , '0');
+        // delete this.tableData[index].editorStatus;
+
+      },
       //保存新增模板
       saveNew(formName){
-        this.$refs[formName].validate((valid) =>{
+        if(this.carriageForm.carriageType === '2'&&this.carriageForm.specialList.length>1 ){
+          this.carriageForm.specialList.some((i,index) => {
+            if(i.area.length === 0&& index !==0 ){
+              this.$message({
+                message : '指定地区不能为空，请确定选择指定地区',
+                center : true ,
+                type : 'error'
+              });
+              return false ;
+            }
+          });
 
+        }
+        this.$refs[formName].validate((valid) =>{
+          if(valid){
+            console.log(this.carriageForm);
+            this.cancel() ;
+          }
         })
       },
       //设置指定地区运费
       addAppoint(){
-        if(this.selfCarriage.specialList.length < 10){
-          this.selfCarriage.specialList.push({ area: '',firstPieces: '',firstFee: '', addPieces: '', addFee: '',})
+        if(this.carriageForm.specialList.length < 34){
+          this.carriageForm.specialList.push({ area: [],firstPieces: '1',firstFee: 0, addPieces: '1', addFee: 0,})
 
         }else{
           this.$message({
@@ -363,7 +435,7 @@
       },
       //删除指定地址运费
       deleteItem(index){
-        this.selfCarriage.specialList.splice((index+1)*1,1);
+        this.carriageForm.specialList.splice((index+1)*1,1);
       },
       //编辑指定地区
       editorArea(index){
@@ -372,11 +444,49 @@
         this.areaDialog = true ;
 
       },
+      //校验输入运费
+      validFee(index,value){
+          if(value<= 0|| !/^[0-9]{1,10}$/.test(value)){
+            this.carriageForm.specialList[index].firstFee = 0;
+          }
+
+          if(this.carriageForm.specialList[index].addFee*1> value*1){
+            this.$message({
+              message : '续件运费不得大于首件运费',
+              center : true ,
+              type : 'error'
+            });
+            this.$set(this.carriageForm.specialList[index],'addFee' , 0);
+          }
+      },
+      checkedFee(index,value){
+        if(value*1<= 0 || !/^[0-9]{1,10}$/.test(value)){
+          this.carriageForm.specialList[index].addFee = 0;
+        }
+
+        if(value*1 > this.carriageForm.specialList[index].firstFee*1){
+          this.$message({
+            message : '续件运费不得大于首件运费',
+            center : true ,
+            type : 'error'
+          });
+          this.$set(this.carriageForm.specialList[index],'addFee' , 0);
+        }
+      },
       //保存指定运费地区
       saveArea(){
         if(this.getArea.length> 0){
-          this.selfCarriage.specialList[this.chooseArea].area = this.getArea ;
+          console.log(this.chooseArea);
+          this.getArea.map( i =>{
+            this.carriageForm.specialList[(this.chooseArea+1)*1].area.push(i) ;
+
+          });
           this.areaDialog = false;
+          this.areaList.map( i => {
+            if(this.getArea.indexOf(i.value) !== -1){
+              i['checked'] = true ;
+            }
+          })
         }else{
           this.$message({
             message: '请选择指定地区',
@@ -396,15 +506,15 @@
       cancel(){
         this.isNew = '0';
         this.selfSetting =  '0';
-        this.selfCarriage.specialList = [] ;
+        this.carriageForm.specialList = [] ;
         this.$refs.carriageForm.resetFields();
       },
       //改变包邮类型
       chooseCarriage(value){
         if(value === '1'){
           this.selfSetting = '0';
-          this.selfCarriage.specialList = [];
-          this.selfCarriage.specialList.push({ area: '',firstPieces: '1',firstFee: '0', addPieces: '1', addFee: '0',})
+          this.carriageForm.specialList = [];
+          this.carriageForm.specialList.push({ area: '',firstPieces: '1',firstFee: 0, addPieces: '1', addFee: 0,})
         }else if(value === '2'){
           this.selfSetting = '1';
 

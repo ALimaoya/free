@@ -22,8 +22,8 @@
         <div class="manage">
           <p class="title">宝贝管理</p>
           <ul>
-            <li><span>出售中的宝贝</span><span>15件</span></li>
-            <li><span>待上架的宝贝</span><span>15件</span></li>
+            <li @click="goGoodsList"><span>出售中的宝贝</span><span>15件</span></li>
+            <li @click="goGoodsList"><span>待上架的宝贝</span><span>15件</span></li>
           </ul>
         </div>
         <div class="manage">
@@ -187,9 +187,10 @@
             this.$router.push('/merchantCenter/transaction/search');
           },
           goRefund(type){
-
             this.$router.push('/merchantCenter/transaction/refund?type='+ type);
-
+          },
+          goGoodsList(){
+            this.$router.push('/merchantCenter/goods/goodsList');
           }
         }
     }

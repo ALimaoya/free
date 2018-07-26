@@ -89,7 +89,7 @@
           </ul>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="描述" prop="describes">
-          <div id="wangeditor"   >
+          <div id="wangeditor">
             <div style="text-align:left" v-html="word"></div>
           </div>
         </el-form-item>
