@@ -9,7 +9,7 @@
         </ul>
       <div class="wrap" >
 
-        <component  :is="tabView" @stepObj="getStep"></component>
+        <component  :is="tabView" @stepObj="getStep" :last-step = status></component>
 
       </div>
     </div>
@@ -35,6 +35,7 @@
               isActive : false,
               tabView : 'Personal1',
               stepObj: '',
+              status:''
             }
         },
         mounted() {
@@ -45,6 +46,7 @@
             this.show = res.index ;
             // this.store.dispatch('GetUserInfo',this.user);
             this.tabView = res.component ;
+            this.status = res.status;
           },
         }
     }

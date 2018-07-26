@@ -2,7 +2,7 @@
     <div class="successAdd">
       <div class="s_icon"><span><i></i></span></div>
       <p class="s_p">恭喜您的店铺已成功入驻</p>
-      <div class="tips_warn">发发发方法{{ shopName }}</div>
+      <div class="tips_warn">{{ this.$store.state.shopInfo.shopName }}</div>
       <div class="s_d"> 商家后台完整功能将在审核通过后开启，快来登录体验吧</div>
       <div class="btn_wrap">
         <el-button type="primary" @click="goHome">前往特卖商城首页</el-button>
