@@ -212,3 +212,10 @@ export function addBond(data){
     needFailResponse:true,
   })
 }
+//  获取审批历史记录
+export function getApproveList(data){
+  return request({
+    url : '/center/merchant/checkin/approveList',
+    method : 'get',
+  })
+}

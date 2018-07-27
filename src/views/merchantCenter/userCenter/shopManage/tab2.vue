@@ -6,7 +6,7 @@
         <div class="infoWrap">
           <h2>店铺主体信息</h2>
           <el-form-item  labelWidth="200px" label="店铺名称：" >
-            <div class="inputInfo">{{ form.shopName }}</div>
+            <div class="inputInfo">{{ form.shopname }}</div>
           </el-form-item>
         </div>
         <div class="infoWrap">
@@ -107,7 +107,8 @@
       name: "tab2",
         data() {
             return {
-              form: {},
+              form: {
+              },
               imageDomain : process.env.IMAGE_DOMAIN , //获取图片的外链域名
               imgUrl: process.env.BASE_API+'/file/upload',   // 上传图片的域名
               imgType: [],
@@ -122,6 +123,7 @@
         methods: {
           getInfo(){
             getAptitudeInfo().then( res => {
+              console.log('res',res)
               if(res.data.status === '000000000'){
                 this.form = res.data.data ;
               }

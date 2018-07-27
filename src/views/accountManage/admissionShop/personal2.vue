@@ -251,7 +251,7 @@
                 mainBusiness: this.form.mainBusiness ,
                 shopType: '3',
                 thirdShopUrl: this.form.thirdShopUrl,
-                
+
               },
               merchantAptitudeReqDto: {
                 name: this.$store.state.shopInfo.enterForm.name,
