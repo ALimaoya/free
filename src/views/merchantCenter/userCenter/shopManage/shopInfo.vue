@@ -32,7 +32,7 @@
           }
       },
       mounted(){
-        this.userType = '2';
+        this.userType = '1';
         this.changeTab(0);
       },
       methods : {

@@ -9,35 +9,35 @@
           <div class="inputInfo">个人入驻</div>
         </el-form-item>
         <el-form-item  labelWidth="160px" label="主营类目：" >
-          <div class="inputInfo">{{ form.goodsType }}</div>
+          <div class="inputInfo">{{ form.mainBusiness }}</div>
         </el-form-item>
         <el-form-item   labelWidth="160px"  label="招商对接联系方式：">
           <el-button size="small" type="text">查看</el-button>
         </el-form-item>
         <el-form-item   labelWidth="160px"  label="第三方平台店铺：">
-          <div v-if="form.shopUrl === ''">
+          <div v-if="form.thirdShopUrl === ''">
             <span>无</span>
             <el-button size="small" type="text" @click="dialogVisible=true;">添加第三方平台店铺链接</el-button>
           </div>
-          <div v-else>{{ form.shopUrl }}</div>
+          <div v-else>{{ form.thirdShopUrl }}</div>
         </el-form-item>
-        <el-form-item labelWidth="160px" label="店铺LOGO：" prop="logo">
-              <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logo"
+        <el-form-item labelWidth="160px" label="店铺LOGO：" prop="logoImage">
+              <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logoImage"
                           :show-file-list="false"  :before-upload="beforeImgUpload">
-                <img v-if="form.logo" :src="imageDomain + form.logo" class="avatar">
+                <img v-if="form.logoImage" :src="imageDomain + form.logoImage" class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
           <p class="require">请上传尺寸为300px×300px，500k以内的图片</p>
           <span class="imgWarn tips_warn" v-if="goodsImgWarn">请上传店铺LOGO</span>
         </el-form-item>
-        <el-form-item   labelWidth="160px"  label="店铺详情：" prop="shopDetail">
-          <el-input class="inputInfo" type="textarea" :rows="4" size="small" v-model.trim="form.shopDetail" placeholder=""></el-input>
+        <el-form-item   labelWidth="160px"  label="店铺详情：" prop="describes">
+          <el-input class="inputInfo" type="textarea" :rows="4" size="small" v-model.trim="form.describes" placeholder=""></el-input>
         </el-form-item>
         <el-form-item   labelWidth="160px"  label="入驻人邮箱：" prop="email">
           <el-input class="inputInfo telInput"  size="small" v-model.trim="form.email" placeholder="请输入入驻人邮箱"></el-input>
         </el-form-item>
-        <el-form-item   labelWidth="160px" label="入驻人手机号：" prop="tel">
-          <el-input class="inputInfo telInput"  size="small" v-model.trim="form.tel" disabled="disabled"></el-input>
+        <el-form-item   labelWidth="160px" label="入驻人手机号：" prop="mobile">
+          <el-input class="inputInfo telInput"  size="small" v-model.trim="form.mobile" disabled="disabled"></el-input>
           <el-button type="text" size="mini" @click="goChange">修改</el-button>
         </el-form-item>
         <el-form-item class="ruleDetail">
@@ -71,6 +71,7 @@
 <script>
   import { uploadImage  } from "@/api/activity"
   import { getToken } from '@/utils/auth'
+  import { getBasicInfo,editorBasicInfo } from "@/api/userCenter"
   import  { validatePhone , validateZipCode,validateURL} from '@/utils/validate';
 
   export default {
@@ -99,18 +100,17 @@
             return {
               form : {
                 shopName: '',
-                shopType: '',
+                mainBusiness: '',
                 platformType: '',
-                shopUrl: '',
-                goodsType: '',
-                logo : '',
-                shopDetail: '',
+                thirdShopUrl: '',
+                logoImage : '',
+                describes: '',
                 email: '',
-                tel: '',
+                mobile: '',
               },
               agree: false ,
               formRule: {
-                shopDetail: [
+                describes: [
                   {
                     required : true ,trigger: 'blur',message : '请填写店铺详情'
                   }
@@ -120,7 +120,7 @@
                     required : true ,trigger: 'blur', validator: validZipCode
                   }
                 ],
-                tel: [
+                mobile: [
                   {
                     required : true ,trigger : 'blur',validator : validTel
                   }
@@ -154,9 +154,17 @@
             }
         },
         mounted() {
+          this.getInfo();
           // this.form=
         },
         methods: {
+          getInfo(){
+            getBasicInfo().then( res => {
+              if( res.data.status === '000000000'){
+                this.form = res.data.data ;
+              }
+            })
+          },
           //提交第三方平台链接
           confirm(link){
             if(!validateURL(link)){
@@ -166,7 +174,7 @@
                 type : 'error'
               })
             }else{
-              this.form.shopUrl = this.shopLink ;
+              this.form.thirdShopUrl = this.shopLink ;
               this.dialogVisible = false ;
             }
           },
@@ -195,7 +203,7 @@
                   uploadImage(formData).then(res => {
                     if (res.data.status === '000000000') {
 
-                        _this.form.logo = res.data.data.fileName;
+                        _this.form.logoImage = res.data.data.fileName;
                         // console.log(_this.form.imgList)
 
                     } else {
@@ -216,7 +224,7 @@
           },
           //提交表单
           submitForm(formName){
-            if(this.form.logo === ''){
+            if(this.form.logoImage === ''){
               this.goodsImgWarn = true ;
             }else{
               this.goodsImgWarn = false ;
@@ -225,7 +233,15 @@
             this.$refs[formName].validate((valid) => {
 
               if(valid&&!this.goodsImgWarn&&this.agree){
-
+                editorBasicInfo(this.form).then( res => {
+                  if(res.data.status === '000000000'){
+                    this.$message({
+                      message : '您修改的基本信息已成功提交，请稍后核对',
+                      center : true ,
+                      type : 'success'
+                    })
+                  }
+                })
               }else{
                 if(!this.agree){
                   this.$message({

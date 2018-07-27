@@ -40,10 +40,9 @@
 </template>
 
 <script>
-    // import ElRadioGroup from "element-ui/packages/radio/src/radio-group";
 
     export default {
-      // components: {ElRadioGroup},
+
       name: "AdmissionShop",
         data() {
             return {
@@ -70,9 +69,23 @@
             }
         },
         mounted() {
+          let status = this.$route.query.checkStatus;
+          if(status !== undefined){
+            if(status !== '0'){
+              if(status === '3'){
+                this.$router.push('/accountManage/admission/admissionShop/failAdd')
+
+              }
+              if(status === '1'){
+                this.$router.push('/accountManage/admission/admissionShop/successAdd')
+
+              }
+            }
+          }
 
         },
         methods: {
+
           goPersonal(){
             this.$router.push('/accountManage/admission/admissionShop/personal')
           },

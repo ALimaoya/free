@@ -584,6 +584,13 @@ export const constantRouterMap = [
 
           },
           {
+            path: 'admissionShop/failAdd',
+            name: 'checkFail',
+            component: () => import('@/views/accountManage/admissionShop/failAdd'),
+            hidden: true,
+            meta: { title: '审核拒绝', icon: 'checkFail' },
+          },
+          {
             path: 'admissionShop/personal',
             name: 'Personal1',
             component: () => import('@/views/accountManage/admissionShop/personal'),

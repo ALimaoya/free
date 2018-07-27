@@ -2,7 +2,7 @@
     <div class="merchantCenterHome">
       <div class="mainInfo">
         <div class="userInfo" @click="goShopInfo">
-          <div><img src="../../assets/imgs/logo.png" /><dl><dd>童趣母婴店</dd><dt>主营类目：</dt></dl></div>
+          <div v-if="shopObj.ybMerchantShopDto!== undefined"><img :src="imageDomain + shopObj.ybMerchantShopDto.logoImage" /><dl><dd>{{ shopObj.ybMerchantShopDto.name }}</dd><dt>主营类目：{{shopObj.ybMerchantShopDto.mainBusiness }}</dt></dl></div>
           <ul>
             <li><span>描述相符</span><span class="tips_warn">5.0</span></li>
             <li><span>服务态度</span><span class="tips_warn">5.0</span></li>
@@ -10,9 +10,9 @@
           </ul>
         </div>
         <ul class="flowDetail" >
-          <li @click="goTransition"><span><img src="../../assets/imgs/home1.png" alt="" /></span><span>今日成交金额</span><span class="tips_warn">1231221</span></li>
-          <li @click="goTransition"><span><img src="../../assets/imgs/home2.png" alt="" /></span><span>近20天出货量</span><span class="tips_warn">123212</span></li>
-          <li @click="goTransition"><span><img src="../../assets/imgs/home3.png" alt="" /></span><span>近20天成交金额</span><span class="tips_warn">342312</span></li>
+          <li @click="goTransition"><span><img src="../../assets/imgs/home1.png" alt="" /></span><span>今日成交金额</span><span class="tips_warn">{{ shopObj.todayTurnover}}</span></li>
+          <li @click="goTransition"><span><img src="../../assets/imgs/home2.png" alt="" /></span><span>近20天出货量</span><span class="tips_warn">{{ shopObj.deliverNum}}</span></li>
+          <li @click="goTransition"><span><img src="../../assets/imgs/home3.png" alt="" /></span><span>近20天成交金额</span><span class="tips_warn">{{ shopObj.turnover}}</span></li>
           <li><span><img src="../../assets/imgs/home4.png" alt="" /></span><span>今日访客数</span><span class="tips_warn">1312321</span></li>
           <li><span><img src="../../assets/imgs/home5.png" alt="" /></span><span>今日浏览量</span><span class="tips_warn">423422</span></li>
           <li></li>
@@ -22,18 +22,18 @@
         <div class="manage">
           <p class="title">宝贝管理</p>
           <ul>
-            <li @click="goGoodsList"><span>出售中的宝贝</span><span>15件</span></li>
-            <li @click="goGoodsList"><span>待上架的宝贝</span><span>15件</span></li>
+            <li @click="goGoodsList"><span>出售中的宝贝</span><span>{{ shopObj.inTheSaleProductNum }}件</span></li>
+            <li @click="goGoodsList"><span>待上架的宝贝</span><span>{{ shopObj.notForSaleProductNum }}件</span></li>
           </ul>
         </div>
         <div class="manage">
           <p class="title">订单提醒</p>
           <ul>
-            <li @click="goTransition"><span>待付款</span><span>15单</span></li>
-            <li @click="goTransition"><span>待发货</span><span>15单</span></li>
-            <li @click="goTransition"><span>待评价</span><span>15单</span></li>
-            <li @click="goRefund('0')"><span>退款/待处理</span><span>15单</span></li>
-            <li @click="goRefund('1')"><span>退款/已处理</span><span>15单</span></li>
+            <li @click="goTransition"><span>待付款</span><span>{{ shopObj.pendingPaymentOrderNum }}单</span></li>
+            <li @click="goTransition"><span>待发货</span><span>{{ shopObj.toBeDeliveredOrderNum }}单</span></li>
+            <li @click="goTransition"><span>待评价</span><span>{{ shopObj.toBeEvaluatedOrderNum }}单</span></li>
+            <li @click="goRefund('0')"><span>退款/待处理</span><span>{{ shopObj.pendingReturnOrderNum }}单</span></li>
+            <li @click="goRefund('1')"><span>退款/已处理</span><span>{{ shopObj.returnOrderNum }}单</span></li>
           </ul>
         </div>
       </div>
@@ -51,7 +51,7 @@
         </div>
         <div id="myChart" ></div>
       </div>
-      <div class="mask" v-if="shopPass==='1'">
+      <div class="mask" v-if="shopPass==='4'">
         <div class="boxWrap">
           <div class="success_icon"></div>
           <div class="box_content">
@@ -70,6 +70,7 @@
 
 <script>
   import echarts from 'echarts'
+  import { getShopInfo, getSaleNum,getApprovedStatus } from "@/api/userCenter"
     export default {
         name: "merchantCenter-home",
         data() {
@@ -88,7 +89,10 @@
                   name : '销售量'
                 }
               ],
+              yLabel: ['金额','件数'],
               shopPass: '0',
+              shopObj: {},
+              imageDomain : process.env.IMAGE_DOMAIN ,
             }
         },
         mounted() {
@@ -105,36 +109,74 @@
         methods: {
           //获取店铺审核状态
           getShopStatus(){
-            this.shopPass = '1';
-            if(this.shopPass === '0'){
-              this.$router.push('')
-            }else{
-              this.getType('1');
+            getApprovedStatus().then( res => {
+              if(res.data.status === '000000000'){
+                this.shopPass = res.data.data.status ;
+                if(this.shopPass !== '2'&&this.shopPass !== '4'){
+                  let message = '';
+                  if(this.shopPass === '0'){
+                    message = '您还未入驻商城，请前往入驻';
+                  }else if(this.shopPass === '1'){
+                    message = '您提交的入驻申请正在审核中，审核通过后即可试用特卖商城相关功能'
+                  }else if(this.shopPass === '3'){
+                    message = '您提交的入驻申请已被拒绝，请前往查看具体原因'
+                  }
+                  this.$message({
+                    message : message,
+                    center : true ,
+                    type : 'error',
+                    duration : 1500
+                  });
+                  setTimeout(() => {
+                    this.$router.push('/accountManage/admission/admissionShop/index?checkStatus='+this.shopPass)
 
-            }
+                  },2000)
+                }else{
+            getShopInfo().then( res => {
+              if(res.data.status === '000000000'){
+                this.shopObj = res.data.data ;
+                this.getType('1');
+
+              }
+            });
+
+                }
+              }
+            });
 
           },
           getType(type){
-            this.changeBtn = type ;
-            let arr = [];
-            for(let i = 1 ; i<= 30 ;i++){
-              let num = this.getDate(i);
-              arr.unshift(num);
-            }
-            let subDateArr = arr.slice(23,30);
-            if(type ==='1'){
-              this.dateArr = subDateArr ;
-            }else if(type === '2'){
-              this.dateArr = arr ;
 
-            }
-            this.chartData = [300,577,654,543,564,454,453] ;
-            this.initChart(this.chartData,this.chartsOptions[this.chartsType-1].name);
+            this.changeBtn = type ;
+            this.changeType(this.chartsType);
 
           },
           changeType(type){
-            console.log(type);
-            this.initChart(this.chartData ,this.chartsOptions[type-1].name)
+            getSaleNum(type).then( res => {
+              let dataList = [];
+
+              if(res.data.status === '000000000'){
+
+                dataList = res.data.data ;
+                dataList.map(i => {
+                  this.chartData.unshift(i);
+                });
+                let arr = [];
+                for(let i = 1 ; i<= 30 ;i++){
+                  let num = this.getDate(i);
+                  arr.unshift(num);
+                }
+                let subDateArr = arr.slice(23,30);
+                if(this.changeBtn ==='1'){
+                  this.dateArr = subDateArr ;
+                  this.chartData = this.chartData.slice(23)
+                }else if(this.changeBtn === '2'){
+                  this.dateArr = arr ;
+                }
+                this.initChart(this.chartData,this.yLabel[type-1]);
+              }
+            });
+
           },
           getDate(index){
             let now = new Date();

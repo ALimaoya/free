@@ -215,6 +215,15 @@ export function wrongDemo(data){
     }
   })
 }
+//判断是否可导出
+export function isExport(data){
+  return request({
+    url: '/center/order/export/validate',
+    method:'post',
+    data,
+    needFailResponse:true
+  })
+}
 //导出订单列表
 export function exportList(data){
   return request({
@@ -223,7 +232,13 @@ export function exportList(data){
     data
   })
 }
-
+//获取京东商品详情
+export function getJD(data){
+  return request({
+    url: '/thirdProduct/detail/jdProduct?productUrl='+data,
+    method: 'get'
+  })
+}
 //获取淘宝商品详情
 export function getTao(data){
   return request({
@@ -231,7 +246,6 @@ export function getTao(data){
     method:'post',
     headers: {
       'Content-Type': 'application/json',
-
     },
     data
   })

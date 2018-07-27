@@ -12,61 +12,76 @@
         <div class="infoWrap">
           <h2>入驻人证件信息</h2>
           <el-form-item  labelWidth="200px" label="入驻人姓名：" >
-            <div class="inputInfo">{{ form.userName }}</div>
+            <div class="inputInfo">{{ form.name }}</div>
           </el-form-item>
           <el-form-item  labelWidth="200px" label="入驻人身份证号：" >
-            <div class="inputInfo">{{ form.idCard }}</div>
+            <div class="inputInfo">{{ form.cardId }}</div>
           </el-form-item>
           <el-form-item  labelWidth="200px" label="身份证号有效期：" >
-            <div class="inputInfo">{{ form.validity }}</div>
+            <div class="inputInfo">{{ form.cardDeadline }}</div>
           </el-form-item>
         </div>
         <div class="infoWrap">
           <h2>类目资质</h2>
-          <el-form-item labelWidth="200px" :label="imgType[item.type]" v-for="(item,index) in form.imgList" :key="index">
-            <el-upload  class="upload"  :action="imgUrl" :multiple="false" v-model.trim="item.url"
-                        :show-file-list="false"  >
-              <img v-if="item.url" :src="imageDomain + item.url" class="avatar">
-              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            </el-upload>
+          <el-form-item v-if="form.surveyReport !== ''|| form.surveyReport !== undefined" label="质检报告">
+            <img :src="imageDomain + form.surveyReport" />
           </el-form-item>
+          <el-form-item v-if="form.foodTradeLicence !== ''|| form.foodTradeLicence !== undefined" label="食品流通许可证">
+            <img :src="imageDomain + form.foodTradeLicence" />
+          </el-form-item>
+          <el-form-item v-if="form.drinkTradeLicence !== ''|| form.drinkTradeLicence !== undefined" label="酒类流通备案登记表">
+            <img :src="imageDomain + form.drinkTradeLicence" />
+          </el-form-item>
+          <el-form-item v-if="form.businessImage !== ''|| form.businessImage !== undefined" label="营业执照">
+            <img :src="imageDomain + form.businessImage" />
+          </el-form-item>
+          <!--<el-form-item labelWidth="200px" :label="imgType[item.type]" v-for="(item,index) in form.imgList" :key="index">-->
+            <!--<el-upload  class="upload"  :action="imgUrl" :multiple="false" v-model.trim="item.url"-->
+                        <!--:show-file-list="false"  >-->
+              <!--<img v-if="item.url" :src="imageDomain + item.url" class="avatar">-->
+              <!--<i v-else class="el-icon-plus avatar-uploader-icon"></i>-->
+            <!--</el-upload>-->
+          <!--</el-form-item>-->
           <el-form-item  labelWidth="200px" label="营业执照有效期：" >
-            <div class="inputInfo">{{ form.license }}</div>
+            <div class="inputInfo">{{ form.busLicenceDeadline }}</div>
           </el-form-item>
           <el-form-item  labelWidth="200px" label="营业执照编号：" >
-            <div class="inputInfo">{{ form.licenseCode }}</div>
+            <div class="inputInfo">{{ form.socialCreditCode }}</div>
           </el-form-item>
-          <el-form-item  labelWidth="200px" label="出版物经营许可证有效期：" >
-            <div class="inputInfo">{{ form.publicationsTime }}</div>
+          <el-form-item v-if="form.paperTradeLicence !== ''|| form.paperTradeLicence !== undefined" label="出版物经营许可证">
+            <img :src="imageDomain + form.paperTradeLicence" />
           </el-form-item>
-        </div>
-        <div class="infoWrap">
-          <h2>商标信息</h2>
-          <p class="tips">注：店铺包含“旗舰、专卖”，商家必须上传品牌授权或独占授权证明，需授权店铺从属人在丫贝网经营该品牌产品</p>
-          <el-form-item  labelWidth="200px" label="注册类型：" >
-            <div class="inputInfo">{{ form.registrationType }}</div>
-          </el-form-item>
-          <el-form-item  labelWidth="200px" label="商品注册号：" >
-            <div class="inputInfo">{{ form.registrationCode }}</div>
-          </el-form-item>
-          <el-form-item labelWidth="200px" label="商标注册证明：">
-            <el-upload  class="upload"  :action="imgUrl" :multiple="false" v-model.trim="form.img6"
-                        :show-file-list="false"  >
-              <img v-if="form.img6" :src="imageDomain + form.img6" class="avatar">
-              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            </el-upload>
-          </el-form-item>
-          <el-form-item labelWidth="200px" label="品牌授权证明：">
-            <el-upload  class="upload"  :action="imgUrl" :multiple="false" v-model.trim="form.img7"
-                        :show-file-list="false"  >
-              <img v-if="form.img7" :src="imageDomain + form.img7" class="avatar">
-              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            </el-upload>
-          </el-form-item>
-          <el-form-item  labelWidth="200px" label="品牌授权有效期：" >
-            <div class="inputInfo">{{ form.grantTime }} （截止日期）</div>
+          <el-form-item v-if="form.paperTradeDeadline !== ''||form.paperTradeDeadline !== undefined" labelWidth="200px" label="出版物经营许可证有效期：" >
+            <div class="inputInfo">{{ form.paperTradeDeadline }}</div>
           </el-form-item>
         </div>
+        <!--<div class="infoWrap">-->
+          <!--<h2>商标信息</h2>-->
+          <!--<p class="tips">注：店铺包含“旗舰、专卖”，商家必须上传品牌授权或独占授权证明，需授权店铺从属人在丫贝网经营该品牌产品</p>-->
+          <!--<el-form-item  labelWidth="200px" label="注册类型：" >-->
+            <!--<div class="inputInfo">{{ form.registrationType }}</div>-->
+          <!--</el-form-item>-->
+          <!--<el-form-item  labelWidth="200px" label="商品注册号：" >-->
+            <!--<div class="inputInfo">{{ form.registrationCode }}</div>-->
+          <!--</el-form-item>-->
+          <!--<el-form-item labelWidth="200px" label="商标注册证明：">-->
+            <!--<el-upload  class="upload"  :action="imgUrl" :multiple="false" v-model.trim="form.img6"-->
+                        <!--:show-file-list="false"  >-->
+              <!--<img v-if="form.img6" :src="imageDomain + form.img6" class="avatar">-->
+              <!--<i v-else class="el-icon-plus avatar-uploader-icon"></i>-->
+            <!--</el-upload>-->
+          <!--</el-form-item>-->
+          <!--<el-form-item labelWidth="200px" label="品牌授权证明：">-->
+            <!--<el-upload  class="upload"  :action="imgUrl" :multiple="false" v-model.trim="form.img7"-->
+                        <!--:show-file-list="false"  >-->
+              <!--<img v-if="form.img7" :src="imageDomain + form.img7" class="avatar">-->
+              <!--<i v-else class="el-icon-plus avatar-uploader-icon"></i>-->
+            <!--</el-upload>-->
+          <!--</el-form-item>-->
+          <!--<el-form-item  labelWidth="200px" label="品牌授权有效期：" >-->
+            <!--<div class="inputInfo">{{ form.grantTime }} （截止日期）</div>-->
+          <!--</el-form-item>-->
+        <!--</div>-->
       </el-form>
       <el-dialog title="历史审核意见" :visible.sync="dialogVisible" width="60%" center >
         <el-table :data="tableData" border fit>
@@ -76,7 +91,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="submitTime" label="提交时间" ></el-table-column>
-          <el-table-column prop="changeModal" label="修改模块" ></el-table-column>
+          <!--<el-table-column prop="changeModal" label="修改模块" ></el-table-column>-->
           <el-table-column prop="checkTime" label="审核时间" ></el-table-column>
           <el-table-column prop="checkView" label="审核意见" ></el-table-column>
         </el-table>
@@ -85,23 +100,14 @@
 </template>
 
 <script>
+  import { getAptitudeInfo } from "@/api/userCenter"
+  import ElFormItem from "element-ui/packages/form/src/form-item";
     export default {
-        name: "tab2",
+      components: {ElFormItem},
+      name: "tab2",
         data() {
             return {
-              form: {
-                shopName:'',
-                userName: '',
-                idCard: '',
-                validity:'',
-                license:'',
-                imgList: [],
-                licenseCode: '',
-                publications: '',
-                registrationType: '',
-                registrationCode: '',
-                grantTime: ''
-              },
+              form: {},
               imageDomain : process.env.IMAGE_DOMAIN , //获取图片的外链域名
               imgUrl: process.env.BASE_API+'/file/upload',   // 上传图片的域名
               imgType: [],
@@ -111,10 +117,16 @@
             }
         },
         mounted() {
-          // this.form =
+          this.getInfo() ;
         },
         methods: {
-
+          getInfo(){
+            getAptitudeInfo().then( res => {
+              if(res.data.status === '000000000'){
+                this.form = res.data.data ;
+              }
+            })
+          }
         }
     }
 </script>

@@ -28,17 +28,17 @@
         <div class="inputWrap">
         <div class="block">
           <span class="demonstration">交易开始时间：</span>
-          <el-date-picker size="small" v-model="transition.GT_createTime" value-format="yyyy-MM-dd" type="date" placeholder="开始时间"></el-date-picker>
+          <el-date-picker size="small" v-model="transition.GT_createTime" value-format="yyyy-MM-dd HH:mm:00" type="datetime" placeholder="开始时间" ></el-date-picker>
         </div>
         <div class="block">
           <span class="demonstration">交易结束时间：</span>
-          <el-date-picker size="small" v-model="transition.LT_createTime" value-format="yyyy-MM-dd" type="date" placeholder="结束时间"></el-date-picker>
+          <el-date-picker size="small" v-model="transition.LT_createTime" value-format="yyyy-MM-dd HH:mm:00" type="datetime" placeholder="结束时间" ></el-date-picker>
         </div>
         </div>
         <div class="inputWrap">
           <el-button  size="mini" type="primary"  @click="getList()" class="searchOrder">查询</el-button>
           <el-button  size="mini" type="primary"  @click="exportOrder()" class="searchOrder">导出</el-button>
-          <a style="display: none" id="orderFile"  :href="baseUrl+'/center/order/export?merchantId='+ merchantId+ '&EQ_activityType='+ transition.EQ_activityType+'&EQ_payOrder.code='+ transition.EQ_payOrder +'&EQ_code='+ transition.EQ_code+'&productCode='+ transition.productCode+'&LIKE_payOrder.user.accountName='+transition.LIKE_payOrder+ '&GT_createTime='+transition.GT_createTime+ '&LT_createTime='+transition.LT_createTime+ '&EQ_status='+transition.EQ_status"></a>
+          <a style="display: none" id="orderFile"  :href="baseUrl+'/center/order/export?merchantId='+ merchantId+ '&EQ_activityType='+ transition.EQ_activityType+'&EQ_payOrder.code='+ transition.EQ_payOrder +'&EQ_code='+ transition.EQ_code+'&productCode='+ transition.productCode+'&LIKE_payOrder.user.accountName='+transition.LIKE_payOrder+ '&GT_createTime='+ this.gt_time + '&LT_createTime='+ this.lt_time + '&EQ_status='+transition.EQ_status"></a>
           <el-button  size="mini" type="primary" style="padding: 0;text-align: center;height : 28px;"  @click="deliverDialog= true;excelTitle = '';" class="searchOrder">导入发货</el-button>
           <el-button  size="mini" type="primary"  @click="reset()" class="searchOrder">重置</el-button>
         </div>
@@ -97,7 +97,7 @@
       <el-table-column prop="action" label="操作" width="100">
         <template slot-scope="scope">
           <el-button type='primary'  @click="goDetail(scope.$index,scope.row.id)" size="mini">详情</el-button>
-          <el-button type="warning" v-if="scope.row.status === '1'" @click="deliver(scope.$index,scope.row.id)" size="mini">发货</el-button>
+          <el-button type="warning" v-if="scope.row.status === '1'|| scope.row.status === '7'" @click="deliver(scope.$index,scope.row.id)" size="mini">发货</el-button>
           <el-button type='warning' v-if="scope.row.status === '2'" @click="changeWay(scope.$index,scope.row.id)" size="mini">修改快递</el-button>
         </template>
       </el-table-column>
@@ -183,7 +183,7 @@
 
 <script>
   import {  validPassWord } from '@/utils/validate'
-  import { getOrderList,confirmDeliver,importDeliver,deliverDemo,wrongDemo,exportList } from "@/api/merchant"
+  import { getOrderList,confirmDeliver,importDeliver,deliverDemo,wrongDemo,exportList,isExport } from "@/api/merchant"
     export default {
       name: "search",
       data(){
@@ -198,7 +198,7 @@
             }
             callback();
           }
-        }
+        };
         // const validPassword = ( rule,value,callback) => {
         //   if(value === ''){
         //     callback(new Error('请输入登录密码'))
@@ -357,6 +357,35 @@
       mounted(){
         this.getList();
       },
+      computed: {
+        lt_time : function() {
+
+          if(this.transition !== undefined  ){
+            if( this.transition.LT_createTime === null){
+              this.transition.LT_createTime = '';
+            }
+            return this.transition.LT_createTime ;
+
+          }
+          // else{
+          //   // return '';
+          // }
+        },
+        gt_time : function(){
+
+          if(this.transition !== undefined ){
+            if( this.transition.GT_createTime === null){
+              this.transition.GT_createTime = '';
+            }
+
+            return this.transition.GT_createTime ;
+
+          }
+          // else{
+          //   // return '';
+          // }
+        }
+      },
       methods: {
         //  获取交易列表
         getList(){
@@ -367,11 +396,10 @@
           formData.append('EQ_code',this.transition.EQ_code);
           formData.append('productCode',this.transition.productCode);
           formData.append('LIKE_payOrder.user.accountName',this.transition.LIKE_payOrder);
-          formData.append('GT_createTime',this.transition.GT_createTime);
-          formData.append('LT_createTime',this.transition.LT_createTime);
+          formData.append('GT_createTime',this.transition.GT_createTime===null?'':this.transition.GT_createTime);
+          formData.append('LT_createTime',this.transition.LT_createTime===null?'':this.transition.LT_createTime);
           formData.append('EQ_status',this.transition.EQ_status);
           formData.append('EQ_activityType',this.transition.EQ_activityType);
-
           this.loading = true ;
 
           getOrderList(formData).then( res => {
@@ -380,16 +408,51 @@
              this.deliverList=  res.data.data.tExpressResDtos ;
               this.tableData = res.data.data.pageResultDto.data ;
               this.totalElements = res.data.data.pageResultDto.totalElements;
-              this.totalPages = res.data.data.pageResultDto.totalPages
+              this.totalPages = res.data.data.pageResultDto.totalPages;
               this.merchantId = res.data.data.merchantId;
           })
 
         },
 
+        getTime(value,type){
+          if(value === null){
+            if(type === 1){
+              // this.$set(this.transition,'GT_createTime',' ');
+              this.transition.GT_createTime = '';
 
+            }
+            if(type === 2){
+              this.transition.LT_createTime = '';
+
+            }
+          }
+        },
         //导出订单列表
         exportOrder(){
-          document.getElementById('orderFile').click()
+          let formData = new FormData();
+          formData.append('EQ_payOrder.code',this.transition.EQ_payOrder);
+          formData.append('EQ_code',this.transition.EQ_code);
+          formData.append('productCode',this.transition.productCode);
+          formData.append('LIKE_payOrder.user.accountName',this.transition.LIKE_payOrder);
+          formData.append('GT_createTime',this.transition.GT_createTime===null?'':this.transition.GT_createTime);
+          formData.append('LT_createTime',this.transition.LT_createTime===null?'':this.transition.LT_createTime);
+          formData.append('EQ_status',this.transition.EQ_status);
+          formData.append('EQ_activityType',this.transition.EQ_activityType);
+          this.loading = true ;
+          isExport(formData).then( res => {
+            this.loading = false ;
+
+            if(res.data.status === '000000000'){
+              document.getElementById('orderFile').click()
+
+            }else{
+              this.$message({
+                message : res.data.message,
+                center : true ,
+                type : 'error'
+              })
+            }
+          });
         },
         //选择文件
         handelFile(){
@@ -421,7 +484,7 @@
                     message: '导入发货列表成功' ,
                     center : true ,
                     type: 'success'
-                  })
+                  });
                   this.deliverDialog = false ;
                   this.getList();
                 }else{
@@ -451,23 +514,7 @@
         //下载错误列表
         importWrong(){
           document.getElementById('wrongFile').click()
-          // let formData = new FormData();
-          // formData.append('fileAddress',this.wrongPath)
-          // console.log(this.wrongPath)
-          // wrongDemo(this.wrongPath).then( res => {
-          //         if( res.data.status === '000000000'){
-          //           // window.location.href = res.data.data
-          //         }else{
-          //           this.$message({
-          //             message: res.data.message ,
-          //             center : true ,
-          //             type: 'error'
-          //           })
-          //         }
-          //       }).catch( err => {
-          //         alert('服务器开小差啦，请稍等~')
-          //
-          //       })
+
         },
 
         //重置搜索条件
@@ -480,6 +527,7 @@
             GT_createTime: '',
             LT_createTime: '',
             EQ_status: '',
+            EQ_activityType:'',
           };
           this.currentPage = 1 ;
           this.pageSize = 10 ;
@@ -589,7 +637,7 @@
 
       }
       .el-input{
-        width : 160px!important;
+        width : 190px!important;
 
       }
     }
