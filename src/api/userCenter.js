@@ -162,7 +162,7 @@ export function changeAddress(data){
 //获取省份列表
 export function getProvinceList(){
   return request({
-    url: '/center/merchant/address/provinces',
+    url: '/area/province',
     method: 'get'
   })
 }

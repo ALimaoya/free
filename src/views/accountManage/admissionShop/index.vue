@@ -64,7 +64,7 @@
                   name : '普通店'
                 },
               ],
-              shopType: '1',
+              shopType: '0',
               dialogVisible: false ,
             }
         },
@@ -90,9 +90,8 @@
             this.$router.push('/accountManage/admission/admissionShop/personal')
           },
           goEnterPrise(){
-            this.$store.commit('shopType',this.shopType)
-            console.log(this.$store.state.shopInfo.shopType)
-            this.$router.push('/accountManage/admission/admissionShop/enterprise')
+            this.$store.commit('shopType',this.shopType);
+            this.$router.push('/accountManage/admission/admissionShop/enterprise?type='+this.shopType);
 
           },
 

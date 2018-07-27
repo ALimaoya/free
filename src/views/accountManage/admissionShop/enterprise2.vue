@@ -2,133 +2,152 @@
     <div class="enterprise2  new tagView">
       <el-form :model="form" ref="form" :rules="formRule" label-position="right">
         <h1 class="h_title">店铺基本信息</h1>
-        <el-form-item  :labelWidth="labelWidth" label="主营类目："  prop="shopType">
-          <span class="tip" style="margin-bottom: 0.2rem;">入驻后，主营类目不可修改，请谨慎选择</span>
-          <!-- <el-checkbox-group v-model="form.shopType" size="mini">
-            <el-checkbox-button v-for="(item,index) in shopTypeList" :key="index" :label="item.value" border>{{ item.name }}</el-checkbox-button>
+        <el-form-item  :labelWidth="labelWidth" label="主营类目："  prop="mainBusiness">
+          <span class="tip" style="margin-bottom: 0.2rem;"><svg-icon icon-class="tips"/>入驻后，主营类目不可修改，请谨慎选择</span>
+          <!-- <el-checkbox-group v-model="form.mainBusiness" size="mini">
+            <el-checkbox-button v-for="(item,index) in mainBusinessList" :key="index" :label="item.value" border>{{ item.name }}</el-checkbox-button>
           </el-checkbox-group> -->
           <div>
-            <el-radio-group v-model="form.shopType"  @change="getMainBusiness(form.shopType)">
-              <el-radio-button v-for="(item,index) in shopTypeList" :key="index" :label="item.id">{{ item.name }}</el-radio-button>
+            <el-radio-group size="mini" fill="#f56c6c" v-model="form.mainBusiness"  @change="getMainBusiness(form.mainBusiness)">
+              <el-radio-button border v-for="(item,index) in shopTypeList" :key="index" :label="item.id">{{ item.name }}</el-radio-button>
             </el-radio-group>
           </div>
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth" label="店铺名称：" prop="shopName">
-          <el-input class="inputInfo" size="small" v-model.trim="form.shopName" :disabled="readOnly" placeholder="请输入店铺名称"></el-input>
+          <el-input class="inputInfo" size="small" v-model.trim="form.shopName" @change="haveShop(form.shopName)" :disabled="readOnly" placeholder="请输入店铺名称"></el-input>
           <span class="tip"><svg-icon icon-class="tips"/>入驻后店铺名称不可修改，请谨慎填写</span>
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth" label="名称预览：" >
-          <div class="inputInfo showShop" >{{ form.shopName }}</div>
-          <span class="tip" style="margin-top: 0.2rem;">入驻成功后店铺的名称</span>
+          <div class="inputInfo showShop" ><span v-if="form.shopName !== ''">{{ form.shopName + lastName[brandInfo]}} </span></div>
+          <span class="tip" style="margin-top: 0.2rem;"><svg-icon icon-class="tips"/>入驻成功后店铺的名称</span>
         </el-form-item>
         <p class="h_title otherInfo">入驻企业信息</p>
-        <el-form-item  :labelWidth="labelWidth" label="是否是国内企业证件照：" prop="inner">
-          <el-radio label="1" v-model="form.inner">是</el-radio>
+        <el-form-item  :labelWidth="labelWidth" label="是否是国内企业证件照：" prop="licenseCountryType">
+          <el-radio label="1" v-model="form.licenseCountryType">是</el-radio>
         </el-form-item>
-        <el-form-item :labelWidth="labelWidth" label="是否三证合一：" prop="all">
-          <el-radio label="1" v-model="form.all">是</el-radio>
-          <span class="tip" style="margin-left: 0.2rem;">注：目前仅支持三证合一</span>
+        <el-form-item :labelWidth="labelWidth" label="是否三证合一：" prop="licenseMergeType">
+          <el-radio label="1" v-model="form.licenseMergeType">是</el-radio>
+          <span class="tip" style="margin-left: 0.2rem;"><svg-icon icon-class="tips"/>注：目前仅支持三证合一</span>
         </el-form-item>
-        <el-form-item  :labelWidth="labelWidth" label="公司名称：" prop="companyName">
-          <el-input class="inputInfo" size="small" v-model.trim="form.companyName" :disabled="readOnly" placeholder="请输入公司名称"></el-input>
+        <el-form-item  :labelWidth="labelWidth" label="公司名称：" prop="enterpriseName">
+          <el-input class="inputInfo" size="small" v-model.trim="form.enterpriseName" :disabled="readOnly" placeholder="请输入公司名称"></el-input>
         </el-form-item>
-        <el-form-item  :labelWidth="labelWidth" label="公司经营地址：" prop="companyAddr">
-          <el-select v-model="form.companyAddr.provice" clearable placeholder="请选择" size="mini">
+        <el-form-item  :labelWidth="labelWidth" label="公司经营地址：" prop="companyAddress">
+          <el-select v-model="form.companyAddress.province" clearable placeholder="请选择" size="mini">
             <el-option
-              v-for="item in proviceList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              v-for="item in provinceList"
+              :key="item"
+              :label="item"
+              :value="item">
             </el-option>
           </el-select>
           <div class="blank"></div>
-          <el-input class="inputInfo" size="small" v-model.trim="form.companyAddr.detail" :disabled="readOnly" placeholder="请输入精确到门牌号的具体地址"></el-input>
-          <span class="tip">注：请填写公司实际经营地址</span>
+          <el-input class="inputInfo" size="small" v-model.trim="form.companyAddress.detail" :disabled="readOnly" placeholder="请输入精确到门牌号的具体地址"></el-input>
+          <span class="tip"><svg-icon icon-class="tips"/>注：请填写公司实际经营地址</span>
         </el-form-item>
-        <el-form-item  :labelWidth="labelWidth" label="社会信用代码：" prop="social_credit_code">
-          <el-input class="inputInfo" size="small" v-model.trim="form.social_credit_code" :disabled="readOnly" placeholder="请输入社会统一信用代码"></el-input>
+        <el-form-item  :labelWidth="labelWidth" label="社会信用代码：" prop="socialCreditCode">
+          <el-input class="inputInfo" size="small" v-model.trim="form.socialCreditCode" :disabled="readOnly" placeholder="请输入社会统一信用代码"></el-input>
           <el-button type="text" @click="showDemo('1')">示例</el-button>
         </el-form-item>
-        <el-form-item class="uploadImg" :labelWidth="labelWidth" label="营业执照：" prop="back">
-          <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.business_license"
+        <el-form-item class="uploadImg" :labelWidth="labelWidth" label="营业执照：" prop="businessImage">
+          <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.businessImage"
                       :headers="{'yb-tryout-merchant-token':token}"           :show-file-list="false"  :before-upload="beforeLicense">
-            <img v-if="form.business_license" :src="imageDomain + form.business_license" class="avatar">
+            <img v-if="form.businessImage" :src="imageDomain + form.businessImage" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             <span class="imgWarn tips_warn" v-if="licenseWarn">请上传营业执照</span>
           </el-upload>
           <el-button class="showBtn" type="text" size="mini" @click="showDemo('2')">查看示例</el-button>
         </el-form-item>
-        <el-form-item   :labelWidth="labelWidth"  label="营业期限：" prop="licenseDate">
+        <el-form-item   :labelWidth="labelWidth"  label="营业期限：" prop="busLicenceDeadline">
           <el-col :span="9">
-            <el-date-picker type="date" size="mini" placeholder="截止日期" :disabled="readOnly" v-model="form.licenseDate" style="width: 100%;" :readonly="long"></el-date-picker>
+            <el-date-picker type="date" size="mini" placeholder="截止日期" value-format="yyyy-MM-dd" :disabled="readOnly" v-model="form.busLicenceDeadline" style="width: 100%;" :readonly="long"></el-date-picker>
           </el-col>
           <el-col class="line" :span="20">
             <el-checkbox v-model="long" :disabled="readOnly">长期</el-checkbox>
-            <span class="tip" style="background: none;border: 0;"><svg-icon icon-class="tips"/>注：营业期限剩余有效期时长必须大于2个月</span>
+            <span class="tip" style="bubusinessImageground: none;border: 0;"><svg-icon icon-class="tips"/>注：营业期限剩余有效期时长必须大于2个月</span>
           </el-col>
         </el-form-item>
-        <el-form-item class="uploadImg" :labelWidth="labelWidth" label="开户许可证：" prop="back">
-          <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.opening_permit"
+        <el-form-item class="uploadImg" :labelWidth="labelWidth" label="开户许可证：" prop="openLicenceImage">
+          <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.openLicenceImage"
                       :headers="{'yb-tryout-merchant-token':token}"           :show-file-list="false"  :before-upload="beforePermit">
-            <img v-if="form.opening_permit" :src="imageDomain + form.opening_permit" class="avatar">
+            <img v-if="form.openLicenceImage" :src="imageDomain + form.openLicenceImage" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             <span class="imgWarn tips_warn" v-if="permitWarn">请上传开户许可证</span>
           </el-upload>
           <el-button class="showBtn" type="text" size="mini" @click="showDemo('3')">查看示例</el-button>
           <span class="tip" style="background: none;border: 0;"><svg-icon icon-class="tips"/>开户许可证是指入驻企业在银行开设基本存款账户时取得的凭证，应由银行开具</span>
         </el-form-item>
-        <p class="h_title otherInfo">商标信息上传<span class="note">（注：上传的图片大小在5M以内，仅支持jpg、png格式）</span></p>
-        <el-form-item  :labelWidth="labelWidth" label="注册类型：" prop="registerType">
-          <el-radio label="1" v-model="form.registerType">自有商标</el-radio>
-          <el-radio label="2" v-model="form.registerType">授权商标</el-radio>
-        </el-form-item>
-        <template v-if="form.registerType === '1'">
-          <el-form-item :labelWidth="labelWidth" label="商标注册号：" prop="registerCode">
-            <el-input class="inputInfo" size="small"  v-model.trim="form.registerCode" :disabled="readOnly" placeholder="请输入商标注册号"></el-input>
+        <div  v-if="brandInfo !=='3'">
+          <p class="h_title otherInfo">商标信息上传<span class="note">（注：上传的图片大小在5M以内，仅支持jpg、png格式）</span></p>
+          <div class="itemContent"  v-for="(item,index) in form.merchantBrandinfoReqDtos" :key="index">
+          <el-form-item  :labelWidth="labelWidth" label="注册类型：" :prop="'merchantBrandinfoReqDtos.'+index+'.brandRegistType'" :rules="{ message : '请选择注册类型', trigger : 'change' , required: true }">
+            <el-radio-group v-model="item.brandRegistType" @change="resetInfo(item.brandRegistType)">
+              <el-radio label="1" :disabled="form.merchantBrandinfoReqDtos.length> 1">自有商标</el-radio>
+              <el-radio label="2" :disabled="brandInfo === '0'">授权商标</el-radio>
+            </el-radio-group>
+            <el-button v-if="form.merchantBrandinfoReqDtos.length> 1" style="float: right ;" class="tips_warn" type="text" @click="deleteBrand(item)">删除</el-button>
           </el-form-item>
-          <el-form-item class="uploadImg" :labelWidth="labelWidth" label="商标注册证明：" prop="certification">
-            <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.certification"
-                        :headers="{'yb-tryout-merchant-token':token}"           :show-file-list="false"  :before-upload="beforeCertification">
-              <img v-if="form.certification" :src="imageDomain + form.certification" class="avatar">
-              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-              <span class="imgWarn tips_warn" v-if="certificationtWarn">请上传商标注册证明</span>
-            </el-upload>
-            <el-button class="showBtn" type="text" size="mini" @click="showDemo('4')">查看示例</el-button>
-            <ul class="intro">
-              <li>注:</li>
-              <li>1、请上传《商标注册证》或《注册申请受理通知书》；</li>
-              <li>2、变更中的商标请同时上传《变更受理通知书》和《注册申请受理通知书》；</li>
-              <li>3、转入/已转让的商标需上传《转让受理通知书》或者《转让证明》；</li>
-              <li>4、《商标注册证》续证完成，而原《商标注册证》已经过期，需同时上传《核准续展注册证明。》</li>
-            </ul>
-          </el-form-item>
-        </template>
-        <template v-if="form.registerType === '2'">
-          <el-form-item :labelWidth="labelWidth" label="商标注册号：" prop="registerCode">
-            <el-input class="inputInfo" size="small"  v-model.trim="form.registerCode" :disabled="readOnly" placeholder="请输入商标注册号"></el-input>
-          </el-form-item>
-          <el-form-item class="uploadImg" :labelWidth="labelWidth" label="商标注册证明：" prop="certification">
-            <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.certification"
-                        :headers="{'yb-tryout-merchant-token':token}"           :show-file-list="false"  :before-upload="beforeCertification">
-              <img v-if="form.certification" :src="imageDomain + form.certification" class="avatar">
-              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-              <span class="imgWarn tips_warn" v-if="certificationtWarn">请上传商标注册证明</span>
-            </el-upload>
-            <el-button class="showBtn" type="text" size="mini" @click="showDemo('4')">查看示例</el-button>
-            <ul class="intro">
-              <li>注:</li>
-              <li>1、请上传《商标注册证》或《注册申请受理通知书》；</li>
-              <li>2、变更中的商标请同时上传《变更受理通知书》和《注册申请受理通知书》；</li>
-              <li>3、转入/已转让的商标需上传《转让受理通知书》或者《转让证明》；</li>
-              <li>4、《商标注册证》续证完成，而原《商标注册证》已经过期，需同时上传《核准续展注册证明。》</li>
-            </ul>
-          </el-form-item>
-          
-        </template>
-        
+            <el-form-item :labelWidth="labelWidth" label="商标注册号：" :prop="'merchantBrandinfoReqDtos.'+index+'.brandRegistCode'" :rules="{ message : '请输入商标注册号', trigger : 'blur' , required: true }">
+              <el-input class="inputInfo" size="small"  v-model.trim="item.brandRegistCode" :disabled="readOnly" placeholder="请输入商标注册号"></el-input>
+            </el-form-item>
+            <el-form-item class="uploadImg" :labelWidth="labelWidth" label="商标注册证明：" :prop="'merchantBrandinfoReqDtos.'+index+'.brandCertifyImage'">
+              <div @click="chooseCer = index ;">
+                <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="item.brandCertifyImage"
+                            :headers="{'yb-tryout-merchant-token':token}"           :show-file-list="false"  :before-upload="beforeCertification" >
+                  <img v-if="item.brandCertifyImage" :src="imageDomain + item.brandCertifyImage" class="avatar">
+                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                  <span class="imgWarn tips_warn" v-if="certificationtWarn">请上传商标注册证明</span>
+                </el-upload>
+              </div>
+              <el-button class="showBtn" type="text" size="mini" @click="showDemo('4')">查看示例</el-button>
+              <ul class="intro">
+                <li>注:</li>
+                <li>1、请上传《商标注册证》或《注册申请受理通知书》；</li>
+                <li>2、变更中的商标请同时上传《变更受理通知书》和《注册申请受理通知书》；</li>
+                <li>3、转入/已转让的商标需上传《转让受理通知书》或者《转让证明》；</li>
+                <li>4、《商标注册证》续证完成，而原《商标注册证》已经过期，需同时上传《核准续展注册证明。》</li>
+              </ul>
+            </el-form-item>
+            <el-form-item v-if="brandInfo !== '0'&& item.brandRegistType === '2'" class="uploadImg" :labelWidth="labelWidth" label="品牌授权证明：" :prop="'merchantBrandinfoReqDtos.'+index+'.brandAuthImage'">
+              <div @click="chooseBrand = index ;">
+                <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="item.brandAuthImage"
+                            :headers="{'yb-tryout-merchant-token':token}" :show-file-list="false"  :before-upload="beforeBrandAuth" >
+                  <img v-if="item.brandAuthImage" :src="imageDomain + item.brandAuthImage" class="avatar">
+                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                  <span class="imgWarn tips_warn" v-if="brandAuthWarn">请上传品牌授权证明</span>
+                </el-upload>
+              </div>
+              <el-button class="showBtn" type="text" size="mini" @click="showDemo('5')">查看示例</el-button>
+              <ul class="intro">
+                <li>注:</li>
+                <li>1、上传从商标授权人到开店公司的完整授权文件；
+                  <el-popover placement="right"
+                              width="200"
+                              trigger="hover"
+                              content="品牌授权证明需上传完整授权链，否则将被驳回，上传无关文件也将被驳回。
+                              如：商标权利人A为某公司B授权，B再给入驻商家C授权，则此处需要上传A-B授权文件和B-C授权文件。">
+                    <span slot="reference" class="el-icon-question"></span>
+                  </el-popover>
+                </li>
+                <li>2、若商标授权人为自然人，须提交商标授权人亲笔签名；</li>
+                <!--<li>3、如果是旗舰店，请点击下载模板填写，加盖授权及开店公司红色公章后上传照片或扫描件。</li>-->
+              </ul>
+            </el-form-item>
+            <el-form-item v-if="brandInfo !== '0'&& item.brandRegistType === '2'" :labelWidth="labelWidth" label="品牌授权截止日期："  :prop="'merchantBrandinfoReqDtos.'+index+'.brandAuthDeadline'" :rules="{ message : '请选择品牌授权截止日期', trigger : 'change' , required: true }">
+              <el-col :span="9">
+                <el-date-picker type="date" size="mini" placeholder="请选择截止日期" value-format="yyyy-MM-dd" auto-complete="off"  :disabled="brandInfo==='0'||brandInfo==='3'" v-model="item.brandAuthDeadline" style="width: 100%;" ></el-date-picker>
+              </el-col>
+            </el-form-item>
+          </div>
+            <el-form-item :labelWidth="labelWidth">
+              <el-button size="small" type="danger" v-if="form.merchantBrandinfoReqDtos[0].brandRegistType === '2'&& brandInfo === '2'&&form.merchantBrandinfoReqDtos.length< 3" @click="addBrand">添加更多商标信息</el-button>
+            </el-form-item>
+
+        </div>
+
         <p class="h_title otherInfo">其他信息</p>
-        <el-form-item style="width: 95%;margin-top:0.5rem;"  :labelWidth="labelWidth" label="第三方店铺链接：" prop="shopLink">
-          <el-input class="inputInfo" size="small"  v-model.trim="form.shopLink" :disabled="readOnly" placeholder="请填写真实的第三方平台店铺链接可增加入驻成功率，没有可不填"></el-input>
+        <el-form-item style="width: 95%;margin-top:0.5rem;"  :labelWidth="labelWidth" label="第三方店铺链接：" prop="thirdShopUrl">
+          <el-input class="inputInfo" size="small"  v-model.trim="form.thirdShopUrl" :disabled="readOnly" placeholder="请填写真实的第三方平台店铺链接可增加入驻成功率，没有可不填"></el-input>
           <span class="tip"><svg-icon icon-class="tips"/>入驻后店铺名称不可修改，请谨慎填写</span>
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth" >
@@ -150,17 +169,17 @@
               <span class="tips_warn">入驻后店铺名称不可修改</span>
             </div>
           </el-form-item>
-          <el-form-item  :labelWidth="labelWidth" label="店铺名称：">
-            <div class="inputInfo" ><span v-for="(item,index) in form.shopType" :key="index">{{ item }}</span>
+          <el-form-item  :labelWidth="labelWidth" label="主营类目：">
+            <div class="inputInfo" ><span >{{ shopTypeName  }}</span>
               <span class="tips_warn">入驻后主营类目不可修改</span>
             </div>
           </el-form-item>
           <el-form-item  :labelWidth="labelWidth" label="店铺管理人姓名：" >
-            <div class="inputInfo" >{{ form.name }}</div>
+            <div class="inputInfo" >{{ this.$store.state.shopInfo.enterForm2.name }}</div>
           </el-form-item>
           <el-form-item  :labelWidth="labelWidth" label="店铺管理人手机号：" >
-            <div class="inputInfo" >{{ form.tel }}
-              <span class="tips_warn">该手机号将拥有店铺经营最高管理权限</span>
+            <div class="inputInfo" >{{ this.$store.state.shopInfo.enterForm2.mobile }}
+              <span class="tips_warn">该手机号将拥有店铺经营最高管理权限，暂不支持修改</span>
             </div>
 
           </el-form-item>
@@ -174,7 +193,7 @@
         <div class="wrap">
           <img src="../../../assets/imgs/logo.png" />
           <div slot="footer" class="dialog-footer">
-            <el-button type="warning" @click="readRule = false;">我知道了</el-button>
+            <el-button type="danger" @click="readRule = false;">我知道了</el-button>
           </div>
         </div>
       </el-dialog>
@@ -185,7 +204,7 @@
           <img v-else-if="showImg === '3'" src="../../../assets/imgs/u924.png" />
           <img v-else-if="showImg === '4'" src="../../../assets/imgs/u1810.png" />
           <div slot="footer" class="dialog-footer">
-            <el-button type="warning" @click="imgVisible = false ;">我知道了</el-button>
+            <el-button type="danger" @click="imgVisible = false ;">我知道了</el-button>
           </div>
         </div>
       </el-dialog>
@@ -197,14 +216,25 @@
   import { uploadImage  } from "@/api/activity"
   import { getToken } from '@/utils/auth'
   import { firstList } from "@/api/merchant"
+  import { getProvinceList } from "@/api/userCenter"
+  import { enterApply , haveShopName } from "@/api/enter"
+  import ElRadioGroup from "element-ui/packages/radio/src/radio-group";
+  import ElFormItem from "element-ui/packages/form/src/form-item";
+  import ElButton from "element-ui/packages/button/src/button";
 
   export default {
-        name: "enterprise2",
-        data() {
+    components: {
+      ElButton,
+      ElFormItem,
+      ElRadioGroup},
+    name: "enterprise2",
+    props : ['editorInfo'],
+
+    data() {
           const validAddress = (rule,value ,callback) => {
-            if(this.form.companyAddr.provice === ''){
+            if(this.form.companyAddress.province === ''){
               callback(new Error('请选择公司所在省市'))
-            }else if(this.form.companyAddr.detail === ''){
+            }else if(this.form.companyAddress.detail === ''){
               callback(new Error('请填写公司具体经营地址'))
             }
             callback();
@@ -236,27 +266,34 @@
           return {
             labelWidth: '200px',
             form: {
-              shopType: '',
+              mainBusiness: '',
               shopName:'',
-              shopLink:'',
-              inner: '1',
-              all: '1',
-              companyName:'',
-              companyAddr:{ provice : '', detail: ''},
-              social_credit_code:'',
-              business_license: '',
-              opening_permit: '',
-              licenseDate: '',
-              registerType:'1',
-              registerCode:'',
-              certification: '',
-              merchantBrandinfos:[
-
-              ]
+              thirdShopUrl:'',
+              licenseCountryType: '1',
+              licenseMergeType: '1',
+              enterpriseName:'',
+              companyAddress:{ province : '', detail: ''},
+              socialCreditCode:'',
+              businessImage: '',
+              openLicenceImage: '',
+              busLicenceDeadline: '',
+              // registerType:'1',
+              // registerCode:'',
+              // certification: '',
+              merchantBrandinfoReqDtos:[
+                {
+                  brandRegistType:'1',
+                  brandRegistCode: '',
+                  brandCertifyImage:'',
+                  brandAuthImage:'',
+                  brandAuthDeadline:'',
+                  brandAuthType:''
+                }
+                ]
             },
             shopTypeList: [],
             formRule:{
-              shopType:[
+              mainBusiness:[
                 {
                  required: true ,trigger : 'change',message: '请选择入驻店铺主营类目'
                 }
@@ -266,44 +303,47 @@
                   required : true ,trigger: 'blur',message : '请输入入驻店铺名称'
                 }
               ],
-              inner:[
+              licenseCountryType:[
                 {
                   required: true ,trigger: 'change',message: '该选项必填'
                 }
               ],
-              all:[
+              licenseMergeType:[
                 {
                   required: true ,trigger: 'change',message: '该选项必填'
                 }
               ],
-              companyName:[
+              enterpriseName:[
                 {
                   required: true ,trigger: 'blur',message: '请输入公司名称'
                 },
               ],
-              companyAddr: [
+              companyAddress: [
                   {
                     required: true, trigger: 'blur', validator: validAddress
                   }
-
-
               ],
-              social_credit_code: [
+              socialCreditCode: [
                 {
                   required: true ,trigger : 'blur', validator : validCredit
                 }
               ],
-              registerType: [
+              busLicenceDeadline:[
                 {
-                  required : true , trigger: 'change', message : '请选择注册类型'
+                  required : true ,trigger : 'change',message : '请选择营业期限'
                 }
               ],
-              registerCode: [
-                {
-                  required : true ,trigger: 'blur' ,message : '请输入商标注册号'
-                }
-              ],
-              shopLink:[
+              // registerType: [
+              //   {
+              //     required : true , trigger: 'change', message : '请选择注册类型'
+              //   }
+              // ],
+              // registerCode: [
+              //   {
+              //     required : true ,trigger: 'blur' ,message : '请输入商标注册号'
+              //   }
+              // ],
+              thirdShopUrl:[
                 {
                   required:false ,trigger: 'blur',validator: validLink
                 }
@@ -315,57 +355,76 @@
             dialogVisible : false ,
             readRule: false ,
             imgVisible: false ,
-            proviceList: [],
+            provinceList: [],
             autoUpload : true ,
             imgUrl : process.env.BASE_API+'/file/upload',
             imageDomain : process.env.IMAGE_DOMAIN ,
             licenseWarn : false ,
             permitWarn: false ,
             certificationtWarn: false ,
+            brandAuthWarn: false ,
             long: false,
             showImg: '',
             token: getToken(),
+            brandInfo: '',
+            requiredInput : true,
+            chooseCer: '',
+            chooseBrand : '',
+            lastName : ['旗舰店','专卖店','专营店',''],
+            busLicenceType: '',
+            shopTypeName:''
           }
 
         },
         mounted() {
+          this.form = this.$store.state.shopInfo.enterForm2 ;
+          this.brandInfo = this.$route.query.type ;
+          if(this.brandInfo !== '3'){
+            this.requiredInput = false ;
+          }
           this.getTypeList();
-          this.getProviceList();
+          this.getProvince();
         },
         methods: {
+
           getTypeList(){
             firstList().then(res=> {
               this.shopTypeList = res.data.data
             })
-            // this.shopTypeList =  [{
-            //   value: '1',
-            //   name: '王小虎',
-            // }, {
-            //   value: '2',
-            //   name: '小虎',
-            // }, {
-            //   value: '3',
-            //   name: '土豆粉',
-            // }, {
-            //   value: '4',
-            //   name: '家具生活',
-            // }]
           },
           //  获得主营类目名字
           getMainBusiness(item){
               for( let i = 0; i < this.shopTypeList.length ; i++){
                 if(this.shopTypeList[i].id == item){
-                  this.shopTypeName = this.shopTypeList[i].name
+                  this.shopTypeName = this.shopTypeList[i].name;
                     console.log(this.shopTypeName)
                 }
-                
+
               }
           },
-          getProviceList(){
-            // this.proviceList = []
+          haveShop(shopName){
+            if(shopName !== ''){
+              haveShopName(shopName).then( res =>{
+                if(res.data.status === "000000000"){
+                  if(res.data.data.status !== "1"){
+                    this.form.shopName = '';
+                    this.$message.error('店铺名称已存在，请重新输入');
+                  }
+                }
+              })
+            }
+
+          },
+          getProvince(){
+            getProvinceList().then( res => {
+              if( res.data.status === '000000000'){
+                this.provinceList = res.data.data ;
+              }
+            })
+            // this.provinceList = []
           },
           //限制上传图片大小
-          limitImg(file){
+          limitImage(file,type){
             let reader = new FileReader();
             let _this = this;
             const isImg = file.type === 'image/jpeg'|| file.type === 'image/png';
@@ -376,96 +435,129 @@
                 const isWidth = this.width;
                 if (isWidth > 800 || isHeight > 800) {
                   _this.$message.error('图片尺寸过大，请重新选择后上传');
-                  return false;
+                  _this.limitImg = false;
+
+                  return false ;
 
                 }else if(!isImg){
                   _this.$message.error('图片必须为jpg或者png格式，请重新选择后上传');
-                  return false;
+                  _this.limitImg = false;
+                  return false ;
+
+                }else{
+                  let formData = new FormData();
+                  formData.append('image', file);
+
+                  uploadImage(formData).then(res => {
+                    if (res.data.status === '000000000') {
+                      console.log(type);
+
+                      if(type ===1){
+                        _this.form.businessImage = res.data.data.fileName;
+                        // console.log(_this.form.cardFaceImage,3)
+                        _this.licenseWarn = false;
+                      }
+                      if(type ===2){
+                        _this.form.openLicenceImage = res.data.data.fileName;
+                        // console.log(_this.form.cardBackImage,4)
+                        _this.permitWarn = false;
+                      }
+                      if(type === 3){
+                        _this.$set(_this.form.merchantBrandinfoReqDtos[_this.chooseCer], 'brandCertifyImage' , res.data.data.fileName);
+                        console.log(_this.chooseCer,_this.form.merchantBrandinfoReqDtos[this.chooseCer]);
+                        _this.certificationtWarn = false;
+                      }
+                      if(type === 4){
+
+                        _this.$set(_this.form.merchantBrandinfoReqDtos[_this.chooseBrand],'brandAuthImage' , res.data.data.fileName);
+                        // console.log(_this.form.cardBackImage,4)
+                        _this.brandAuthWarn = false;
+                      }
+
+                    } else {
+                      _this.tipsWarn(type);
+
+
+                    }
+                  }).catch(err => {
+                    // console.log(err) ;
+                    _this.tipsWarn(type);
+                  })
 
                 }
-              };
 
+              };
               image.src = e.target.result;
+
             };
             reader.readAsDataURL(file);
-            return true ;
+            // console.log(this.limitImg,5)
+
+
+          },
+          tipsWarn(type){
+            if(type === 1){
+              this.cardFaceImageWarn = true;
+
+            }
+            if(type === 2){
+              this.cardBackImageWarn = true;
+
+            }
           },
           //  上传营业执照
           beforeLicense(file) {
-            let that = this;
-            if(this.limitImg(file)){
-
-              let formData = new FormData();
-              formData.append('image', file);
-              uploadImage(formData).then(res => {
-                if (res.data.status === '000000000') {
-                  // console.log(_this.form.imgList)
-                  that.form.business_license = res.data.data.fileName ;
-                  that.licenseWarn = false;
-                } else {
-                  that.licenseWarn = true;
-                  that.form.business_license = '';
-                }
-              }).catch(err => {
-                // console.log(err) ;
-                that.form.business_license = '';
-                that.licenseWarn = true;
-
-              })
-            }
-
-
-
+            this.limitImage(file,1);
           },
           // 上传开户许可照
           beforePermit(file) {
-            let that = this;
+            this.limitImage(file,2);
+          },
+          //上传商标注册证明
+          beforeCertification(file){
+            console.log(this.chooseCer);
 
-            if (this.limitImg(file)) {
-              let formData = new FormData();
-              formData.append('image', file);
-              uploadImage(formData).then(res => {
-                if (res.data.status === '000000000') {
-                  // console.log(_this.form.imgList)
-                  that.form.opening_permit = res.data.data.fileName ;
-                  that.permitWarn = false;
-                } else {
-                  that.permitWarn = true;
-                  that.form.opening_permit = '' ;
-
-                }
-              }).catch(err => {
-                // console.log(err) ;
-                that.permitWarn = true;
-                that.form.opening_permit = '' ;
+            this.limitImage(file,3);
+          },
+          beforeBrandAuth(file){
+            this.limitImage(file,4);
+          },
+          addBrand(){
+            if(this.form.merchantBrandinfoReqDtos.length < 3){
+              this.form.merchantBrandinfoReqDtos.push({
+                brandRegistType:'2',
+                brandRegistCode: '',
+                brandCertifyImage:'',
+                brandAuthImage:'',
+                brandAuthDeadline:'',
+                brandAuthType:''
+              })
+            }else{
+              this.$message({
+                message : '入驻时最多只能添加3个商标信息，您不能再添加啦~',
+                center : true ,
+                type : 'error',
               })
             }
 
           },
-          //上传商标注册证明
-          beforeCertification(){
-            let that = this;
-
-            if (this.limitImg(file)) {
-              let formData = new FormData();
-              formData.append('image', file);
-              uploadImage(formData).then(res => {
-                if (res.data.status === '000000000') {
-                  // console.log(_this.form.imgList)
-                  that.form.certification = res.data.data.fileName ;
-                  that.certificationtWarn = false;
-                } else {
-                  that.certificationtWarn = true;
-                  that.form.certification = '' ;
-
-                }
-              }).catch(err => {
-                // console.log(err) ;
-                that.certificationtWarn = true;
-                that.form.certification = '' ;
-              })
+          deleteBrand(item){
+            if(this.form.merchantBrandinfoReqDtos.length > 1){
+              let num = this.form.merchantBrandinfoReqDtos.indexOf(item);
+              if( num !== -1){
+                this.form.merchantBrandinfoReqDtos.splice(num,1);
+              }
             }
-
+          },
+          resetInfo(value){
+            this.form.merchantBrandinfoReqDtos= [{
+              brandRegistType: value,
+              brandRegistCode: '',
+              brandCertifyImage:'',
+              brandAuthImage:'',
+              brandAuthDeadline:'',
+              brandAuthType:''
+            }]
           },
           showDemo(index){
             this.imgVisible = true ;
@@ -473,20 +565,46 @@
             this.showImg = index ;
           },
 
+
           //返回上一步
           goBack(){
+            this.$store.commit('addForm2',this.form);
             this.$emit('stepObj',{ index : '1' ,component : 'enterprise1',status : 1})
 
           },
           //下一步操作
           goNext(formName){
-            this.dialogVisible = true ;
+            if(this.form.businessImage === ''){
+              this.licenseWarn = true;
+
+            }
+            if(this.form.openLicenceImage  === ''){
+              this.permitWarn = true;
+
+            }
+            this.form.merchantBrandinfoReqDtos.map( i => {
+              if(i.brandCertifyImage === ''){
+                this.certificationtWarn = true ;
+              }
+              if(i.brandAuthImage === ''){
+                this.brandAuthWarn = true ;
+
+              }
+            });
+
+
+            if(this.long){
+              this.busLicenceType = '1';
+              this.form.busLicenceDeadline = '9999-12-31';
+            }else{
+              this.busLicenceType = '0';
+
+            }
 
             this.$refs[formName].validate((valid) => {
 
 
               if(valid){
-                console.log(this.agree,1);
                 if(!this.agree){
                   this.$message({
                     message : '请先阅读并同意《丫贝网合作协议》',
@@ -495,6 +613,7 @@
                   })
                 }else{
                   this.dialogVisible = true ;
+
                 }
 
               }else{
@@ -505,7 +624,46 @@
           //  确认提交
           confirm(){
             this.dialogVisible = false ;
-            this.$emit('stepObj',{ index : '3' ,component : 'successAdd'})
+            let data = {
+              merchantShopReqDto: {
+                shopName: this.form.shopName ,
+                mainBusiness: this.form.mainBusiness ,
+                shopType: this.brandInfo,
+                thirdShopUrl: this.form.thirdShopUrl,
+              },
+              merchantAptitudeReqDto: {
+                licenseCountryType: '1',
+                licenseMergeType: '1',
+                enterpriseName: this.form.enterpriseName,
+                companyAddress:this.form.companyAddress.province + '- '+ this.form.companyAddress.detail,
+                socialCreditCode:this.form.socialCreditCode,
+                businessImage: this.form.businessImage ,
+                busLicenceDeadline: this.form.busLicenceDeadline,
+                openLicenceImage: this.form.openLicenceImage,
+                busLicenceType: this.busLicenceType,
+                name:this.$store.state.shopInfo.enterForm2.name,
+                cardId:this.$store.state.shopInfo.enterForm2.cardId,
+                cardType:this.$store.state.shopInfo.cardType2,
+                email: this.$store.state.shopInfo.enterForm2.email,
+                cardFaceImage: this.$store.state.shopInfo.enterForm2.cardFaceImage,
+                cardBackImage: this.$store.state.shopInfo.enterForm2.cardBackImage,
+                cardDeadline: this.$store.state.shopInfo.enterForm2.cardDeadline,
+                mobile: this.$store.state.shopInfo.enterForm2.mobile,
+                legalRepName: this.$store.state.shopInfo.enterForm2.legalRepName ,
+                legalRepMobile: this.$store.state.shopInfo.enterForm2.legalRepMobile,
+                belongType: 2
+              },
+              merchantBrandinfoReqDtos: this.form.merchantBrandinfoReqDtos ,
+
+            };
+            console.log(data);
+            enterApply(data).then( res =>{
+              if(res.data.status === "000000000"){
+                this.$store.commit('shopName',this.form.shopName);
+                console.log(this.$store.state.shopInfo);
+                this.$emit('stepObj',{ index : '3' ,component : 'successAdd'})
+              }
+            })
 
           }
         }
@@ -535,7 +693,7 @@
     display: block!important;
   }
   .tip{
-    width : 50%!important;
+    /*width : 50%!important;*/
   }
   .note{
     font-size : 0.16rem;

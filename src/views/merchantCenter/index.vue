@@ -132,13 +132,13 @@
 
                   },2000)
                 }else{
-            getShopInfo().then( res => {
-              if(res.data.status === '000000000'){
-                this.shopObj = res.data.data ;
-                this.getType('1');
+                  getShopInfo().then( res => {
+                    if(res.data.status === '000000000'){
+                      this.shopObj = res.data.data ;
+                      this.getType('1');
 
-              }
-            });
+                    }
+                  });
 
                 }
               }

@@ -581,7 +581,7 @@ export const constantRouterMap = [
             name: 'AdmissionShop',
             component: () => import('@/views/accountManage/admissionShop/index'),
             meta: { title: '入驻商城', icon: 'admissionShop' },
-
+            hidden: true
           },
           {
             path: 'admissionShop/failAdd',

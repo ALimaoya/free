@@ -17,7 +17,9 @@
 </template>
 
 <script>
-    export default {
+  import { getApprovedStatus } from "@/api/userCenter"
+
+  export default {
         name: "admissionManage",
       data(){
           return{
@@ -29,8 +31,24 @@
           this.$router.push({ name : 'TryoutActivity'})
         },
         goShop(){
-          this.$router.push({ name : 'AdmissionShop'})
-        }
+          this.getUserInfo();
+        },
+        getUserInfo() {
+          getApprovedStatus().then( res => {
+            if(res.data.status === '000000000'){
+              if(res.data.data.status === '0'){
+                this.$router.push({ name : 'AdmissionShop'})
+
+              }
+              if(res.data.data.status === '1'){
+                this.$router.push( '/accountManage/admission/admissionShop/index?checkStatus=1')
+              }
+              if(res.data.data.status === '3'){
+                this.$router.push( '/admissionShop/failAdd')
+              }
+            }
+          })
+        },
       }
     }
 </script>

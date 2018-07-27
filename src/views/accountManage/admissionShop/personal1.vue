@@ -10,7 +10,7 @@
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth " label="入驻人手机号：" prop="mobile" >
           <el-input class="inputInfo" size="small" v-model.trim="form.mobile" disabled="disabled" placeholder="请输入入驻人手机号"></el-input>
-          <span class="tip"><svg-icon icon-class="tips"/>此手机号为商家首次登陆后台的账号，有最高管理权限</span>
+          <span class="tip"><svg-icon icon-class="tips"/>此手机号为商家首次登陆后台的账号，有最高管理权限，暂不支持修改</span>
         </el-form-item>
         <el-form-item   :labelWidth="labelWidth"  label="入驻人身份证号：" prop="cardId">
           <el-input class="inputInfo" :maxlength="18" size="small" :disabled="readOnly" v-model.trim="form.cardId"  placeholder="请输入身份证号码"></el-input>
@@ -18,7 +18,7 @@
         </el-form-item>
         <el-form-item   :labelWidth="labelWidth"  label="身份证有效期：" prop="cardDeadline">
           <el-col :span="9" >
-            <el-date-picker type="date" size="mini" placeholder="截止日期" :disabled="readOnly" v-model="form.cardDeadline" style="width: 100%;" :readonly="cardType"></el-date-picker>
+            <el-date-picker type="date" size="mini" placeholder="截止日期" :disabled="readOnly" value-format="yyyy-MM-dd" v-model="form.cardDeadline" style="width: 100%;" :readonly="cardType"></el-date-picker>
           </el-col>
           <el-col class="line" :span="20">
             <el-checkbox v-model="cardType" :disabled="readOnly">长期</el-checkbox>
@@ -71,7 +71,7 @@
           <img v-else-if="this.showImg === '2'"  src="../../../assets/imgs/u922.png" />
           <img v-else-if="this.showImg === '3'"  src="../../../assets/imgs/u923.png" />
           <div slot="footer" class="dialog-footer">
-            <el-button type="warning" @click="close">我知道了</el-button>
+            <el-button type="danger" @click="close">我知道了</el-button>
           </div>
         </div>
       </el-dialog>
@@ -84,9 +84,7 @@
     import { validateEmail,validateIDCard,validName} from '@/utils/validate'
 
     export default {
-      props:[
-          'lastStep'
-      ],
+      props:['lastStep','editorInfo'],
 
       name: "personal1",
         data() {
@@ -153,7 +151,6 @@
                 ]
               },
               labelWidth: '180px',
-              
               autoUpload : true ,
               imgUrl : process.env.BASE_API+'/file/upload',
               imageDomain : process.env.IMAGE_DOMAIN ,
@@ -169,23 +166,37 @@
             }
 
         },
-        watch: {
-          
-        },
-        mounted() {
-          if(this.lastStep === 1 ){
-            this.form = this.$store.state.shopInfo.enterForm
-            if(this.$store.state.shopInfo.cardType ===1){
-              this.cardType = true
-            }else{
-              this.cardType = false
-            }
+      watch : {
+        editorInfo : function(val){
+          if(val === 1){
+            this.form = this.$store.state.shopInfo.enterForm;
+
           }
+
+        }
+      },
+
+
+        mounted() {
+            // if(this.$store.state.shopInfo.editorType === 1){
+            //
+            // }
+            if(this.lastStep === 1 ){
+              this.form = this.$store.state.shopInfo.enterForm;
+              console.log(this.form);
+
+              if(this.$store.state.shopInfo.cardType ===1){
+                this.cardType = true
+              }else{
+                this.cardType = false
+              }
+            }
+
         },
         methods: {
-          
+
           //限制上传图片大小
-          limitImg(file){
+          limitImage(file,type){
             let reader = new FileReader();
             let _this = this;
             const isImg = file.type === 'image/jpeg'|| file.type === 'image/png';
@@ -196,93 +207,86 @@
                 const isWidth = this.width;
                 if (isWidth > 800 || isHeight > 800) {
                   _this.$message.error('图片尺寸过大，请重新选择后上传');
-                  return false;
+                  _this.limitImg = false;
+
+                  return false ;
 
                 }else if(!isImg){
                   _this.$message.error('图片必须为jpg或者png格式，请重新选择后上传');
-                  return false;
+                  _this.limitImg = false;
+                  return false ;
 
-                }
-              };
-
-              image.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-            return true ;
-          },
-          // 上传身份证正面照
-          beforeFront(file) {
-            let that = this;
-            if(this.limitImg(file)){
-
+                }else{
                   let formData = new FormData();
                   formData.append('image', file);
+
                   uploadImage(formData).then(res => {
                     if (res.data.status === '000000000') {
-                        // console.log(_this.form.imgList)
-                      that.form.cardFaceImage = res.data.data.fileName ;
-                      that.frontImgWarn = false;
+
+                      if(type ===1){
+                        _this.$set(_this.form,'cardFaceImage' , res.data.data.fileName);
+                        _this.frontImgWarn = false;
+                        console.log(_this.form.cardFaceImage)
+                      }
+                      if(type ===2){
+                        _this.$set(_this.form,'cardBackImage' , res.data.data.fileName);
+
+                        // _this.form.cardBackImage = res.data.data.fileName;
+                        _this.backImgWarn = false;
+                      }
+                      if(type === 3){
+                        _this.$set(_this.form,'cardSelfImage' , res.data.data.fileName);
+
+                        // _this.form.cardSelfImage = res.data.data.fileName;
+                        _this.halfBodyImgWarn = false;
+                      }
+
                     } else {
-                      that.frontImgWarn = true;
-                      that.form.cardFaceImage = '';
+                      _this.tipsWarn(type);
+
+
                     }
                   }).catch(err => {
                     // console.log(err) ;
-                    that.form.cardFaceImage = '';
-                    that.frontImgWarn = true;
-
+                    _this.tipsWarn(type);
                   })
+
                 }
 
+              };
+              image.src = e.target.result;
 
+            };
+            reader.readAsDataURL(file);
+            // console.log(this.limitImg,5)
+
+
+          },
+          tipsWarn(type){
+            if(type === 1){
+              this.cardFaceImageWarn = true;
+
+            }
+            if(type === 2){
+              this.cardBackImageWarn = true;
+
+            }
+            if( type === 3){
+              this.halfBodyImgWarn = true ;
+            }
+          },
+          // 上传身份证正面照
+          beforeFront(file) {
+            this.limitImage(file,1);
 
           },
         //  上传身份证反面照
           beforeBack(file) {
-            let that = this;
-
-                if (this.limitImg(file)) {
-                  let formData = new FormData();
-                  formData.append('image', file);
-                  uploadImage(formData).then(res => {
-                    if (res.data.status === '000000000') {
-                      // console.log(_this.form.imgList)
-                      that.form.cardBackImage = res.data.data.fileName ;
-                      that.backImgWarn = false;
-                    } else {
-                      that.backImgWarn = true;
-                      that.form.cardBackImage = '' ;
-
-                    }
-                  }).catch(err => {
-                    // console.log(err) ;
-                    that.backImgWarn = true;
-                    that.form.cardBackImage = '' ;
-                  })
-                }
+            this.limitImage(file,2);
 
           },
           beforeHalfBody(file){
-            let that = this;
-            if(this.limitImg(file)){
-              let formData = new FormData();
-              formData.append('image', file);
-              uploadImage(formData).then(res => {
-                if (res.data.status === '000000000') {
-                  // console.log(_this.form.imgList)
-                  that.form.cardSelfImage = res.data.data.fileName ;
-                  that.halfBodyImgWarn = false;
-                } else {
-                  that.halfBodyImgWarn = true;
-                  that.form.cardSelfImage = '' ;
-                }
-              }).catch(err => {
-                // console.log(err) ;
-                that.halfBodyImgWarn = true;
-                that.form.cardSelfImage = '' ;
-
-              })
-            }
+            this.limitImage(file,3);
 
 
           },
@@ -290,27 +294,28 @@
             if(this.form.cardFaceImage === ''){
             this.frontImgWarn = true;
 
-            }else if(this.form.cardBackImage  === ''){
+            }
+            if(this.form.cardBackImage  === ''){
               this.backImgWarn = true;
 
-            }else if(this.form.cardSelfImage === ''){
+            }
+            if(this.form.cardSelfImage === ''){
               this.halfBodyImgWarn = true;
             }
             if(this.cardType === true){
               this.form.cardDeadline = '9999-12-31'
             }
             this.$refs[formName].validate((valid) => {
-                
+
               // this.$emit('stepObj',{ index : '2' ,component : 'personal2'});
 
-              if(valid&&!this.backImgWarn&&!this.backImgWarn&&!this.halfBodyImgWarn ){
-                
-              this.$emit('stepObj',{ index : '2' ,component : 'personal2'})
+              if(valid&&!this.frontImgWarn&&!this.backImgWarn&&!this.halfBodyImgWarn ){
 
-              this.$store.commit('addForm',this.form)
+              this.$emit('stepObj',{ index : '2' ,component : 'personal2'});
+
+              this.$store.commit('addForm',this.form);
               this.$store.commit('addCardType',this.cardType-0)
-              console.log(this.$store.state.shopInfo.enterForm)
-              console.log(this.$store.state.shopInfo.cardType)
+
               }else{
 
               }

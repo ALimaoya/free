@@ -9,7 +9,7 @@
         </ul>
       <div class="wrap" >
 
-        <component  :is="tabView" @stepObj="getStep" :last-step = status></component>
+        <component  :is="tabView" @stepObj="getStep" :last-step= 'status' :editor-info="editorDetail"></component>
 
       </div>
     </div>
@@ -20,7 +20,8 @@
   import Personal1 from "@/views/accountManage/admissionShop/personal1"
   import Personal2 from "@/views/accountManage/admissionShop/personal2"
   import SuccessAdd from "@/views/accountManage/admissionShop/successAdd"
-
+  import { getApprovedStatus } from "@/api/userCenter"
+  import { getRegisterInfo } from "@/api/enter"
 
   export default {
       name: "personal",
@@ -35,13 +36,40 @@
               isActive : false,
               tabView : 'Personal1',
               stepObj: '',
-              status:''
+              status:'',
+              editorDetail: ''
             }
         },
         mounted() {
+          this.getUserInfo();
 
         },
         methods: {
+          getUserInfo() {
+            getApprovedStatus().then( res => {
+              if(res.data.status === '000000000'){
+
+                if(res.data.data.status !== '0'){
+
+                  if( res.data.data.status === '1'){
+                    this.$router.push('/accountManage/admission/admissionShop/successAdd?checking=1')
+                  }
+                  if(res.data.data.status === '3'){
+                    getRegisterInfo().then( res => {
+                      if( res.data.status === '000000000'){
+                        let data1 =  res.data.data.merchantAptitudeDto ;
+                        let data2 = res.data.data.merchantShopResDto ;
+                        let form = { ...data2,...data1};
+                        this.$store.commit('addForm',form);
+                        this.editorDetail = 1 ;
+
+                      }
+                    })
+                  }
+                }
+              }
+            })
+          },
           getStep(res){
             this.show = res.index ;
             // this.store.dispatch('GetUserInfo',this.user);

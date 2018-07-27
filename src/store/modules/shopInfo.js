@@ -1,10 +1,59 @@
+import {  getMobile } from '@/utils/auth'
+
 const shopInfo = {
   state: {
-    enterForm: '',
+    enterForm: {
+      name: '',
+      email: '',
+      mobile: getMobile(),
+      cardId:'',
+      cardFaceImage: '',
+      cardBackImage : '',
+      cardSelfImage: '',
+      cardDeadline: '',
+      mainBusiness: '',
+      shopName:'',
+      thirdShopUrl:''
+    },
     cardType:'',
     shopName:'',
     shopType:'',
-    enterForm2: '',
+    enterForm2: {
+      name: '',
+      email: '',
+      mobile: getMobile(),
+      legalRepName: '',
+      legalRepMobile: '',
+      cardId:'',
+      cardFaceImage: '',
+      cardBackImage : '',
+      // halfBody: '',
+      cardDeadline: '',
+      mainBusiness: '',
+      shopName:'',
+      thirdShopUrl:'',
+      licenseCountryType: '1',
+      licenseMergeType: '1',
+      enterpriseName:'',
+      companyAddress:{ province : '', detail: ''},
+      socialCreditCode:'',
+      businessImage: '',
+      openLicenceImage: '',
+      busLicenceDeadline: '',
+      // registerType:'1',
+      // registerCode:'',
+      // certification: '',
+      merchantBrandinfoReqDtos:[
+        {
+          brandRegistType:'1',
+          brandRegistCode: '',
+          brandCertifyImage:'',
+          brandAuthImage:'',
+          brandAuthDeadline:'',
+          brandAuthType:''
+        }
+      ]
+    },
     cardType2:'',
   },
   mutations:{
@@ -26,6 +75,8 @@ const shopInfo = {
     addCardType2(state,item){
       state.cardType2 = item
     },
+
+
   },
 }
 

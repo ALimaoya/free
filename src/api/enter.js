@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
-//发布试用活动
-export function enterApply(data){
+//提交入驻信息
+export function enterApply(data,type){
     return request({
-      url: '/center/merchant/checkin/add',
+      url: '/center/merchant/checkin/add/'+type,
       method: 'post',
       data : data
     })
@@ -17,4 +17,22 @@ export function enterApply(data){
     })
   }
 
-  
+  //获取入驻信息
+  export function getRegisterInfo(){
+  return request({
+    url: '/center/merchant/checkin/applyInfo',
+    method:'get'
+  })
+  }
+
+  //修改入驻信息
+export function editorRegisterInfo(data,type){
+  return request({
+    url: '/center/merchant/checkin/editBasicInfo/'+ type,
+    method : 'post',
+    data
+  })
+}
+
+
+

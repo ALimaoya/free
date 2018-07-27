@@ -3,33 +3,34 @@
       <el-form :model="form" ref="form" :rules="formRule" label-position="right">
         <h1 class="h_title">店铺基本信息</h1>
         <el-form-item  :labelWidth="labelWidth" label="主营类目："  prop="mainBusiness">
-          <span class="tip" style="margin-bottom: 0.2rem;">入驻后，主营类目不可修改，请谨慎选择</span>
+          <span class="tip" style="margin-bottom: 0.2rem;"><svg-icon icon-class="tips"/>入驻后，主营类目不可修改，请谨慎选择</span>
           <!-- <div class="items">
               <el-radio v-for="(item,index) in shopTypeList" :key="index" :label="item.id" v-model="form.mainBusiness">{{ item.name }}</el-radio>
           </div> -->
           <div>
-            <el-radio-group v-model="form.mainBusiness"  @change="getMainBusiness(form.mainBusiness)">
-              <el-radio-button v-for="(item,index) in shopTypeList" :key="index" :label="item.id">{{ item.name }}</el-radio-button>
+            <el-radio-group size="mini" v-model="form.mainBusiness" fill="#f56c6c"  @change="getMainBusiness(form.mainBusiness)">
+              <el-radio-button border v-for="(item,index) in shopTypeList" :key="index" :label="item.id">{{ item.name }}</el-radio-button>
             </el-radio-group>
+
           </div>
-          
+
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth" label="店铺名称：" prop="shopName">
-          <el-input class="inputInfo" size="small" v-model.trim="form.shopName" :disabled="readOnly" placeholder="请输入店铺名称" @blur="haveShop(form.shopName)"></el-input>
+          <el-input class="inputInfo" size="small" v-model.trim="form.shopName" :disabled="readOnly" placeholder="请输入店铺名称" @change="haveShop(form.shopName)"></el-input>
           <span class="tip"><svg-icon icon-class="tips"/>入驻后店铺名称不可修改，请谨慎填写</span>
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth" label="名称预览：" >
           <div class="inputInfo showShop" >{{ form.shopName }}</div>
           <span class="tip">入驻成功后店铺的名称
             <el-popover placement="right"
-                      width="200"             
+                      width="200"
                       trigger="hover"
                       content="1、未经平台许可，店名、电标、店铺详情不得使用含有“丫贝特许”、“丫贝授权”等含义的词句。
                               2、个人卖家店铺名称禁止使用“旗舰”、“专营”“专卖”、“官方”、“直营”、“官方认证”、“官方授权”、“知名品牌名”等表述或内容。">
               <span slot="reference" class="el-icon-question"></span>
             </el-popover>
           </span>
-          
+
         </el-form-item>
         <p class="h_title otherInfo">其他信息</p>
         <el-form-item style="width: 95%;margin-top:0.5rem;"  :labelWidth="labelWidth" label="第三方店铺链接：" prop="thirdShopUrl">
@@ -41,7 +42,7 @@
         </el-form-item>
         <el-form-item class="bottom">
           <el-button plain @click="goBack">上一步</el-button>
-          <el-button type="warning" @click="goNext('form')">下一步</el-button>
+          <el-button type="danger" @click="goNext('form')">下一步</el-button>
         </el-form-item>
       </el-form>
       <el-dialog title="温馨提示" :visible.sync="dialogVisible" width="80%" center>
@@ -94,6 +95,7 @@
 
   export default {
         name: "personal2",
+        props : ['editorInfo'],
         data() {
           const validLink = (rule,value,callback) => {
 
@@ -113,7 +115,7 @@
 
             if(value === ''){
               callback(new Error('请输入店铺名称'))
-              
+
             }else{
               if(validShopName(value)){
                 callback(new Error('店铺名不能含有"丫贝特许","丫贝授权","旗舰","专营","专卖","官方","直营","官方认证","官方授权"等文字'))
@@ -126,14 +128,12 @@
           };
           return {
             labelWidth: '160px',
-            belongType:1,
             mobile:getMobile(),
             form: {
               mainBusiness: '',
               shopName:'',
               thirdShopUrl:''
             },
-            merchantBrandinfos:[],
             shopTypeList: [],
             formRule:{
               mainBusiness:[
@@ -160,9 +160,24 @@
             mainBusinessName:''
           }
         },
+        // watch:{
+        //   editorInfo : function(val){
+        //     console.log(val,43432)
+        //
+        //     // if(val === 1){
+        //     //   this.form = this.$store.state.shopInfo.enterForm;
+        //     //   console.log(this.form,123)
+        //     // }
+        //
+        //   }
+        // },
         mounted() {
+
           this.getTypeList();
+          this.form = this.$store.state.shopInfo.enterForm;
+
         },
+
         methods: {
           //  失去焦点的时候 判断是否重名
           haveShop(shopName){
@@ -170,31 +185,19 @@
               haveShopName(shopName).then( res =>{
               if(res.data.status === "000000000"){
                 if(res.data.data.status !== "1"){
-                  this.form.shopName = ''
+                  this.form.shopName = '';
                   this.$message.error('店铺名称已存在，请重新输入');
                 }
               }
             })
             }
-            
+
           },
           getTypeList(){
             firstList().then(res=> {
           this.shopTypeList = res.data.data
         })
-            // this.shopTypeList =  [{
-            //   value: '1',
-            //   name: '王小虎',
-            // }, {
-            //   value: '2',
-            //   name: '小虎',
-            // }, {
-            //   value: '3',
-            //   name: '土豆粉',
-            // }, {
-            //   value: '4',
-            //   name: '家具生活',
-            // }]
+
           },
           //  获得主营类目名字
           getMainBusiness(item){
@@ -203,11 +206,12 @@
                   this.mainBusinessName = this.shopTypeList[i].name
                     console.log(this.mainBusinessName)
                 }
-                
+
               }
           },
           //返回上一步
           goBack(){
+            this.$store.commit('addForm',this.form);
             this.$emit('stepObj',{ index : '1' ,component : 'personal1',status : 1})
 
           },
@@ -238,49 +242,68 @@
           //  确认提交
           confirm(){
             this.dialogVisible = false ;
-            let formData = new FormData();
-            formData.append('shopName', this.form.shopName);
-            formData.append('logoImage', '');
-            formData.append('mainBusiness', this.form.mainBusiness);
-            formData.append('shopType', '3');
-            formData.append('describes', '');
-            formData.append('thirdShopUrl', this.form.thirdShopUrl);
-            formData.append('name', this.$store.state.shopInfo.enterForm.name);
-            formData.append('cardId', this.$store.state.shopInfo.enterForm.cardId);
-            formData.append('cardType', this.$store.state.shopInfo.cardType);
-            formData.append('enterpriseName', '');
-            formData.append('email', this.$store.state.shopInfo.enterForm.email);
-            formData.append('businessImage', '');
-            formData.append('authorizeImage', '');
-            formData.append('cardFaceImage', this.$store.state.shopInfo.enterForm.cardFaceImage);
-            formData.append('cardBackImage', this.$store.state.shopInfo.enterForm.cardBackImage);
-            formData.append('cardSelfImage', this.$store.state.shopInfo.enterForm.cardSelfImage);
-            formData.append('cardDeadline', this.$store.state.shopInfo.enterForm.cardDeadline);
-            formData.append('mobile', this.$store.state.shopInfo.enterForm.mobile);
-            formData.append('belongType', this.belongType);
-            formData.append('legalRepName', '');
-            formData.append('legalRepMobile', '');
-            formData.append('licenseCountryType', '');
-            formData.append('licenseMergeType', '');
-            formData.append('companyName', '');
-            formData.append('companyAddress', '');
-            formData.append('socialCreditCode', '');
-            formData.append('busLicenceImage', '');
-            formData.append('openLicenceImage', '');
-            formData.append('merchantBrandinfos[0].brandRegistType', '');
-            formData.append('merchantBrandinfos[0].brandRegistCode', '');
-            formData.append('merchantBrandinfos[0].brandCertifyImage', '');
-            formData.append('merchantBrandinfos[0].brandAuthImage', '');
-            formData.append('merchantBrandinfos[0].brandAuthDeadline', '');
-            formData.append('merchantBrandinfos[0].brandAuthType', '');
-            enterApply(formData).then( res =>{
+            if(this.form.cardDeadline === '9999-12-31'){
+              this.cardType = true;
+            }
+            let data = {
+              merchantShopReqDto: {
+                shopName : this.form.shopName ,
+                mainBusiness: this.form.mainBusiness ,
+                shopType: '3',
+                thirdShopUrl: this.form.thirdShopUrl,
+                
+              },
+              merchantAptitudeReqDto: {
+                name: this.$store.state.shopInfo.enterForm.name,
+                cardId:this.$store.state.shopInfo.enterForm.cardId,
+                cardType: this.$store.state.shopInfo.cardType,
+                email: this.$store.state.shopInfo.enterForm.email,
+                cardFaceImage: this.$store.state.shopInfo.enterForm.cardFaceImage,
+                cardBackImage: this.$store.state.shopInfo.enterForm.cardBackImage,
+                cardSelfImage: this.$store.state.shopInfo.enterForm.cardSelfImage,
+                cardDeadline: this.$store.state.shopInfo.enterForm.cardDeadline,
+                mobile: this.$store.state.shopInfo.enterForm.mobile,
+                belongType: 1,
+                busLicenceDeadline:  '0000-00-00',
+                busLicenceType: '',
+                licenseCountryType:'',
+                licenseMergeType:'',
+                enterpriseName: '',
+                companyAddress:'',
+                socialCreditCode:'',
+                businessImage: '' ,
+                openLicenceImage: '',
+                legalRepName:'' ,
+                legalRepMobile: '',
+              },
+              merchantBrandinfoReqDtos :[
+                {
+                  brandAuthDeadline : '0000-00-00',
+                  brandRegistType: '',
+                  brandRegistCode: '',
+                  brandCertifyImage:'',
+                  brandAuthImage:'',
+                  brandAuthType:''
+                }
+              ]
+
+
+            };
+            let type = '';
+            if(this.editorInfo === 1){
+              type = 'edit';
+
+            }else{
+              type = 'add';
+            }
+            enterApply(data,type).then( res =>{
               if(res.data.status === "000000000"){
-                this.$store.commit('shopName',this.form.shopName)
-                console.log(this.$store.state.shopInfo)
+                this.$store.commit('shopName',this.form.shopName);
+                console.log(this.$store.state.shopInfo);
                 this.$emit('stepObj',{ index : '3' ,component : 'successAdd'})
               }
             })
-            
+
 
           }
         }
@@ -302,7 +325,7 @@
     display: block!important;
   }
   .items{
-    
+
   }
   .el-radio-button{
     margin: 5px;

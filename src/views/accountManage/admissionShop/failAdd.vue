@@ -6,7 +6,7 @@
         <p class="box_title">店铺信息被拒绝</p>
         <p class="shop tips_warn">您的店铺：{{ shopName }}</p>
         <div class="box_note">
-          <p class="refuseNote">拒绝原因</p>
+          <p class="refuseNote">拒绝原因：</p>
           <p class="refuseDetail">{{ refusedReason}}</p>
         </div>
         <div class="box_footer">
@@ -48,10 +48,10 @@
       },
       goHomeEditor() {
         if(this.type === '1'){
-          this.$router.push('/accountManage/admission/admissionShop/personal?editor=1')
+          this.$router.push('/accountManage/admission/admissionShop/personal')
 
         }else if( this.type === '2'){
-          this.$router.push('/accountManage/admission/admissionShop/enterprise?editor=1')
+          this.$router.push('/accountManage/admission/admissionShop/enterprise')
 
         }
       }

@@ -1,27 +1,22 @@
 <template>
   <div class="successAdd">
-    <div class="s_icon"><span><i></i></span></div>
-    <p class="s_p">恭喜您的店铺已成功入驻</p>
-    <div class="tips_warn">发发发方法{{ shopName }}</div>
-    <div class="s_d"> 商家后台完整功能将在审核通过后开启，快来登录体验吧</div>
-    <div class="btn_wrap">
-      <el-button type="primary" @click="goHome">前往特卖商城首页</el-button>
-    <div class="successAdd" v-if="checking === ''">
+    <!--<div class="s_icon"><span><i></i></span></div>-->
+    <!--<p class="s_p">恭喜您的店铺已成功入驻</p>-->
+    <!--<div class="tips_warn">{{ this.$store.state.shopInfo.shopName }}</div>-->
+    <!--<div class="s_d"> 商家后台完整功能将在审核通过后开启，快来登录体验吧</div>-->
+    <!--<div class="btn_wrap">-->
+      <!--<el-button type="primary" @click="goHome">前往特卖商城首页</el-button>-->
       <div class="s_icon"><span><i></i></span></div>
-      <p class="s_p">恭喜您的店铺已成功入驻</p>
-      <div class="tips_warn">{{ this.$store.state.shopInfo.shopName }}</div>
-      <div class="s_d"> 商家后台完整功能将在审核通过后开启，快来登录体验吧</div>
-      <div class="btn_wrap">
-        <el-button type="primary" @click="goHome">前往特卖商城首页</el-button>
-      </div>
-    </div>
-      <div class="successAdd" v-else="checking === '1'">
-        <p class="s_p">您的店铺正在审核中</p>
-        <div class="tips_warn">{{ this.$store.state.shopInfo.shopName }}</div>
-        <div class="s_d"> 商家管理后台完整功能将在审核通过后开启，请耐心等候~</div>
+      <p class="s_p">您入驻商城的信息已成功提交</p>
+      <p class="s_d">您的店铺正在审核中</p>
+      <div class="tips_warn">您的店铺：{{ shopName }}</div>
+      <div class="s_d"> 商家管理后台完整功能将在审核通过后开启，请耐心等候~</div>
+      <!--<div class="btn_wrap">-->
+        <!--<el-button type="primary" @click="goHome">前往特卖商城首页</el-button>-->
+      <!--</div>-->
+    <!--</div>-->
 
-      </div>
-  </div>
+  <!--</div>-->
   </div>
 </template>
 
@@ -34,14 +29,14 @@
     data() {
       return {
         shopName: '',
-        checking:''
+        // checking:''
       }
     },
     mounted() {
-      this.checking = this.$route.query.checking ;
-      if(this.checking !== undefined && this.checking === '1'){
+      // this.checking = this.$route.query.checking ;
+      // if(this.checking !== undefined && this.checking === '1'){
         this.getUserInfo();
-      }
+      // }
     },
     methods: {
       getUserInfo() {
@@ -49,13 +44,13 @@
           if(res.data.status === '000000000'){
 
             this.shopName = res.data.data.name ;
-            // this.goHomeEditor(type)
+            // this.goHomeEditor
           }
         })
       },
-      goHome(){
-        this.$router.push('/merchantCenter/index')
-      }
+      // goHome(){
+      //   this.$router.push('/merchantCenter/index')
+      // }
     }
   }
 </script>
@@ -98,6 +93,7 @@
       height : 0.7rem ;
       line-height : 0.7rem;
     }
+
     .tips_warn{
       font-size : 0.24rem ;
       line-height : 0.5rem ;
