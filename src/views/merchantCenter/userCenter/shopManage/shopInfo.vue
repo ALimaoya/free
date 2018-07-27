@@ -8,6 +8,7 @@
 </template>
 
 <script>
+  import { getAptitudeInfo } from "@/api/userCenter"
   import {  getUser,getToken } from '@/utils/auth'
   import Tab1 from "@/views/merchantCenter/userCenter/shopManage/tab1"
   import Tab2 from "@/views/merchantCenter/userCenter/shopManage/tab2"
@@ -24,6 +25,7 @@
       },
       data(){
           return{
+            // form:'',
             menu :['基本信息','资质信息'],
             isActive : false,
             tabView : 'tab1',
@@ -32,10 +34,23 @@
           }
       },
       mounted(){
-        this.userType = '1';
+        this.getInfo();
+        // this.userType = '1';
         this.changeTab(0);
       },
       methods : {
+        getInfo(){
+            getAptitudeInfo().then( res => {
+              if(res.data.status === '000000000'){
+                this.userType = res.data.data.belongType
+                if(this.userType==='1'){
+                  this.tabView = 'tab'+ 1 ;
+                }else if(this.userType==='2'){
+                  this.tabView = 'tab'+ 3 ;
+                }
+              }
+            })
+          },
 
         changeTab(index){
           this.show = index ;

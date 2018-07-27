@@ -19,7 +19,7 @@
             <span>无</span>
             <el-button size="small" type="text" @click="dialogVisible=true;">添加第三方平台店铺链接</el-button>
           </div>
-          <div v-else>{{ form.thirdShopUrl }}</div>
+          <div v-else>{{ form.thirdShopUrl }}<el-button type="primary" round style="padding:2px 15px;margin-left:10px" @click="dialogVisible=true;">修改</el-button></div>
         </el-form-item>
         <el-form-item labelWidth="160px" label="店铺LOGO：" prop="logoImage">
               <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logoImage"
@@ -38,7 +38,8 @@
         </el-form-item>
         <el-form-item   labelWidth="160px" label="入驻人手机号：" prop="mobile">
           <el-input class="inputInfo telInput"  size="small" v-model.trim="form.mobile" disabled="disabled"></el-input>
-          <el-button type="text" size="mini" @click="goChange">修改</el-button>
+          <!-- <el-button type="text" size="mini" @click="goChange">修改</el-button> -->
+          <span class="tip"><svg-icon icon-class="tips"/>此手机号为商家首次登陆后台的账号，有最高管理权限，暂不支持修改</span>
         </el-form-item>
         <el-form-item class="ruleDetail">
           <el-checkbox class="inputInfo"  size="small" v-model.trim="agree"></el-checkbox>
@@ -50,7 +51,7 @@
       </el-form>
       <el-dialog title="添加第三方平台店铺" :visible.sync="dialogVisible" width="50%" center >
         <div class="dialog_content">
-          <el-select class="search" v-model="form.platformType" placeholder="请选择第三方平台" size="small">
+          <el-select class="search" v-model="platformType" placeholder="请选择第三方平台" size="small" @change="getPlatformType(platformType)">
             <el-option
               v-for="(item ,index) in platForm"
               :key="index"
@@ -72,17 +73,17 @@
   import { uploadImage  } from "@/api/activity"
   import { getToken } from '@/utils/auth'
   import { getBasicInfo,editorBasicInfo } from "@/api/userCenter"
-  import  { validatePhone , validateZipCode,validateURL} from '@/utils/validate';
+  import  { validatePhone , validateZipCode,validateURL,validateEmail} from '@/utils/validate';
 
   export default {
         name: "tab1",
         data() {
           const validZipCode = (rule,value,callback) => {
             if(value === ''){
-              callback(new Error('请填写邮编'))
+              callback(new Error('请填写邮箱'))
             }else{
-              if(!validateZipCode(value)){
-                callback(new Error('请填写正确格式的邮编'))
+              if(!validateEmail(value)){
+                callback(new Error('请填写正确格式的邮箱'))
               }
               callback()
             }
@@ -101,7 +102,7 @@
               form : {
                 shopName: '',
                 mainBusiness: '',
-                platformType: '',
+                
                 thirdShopUrl: '',
                 logoImage : '',
                 describes: '',
@@ -133,6 +134,8 @@
               goodsImgWarn: false,
               dialogVisible: false ,
               shopLink: '',
+              platformType: '',
+              platformTypeName:'',
               platForm : [
                 {
                   name : '淘宝',
@@ -146,10 +149,38 @@
                   name : '京东',
                   id : '3'
                 },
-                // {
-                //   name : '拼多多',
-                //   id : '4'
-                // }
+                {
+                  name : '拼多多',
+                  id : '4'
+                },
+                {
+                  name : '唯品会',
+                  id : '5'
+                },
+                {
+                  name : '折800',
+                  id : '6'
+                },
+                {
+                  name : '贝贝',
+                  id : '7'
+                },
+                {
+                  name : '卷皮',
+                  id : '8'
+                },
+                {
+                  name : '蘑菇街',
+                  id : '9'
+                },
+                {
+                  name : '聚美优品',
+                  id : '10'
+                },
+                {
+                  name : '其他',
+                  id : '11'
+                },
               ],
             }
         },
@@ -158,12 +189,23 @@
           // this.form=
         },
         methods: {
+          //  获取信息
           getInfo(){
             getBasicInfo().then( res => {
+              console.log('res',res)
               if( res.data.status === '000000000'){
                 this.form = res.data.data ;
               }
             })
+          },
+          //  选择平台
+          getPlatformType(item){
+            for(let i = 0; i<this.platForm.length;i++){
+              if(this.platForm[i].id === item){
+                this.platformTypeName = this.platForm[i].name 
+                console.log(this.platformTypeName)
+              }
+            }
           },
           //提交第三方平台链接
           confirm(link){
@@ -174,8 +216,9 @@
                 type : 'error'
               })
             }else{
-              this.form.thirdShopUrl = this.shopLink ;
+              this.form.thirdShopUrl =this.platformTypeName+':'+this.shopLink ;
               this.dialogVisible = false ;
+
             }
           },
           //跳转修改手机号
@@ -259,5 +302,25 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
   @import '../../../../styles/tab';
+  .tip{
+      width : 80% ;
+      margin : auto;
+      display: inline-block;
+      font-size : 0.14rem ;
+      color : #666;
+      min-height : 0.4rem ;
+      line-height :0.2rem;
+      background : #fdf1ce;
+      border : 1px solid #ffe18d ;
+      border-radius : 0.05rem;
+      padding : 0 0.2rem;
+      box-sizing: border-box;
+      .svg-icon{
+        width : 0.3rem;
+        height : 0.3rem;
+        margin : 0.04rem 0.05rem;
+        float : left;
 
+      }
+    }
 </style>
