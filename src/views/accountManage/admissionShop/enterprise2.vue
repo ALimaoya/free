@@ -4,9 +4,14 @@
         <h1 class="h_title">店铺基本信息</h1>
         <el-form-item  :labelWidth="labelWidth" label="主营类目："  prop="shopType">
           <span class="tip" style="margin-bottom: 0.2rem;">入驻后，主营类目不可修改，请谨慎选择</span>
-          <el-checkbox-group v-model="form.shopType" size="mini">
+          <!-- <el-checkbox-group v-model="form.shopType" size="mini">
             <el-checkbox-button v-for="(item,index) in shopTypeList" :key="index" :label="item.value" border>{{ item.name }}</el-checkbox-button>
-          </el-checkbox-group>
+          </el-checkbox-group> -->
+          <div>
+            <el-radio-group v-model="form.shopType"  @change="getMainBusiness(form.shopType)">
+              <el-radio-button v-for="(item,index) in shopTypeList" :key="index" :label="item.id">{{ item.name }}</el-radio-button>
+            </el-radio-group>
+          </div>
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth" label="店铺名称：" prop="shopName">
           <el-input class="inputInfo" size="small" v-model.trim="form.shopName" :disabled="readOnly" placeholder="请输入店铺名称"></el-input>
@@ -77,25 +82,50 @@
           <el-radio label="1" v-model="form.registerType">自有商标</el-radio>
           <el-radio label="2" v-model="form.registerType">授权商标</el-radio>
         </el-form-item>
-        <el-form-item :labelWidth="labelWidth" label="商标注册号：" prop="registerCode">
-          <el-input class="inputInfo" size="small"  v-model.trim="form.registerCode" :disabled="readOnly" placeholder="请输入商标注册号"></el-input>
-        </el-form-item>
-        <el-form-item class="uploadImg" :labelWidth="labelWidth" label="商标注册证明：" prop="certification">
-          <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.certification"
-                      :headers="{'yb-tryout-merchant-token':token}"           :show-file-list="false"  :before-upload="beforeCertification">
-            <img v-if="form.certification" :src="imageDomain + form.certification" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            <span class="imgWarn tips_warn" v-if="certificationtWarn">请上传商标注册证明</span>
-          </el-upload>
-          <el-button class="showBtn" type="text" size="mini" @click="showDemo('4')">查看示例</el-button>
-          <ul class="intro">
-            <li>注:</li>
-            <li>1、请上传《商标注册证》或《注册申请受理通知书》；</li>
-            <li>2、变更中的商标请同时上传《变更受理通知书》和《注册申请受理通知书》；</li>
-            <li>3、转入/已转让的商标需上传《转让受理通知书》或者《转让证明》；</li>
-            <li>4、《商标注册证》续证完成，而原《商标注册证》已经过期，需同时上传《核准续展注册证明。》</li>
-          </ul>
-        </el-form-item>
+        <template v-if="form.registerType === '1'">
+          <el-form-item :labelWidth="labelWidth" label="商标注册号：" prop="registerCode">
+            <el-input class="inputInfo" size="small"  v-model.trim="form.registerCode" :disabled="readOnly" placeholder="请输入商标注册号"></el-input>
+          </el-form-item>
+          <el-form-item class="uploadImg" :labelWidth="labelWidth" label="商标注册证明：" prop="certification">
+            <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.certification"
+                        :headers="{'yb-tryout-merchant-token':token}"           :show-file-list="false"  :before-upload="beforeCertification">
+              <img v-if="form.certification" :src="imageDomain + form.certification" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              <span class="imgWarn tips_warn" v-if="certificationtWarn">请上传商标注册证明</span>
+            </el-upload>
+            <el-button class="showBtn" type="text" size="mini" @click="showDemo('4')">查看示例</el-button>
+            <ul class="intro">
+              <li>注:</li>
+              <li>1、请上传《商标注册证》或《注册申请受理通知书》；</li>
+              <li>2、变更中的商标请同时上传《变更受理通知书》和《注册申请受理通知书》；</li>
+              <li>3、转入/已转让的商标需上传《转让受理通知书》或者《转让证明》；</li>
+              <li>4、《商标注册证》续证完成，而原《商标注册证》已经过期，需同时上传《核准续展注册证明。》</li>
+            </ul>
+          </el-form-item>
+        </template>
+        <template v-if="form.registerType === '2'">
+          <el-form-item :labelWidth="labelWidth" label="商标注册号：" prop="registerCode">
+            <el-input class="inputInfo" size="small"  v-model.trim="form.registerCode" :disabled="readOnly" placeholder="请输入商标注册号"></el-input>
+          </el-form-item>
+          <el-form-item class="uploadImg" :labelWidth="labelWidth" label="商标注册证明：" prop="certification">
+            <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.certification"
+                        :headers="{'yb-tryout-merchant-token':token}"           :show-file-list="false"  :before-upload="beforeCertification">
+              <img v-if="form.certification" :src="imageDomain + form.certification" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              <span class="imgWarn tips_warn" v-if="certificationtWarn">请上传商标注册证明</span>
+            </el-upload>
+            <el-button class="showBtn" type="text" size="mini" @click="showDemo('4')">查看示例</el-button>
+            <ul class="intro">
+              <li>注:</li>
+              <li>1、请上传《商标注册证》或《注册申请受理通知书》；</li>
+              <li>2、变更中的商标请同时上传《变更受理通知书》和《注册申请受理通知书》；</li>
+              <li>3、转入/已转让的商标需上传《转让受理通知书》或者《转让证明》；</li>
+              <li>4、《商标注册证》续证完成，而原《商标注册证》已经过期，需同时上传《核准续展注册证明。》</li>
+            </ul>
+          </el-form-item>
+          
+        </template>
+        
         <p class="h_title otherInfo">其他信息</p>
         <el-form-item style="width: 95%;margin-top:0.5rem;"  :labelWidth="labelWidth" label="第三方店铺链接：" prop="shopLink">
           <el-input class="inputInfo" size="small"  v-model.trim="form.shopLink" :disabled="readOnly" placeholder="请填写真实的第三方平台店铺链接可增加入驻成功率，没有可不填"></el-input>
@@ -166,6 +196,8 @@
   import { validateURL ,validCreditCode } from '@/utils/validate'
   import { uploadImage  } from "@/api/activity"
   import { getToken } from '@/utils/auth'
+  import { firstList } from "@/api/merchant"
+
   export default {
         name: "enterprise2",
         data() {
@@ -204,7 +236,7 @@
           return {
             labelWidth: '200px',
             form: {
-              shopType: [],
+              shopType: '',
               shopName:'',
               shopLink:'',
               inner: '1',
@@ -217,13 +249,16 @@
               licenseDate: '',
               registerType:'1',
               registerCode:'',
-              certification: ''
+              certification: '',
+              merchantBrandinfos:[
+
+              ]
             },
             shopTypeList: [],
             formRule:{
               shopType:[
                 {
-                  type: 'array', required: true ,trigger : 'change',message: '请选择入驻店铺主营类目'
+                 required: true ,trigger : 'change',message: '请选择入驻店铺主营类目'
                 }
               ],
               shopName:[
@@ -299,19 +334,32 @@
         },
         methods: {
           getTypeList(){
-            this.shopTypeList =  [{
-              value: '1',
-              name: '王小虎',
-            }, {
-              value: '2',
-              name: '小虎',
-            }, {
-              value: '3',
-              name: '土豆粉',
-            }, {
-              value: '4',
-              name: '家具生活',
-            }]
+            firstList().then(res=> {
+              this.shopTypeList = res.data.data
+            })
+            // this.shopTypeList =  [{
+            //   value: '1',
+            //   name: '王小虎',
+            // }, {
+            //   value: '2',
+            //   name: '小虎',
+            // }, {
+            //   value: '3',
+            //   name: '土豆粉',
+            // }, {
+            //   value: '4',
+            //   name: '家具生活',
+            // }]
+          },
+          //  获得主营类目名字
+          getMainBusiness(item){
+              for( let i = 0; i < this.shopTypeList.length ; i++){
+                if(this.shopTypeList[i].id == item){
+                  this.shopTypeName = this.shopTypeList[i].name
+                    console.log(this.shopTypeName)
+                }
+                
+              }
           },
           getProviceList(){
             // this.proviceList = []
@@ -427,7 +475,7 @@
 
           //返回上一步
           goBack(){
-            this.$emit('stepObj',{ index : '1' ,component : 'enterprise1'})
+            this.$emit('stepObj',{ index : '1' ,component : 'enterprise1',status : 1})
 
           },
           //下一步操作
@@ -496,5 +544,9 @@
   }
   .intro{
     width : 60% !important;
+  }
+  .el-radio-button{
+    margin: 5px;
+    border-left: 1px solid #dcdfe6;
   }
 </style>

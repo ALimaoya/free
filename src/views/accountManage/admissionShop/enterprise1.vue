@@ -8,8 +8,8 @@
         <el-form-item  :labelWidth="labelWidth" label="店铺管理人邮箱：" prop="email">
           <el-input class="inputInfo" size="small" v-model.trim="form.email" :disabled="readOnly" placeholder="请输入常用邮箱，便于信息及时送达"></el-input>
         </el-form-item>
-        <el-form-item  :labelWidth="labelWidth " label="店铺管理人手机号：" prop="tel1" >
-          <el-input class="inputInfo" size="small" v-model.trim="form.tel1" disabled="disabled" placeholder="请输入店铺管理人手机号"></el-input>
+        <el-form-item  :labelWidth="labelWidth " label="店铺管理人手机号：" prop="mobile" >
+          <el-input class="inputInfo" size="small" v-model.trim="form.mobile" disabled="disabled" placeholder="请输入店铺管理人手机号"></el-input>
           <span class="tip"><svg-icon icon-class="tips"/>此手机号为商家首次登陆后台的账号，有最高管理权限</span>
         </el-form-item>
         <p class="h_title otherInfo">企业法定代表人基本信息</p>
@@ -50,7 +50,7 @@
           </el-upload>
           <el-button class="showBtn" type="text" size="mini" @click="showDemo('2')">查看示例</el-button>
         </el-form-item>
-        <el-form-item class="uploadImg" :labelWidth="labelWidth" label="法定代表人手持身份证半身照：" prop="halfBody">
+        <!-- <el-form-item class="uploadImg" :labelWidth="labelWidth" label="法定代表人手持身份证半身照：" prop="halfBody">
           <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.halfBody"
                       :headers="{'yb-tryout-merchant-token':token}"        :show-file-list="false"  :before-upload="beforeHalfBody">
             <img v-if="form.halfBody" :src="imageDomain + form.halfBody" class="avatar">
@@ -65,7 +65,7 @@
             <li>4、照片必须支持jpg、png格式</li>
           </ul>
 
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item class="bottom">
           <el-button plain @click="goBack">上一步</el-button>
           <el-button type="danger" @click="goNext('form')">下一步</el-button>
@@ -87,9 +87,12 @@
 
 <script>
   import { uploadImage  } from "@/api/activity"
-  import { getToken } from '@/utils/auth'
+  import { getToken , getMobile } from '@/utils/auth'
   import { validateEmail,validateIDCard,validName, validatePhone} from '@/utils/validate'
     export default {
+      props:[
+          'lastStep'
+      ],
         name: "enterprise1",
         data() {
           const validateName = (rule,value,callback) => {
@@ -125,6 +128,7 @@
               if(!validateIDCard(value)){
                 callback(new Error('请输入正确格式的身份证号码'))
               }
+              callback()
             }
           };
           const validateTel = (rule, value, callback) => {
@@ -141,15 +145,16 @@
               form: {
                 name1: '',
                 email: '',
-                tel1: '',
+                mobile: getMobile(),
                 name2: '',
                 tel2: '',
                 idCard:'',
                 front: '',
                 back : '',
-                halfBody: '',
+                // halfBody: '',
                 idCardDate: ''
               },
+              long: false,
               formRule: {
                 name1: [
                   {
@@ -183,7 +188,7 @@
                 ]
               },
               labelWidth: '230px',
-              long: false,
+              
               autoUpload : true ,
               imgUrl : process.env.BASE_API+'/file/upload',
               imageDomain : process.env.IMAGE_DOMAIN ,
@@ -199,6 +204,14 @@
             }
         },
         mounted() {
+           if(this.lastStep === 1 ){
+            this.form = this.$store.state.shopInfo.enterForm2
+            if(this.$store.state.shopInfo.cardType2 ===1){
+              this.long = true
+            }else{
+              this.long = false
+            }
+          }
         },
         methods: {
           //限制上传图片大小
@@ -279,30 +292,30 @@
             }
 
           },
-          beforeHalfBody(file){
-            let that = this;
-            if(this.limitImg(file)){
-              let formData = new FormData();
-              formData.append('image', file);
-              uploadImage(formData).then(res => {
-                if (res.data.status === '000000000') {
-                  // console.log(_this.form.imgList)
-                  that.form.halfBody = res.data.data.fileName ;
-                  that.halfBodyImgWarn = false;
-                } else {
-                  that.halfBodyImgWarn = true;
-                  that.form.halfBody = '' ;
-                }
-              }).catch(err => {
-                // console.log(err) ;
-                that.halfBodyImgWarn = true;
-                that.form.halfBody = '' ;
+          // beforeHalfBody(file){
+          //   let that = this;
+          //   if(this.limitImg(file)){
+          //     let formData = new FormData();
+          //     formData.append('image', file);
+          //     uploadImage(formData).then(res => {
+          //       if (res.data.status === '000000000') {
+          //         // console.log(_this.form.imgList)
+          //         that.form.halfBody = res.data.data.fileName ;
+          //         that.halfBodyImgWarn = false;
+          //       } else {
+          //         that.halfBodyImgWarn = true;
+          //         that.form.halfBody = '' ;
+          //       }
+          //     }).catch(err => {
+          //       // console.log(err) ;
+          //       that.halfBodyImgWarn = true;
+          //       that.form.halfBody = '' ;
 
-              })
-            }
+          //     })
+          //   }
 
 
-          },
+          // },
           goNext(formName){
             if(this.form.front === ''){
               this.frontImgWarn = true;
@@ -310,16 +323,22 @@
             }else if(this.form.back  === ''){
               this.backImgWarn = true;
 
-            }else if(this.form.halfBody === ''){
-              this.halfBodyImgWarn = true;
-            }else{
-
+            }
+            // else if(this.form.halfBody === ''){
+            //   this.halfBodyImgWarn = true;
+            // }
+            if(this.long === true){
+              this.form.idCardDate = '9999-12-31'
             }
             this.$refs[formName].validate((valid) => {
-
               this.$emit('stepObj',{ index : '2' ,component : 'enterprise2'});
 
-              if(valid&&!this.backImgWarn&&!this.backImgWarn&&!this.halfBodyImgWarn ){
+              // if(valid&&!this.backImgWarn&&!this.backImgWarn&&!this.halfBodyImgWarn )
+              if(valid&&!this.backImgWarn&&!this.backImgWarn ){
+                this.$store.commit('addForm2',this.form)
+                this.$store.commit('addCardType2',this.long-0)
+                console.log(this.$store.state.shopInfo.enterForm2)
+                console.log(this.$store.state.shopInfo.cardType2)
                 this.$emit('stepObj',{ index : '2' ,component : 'enterprise2'})
 
               }else{

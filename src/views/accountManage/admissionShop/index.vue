@@ -49,19 +49,19 @@
             return {
               typeList: [
                 {
-                  value : '1',
+                  value : '0',
                   name : '旗舰店'
                 },
                 {
-                  value : '2',
+                  value : '1',
                   name : '专卖店'
                 },
                 {
-                  value : '3',
+                  value : '2',
                   name : '专营店'
                 },
                 {
-                  value : '4',
+                  value : '3',
                   name : '普通店'
                 },
               ],
@@ -77,6 +77,8 @@
             this.$router.push('/accountManage/admission/admissionShop/personal')
           },
           goEnterPrise(){
+            this.$store.commit('shopType',this.shopType)
+            console.log(this.$store.state.shopInfo.shopType)
             this.$router.push('/accountManage/admission/admissionShop/enterprise')
 
           },
