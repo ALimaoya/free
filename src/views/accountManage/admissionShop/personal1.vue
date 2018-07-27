@@ -8,45 +8,45 @@
         <el-form-item  :labelWidth="labelWidth" label="入驻人邮箱：" prop="email">
           <el-input class="inputInfo" size="small" v-model.trim="form.email" :disabled="readOnly" placeholder="请输入常用邮箱，便于信息及时送达"></el-input>
         </el-form-item>
-        <el-form-item  :labelWidth="labelWidth " label="入驻人手机号：" prop="tel" >
-          <el-input class="inputInfo" size="small" v-model.trim="form.tel" disabled="disabled" placeholder="请输入入驻人手机号"></el-input>
+        <el-form-item  :labelWidth="labelWidth " label="入驻人手机号：" prop="mobile" >
+          <el-input class="inputInfo" size="small" v-model.trim="form.mobile" disabled="disabled" placeholder="请输入入驻人手机号"></el-input>
           <span class="tip"><svg-icon icon-class="tips"/>此手机号为商家首次登陆后台的账号，有最高管理权限</span>
         </el-form-item>
-        <el-form-item   :labelWidth="labelWidth"  label="店铺管理人身份证号：" prop="idCard">
-          <el-input class="inputInfo" :maxlength="18" size="small" :disabled="readOnly" v-model.trim="form.idCard"  placeholder="请输入身份证号码"></el-input>
+        <el-form-item   :labelWidth="labelWidth"  label="入驻人身份证号：" prop="cardId">
+          <el-input class="inputInfo" :maxlength="18" size="small" :disabled="readOnly" v-model.trim="form.cardId"  placeholder="请输入身份证号码"></el-input>
           <span class="tip"><svg-icon icon-class="tips"/>该证件号与证件照片、营业执照法人等一致</span>
         </el-form-item>
-        <el-form-item   :labelWidth="labelWidth"  label="身份证有效期：" prop="idCardDate">
-          <el-col :span="9">
-            <el-date-picker type="date" size="mini" placeholder="截止日期" :disabled="readOnly" v-model="form.idCardDate" style="width: 100%;" :readonly="long"></el-date-picker>
+        <el-form-item   :labelWidth="labelWidth"  label="身份证有效期：" prop="cardDeadline">
+          <el-col :span="9" >
+            <el-date-picker type="date" size="mini" placeholder="截止日期" :disabled="readOnly" v-model="form.cardDeadline" style="width: 100%;" :readonly="cardType"></el-date-picker>
           </el-col>
           <el-col class="line" :span="20">
-            <el-checkbox v-model="long" :disabled="readOnly">长期</el-checkbox>
-            <span class="tip" style="background: none;border: 0;"><svg-icon icon-class="tips"/>身份证剩余有效期时长必须大于2个月</span>
+            <el-checkbox v-model="cardType" :disabled="readOnly">长期</el-checkbox>
+            <span class="tip" style="background: none;border: 0; width: 65%"><svg-icon icon-class="tips"/>身份证剩余有效期时长必须大于2个月</span>
           </el-col>
         </el-form-item>
-        <el-form-item class="uploadImg" :labelWidth="labelWidth" label="身份证件正面：" prop="front">
-          <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.front"
+        <el-form-item class="uploadImg" :labelWidth="labelWidth" label="身份证件正面：" prop="cardFaceImage">
+          <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.cardFaceImage"
                       :headers="{'yb-tryout-merchant-token':token}"          :show-file-list="false"  :before-upload="beforeFront">
-            <img v-if="form.front" :src="imageDomain + form.front" class="avatar">
+            <img v-if="form.cardFaceImage" :src="imageDomain + form.cardFaceImage" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             <span class="imgWarn tips_warn" v-if="frontImgWarn">请上传身份证正面照片</span>
           </el-upload>
           <el-button class="showBtn" type="text" size="mini" @click="showDemo('1')">查看示例</el-button>
         </el-form-item>
-        <el-form-item class="uploadImg" :labelWidth="labelWidth" label="身份证件反面：" prop="back">
-          <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.back"
+        <el-form-item class="uploadImg" :labelWidth="labelWidth" label="身份证件反面：" prop="cardBackImage">
+          <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.cardBackImage"
                       :headers="{'yb-tryout-merchant-token':token}"           :show-file-list="false"  :before-upload="beforeBack">
-            <img v-if="form.back" :src="imageDomain + form.back" class="avatar">
+            <img v-if="form.cardBackImage" :src="imageDomain + form.cardBackImage" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             <span class="imgWarn tips_warn" v-if="backImgWarn">请上传身份证反面照片</span>
           </el-upload>
           <el-button class="showBtn" type="text" size="mini" @click="showDemo('2')">查看示例</el-button>
         </el-form-item>
-        <el-form-item class="uploadImg" :labelWidth="labelWidth" label="手持身份证半身照：" prop="halfBody">
-          <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.halfBody"
+        <el-form-item class="uploadImg" :labelWidth="labelWidth" label="手持身份证半身照：" prop="cardSelfImage">
+          <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.cardSelfImage"
                       :headers="{'yb-tryout-merchant-token':token}"        :show-file-list="false"  :before-upload="beforeHalfBody">
-            <img v-if="form.halfBody" :src="imageDomain + form.halfBody" class="avatar">
+            <img v-if="form.cardSelfImage" :src="imageDomain + form.cardSelfImage" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             <span class="imgWarn tips_warn" v-if="halfBodyImgWarn">请上传手持身份证半身照照片</span>
           </el-upload>
@@ -80,10 +80,13 @@
 
 <script>
     import { uploadImage  } from "@/api/activity"
-    import { getToken } from '@/utils/auth'
+    import { getToken , getMobile } from '@/utils/auth'
     import { validateEmail,validateIDCard,validName} from '@/utils/validate'
 
     export default {
+      props:[
+          'lastStep'
+      ],
 
       name: "personal1",
         data() {
@@ -109,24 +112,26 @@
         };
         const validCode= (rule,value,callback) => {
           if(value === ''){
-            callback(new Error('请输入店铺管理人身份证号'))
+            callback(new Error('请输入入驻人身份证号'))
           }else{
             if(!validateIDCard(value)){
               callback(new Error('请输入正确格式的身份证号码'))
             }
+            callback();
           }
         };
             return {
               form: {
                 name: '',
                 email: '',
-                tel: '',
-                idCard:'',
-                front: '',
-                back : '',
-                halfBody: '',
-                idCardDate: ''
+                mobile: getMobile(),
+                cardId:'',
+                cardFaceImage: '',
+                cardBackImage : '',
+                cardSelfImage: '',
+                cardDeadline: ''
               },
+              cardType: false,
               formRule: {
                 name: [
                   {
@@ -138,17 +143,17 @@
                     required : true ,trigger:'blur', validator : validEmail
                   }
                 ],
-                idCard: [
+                cardId: [
                   {
                     required : true ,trigger : 'blur', validator: validCode
                   }
                 ],
-                idCardDate: [
+                cardDeadline: [
                   {  required: true, message: '请选择身份证截止日期', trigger: 'change' }
                 ]
               },
               labelWidth: '180px',
-              long: false,
+              
               autoUpload : true ,
               imgUrl : process.env.BASE_API+'/file/upload',
               imageDomain : process.env.IMAGE_DOMAIN ,
@@ -164,10 +169,21 @@
             }
 
         },
+        watch: {
+          
+        },
         mounted() {
-
+          if(this.lastStep === 1 ){
+            this.form = this.$store.state.shopInfo.enterForm
+            if(this.$store.state.shopInfo.cardType ===1){
+              this.cardType = true
+            }else{
+              this.cardType = false
+            }
+          }
         },
         methods: {
+          
           //限制上传图片大小
           limitImg(file){
             let reader = new FileReader();
@@ -204,15 +220,15 @@
                   uploadImage(formData).then(res => {
                     if (res.data.status === '000000000') {
                         // console.log(_this.form.imgList)
-                      that.form.front = res.data.data.fileName ;
+                      that.form.cardFaceImage = res.data.data.fileName ;
                       that.frontImgWarn = false;
                     } else {
                       that.frontImgWarn = true;
-                      that.form.front = '';
+                      that.form.cardFaceImage = '';
                     }
                   }).catch(err => {
                     // console.log(err) ;
-                    that.form.front = '';
+                    that.form.cardFaceImage = '';
                     that.frontImgWarn = true;
 
                   })
@@ -231,17 +247,17 @@
                   uploadImage(formData).then(res => {
                     if (res.data.status === '000000000') {
                       // console.log(_this.form.imgList)
-                      that.form.back = res.data.data.fileName ;
+                      that.form.cardBackImage = res.data.data.fileName ;
                       that.backImgWarn = false;
                     } else {
                       that.backImgWarn = true;
-                      that.form.back = '' ;
+                      that.form.cardBackImage = '' ;
 
                     }
                   }).catch(err => {
                     // console.log(err) ;
                     that.backImgWarn = true;
-                    that.form.back = '' ;
+                    that.form.cardBackImage = '' ;
                   })
                 }
 
@@ -254,16 +270,16 @@
               uploadImage(formData).then(res => {
                 if (res.data.status === '000000000') {
                   // console.log(_this.form.imgList)
-                  that.form.halfBody = res.data.data.fileName ;
+                  that.form.cardSelfImage = res.data.data.fileName ;
                   that.halfBodyImgWarn = false;
                 } else {
                   that.halfBodyImgWarn = true;
-                  that.form.halfBody = '' ;
+                  that.form.cardSelfImage = '' ;
                 }
               }).catch(err => {
                 // console.log(err) ;
                 that.halfBodyImgWarn = true;
-                that.form.halfBody = '' ;
+                that.form.cardSelfImage = '' ;
 
               })
             }
@@ -271,24 +287,30 @@
 
           },
           goNext(formName){
-            if(this.form.front === ''){
+            if(this.form.cardFaceImage === ''){
             this.frontImgWarn = true;
 
-            }else if(this.form.back  === ''){
+            }else if(this.form.cardBackImage  === ''){
               this.backImgWarn = true;
 
-            }else if(this.form.halfBody === ''){
+            }else if(this.form.cardSelfImage === ''){
               this.halfBodyImgWarn = true;
-            }else{
-
+            }
+            if(this.cardType === true){
+              this.form.cardDeadline = '9999-12-31'
             }
             this.$refs[formName].validate((valid) => {
-
-              this.$emit('stepObj',{ index : '2' ,component : 'personal2'});
+                
+              // this.$emit('stepObj',{ index : '2' ,component : 'personal2'});
 
               if(valid&&!this.backImgWarn&&!this.backImgWarn&&!this.halfBodyImgWarn ){
+                
               this.$emit('stepObj',{ index : '2' ,component : 'personal2'})
 
+              this.$store.commit('addForm',this.form)
+              this.$store.commit('addCardType',this.cardType-0)
+              console.log(this.$store.state.shopInfo.enterForm)
+              console.log(this.$store.state.shopInfo.cardType)
               }else{
 
               }

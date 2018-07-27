@@ -4,7 +4,7 @@
       <div class="success_icon"></div>
       <div class="box_content">
         <p class="box_title">店铺信息被拒绝</p>
-        <div class="tips_warn">{{ shopName }}</div>
+        <p class="shop tips_warn">您的店铺：{{ shopName }}</p>
         <div class="box_note">
           <p class="refuseNote">拒绝原因</p>
           <p class="refuseDetail">{{ refusedReason}}</p>
@@ -19,35 +19,39 @@
 </template>
 
 <script>
-  import { getBasicInfo } from "@/api/userCenter"
+  import { getApprovedStatus } from "@/api/userCenter"
 
   export default {
     name: "failAdd",
     data() {
       return {
         shopName: '',
-        status : ''
+        status : '',
+        type : '',
+        refusedReason: ''
       }
     },
     mounted() {
-
+      this.getUserInfo() ;
     },
     methods: {
 
       getUserInfo() {
-        getBasicInfo().then( res => {
+        getApprovedStatus().then( res => {
           if(res.data.status === '000000000'){
-            let type = res.data.data.belongType ;
-            this.goHomeEditor(type)
+            this.type = res.data.data.belongType ;
+            this.shopName = res.data.data.name ;
+            this.refusedReason = res.data.data.reason ;
+            // this.goHomeEditor(type)
           }
         })
       },
-      goHomeEditor(type) {
-        if(type === '1'){
-          this.$router.push('/accountManage/admission/admissionShop/personal')
+      goHomeEditor() {
+        if(this.type === '1'){
+          this.$router.push('/accountManage/admission/admissionShop/personal?editor=1')
 
-        }else if( type === '2'){
-          this.$router.push('/accountManage/admission/admissionShop/enterprise')
+        }else if( this.type === '2'){
+          this.$router.push('/accountManage/admission/admissionShop/enterprise?editor=1')
 
         }
       }
@@ -57,7 +61,7 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
   .failAdd {
-    width: 60%;
+    width: 80%;
     margin: 0.7rem auto;
     .boxWrap {
       width: 60%;
@@ -88,16 +92,22 @@
         width: 80%;
         p {
           text-align: center;
-          font-size: 0.24rem;
+          font-size: 0.2rem;
           line-height: 0.8rem;
 
         }
+
         .box_title {
           font-size: 0.3rem !important;
           font-weight: bold;
           line-height: 0.8rem;
           color: #333;
         }
+        .shop{
+          font-size: 0.28rem !important;
+
+        }
+
         .box_note{
           color: #999;
 

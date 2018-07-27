@@ -5,6 +5,7 @@ import user from './modules/user'
 import getters from './getters'
 import tagsView from './modules/tagsView'
 import publishInfo from './modules/publishInfo'
+import shopInfo from './modules/shopInfo'
 
 Vue.use(Vuex);
 
@@ -14,7 +15,7 @@ const store = new Vuex.Store({
     user,
     tagsView,
     publishInfo,
-
+    shopInfo
   },
   getters
 });

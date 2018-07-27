@@ -6,23 +6,53 @@
     <div class="s_d"> 商家后台完整功能将在审核通过后开启，快来登录体验吧</div>
     <div class="btn_wrap">
       <el-button type="primary" @click="goHome">前往特卖商城首页</el-button>
+    <div class="successAdd" v-if="checking === ''">
+      <div class="s_icon"><span><i></i></span></div>
+      <p class="s_p">恭喜您的店铺已成功入驻</p>
+      <div class="tips_warn">{{ this.$store.state.shopInfo.shopName }}</div>
+      <div class="s_d"> 商家后台完整功能将在审核通过后开启，快来登录体验吧</div>
+      <div class="btn_wrap">
+        <el-button type="primary" @click="goHome">前往特卖商城首页</el-button>
+      </div>
     </div>
+      <div class="successAdd" v-else="checking === '1'">
+        <p class="s_p">您的店铺正在审核中</p>
+        <div class="tips_warn">{{ this.$store.state.shopInfo.shopName }}</div>
+        <div class="s_d"> 商家管理后台完整功能将在审核通过后开启，请耐心等候~</div>
+
+      </div>
+  </div>
   </div>
 </template>
 
 <script>
-  import { getBasicInfo } from "@/api/userCenter"
+  import { getApprovedStatus } from "@/api/userCenter"
+
 
   export default {
     name: "successAdd",
     data() {
       return {
-        shopName: ''
+        shopName: '',
+        checking:''
       }
     },
     mounted() {
+      this.checking = this.$route.query.checking ;
+      if(this.checking !== undefined && this.checking === '1'){
+        this.getUserInfo();
+      }
     },
     methods: {
+      getUserInfo() {
+        getApprovedStatus().then( res => {
+          if(res.data.status === '000000000'){
+
+            this.shopName = res.data.data.name ;
+            // this.goHomeEditor(type)
+          }
+        })
+      },
       goHome(){
         this.$router.push('/merchantCenter/index')
       }

@@ -77,7 +77,7 @@
 
               }
               if(status === '1'){
-                this.$router.push('/accountManage/admission/admissionShop/successAdd')
+                this.$router.push('/accountManage/admission/admissionShop/successAdd?checking=1')
 
               }
             }
