@@ -134,7 +134,7 @@
           getApproveList(){
             getApproveList().then( res =>{
               this.tableData = res.data.data
-              console.log(res)
+              // console.log(res)
             })
           },
         }

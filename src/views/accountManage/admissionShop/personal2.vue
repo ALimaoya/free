@@ -8,7 +8,7 @@
               <el-radio v-for="(item,index) in shopTypeList" :key="index" :label="item.id" v-model="form.mainBusiness">{{ item.name }}</el-radio>
           </div> -->
           <div>
-            <el-radio-group size="mini" v-model="form.mainBusiness" fill="#f56c6c"  @change="getMainBusiness(form.mainBusiness)">
+            <el-radio-group size="mini" v-model="form.mainBusiness" fill="#f56c6c"  >
               <el-radio-button border v-for="(item,index) in shopTypeList" :key="index" :label="item.id">{{ item.name }}</el-radio-button>
             </el-radio-group>
 
@@ -16,7 +16,7 @@
 
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth" label="店铺名称：" prop="shopName">
-          <el-input class="inputInfo" size="small" v-model.trim="form.shopName" :disabled="readOnly" placeholder="请输入店铺名称" @change="haveShop(form.shopName)"></el-input>
+          <el-input class="inputInfo" size="small" :maxlength="40" v-model.trim="form.shopName" :disabled="readOnly" placeholder="请输入店铺名称" @change="haveShop(form.shopName)"></el-input>
           <span class="tip"><svg-icon icon-class="tips"/>入驻后店铺名称不可修改，请谨慎填写</span>
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth" label="名称预览：" >
@@ -33,8 +33,16 @@
 
         </el-form-item>
         <p class="h_title otherInfo">其他信息</p>
-        <el-form-item style="width: 95%;margin-top:0.5rem;"  :labelWidth="labelWidth" label="第三方店铺链接：" prop="thirdShopUrl">
-          <el-input class="inputInfo" size="small"  v-model.trim="form.thirdShopUrl" :disabled="readOnly" placeholder="请填写真实的第三方平台店铺链接可增加入驻成功率，没有可不填"></el-input>
+        <el-form-item style="width: 95%;margin-top:0.5rem;" v-if="form.thirdShopUrl !== undefined && form.thirdShopUrl[0] !== undefined "  :labelWidth="labelWidth" label="第三方店铺链接：" prop="thirdShopUrl">
+          <el-select class="search" v-model="form.thirdShopUrl[0].platformName" placeholder="请选择第三方平台" size="small" >
+            <el-option
+              v-for="(item ,index) in platForm"
+              :key="index"
+              :label="item.name"
+              :value="item.name">
+            </el-option>
+          </el-select>
+          <el-input class="inputInfo" size="small" :maxlength="200" v-model.trim="form.thirdShopUrl[0].url" :disabled="readOnly" placeholder="请填写真实的第三方平台店铺链接可增加入驻成功率，没有可不填"></el-input>
           <!-- <span class="tip"><svg-icon icon-class="tips"/>入驻后店铺名称不可修改，请谨慎填写</span> -->
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth" >
@@ -57,7 +65,7 @@
             </div>
           </el-form-item>
           <el-form-item  :labelWidth="labelWidth" label="主营类目：">
-            <div class="inputInfo" ><span >{{ this.mainBusinessName }}</span>
+            <div class="inputInfo" ><span >{{ mainBusinessName }}</span>
               <span class="tips_warn">入驻后主营类目不可修改</span>
             </div>
           </el-form-item>
@@ -78,7 +86,7 @@
       </el-dialog>
       <el-dialog title="丫贝网合作协议" :visible.sync="readRule" width="60%" center>
         <div class="wrap">
-          <img src="../../../assets/imgs/logo.png" />
+          <img class="ruleImg" src="../../../assets/imgs/logo.png" />
           <div slot="footer" class="dialog-footer">
             <el-button type="danger" @click="readRule = false;">我知道了</el-button>
           </div>
@@ -99,15 +107,22 @@
         data() {
           const validLink = (rule,value,callback) => {
 
-            if(value !== ''){
-              if(!validateURL(value)){
-                callback(new Error('请填写正确格式的商品链接'))
-              }else{
-                callback();
-              }
-            }else{
-              callback();
+            if(value[0].platformName !== ''&& value[0].url === ''){
+              callback(new Error('请填写店铺链接'))
+
             }
+            if( value[0].url !== ''&&value[0].platformName === ''){
+
+              callback(new Error('请选择第三方店铺平台'))
+
+            }
+            if(value[0].platformName !== ''&& value[0].url !== ''){
+              if(!validateURL(value[0].url)) {
+                callback(new Error('请填写正确格式的店铺链接'))
+              }
+
+            }
+            callback();
 
 
           };
@@ -129,11 +144,7 @@
           return {
             labelWidth: '160px',
             mobile:getMobile(),
-            form: {
-              mainBusiness: '',
-              shopName:'',
-              thirdShopUrl:''
-            },
+            form: {},
             shopTypeList: [],
             formRule:{
               mainBusiness:[
@@ -148,7 +159,7 @@
               ],
               thirdShopUrl:[
                 {
-                  required:false ,trigger: 'blur',validator: validLink
+                  required:false ,trigger: 'change',validator: validLink
                 }
               ]
 
@@ -157,25 +168,68 @@
             agree: false,
             dialogVisible : false ,
             readRule: false ,
-            mainBusinessName:''
+            mainBusinessName:'',
+            platForm : [
+              {
+                name : '淘宝',
+                id : '1',
+              },
+              {
+                name : '天猫',
+                id : '2'
+              },
+              {
+                name : '京东',
+                id : '3'
+              },
+              {
+                name : '拼多多',
+                id : '4'
+              },
+              {
+                name : '唯品会',
+                id : '5'
+              },
+              {
+                name : '折800',
+                id : '6'
+              },
+              {
+                name : '贝贝',
+                id : '7'
+              },
+              {
+                name : '卷皮',
+                id : '8'
+              },
+              {
+                name : '蘑菇街',
+                id : '9'
+              },
+              {
+                name : '聚美优品',
+                id : '10'
+              },
+              {
+                name : '其他',
+                id : '11'
+              },
+            ],
+
           }
         },
-        // watch:{
-        //   editorInfo : function(val){
-        //     console.log(val,43432)
-        //
-        //     // if(val === 1){
-        //     //   this.form = this.$store.state.shopInfo.enterForm;
-        //     //   console.log(this.form,123)
-        //     // }
-        //
-        //   }
-        // },
+
         mounted() {
 
           this.getTypeList();
           this.form = this.$store.state.shopInfo.enterForm;
+          // console.log(this.form);
 
+          if(typeof(this.form.thirdShopUrl) === 'string'&&this.form.thirdShopUrl !== null&&this.form.thirdShopUrl !== ''){
+
+            this.form.thirdShopUrl = JSON.parse(this.form.thirdShopUrl);
+
+          }
         },
 
         methods: {
@@ -195,19 +249,21 @@
           },
           getTypeList(){
             firstList().then(res=> {
-          this.shopTypeList = res.data.data
+              if(res.data.status === '000000000'){
+                this.shopTypeList = res.data.data
+
+              }
         })
 
           },
           //  获得主营类目名字
-          getMainBusiness(item){
-              for( let i = 0; i < this.shopTypeList.length ; i++){
-                if(this.shopTypeList[i].id == item){
-                  this.mainBusinessName = this.shopTypeList[i].name
-                    console.log(this.mainBusinessName)
-                }
-
+          getMainBusiness(id){
+            this.shopTypeList.map( i =>{
+              if(i.id == id){
+                this.mainBusinessName = i.name;
               }
+            });
+
           },
           //返回上一步
           goBack(){
@@ -231,7 +287,12 @@
                     center: true
                   })
                 }else{
+                  if(this.form.mainBusiness !== ''){
+                    this.getMainBusiness(this.form.mainBusiness);
+
+                  }
                   this.dialogVisible = true ;
+
                 }
 
               }else{
@@ -244,13 +305,16 @@
             this.dialogVisible = false ;
             if(this.form.cardDeadline === '9999-12-31'){
               this.cardType = true;
-            }
+            };
+            // console.log(this.form.thirdShopUrl);
+            let thirdShopUrl = JSON.stringify(this.form.thirdShopUrl);
+
             let data = {
               merchantShopReqDto: {
                 shopName : this.form.shopName ,
                 mainBusiness: this.form.mainBusiness ,
                 shopType: '3',
-                thirdShopUrl: this.form.thirdShopUrl,
+                thirdShopUrl: thirdShopUrl,
 
               },
               merchantAptitudeReqDto: {
@@ -292,6 +356,9 @@
             let type = '';
             if(this.editorInfo === 1){
               type = 'edit';
+              data.merchantAptitudeReqDto['id'] = this.$store.state.shopInfo.editorId.id1 ;
+              data.merchantShopReqDto['id'] = this.$store.state.shopInfo.editorId.id2 ;
+
 
             }else{
               type = 'add';
@@ -299,7 +366,6 @@
             enterApply(data,type).then( res =>{
               if(res.data.status === "000000000"){
                 this.$store.commit('shopName',this.form.shopName);
-                console.log(this.$store.state.shopInfo);
                 this.$emit('stepObj',{ index : '3' ,component : 'successAdd'})
               }
             })
@@ -330,5 +396,8 @@
   .el-radio-button{
     margin: 5px;
     border-left: 1px solid #dcdfe6;
+  }
+  .ruleImg{
+    width : 90% !important ;
   }
 </style>

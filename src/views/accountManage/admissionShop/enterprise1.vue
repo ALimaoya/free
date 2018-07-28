@@ -9,7 +9,7 @@
           <el-input class="inputInfo" size="small" v-model.trim="form.email" :disabled="readOnly" placeholder="请输入常用邮箱，便于信息及时送达"></el-input>
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth " label="店铺管理人手机号：" prop="mobile" >
-          <el-input class="inputInfo" size="small" v-model.trim="form.mobile" disabled="disabled" placeholder="请输入店铺管理人手机号"></el-input>
+          <el-input class="inputInfo" size="small" :maxlength="11" v-model.tel="form.mobile" disabled="disabled" placeholder="请输入店铺管理人手机号"></el-input>
           <span class="tip"><svg-icon icon-class="tips"/>此手机号为商家首次登陆后台的账号，有最高管理权限，暂不支持修改</span>
         </el-form-item>
         <p class="h_title otherInfo">企业法定代表人基本信息</p>
@@ -17,7 +17,7 @@
           <el-input class="inputInfo" :maxlength="4" size="small" :disabled="readOnly" v-model.trim="form.legalRepName" placeholder="请输入法定代表人的真实姓名" ></el-input>
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth " label="法定代表人手机号：" prop="legalRepMobile" >
-          <el-input class="inputInfo" size="small" v-model.trim="form.legalRepMobile" :disabled="readOnly" placeholder="请输入法定代表人常用手机号，不支持座机号"></el-input>
+          <el-input class="inputInfo" size="small" :maxlength="11" v-model.tel="form.legalRepMobile" :disabled="readOnly" placeholder="请输入法定代表人常用手机号，不支持座机号"></el-input>
         </el-form-item>
         <el-form-item   :labelWidth="labelWidth"  label="法定代表人身份证号：" prop="cardId">
           <el-input class="inputInfo" :maxlength="18" size="small" :disabled="readOnly" v-model.trim="form.cardId"  placeholder="请输入法定代表人身份证号码"></el-input>
@@ -72,10 +72,10 @@
         </el-form-item>
       </el-form>
 
-      <el-dialog :title="demo[showImg]" :visible.sync="dialogVisible" width="60%" center>
+      <el-dialog class="demoBox" :title="demo[showImg]" :visible.sync="dialogVisible" width="60%" center>
         <div class="wrap">
-          <img v-if="this.showImg === '1'"  src="../../../assets/imgs/logo.png" />
-          <img v-else-if="this.showImg === '2'"  src="../../../assets/imgs/u922.png" />
+          <img v-if="this.showImg === '1'"  src="../../../assets/imgs/cardFront.png" />
+          <img v-else-if="this.showImg === '2'"  src="../../../assets/imgs/card_back.png" />
           <!--<img v-else-if="this.showImg === '3'"  src="../../../assets/imgs/u923.png" />-->
           <div slot="footer" class="dialog-footer">
             <el-button type="danger" @click="close">我知道了</el-button>
@@ -146,18 +146,7 @@
             }
           };
             return {
-              form: {
-                name: '',
-                email: '',
-                mobile: getMobile(),
-                legalRepName: '',
-                legalRepMobile: '',
-                cardId:'',
-                cardFaceImage: '',
-                cardBackImage : '',
-                // halfBody: '',
-                cardDeadline: ''
-              },
+              form: {},
               formRule: {
                 name: [
                   {
@@ -207,24 +196,27 @@
             }
         },
         mounted() {
-           if(this.lastStep === 1 ){
+           // if(this.lastStep === 1 ){
             this.form = this.$store.state.shopInfo.enterForm2;
+            if(this.form['0'] !== undefined ){
+              delete this.form['0'] ;
+            }
             if(this.$store.state.shopInfo.cardType2 ===1){
               this.cardType = true
             }else{
               this.cardType = false
             }
+
+        },
+        watch : {
+          editorInfo : function(val){
+            if(val === 1){
+              this.form = this.$store.state.shopInfo.enterForm2;
+
+            }
+
           }
         },
-      watch : {
-        editorInfo : function(val){
-          if(val === 1){
-            this.form = this.$store.state.shopInfo.enterForm;
-
-          }
-
-        }
-      },
         methods: {
           //限制上传图片大小
           limitImage(file,type){
@@ -299,14 +291,10 @@
           // 上传图片
 
           beforeFront(file) {
-
             this.limitImage(file,1);
-
-
           },
           beforeBack(file) {
             this.limitImage(file,2);
-
           },
 
           goNext(formName){
@@ -318,9 +306,7 @@
               this.cardBackImageWarn = true;
 
             }
-            // else if(this.form.halfBody === ''){
-            //   this.halfBodyImgWarn = true;
-            // }
+
             if(this.cardType === true){
               this.form.cardDeadline = '9999-12-31'
             }
@@ -328,8 +314,9 @@
 
               // if(valid&&!this.cardBackImageWarn&&!this.cardBackImageWarn&&!this.halfBodyImgWarn )
               if(valid&&!this.cardFaceImageWarn&&!this.cardBackImageWarn ){
-                this.$store.commit('addForm2',this.form)
-                this.$store.commit('addCardType2',this.cardType-0)
+                this.form.cardDeadline = this.form.cardDeadline ===null?'':this.form.cardDeadline ;
+                this.$store.commit('addForm2',this.form);
+                this.$store.commit('addCardType2',this.cardType-0);
                 this.$emit('stepObj',{ index : '2' ,component : 'enterprise2'})
 
               }else{
@@ -358,5 +345,7 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
   @import '../../../styles/new';
-
+  .demoBox img{
+    width : 60%!important ;
+  }
 </style>

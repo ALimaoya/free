@@ -9,7 +9,7 @@
           <el-input class="inputInfo" size="small" v-model.trim="form.email" :disabled="readOnly" placeholder="请输入常用邮箱，便于信息及时送达"></el-input>
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth " label="入驻人手机号：" prop="mobile" >
-          <el-input class="inputInfo" size="small" v-model.trim="form.mobile" disabled="disabled" placeholder="请输入入驻人手机号"></el-input>
+          <el-input class="inputInfo" size="small" :maxlength="11" v-model.tel="form.mobile" disabled="disabled" placeholder="请输入入驻人手机号"></el-input>
           <span class="tip"><svg-icon icon-class="tips"/>此手机号为商家首次登陆后台的账号，有最高管理权限，暂不支持修改</span>
         </el-form-item>
         <el-form-item   :labelWidth="labelWidth"  label="入驻人身份证号：" prop="cardId">
@@ -65,11 +65,11 @@
         </el-form-item>
       </el-form>
 
-      <el-dialog :title="demo[showImg]" :visible.sync="dialogVisible" width="60%" center>
+      <el-dialog class="demoBox" :title="demo[showImg]" :visible.sync="dialogVisible" width="60%" center>
         <div class="wrap">
-          <img v-if="this.showImg === '1'"  src="../../../assets/imgs/logo.png" />
-          <img v-else-if="this.showImg === '2'"  src="../../../assets/imgs/u922.png" />
-          <img v-else-if="this.showImg === '3'"  src="../../../assets/imgs/u923.png" />
+          <img v-if="this.showImg === '1'"  src="../../../assets/imgs/cardFront.png" />
+          <img v-else-if="this.showImg === '2'"  src="../../../assets/imgs/card_back.png" />
+          <img v-else-if="this.showImg === '3'"  src="../../../assets/imgs/halfPhoto.png" />
           <div slot="footer" class="dialog-footer">
             <el-button type="danger" @click="close">我知道了</el-button>
           </div>
@@ -119,16 +119,7 @@
           }
         };
             return {
-              form: {
-                name: '',
-                email: '',
-                mobile: getMobile(),
-                cardId:'',
-                cardFaceImage: '',
-                cardBackImage : '',
-                cardSelfImage: '',
-                cardDeadline: ''
-              },
+              form: {},
               cardType: false,
               formRule: {
                 name: [
@@ -181,16 +172,16 @@
             // if(this.$store.state.shopInfo.editorType === 1){
             //
             // }
-            if(this.lastStep === 1 ){
+
               this.form = this.$store.state.shopInfo.enterForm;
-              console.log(this.form);
+              // console.log(this.form);
 
               if(this.$store.state.shopInfo.cardType ===1){
                 this.cardType = true
               }else{
                 this.cardType = false
               }
-            }
+
 
         },
         methods: {
@@ -226,7 +217,7 @@
                       if(type ===1){
                         _this.$set(_this.form,'cardFaceImage' , res.data.data.fileName);
                         _this.frontImgWarn = false;
-                        console.log(_this.form.cardFaceImage)
+                        // console.log(_this.form.cardFaceImage)
                       }
                       if(type ===2){
                         _this.$set(_this.form,'cardBackImage' , res.data.data.fileName);
@@ -342,5 +333,7 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
   @import '../../../styles/new';
-
+  .demoBox img{
+    width : 60%!important ;
+  }
 </style>

@@ -8,13 +8,13 @@
             <el-checkbox-button v-for="(item,index) in mainBusinessList" :key="index" :label="item.value" border>{{ item.name }}</el-checkbox-button>
           </el-checkbox-group> -->
           <div>
-            <el-radio-group size="mini" fill="#f56c6c" v-model="form.mainBusiness"  @change="getMainBusiness(form.mainBusiness)">
+            <el-radio-group size="mini" fill="#f56c6c" v-model="form.mainBusiness"  >
               <el-radio-button border v-for="(item,index) in shopTypeList" :key="index" :label="item.id">{{ item.name }}</el-radio-button>
             </el-radio-group>
           </div>
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth" label="店铺名称：" prop="shopName">
-          <el-input class="inputInfo" size="small" v-model.trim="form.shopName" @change="haveShop(form.shopName)" :disabled="readOnly" placeholder="请输入店铺名称"></el-input>
+          <el-input class="inputInfo" size="small" :maxlength="37" v-model.trim="form.shopName" @blur="haveShop(form.shopName)" :disabled="readOnly" placeholder="请输入店铺名称"></el-input>
           <span class="tip"><svg-icon icon-class="tips"/>入驻后店铺名称不可修改，请谨慎填写</span>
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth" label="名称预览：" >
@@ -29,10 +29,10 @@
           <el-radio label="1" v-model="form.licenseMergeType">是</el-radio>
           <span class="tip" style="margin-left: 0.2rem;"><svg-icon icon-class="tips"/>注：目前仅支持三证合一</span>
         </el-form-item>
-        <el-form-item  :labelWidth="labelWidth" label="公司名称：" prop="enterpriseName">
-          <el-input class="inputInfo" size="small" v-model.trim="form.enterpriseName" :disabled="readOnly" placeholder="请输入公司名称"></el-input>
+        <el-form-item  :labelWidth="labelWidth" label="公司名称："  prop="enterpriseName">
+          <el-input class="inputInfo" size="small" :maxlength="40" v-model.trim="form.enterpriseName" :disabled="readOnly" placeholder="请输入公司名称"></el-input>
         </el-form-item>
-        <el-form-item  :labelWidth="labelWidth" label="公司经营地址：" prop="companyAddress">
+        <el-form-item v-if="form.companyAddress !== undefined" :labelWidth="labelWidth" label="公司经营地址：" prop="companyAddress">
           <el-select v-model="form.companyAddress.province" clearable placeholder="请选择" size="mini">
             <el-option
               v-for="item in provinceList"
@@ -42,7 +42,7 @@
             </el-option>
           </el-select>
           <div class="blank"></div>
-          <el-input class="inputInfo" size="small" v-model.trim="form.companyAddress.detail" :disabled="readOnly" placeholder="请输入精确到门牌号的具体地址"></el-input>
+          <el-input class="inputInfo" size="small" :maxlength="200" v-model.trim="form.companyAddress['detail']" :disabled="readOnly" placeholder="请输入精确到门牌号的具体地址"></el-input>
           <span class="tip"><svg-icon icon-class="tips"/>注：请填写公司实际经营地址</span>
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth" label="社会信用代码：" prop="socialCreditCode">
@@ -88,7 +88,7 @@
             <el-button v-if="form.merchantBrandinfoReqDtos.length> 1" style="float: right ;" class="tips_warn" type="text" @click="deleteBrand(item)">删除</el-button>
           </el-form-item>
             <el-form-item :labelWidth="labelWidth" label="商标注册号：" :prop="'merchantBrandinfoReqDtos.'+index+'.brandRegistCode'" :rules="{ message : '请输入商标注册号', trigger : 'blur' , required: true }">
-              <el-input class="inputInfo" size="small"  v-model.trim="item.brandRegistCode" :disabled="readOnly" placeholder="请输入商标注册号"></el-input>
+              <el-input class="inputInfo" size="small" :maxlength="100"  v-model.trim="item.brandRegistCode" :disabled="readOnly" placeholder="请输入商标注册号"></el-input>
             </el-form-item>
             <el-form-item class="uploadImg" :labelWidth="labelWidth" label="商标注册证明：" :prop="'merchantBrandinfoReqDtos.'+index+'.brandCertifyImage'">
               <div @click="chooseCer = index ;">
@@ -140,14 +140,22 @@
             </el-form-item>
           </div>
             <el-form-item :labelWidth="labelWidth">
-              <el-button size="small" type="danger" v-if="form.merchantBrandinfoReqDtos[0].brandRegistType === '2'&& brandInfo === '2'&&form.merchantBrandinfoReqDtos.length< 3" @click="addBrand">添加更多商标信息</el-button>
+              <el-button size="small" type="danger" v-if="form.merchantBrandinfoReqDtos !== undefined && form.merchantBrandinfoReqDtos[0].brandRegistType === '2'&& brandInfo === '2'&&form.merchantBrandinfoReqDtos.length< 3" @click="addBrand">添加更多商标信息</el-button>
             </el-form-item>
 
         </div>
 
         <p class="h_title otherInfo">其他信息</p>
-        <el-form-item style="width: 95%;margin-top:0.5rem;"  :labelWidth="labelWidth" label="第三方店铺链接：" prop="thirdShopUrl">
-          <el-input class="inputInfo" size="small"  v-model.trim="form.thirdShopUrl" :disabled="readOnly" placeholder="请填写真实的第三方平台店铺链接可增加入驻成功率，没有可不填"></el-input>
+        <el-form-item v-if="form.thirdShopUrl !== undefined && form.thirdShopUrl[0] !== undefined " style="width: 95%;margin-top:0.5rem;"  :labelWidth="labelWidth" label="第三方店铺链接：" :prop="'thirdShopUrl.'+ 0">
+          <el-select class="search" v-model="form.thirdShopUrl[0].platformName" placeholder="请选择第三方平台" size="small">
+            <el-option
+              v-for="item in platForm"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name">
+            </el-option>
+          </el-select>
+          <el-input class="inputInfo" size="small" :maxlength="200" v-model.trim="form.thirdShopUrl[0].url" :disabled="readOnly" placeholder="请填写真实的第三方平台店铺链接可增加入驻成功率，没有可不填"></el-input>
           <span class="tip"><svg-icon icon-class="tips"/>入驻后店铺名称不可修改，请谨慎填写</span>
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth" >
@@ -191,18 +199,18 @@
       </el-dialog>
       <el-dialog title="丫贝网合作协议" :visible.sync="readRule" width="60%" center>
         <div class="wrap">
-          <img src="../../../assets/imgs/logo.png" />
+          <img class="ruleImg" src="../../../assets/imgs/register.png" />
           <div slot="footer" class="dialog-footer">
             <el-button type="danger" @click="readRule = false;">我知道了</el-button>
           </div>
         </div>
       </el-dialog>
-      <el-dialog title="示例" :visible.sync="imgVisible" width="60%" center>
+      <el-dialog class="demoBox" title="示例" :visible.sync="imgVisible" width="60%" center>
         <div class="wrap">
-          <img v-if="showImg === '1'" src="../../../assets/imgs/u923.png" />
-          <img v-else-if="showImg === '2'" src="../../../assets/imgs/u922.png" />
-          <img v-else-if="showImg === '3'" src="../../../assets/imgs/u924.png" />
-          <img v-else-if="showImg === '4'" src="../../../assets/imgs/u1810.png" />
+          <img v-if="showImg === '1'|| showImg === '2'" src="../../../assets/imgs/bussiness.png" />
+          <img v-else-if="showImg === '3'" src="../../../assets/imgs/permission.png" />
+          <img v-else-if="showImg === '4'" src="../../../assets/imgs/brandRegister.png" />
+          <img v-else-if="showImg === '5'" src="../../../assets/imgs/brandAuth.png" />
           <div slot="footer" class="dialog-footer">
             <el-button type="danger" @click="imgVisible = false ;">我知道了</el-button>
           </div>
@@ -234,22 +242,29 @@
           const validAddress = (rule,value ,callback) => {
             if(this.form.companyAddress.province === ''){
               callback(new Error('请选择公司所在省市'))
-            }else if(this.form.companyAddress.detail === ''){
+            }
+            if(this.form.companyAddress.detail === ''){
               callback(new Error('请填写公司具体经营地址'))
             }
             callback();
           };
               const validLink = (rule,value,callback) => {
+                if(value.platformName !== ''&& value.url === ''){
+                  callback(new Error('请填写店铺链接'))
 
-                if(value !== ''){
-                  if(!validateURL(value)){
-                    callback(new Error('请填写正确格式的商品链接'))
-                  }else{
-                    callback();
-                  }
-                }else{
-                  callback();
                 }
+                if(value.platformName === ''&& value.url !== ''){
+
+                  callback(new Error('请选择第三方店铺平台'))
+
+                }
+                if(value.platformName !== ''&& value.url !== ''){
+                  if(!validateURL(value.url)) {
+                    callback(new Error('请填写正确格式的店铺链接'))
+                  }
+
+                }
+                callback();
 
 
               };
@@ -265,32 +280,7 @@
               };
           return {
             labelWidth: '200px',
-            form: {
-              mainBusiness: '',
-              shopName:'',
-              thirdShopUrl:'',
-              licenseCountryType: '1',
-              licenseMergeType: '1',
-              enterpriseName:'',
-              companyAddress:{ province : '', detail: ''},
-              socialCreditCode:'',
-              businessImage: '',
-              openLicenceImage: '',
-              busLicenceDeadline: '',
-              // registerType:'1',
-              // registerCode:'',
-              // certification: '',
-              merchantBrandinfoReqDtos:[
-                {
-                  brandRegistType:'1',
-                  brandRegistCode: '',
-                  brandCertifyImage:'',
-                  brandAuthImage:'',
-                  brandAuthDeadline:'',
-                  brandAuthType:''
-                }
-                ]
-            },
+            form: {},
             shopTypeList: [],
             formRule:{
               mainBusiness:[
@@ -333,19 +323,9 @@
                   required : true ,trigger : 'change',message : '请选择营业期限'
                 }
               ],
-              // registerType: [
-              //   {
-              //     required : true , trigger: 'change', message : '请选择注册类型'
-              //   }
-              // ],
-              // registerCode: [
-              //   {
-              //     required : true ,trigger: 'blur' ,message : '请输入商标注册号'
-              //   }
-              // ],
               thirdShopUrl:[
                 {
-                  required:false ,trigger: 'blur',validator: validLink
+                  required:false ,trigger: 'change',validator: validLink
                 }
               ]
 
@@ -372,35 +352,112 @@
             chooseBrand : '',
             lastName : ['旗舰店','专卖店','专营店',''],
             busLicenceType: '',
-            shopTypeName:''
+            shopTypeName:'',
+            platForm : [
+              {
+                name : '淘宝',
+                id : '1',
+              },
+              {
+                name : '天猫',
+                id : '2'
+              },
+              {
+                name : '京东',
+                id : '3'
+              },
+              {
+                name : '拼多多',
+                id : '4'
+              },
+              {
+                name : '唯品会',
+                id : '5'
+              },
+              {
+                name : '折800',
+                id : '6'
+              },
+              {
+                name : '贝贝',
+                id : '7'
+              },
+              {
+                name : '卷皮',
+                id : '8'
+              },
+              {
+                name : '蘑菇街',
+                id : '9'
+              },
+              {
+                name : '聚美优品',
+                id : '10'
+              },
+              {
+                name : '其他',
+                id : '11'
+              },
+            ],
+
           }
 
         },
         mounted() {
+          this.getTypeList();
+          this.getProvince();
+
           this.form = this.$store.state.shopInfo.enterForm2 ;
+          let _this = this ;
+          if(typeof (this.form.companyAddress) !== 'object' ){
+            let label = this.form.companyAddress.split('-')[0] ;
+            let provinceValue = this.form.companyAddress.split('-')[1];
+            _this.form.companyAddress = {
+              detail:provinceValue,
+              province: label
+            };
+
+
+          }else{
+            // this.form.companyAddress = this.$store.state.shopInfo.enterForm2.companyAddress ;
+          }
+
+          if(typeof(this.form.thirdShopUrl) === 'string'&&this.form.thirdShopUrl !== null&&this.form.thirdShopUrl !== ''){
+            this.form.thirdShopUrl = JSON.parse(this.form.thirdShopUrl);
+
+          }
           this.brandInfo = this.$route.query.type ;
+          if(this.brandInfo === undefined){
+            this.brandInfo = this.form.shopType ;
+          }
           if(this.brandInfo !== '3'){
             this.requiredInput = false ;
           }
-          this.getTypeList();
-          this.getProvince();
         },
         methods: {
 
           getTypeList(){
             firstList().then(res=> {
-              this.shopTypeList = res.data.data
+              if(res.data.status === '000000000'){
+                this.shopTypeList = res.data.data;
+              }
             })
           },
           //  获得主营类目名字
-          getMainBusiness(item){
-              for( let i = 0; i < this.shopTypeList.length ; i++){
-                if(this.shopTypeList[i].id == item){
-                  this.shopTypeName = this.shopTypeList[i].name;
-                    console.log(this.shopTypeName)
-                }
-
+          getMainBusiness(id){
+            this.shopTypeList.map( i =>{
+              if(i.id == id){
+                this.shopTypeName = i.name;
               }
+            });
+
+          },
+          getProvince() {
+            getProvinceList().then(res => {
+              if (res.data.status === '000000000') {
+                this.provinceList = res.data.data;
+              }
+            })
           },
           haveShop(shopName){
             if(shopName !== ''){
@@ -415,14 +472,8 @@
             }
 
           },
-          getProvince(){
-            getProvinceList().then( res => {
-              if( res.data.status === '000000000'){
-                this.provinceList = res.data.data ;
-              }
-            })
-            // this.provinceList = []
-          },
+
+
           //限制上传图片大小
           limitImage(file,type){
             let reader = new FileReader();
@@ -450,7 +501,6 @@
 
                   uploadImage(formData).then(res => {
                     if (res.data.status === '000000000') {
-                      console.log(type);
 
                       if(type ===1){
                         _this.form.businessImage = res.data.data.fileName;
@@ -464,7 +514,7 @@
                       }
                       if(type === 3){
                         _this.$set(_this.form.merchantBrandinfoReqDtos[_this.chooseCer], 'brandCertifyImage' , res.data.data.fileName);
-                        console.log(_this.chooseCer,_this.form.merchantBrandinfoReqDtos[this.chooseCer]);
+                        // console.log(_this.chooseCer,_this.form.merchantBrandinfoReqDtos[this.chooseCer]);
                         _this.certificationtWarn = false;
                       }
                       if(type === 4){
@@ -515,7 +565,6 @@
           },
           //上传商标注册证明
           beforeCertification(file){
-            console.log(this.chooseCer);
 
             this.limitImage(file,3);
           },
@@ -582,17 +631,17 @@
               this.permitWarn = true;
 
             }
-            this.form.merchantBrandinfoReqDtos.map( i => {
-              if(i.brandCertifyImage === ''){
-                this.certificationtWarn = true ;
-              }
-              if(i.brandAuthImage === ''){
-                this.brandAuthWarn = true ;
+            if(this.form.merchantBrandinfoReqDtos !== null){
+              this.form.merchantBrandinfoReqDtos.map( i => {
+                if(i.brandCertifyImage === ''){
+                  this.certificationtWarn = true ;
+                }
+                if(i.brandAuthImage === ''){
+                  this.brandAuthWarn = true ;
 
-              }
-            });
-
-
+                }
+              });
+            }
             if(this.long){
               this.busLicenceType = '1';
               this.form.busLicenceDeadline = '9999-12-31';
@@ -605,6 +654,7 @@
 
 
               if(valid){
+                this.getMainBusiness(this.form.mainBusiness);
                 if(!this.agree){
                   this.$message({
                     message : '请先阅读并同意《丫贝网合作协议》',
@@ -613,6 +663,7 @@
                   })
                 }else{
                   this.dialogVisible = true ;
+
 
                 }
 
@@ -623,22 +674,25 @@
           },
           //  确认提交
           confirm(){
+            let thirdShopUrl = JSON.stringify(this.form.thirdShopUrl);
+
             this.dialogVisible = false ;
             let data = {
               merchantShopReqDto: {
                 shopName: this.form.shopName ,
                 mainBusiness: this.form.mainBusiness ,
                 shopType: this.brandInfo,
-                thirdShopUrl: this.form.thirdShopUrl,
+                thirdShopUrl: thirdShopUrl,
+
               },
               merchantAptitudeReqDto: {
                 licenseCountryType: '1',
                 licenseMergeType: '1',
                 enterpriseName: this.form.enterpriseName,
-                companyAddress:this.form.companyAddress.province + '- '+ this.form.companyAddress.detail,
+                companyAddress:this.form.companyAddress.province + '-'+ this.form.companyAddress.detail,
                 socialCreditCode:this.form.socialCreditCode,
                 businessImage: this.form.businessImage ,
-                busLicenceDeadline: this.form.busLicenceDeadline,
+                busLicenceDeadline: this.form.busLicenceDeadline===null?'':this.form.busLicenceDeadline,
                 openLicenceImage: this.form.openLicenceImage,
                 busLicenceType: this.busLicenceType,
                 name:this.$store.state.shopInfo.enterForm2.name,
@@ -651,19 +705,72 @@
                 mobile: this.$store.state.shopInfo.enterForm2.mobile,
                 legalRepName: this.$store.state.shopInfo.enterForm2.legalRepName ,
                 legalRepMobile: this.$store.state.shopInfo.enterForm2.legalRepMobile,
-                belongType: 2
+                belongType: 2,
+                cardSelfImage:'',
               },
               merchantBrandinfoReqDtos: this.form.merchantBrandinfoReqDtos ,
 
             };
-            console.log(data);
-            enterApply(data).then( res =>{
-              if(res.data.status === "000000000"){
-                this.$store.commit('shopName',this.form.shopName);
-                console.log(this.$store.state.shopInfo);
-                this.$emit('stepObj',{ index : '3' ,component : 'successAdd'})
+            if(this.brandInfo ==='0'){
+              data.merchantBrandinfoReqDtos = [
+                {
+                  brandRegistType:'1',
+                  brandRegistCode: this.form.merchantBrandinfoReqDtos[0].brandRegistCode,
+                  brandCertifyImage:this.form.merchantBrandinfoReqDtos[0].brandCertifyImage ,
+                  brandAuthImage:'',
+                  brandAuthDeadline:'0000-00-00',
+                  brandAuthType:''
+                }
+              ];
+
+            }
+            if(this.brandInfo ==='3'){
+              data.merchantBrandinfoReqDtos = [
+                {
+                  brandRegistType:'',
+                  brandRegistCode: '',
+                  brandCertifyImage:'' ,
+                  brandAuthImage:'',
+                  brandAuthDeadline:'0000-00-00',
+                  brandAuthType:''
+                }
+              ]
+            }
+            if(this.editorInfo === 1){
+              data.merchantAptitudeReqDto['id'] = this.$store.state.shopInfo.editorId.id1 ;
+              data.merchantShopReqDto['id'] = this.$store.state.shopInfo.editorId.id2 ;
+
+              let listArr = this.$store.state.shopInfo.listId ;
+              if(listArr !== null && listArr.length > 0){
+                if(data.merchantBrandinfoReqDtos.length< listArr.length){
+                  data.merchantBrandinfoReqDtos.map( (i,index) => {
+                    i['id'] = listArr[index];
+                  });
+                }else if(data.merchantBrandinfoReqDtos.length>=listArr.length){
+                  listArr.map( (i,index) => {
+                    data.merchantBrandinfoReqDtos[index]['id'] = i;
+                  });
+                }
+
               }
-            })
+
+
+
+              enterApply(data,'edit').then( res =>{
+                if(res.data.status === "000000000"){
+                  this.$store.commit('shopName',this.form.shopName);
+                  this.$emit('stepObj',{ index : '3' ,component : 'successAdd'})
+                }
+              })
+            }else{
+              enterApply(data,'add').then( res =>{
+                if(res.data.status === "000000000"){
+                  this.$store.commit('shopName',this.form.shopName);
+                  this.$emit('stepObj',{ index : '3' ,component : 'successAdd'})
+                }
+              })
+            }
+
 
           }
         }
@@ -706,5 +813,11 @@
   .el-radio-button{
     margin: 5px;
     border-left: 1px solid #dcdfe6;
+  }
+  .demoBox img{
+    width : 60%!important ;
+  }
+  .ruleImg{
+    width : 90% !important ;
   }
 </style>

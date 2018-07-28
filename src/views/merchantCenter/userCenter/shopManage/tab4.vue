@@ -81,7 +81,7 @@
       </div>
       <div class="infoWrap">
         <h2>商标信息</h2>
-        <p class="tips">注：店铺包含“旗舰、专卖”，商家必须上传品牌授权或独占授权证明，需授权店铺从属人在丫贝网经营该品牌产品</p>
+        <p class="tips tips_warn">注：店铺包含“旗舰、专卖”，商家必须上传品牌授权或独占授权证明，需授权店铺从属人在丫贝网经营该品牌产品</p>
         <div v-for="(item, index ) in form.merchantBrandinfoResDtos" :key="index">
           <el-form-item  label="注册类型：" labelWidth="200px">
             <div class="inputInfo">{{ item.brandRegistType }}</div>
@@ -181,12 +181,12 @@
       getApproveList(){
         getApproveList().then( res =>{
           this.tableData = res.data.data
-          console.log(res)
+          // console.log(res)
         })
       },
       getInfo(){
         getAptitudeInfo().then( res => {
-          console.log('res',res)
+          // console.log('res',res)
           if(res.data.status === '000000000'){
             this.form = res.data.data ;
           }

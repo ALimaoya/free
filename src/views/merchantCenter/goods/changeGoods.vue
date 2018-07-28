@@ -99,13 +99,13 @@
     </el-form>
 
 
-    <el-dialog class="shop_dialog" title="提示" top="20%" :visible.sync="hasShop" width="40%" center
-               :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
-      <p>{{ tips }}</p>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="applyShop">前往我要开店</el-button>
-      </span>
-    </el-dialog>
+    <!--<el-dialog class="shop_dialog" title="提示" top="20%" :visible.sync="hasShop" width="40%" center-->
+               <!--:show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">-->
+      <!--<p>{{ tips }}</p>-->
+      <!--<span slot="footer" class="dialog-footer">-->
+        <!--<el-button type="primary" @click="applyShop">前往我要开店</el-button>-->
+      <!--</span>-->
+    <!--</el-dialog>-->
   </div>
 </template>
 
@@ -271,16 +271,16 @@
       //判断是否已有店铺
       getShop(){
         getShopInfo().then(res=> {
-          if(res.data.status === '000000000'){
-            this.hasShop = false ;
+          if(res.data.status === '000000000'|| res.data.status === '015009001'){
+            // this.hasShop = false ;
             this.loading = false ;
             this.isNewGoods();
             this.shopName = res.data.data.name
             return true ;
 
           }else{
-            this.tips = res.data.message;
-            this.hasShop = true ;
+            // this.tips = res.data.message;
+            // this.hasShop = true ;
 
 
           }

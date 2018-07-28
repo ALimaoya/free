@@ -385,7 +385,7 @@
       editMode(index,item){
         // this.readList[index] = '1';
         this.$set(this.readList,index , '1');
-        console.log(this.readList[index])
+        // console.log(this.readList[index])
       },
       deleteMode(item){
 
@@ -414,7 +414,7 @@
         }
         this.$refs[formName].validate((valid) =>{
           if(valid){
-            console.log(this.carriageForm);
+            // console.log(this.carriageForm);
             this.cancel() ;
           }
         })
@@ -475,7 +475,7 @@
       //保存指定运费地区
       saveArea(){
         if(this.getArea.length> 0){
-          console.log(this.chooseArea);
+          // console.log(this.chooseArea);
           this.getArea.map( i =>{
             this.carriageForm.specialList[(this.chooseArea+1)*1].area.push(i) ;
 

@@ -21,10 +21,10 @@
             <el-input class="inputInfo" :maxlength="200" type="textarea" :row="4" size="small" v-model.trim="form.detailAddress"  placeholder="详细地址"></el-input>
           </el-form-item>
           <el-form-item  labelWidth="130px" label="邮编" prop="zipCode">
-            <el-input class="inputInfo" size="small" v-model.trim="form.zipCode" placeholder="邮编"></el-input>
+            <el-input class="inputInfo" size="small" :maxlength="6" v-model.trim="form.zipCode" placeholder="邮编"></el-input>
           </el-form-item>
          <el-form-item  labelWidth="130px" label="电话" prop="mobile">
-           <el-input class="inputInfo" size="small" v-model.trim="form.mobile" placeholder="电话"></el-input>
+           <el-input class="inputInfo" size="small" :maxlength="11" v-model.trim="form.mobile" placeholder="电话"></el-input>
          </el-form-item>
          <el-form-item class="btnWrap">
            <el-button v-if="this.isNew === '0'" type="primary" size="mini" @click="submitFrom('form')">确定</el-button>
@@ -72,13 +72,13 @@
 
       </span>
   </el-dialog>
-    <el-dialog class="shop_dialog" title="提示" top="20%" :visible.sync="hasShop" width="40%" center
-               :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
-      <p>{{ tips }}</p>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="applyShop">前往我要开店</el-button>
-      </span>
-    </el-dialog>
+    <!--<el-dialog class="shop_dialog" title="提示" top="20%" :visible.sync="hasShop" width="40%" center-->
+               <!--:show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">-->
+      <!--<p>{{ tips }}</p>-->
+      <!--<span slot="footer" class="dialog-footer">-->
+        <!--<el-button type="primary" @click="applyShop">前往我要开店</el-button>-->
+      <!--</span>-->
+    <!--</el-dialog>-->
   </div>
 </template>
 
@@ -172,41 +172,42 @@
         }
       },
       mounted(){
-        this.getShop();
-
+        // this.getShop();
+        this.getAddressList();
+        this.getProvince();
 
       },
       methods : {
         //判断是否已有店铺
-        getShop(){
-          getShopInfo().then(res=> {
-
-            this.loading= false ;
-
-            if(res.data.status === '000000000'){
-              this.hasShop = false ;
-              this.getAddressList();
-              this.getProvince();
-
-              return true ;
-
-
-            }else{
-              // this.$message({
-              //   message : res.data.message,
-              //   center: true ,
-              //   type : 'error'
-              // });
-              this.tips = res.data.message;
-              this.hasShop = true ;
-
-
-            }
-          })
-          //   .catch( err =>{
-          //   console.log(err);
-          // })
-        },
+        // getShop(){
+        //   getShopInfo().then(res=> {
+        //
+        //     this.loading= false ;
+        //
+        //     if(res.data.status === '000000000'){
+        //       this.hasShop = false ;
+        //       this.getAddressList();
+        //       this.getProvince();
+        //
+        //       return true ;
+        //
+        //
+        //     }else{
+        //       // this.$message({
+        //       //   message : res.data.message,
+        //       //   center: true ,
+        //       //   type : 'error'
+        //       // });
+        //       this.tips = res.data.message;
+        //       this.hasShop = true ;
+        //
+        //
+        //     }
+        //   })
+        //   //   .catch( err =>{
+        //   //   console.log(err);
+        //   // })
+        // },
           //获取地址列表
           getAddressList(){
             getAddress().then( res => {

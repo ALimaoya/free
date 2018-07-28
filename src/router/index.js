@@ -392,20 +392,20 @@ export const constantRouterMap = [
           //   meta: { title: '结算账户', icon: 'settlement' },
           //
           // },
-          // {
-          //   path: 'postSetting',
-          //   name: 'PostSetting',
-          //   component: () => import('@/views/merchantCenter/userCenter/postSetting'),
-          //   meta: { title: '运费设置', icon: 'postSetting' },
-          //
-          // },
           {
-            path: 'postMode',
-            name: 'PostMode',
-            component: () => import('@/views/merchantCenter/userCenter/postMode'),
-            meta: { title: '运费模板', icon: 'postMode' },
+            path: 'postSetting',
+            name: 'PostSetting',
+            component: () => import('@/views/merchantCenter/userCenter/postSetting'),
+            meta: { title: '运费设置', icon: 'postSetting' },
 
           },
+          // {
+          //   path: 'postMode',
+          //   name: 'PostMode',
+          //   component: () => import('@/views/merchantCenter/userCenter/postMode'),
+          //   meta: { title: '运费模板', icon: 'postMode' },
+          //
+          // },
           {
             path: 'addressManage',
             name: 'AddressManage',

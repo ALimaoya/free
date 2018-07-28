@@ -13,7 +13,8 @@ const shopInfo = {
       cardDeadline: '',
       mainBusiness: '',
       shopName:'',
-      thirdShopUrl:''
+      // thirdShopUrl: '',
+      thirdShopUrl:[{ platformName : '',url : ''}]
     },
     cardType:'',
     shopName:'',
@@ -31,7 +32,7 @@ const shopInfo = {
       cardDeadline: '',
       mainBusiness: '',
       shopName:'',
-      thirdShopUrl:'',
+      thirdShopUrl:[{ platformName : '',url : ''}],
       licenseCountryType: '1',
       licenseMergeType: '1',
       enterpriseName:'',
@@ -40,21 +41,21 @@ const shopInfo = {
       businessImage: '',
       openLicenceImage: '',
       busLicenceDeadline: '',
-      // registerType:'1',
-      // registerCode:'',
-      // certification: '',
-      merchantBrandinfoReqDtos:[
-        {
-          brandRegistType:'1',
-          brandRegistCode: '',
-          brandCertifyImage:'',
-          brandAuthImage:'',
-          brandAuthDeadline:'',
-          brandAuthType:''
-        }
-      ]
+      shopType: '',
+      merchantBrandinfoReqDtos:[ {
+        brandRegistType:'1',
+        brandRegistCode: '',
+        brandCertifyImage:'',
+        brandAuthImage:'',
+        brandAuthDeadline:'',
+        brandAuthType:''
+      }]
     },
+
+
     cardType2:'',
+    editorId: {},
+    listId: [],
   },
   mutations:{
       addForm(state,item){
@@ -75,9 +76,16 @@ const shopInfo = {
     addCardType2(state,item){
       state.cardType2 = item
     },
-
-
+    addEditorId(state,value){
+        state.editorId = value
+    },
+    addListId(state,value){
+        state.listId = value
+    },
+    addMerchantBrand(state,value){
+        state.merchantBrandinfoReqDtos = value ;
+    }
   },
-}
+};
 
 export default shopInfo

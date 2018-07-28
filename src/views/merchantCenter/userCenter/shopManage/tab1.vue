@@ -25,7 +25,7 @@
           <div v-else>
             <span>{{ form.thirdShopUrl[0].platformName }}</span>
             <span style="margin-left:10px">{{ form.thirdShopUrl[0].url }}</span>
-            <el-button type="primary" round style="padding:2px 15px;margin-left:10px" @click="dialogVisible=true;">修改</el-button>
+            <el-button type="primary" size="mini" @click="dialogVisible=true;">修改</el-button>
             </div>
         </el-form-item>
         <el-form-item labelWidth="160px" label="店铺LOGO：" prop="logoImage">
@@ -230,7 +230,7 @@
           getPlatformType(item){
             // for(let i = 0; i<this.platForm.length;i++){
             //   if(this.platForm[i].id === item){
-            //     this.platformTypeName = this.platForm[i].name 
+            //     this.platformTypeName = this.platForm[i].name
             //     console.log(this.platformTypeName)
             //   }
             // }

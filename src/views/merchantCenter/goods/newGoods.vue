@@ -4,7 +4,8 @@
       <el-form :model="form" ref="form" :rules="formRule" label-position="right">
         <h2>商品表单</h2>
         <el-form-item  labelWidth="130px"  >
-          <el-button type="primary" size="small" @click="taoVisible=true">获取淘宝商品信息</el-button>
+          <el-button type="primary" size="small" @click="getPlatform('1')">获取淘宝商品信息</el-button>
+          <el-button type="primary" size="small" @click="getPlatform('2')">获取京东商品信息</el-button>
         </el-form-item>
         <el-form-item  labelWidth="130px" label="店铺" >
           <div class="inputInfo">{{shopName}}</div>
@@ -89,7 +90,7 @@
           </ul>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="描述" prop="describes">
-          <div id="wangeditor">
+          <div id="wangeditor"   >
             <div style="text-align:left" v-html="word"></div>
           </div>
         </el-form-item>
@@ -145,11 +146,11 @@
           <el-button plain @click="goBond">前往缴纳保证金</el-button>
         </div>
       </el-dialog>
-      <el-dialog class="taoDetail" title="获取淘宝商品信息" :visible.sync="taoVisible" width="50%" top="24vh" :before-close="beforeClose">
-        <div class="input_wrap"><span>淘宝商品链接：</span><el-input placeholder="商品链接" size="small" v-model.trim="taoLink"></el-input></div>
+      <el-dialog class="taoDetail" :title="platformTitle" :visible.sync="taoVisible" width="50%" top="24vh" :before-close="beforeClose">
+        <div class="input_wrap"><span>{{ platformType }}商品链接：</span><el-input placeholder="商品链接" size="small" v-model.trim="taoLink"></el-input></div>
         <div slot="footer">
-          <el-button type="primary" size="mini" @click="getTaoInfo(taoLink)">确定</el-button>
-          <el-button plain size="mini" @click="taoVisible=false ;taoLink='';">关闭</el-button>
+          <el-button type="primary" size="mini" @click="getLinkInfo(taoLink)">确定</el-button>
+          <el-button plain size="mini" @click="beforeClose">关闭</el-button>
 
         </div>
       </el-dialog>
@@ -159,7 +160,7 @@
 <script>
   // import wangeditor from '@/components/wangeditor'
   import { uploadImage  } from "@/api/activity"
-  import { newGoogds,getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo, getTao} from "@/api/merchant"
+  import { newGoogds,getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo, getTao,getJD} from "@/api/merchant"
   import { getToken,getMobile } from '@/utils/auth'
   import { getBond } from "@/api/userCenter"
   import { checkFloat,validName } from "@/utils/validate"
@@ -311,6 +312,8 @@
               editor: '',  // 存放实例化的wangEditor对象，在多个方法中使用
               word:'',
               thirdName:'',
+              platformType: '',
+              platformTitle: '',
             }
         },
 
@@ -469,7 +472,7 @@
               //   this.getSecondList(this.form.class1Id);
               //
               // }
-              if(!validName(this.form.firstType)&&this.form.firstType!== ''){
+              if(/^[0-9]+$/.test(this.form.firstType*1)&&this.form.firstType!== ''){
                 this.getSecondList(this.form.firstType)
               }
             })
@@ -484,7 +487,7 @@
               //   this.getThirdList(this.form.class2Id);
               //
               // }
-              if(!validName(this.form.secondType)&&this.form.secondType!== ''){
+              if(/^[0-9]+$/.test(this.form.secondType*1)&&this.form.secondType!== ''){
                 this.getThirdList(this.form.secondType)
               }
             })
@@ -592,6 +595,7 @@
             // console.log(JSON.stringify(this.form));
             this.$refs[formName].validate((valid) => {
               if(valid){
+
                 let data = {
                   id: '',
                   productName:this.form.productName,
@@ -603,9 +607,10 @@
                   imagesList : this.form.imagesList,
                   describes: this.form.describes,
                 };
-                if( typeof(data.class3Id*1) !== Number ){
-                  data.class3Id = this.thirdName ;
-                }
+
+            if( !/^[0-9]+$/.test(data.class3Id*1) ){
+              data.class3Id = this.thirdName*1 ;
+            }
                 // data = JSON.stringify(data);
                 // console.log(data,this.form);
                 newGoogds(data,this.user).then( res => {
@@ -629,24 +634,24 @@
           },
           createEditor(){
 
-            this.editor = new E('#wangeditor')        //创建富文本实例
+            this.editor = new E('#wangeditor') ;       //创建富文本实例
 
 
             this.editor.customConfig.onchange = (html) => {
               this.form.describes = html ;
               // this.catchData(html)  //把这个html通过catchData的方法传入父组件
-            }
-            this.editor.customConfig.uploadImgServer = this.dataInterface.editorUpImgUrl
-            this.editor.customConfig.uploadFileName = 'sourcePic'
+            };
+            this.editor.customConfig.uploadImgServer = this.dataInterface.editorUpImgUrl;
+            this.editor.customConfig.uploadFileName = 'sourcePic';
             this.editor.customConfig.showLinkImg = false;
             this.editor.customConfig.uploadImgMaxLength = 10;
             this.editor.customConfig.uploadImgHeaders = {
               'ContentType': 'application/json',
               'yb-tryout-merchant-token':this.token    //头部token
-            }
+            };
             this.editor.customConfig.uploadImgParams = {
               token : 'abcdef12345'
-            }
+            };
             this.editor.customConfig.menus = [          //菜单配置
               'head',
               'list',  // 列表
@@ -665,7 +670,7 @@
               'video',  // 插入视频
               'undo',  // 撤销
               'redo'  // 重复
-            ]
+            ];
             this.editor.customConfig.uploadImgHooks = {
               before: function (xhr, editor, files) {
               },
@@ -686,7 +691,7 @@
 
               customInsert: function (insertImg, result, editor) {
 
-                let url = Object.values(result.data.filePath)      //result.data就是服务器返回的图片名字和链接
+                let url = Object.values(result.data.filePath);      //result.data就是服务器返回的图片名字和链接
 
                 result.data.filePath.map( i => {
                   // let url = Object.values(i)      //result.data就是服务器返回的图片名字和链接
@@ -696,18 +701,28 @@
 
               },
 
-            }
+            };
             this.editor.customConfig.linkImgCallback = function (url) {
               // console.log(url);
-            }
+            };
 
             this.editor.create()
 
           },
+          getPlatform(type){
+            if(type === '1'){
+              this.taoVisible=true;
+              this.platformType='淘宝';
+              this.platformTitle = '获取淘宝商品信息';
+            }else if( type === '2'){
+              this.taoVisible=true;
+              this.platformType='京东';
+              this.platformTitle = '获取京东商品信息';
 
+            }
+          },
           //获取淘宝商品详情
-          getTaoInfo(url){
-            let that = this ;
+          getLinkInfo(url){
             if(url === ''){
               this.$message({
                 message: '请输入商品链接！',
@@ -715,125 +730,164 @@
                 type: 'error'
               });
             }else{
-              var startIndex = url.indexOf("&id=");
-              if (startIndex < 0) {
-                startIndex = url.indexOf("?id=");
-              }
-              if (startIndex < 0) {
-                this.taoLink = '';
-                this.$message({
-                  message: '您输入的商品链接有误，请重新输入！',
-                  center: true,
-                  type: 'error'
-                });
-                return;
-              }
-              var endIndex = url.indexOf("&", startIndex + 1);
-              if (endIndex < 0) {
-                endIndex = url.length;
-              }
-              if (endIndex < 0) {
-                this.taoLink = '';
-                this.$message({
-                  message: '您输入的商品链接有误，请重新输入！',
-                  center: true,
-                  type: 'error'
-                });
-                return;
-              }
-              var productId = '';
-              productId = url.substring(startIndex + 4, endIndex);
-              if (productId.length <= 0) {
-                this.$message({
-                  message: '您输入的商品链接有误，请重新输入！',
-                  center: true,
-                  type: 'error'
-                });
-                this.taoLink = '';
-                return;
-              }
-              // console.log(productId);
-              if( productId!== '' ){
+              if(this.platformType ==='京东'){
+                if(url.indexOf('item.jd.com') !== -1){
+                  this.getJDLink(url);
 
-                let _this = this ;
-                $.ajax({
-                  url: "https://acs.m.taobao.com/h5/mtop.taobao.detail.getdetail/6.0/?data=%7B%22itemNumId%22%3A%22" + productId + "%22%7D&qq-pf-to=pcqq.group",
-                  dataType: 'jsonp',
-                  type: 'get',
-                  contentType: 'application/json',
-                  success: function (data) {
-                    // var productBase = data;
-                    var params = {
-                      "productId": productId,
-                      "productBaseMap": data
-                    };
-                    // console.log(params)
-                    params = JSON.stringify(params);
-                    that.getDetail(params);
-                  },
-                  error: function(err){
-                    // console.log(err);
-                  }
-                });
+                }else{
+                  this.$message({
+                    message : '请输入对应平台的正确链接',
+                    center : true ,
+                    type : 'error'
+                  });
+                  this.taoLink = '';
 
-
+                }
+              }else if(this.platformType === '淘宝'){
+                this.getTaoLink(url);
               }
             }
           },
+          //请求京东商品信息
+          getJDLink(url){
+            this.formInit();
+            getJD(url).then( res => {
+              if(res.data.status === '000000000'){
+                this.taoLink = '';
+                // console.log(res);
+                this.getGoodsInfo(res.data.data);
+              }
+            })
+          },
+          //请求淘宝商品信息
+          getTaoLink(url){
+            let that = this ;
+            let startIndex = url.indexOf("&id=");
+            if (startIndex < 0) {
+              startIndex = url.indexOf("?id=");
+            }
+            if (startIndex < 0) {
+              this.taoLink = '';
+              this.$message({
+                message: '您输入的商品链接有误，请重新输入！',
+                center: true,
+                type: 'error'
+              });
+              return;
+            }
+            let endIndex = url.indexOf("&", startIndex + 1);
+            if (endIndex < 0) {
+              endIndex = url.length;
+            }
+            if (endIndex < 0) {
+              this.taoLink = '';
+              this.$message({
+                message: '您输入的商品链接有误，请重新输入！',
+                center: true,
+                type: 'error'
+              });
+              return;
+            }
+            let productId = '';
+            productId = url.substring(startIndex + 4, endIndex);
+            if (productId.length <= 0) {
+              this.$message({
+                message: '您输入的商品链接有误，请重新输入！',
+                center: true,
+                type: 'error'
+              });
+              this.taoLink = '';
+              return;
+            }
+            // console.log(productId);
+            if( productId!== '' ){
+
+              let _this = this ;
+              $.ajax({
+                url: "https://acs.m.taobao.com/h5/mtop.taobao.detail.getdetail/6.0/?data=%7B%22itemNumId%22%3A%22" + productId + "%22%7D&qq-pf-to=pcqq.group",
+                dataType: 'jsonp',
+                type: 'get',
+                contentType: 'application/json',
+                success: function (data) {
+                  // var productBase = data;
+                  let params = {
+                    "productId": productId,
+                    "productBaseMap": data
+                  };
+                  // console.log(params)
+                  params = JSON.stringify(params);
+                  that.getDetail(params);
+                },
+                error: function(err){
+                  // console.log(err);
+                }
+              });
+
+
+            }
+          },
           getDetail(params){
+            this.formInit();
+            getTao(params).then( res => {
+              // console.log(res);
+              if(res.data.status === '000000000'){
+                this.taoLink = '';
+                this.getGoodsInfo(res.data.data);
+              }
+
+            })
+          },
+          //清除表单已有数据
+          formInit(){
             this.form.describe = '';
             this.editor.txt.html('');
             this.form.imagesList = [{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''}];
             this.form.productName = '';
             this.form.ybProductItemReqDto = [{ size: '', color : '', stock: ''}];
-            getTao(params).then( res => {
-              // console.log(res);
-              this.taoLink = '';
+          },
+          //通过链接获取信息
+          getGoodsInfo(value){
+            if(value.sizeColor!== undefined){
+              let sizeLength = value.sizeColor.length ;
+              if(sizeLength> 0){
+                if(sizeLength< 10){
+                  this.form.ybProductItemReqDto = value.sizeColor ;
 
-              if(res.data.data.sizeColor!== undefined){
-                let sizeLength = res.data.data.sizeColor.length ;
-                if(sizeLength> 0){
-                  if(sizeLength< 10){
-                    this.form.ybProductItemReqDto = res.data.data.sizeColor ;
-
-                  }else{
-                    this.form.ybProductItemReqDto = res.data.data.sizeColor.slice(0,10) ;
-
-                  }
+                }else{
+                  this.form.ybProductItemReqDto = value.sizeColor.slice(0,10) ;
 
                 }
-              };
-              if( res.data.data.productName!==''){
-                this.form.productName = res.data.data.productName ;
 
               }
-              if(res.data.data.showImages!== null &&res.data.data.showImages.length > 0){
-                this.form.imagesList = [];
-                res.data.data.showImages.map( i => {
-                  this.form.imagesList.push({ id: '', imgUrl:i })
-                })
-                // this.form.imagesList = res.data.data.showImages ;
-                if(this.form.imagesList.length < 5){
-                  if(this.form.imagesList.length === 0){
-                    this.form.imagesList =   [{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''}]
+            }
+            if( value.productName!==''){
+              this.form.productName = value.productName ;
 
-                  }else {
-                    for(let i = this.form.imagesList.length ; i< 5;i++){
-                      this.form.imagesList.push({ id: '', imgUrl:''});
-                    }
+            }
+            if(value.showImages!== null &&value.showImages.length > 0){
+              this.form.imagesList = [];
+              value.showImages.map( i => {
+                this.form.imagesList.push({ id: '', imgUrl:i })
+              });
+              // this.form.imagesList = value.showImages ;
+              if(this.form.imagesList.length < 5){
+                if(this.form.imagesList.length === 0){
+                  this.form.imagesList =   [{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''}]
+
+                }else {
+                  for(let i = this.form.imagesList.length ; i< 5;i++){
+                    this.form.imagesList.push({ id: '', imgUrl:''});
                   }
-                };
+                }
               }
-
-              if(res.data.data.detailImages!== undefined &&res.data.data.detailImages.length > 0){
-                this.form.describes = res.data.data.detailImages ;
-                res.data.data.detailImages.map( i => {
-                  this.editor.uploadImg.insertLinkImg(i)
-                })
-              }
-              this.taoVisible = false;
-
-            })
+            }
+            if(value.detailImages!== undefined &&value.detailImages.length > 0){
+              this.form.describes = value.detailImages ;
+              value.detailImages.map( i => {
+                this.editor.uploadImg.insertLinkImg(i)
+              })
+            }
+            this.taoVisible = false;
           },
           beforeClose(){
             this.taoLink ='';
@@ -841,12 +895,12 @@
 
           },
           goBond(){
-            this.$router.push({ name : 'MerchantCenter-home',params: { 'step3' : true}})
+            this.$router.push('/merchantCenter/userCenter/bond')
           },
 
         //  跳转到申请店铺
           applyShop(){
-            this.$router.push('/merchantCenter/userCenter/openShop')
+            this.$router.push('/merchantCenter/userCenter/bond')
           },
           handleSizeChange(val) {
             this.radio = '';

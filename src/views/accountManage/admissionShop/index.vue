@@ -5,7 +5,7 @@
         <span>适合个人、个体户入驻，提供身份证即可入驻</span>
         <span class="blank" ></span>
         <span class="blank" ></span>
-        <el-button type="warning" @click="goPersonal">马上入驻</el-button>
+        <el-button type="danger" @click="goPersonal">马上入驻</el-button>
       </div>
       <div class="enterPriseAdd">
         <p class="title">企业入驻</p>
@@ -14,7 +14,7 @@
           <el-radio v-for="(item,index) in typeList" :label="item.value" :key="index">{{ item.name }}</el-radio>
         </el-radio-group>
         <el-button class="typeBtn" type="text" @click="dialogVisible = true ;">店铺类型说明</el-button>
-        <el-button type="warning" @click="goEnterPrise">马上入驻</el-button>
+        <el-button type="danger" @click="goEnterPrise">马上入驻</el-button>
       </div>
       <el-dialog title="店铺类型说明" :visible.sync="dialogVisible" width="60%" center>
         <div class="dialog_content">
@@ -66,32 +66,66 @@
               ],
               shopType: '0',
               dialogVisible: false ,
+              goRegister : false,
             }
         },
         mounted() {
-          let status = this.$route.query.checkStatus;
-          if(status !== undefined){
-            if(status !== '0'){
-              if(status === '3'){
-                this.$router.push('/accountManage/admission/admissionShop/failAdd')
-
-              }
-              if(status === '1'){
-                this.$router.push('/accountManage/admission/admissionShop/successAdd?checking=1')
-
-              }
-            }
-          }
+          this.goOther();
 
         },
         methods: {
+          getUserInfo() {
+            getApprovedStatus().then( res => {
+              if(res.data.status === '000000000'){
+                if(res.data.data.status === '0'){
+                  this.$router.push({ name : 'AdmissionShop'})
 
+                }
+                if(res.data.data.status === '1'){
+                  this.$router.push( '/accountManage/admission/admissionShop/index?checkStatus=1')
+                }
+                if(res.data.data.status === '3'){
+                  this.$router.push( '/admissionShop/failAdd')
+                }
+              }
+            })
+          },
+
+          goOther(){
+            let status = this.$route.query.checkStatus;
+            if(status !== undefined){
+              if(status !== '0'){
+                if(status === '3'){
+                  this.$router.push('/accountManage/admission/admissionShop/failAdd')
+
+                }
+                if(status === '1'){
+                  this.$router.push('/accountManage/admission/admissionShop/successAdd')
+
+                }
+              }else{
+                  this.goRegister = true ;
+              }
+            }else{
+              this.goRegister = true ;
+
+            }
+          },
           goPersonal(){
-            this.$router.push('/accountManage/admission/admissionShop/personal')
+            this.goOther();
+            if(this.goRegister){
+              this.$router.push('/accountManage/admission/admissionShop/personal')
+
+            }
+
           },
           goEnterPrise(){
-            this.$store.commit('shopType',this.shopType);
-            this.$router.push('/accountManage/admission/admissionShop/enterprise?type='+this.shopType);
+            this.goOther();
+            if(this.goRegister){
+              this.$store.commit('shopType',this.shopType);
+              this.$router.push('/accountManage/admission/admissionShop/enterprise?type='+this.shopType);
+            }
+
 
           },
 

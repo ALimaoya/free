@@ -313,11 +313,30 @@
         },
         //新增商品
         newGoods(){
-          this.$router.push('/merchantCenter/goods/newGoods')
+          if(this.tableData.length>=10 && this.limit === true){
+            this.$message({
+              message : '您还未缴纳保证金，成功缴纳保证金后即可发布更多商品，请前往缴纳保证金吧',
+              center : true ,
+              type : 'error'
+            })
+          }else{
+            this.$router.push('/merchantCenter/goods/newGoods')
+
+          }
 
         },
         copyGoods(index,id){
-          this.$router.push('/merchantCenter/goods/newGoods?order='+id);
+          if(this.tableData.length>=10 && this.limit === true){
+            this.$message({
+              message : '您还未缴纳保证金，成功缴纳保证金后即可发布更多商品，请前往缴纳保证金吧',
+              center : true ,
+              type : 'error'
+            })
+          }else{
+            this.$router.push('/merchantCenter/goods/newGoods?order='+id);
+
+
+          }
 
         },
         handleSizeChange(val) {

@@ -50,14 +50,29 @@
 
                 if(res.data.data.status !== '0'){
                   if(res.data.data.status === '3'){
-                    this.$router.push('/accountManage/admission/admissionShop/failAdd');
+                    // this.$router.push('/accountManage/admission/admissionShop/failAdd');
                     getRegisterInfo().then( res => {
                       if( res.data.status === '000000000'){
                         let data1 =  res.data.data.merchantAptitudeDto ;
                         let data2 = res.data.data.merchantShopResDto ;
-                        let data3 = res.data.data.merchantBrandinfoResDtoList;
-                        let form = { ...data2,...data1,...data3 };
-                        this.$store.commit('addForm',form);
+                        let merchantBrandinfoReqDtos = res.data.data.merchantBrandinfoResDtoList;
+                        let form = { ...data2,...data1 };
+                        form['merchantBrandinfoReqDtos'] = merchantBrandinfoReqDtos;
+                        // console.log(form);
+                        let listId = [];
+                        if(res.data.data.merchantBrandinfoResDtoList !== null ){
+                          res.data.data.merchantBrandinfoResDtoList.map( i => {
+                            listId.push(i.id);
+                          });
+                        }
+                        let editorId = {
+                          id1  : res.data.data.merchantAptitudeDto.id ,
+                          id2 : res.data.data.merchantShopResDto.id,
+                        };
+                        this.$store.commit('addForm2',form);
+                        this.$store.commit('addEditorId',editorId);
+                        this.$store.commit('addListId',listId);
+                        // this.$store.commit('addMerchantBrand',merchantBrandinfoReqDtos);
                         this.editorDetail = 1 ;
 
                       }

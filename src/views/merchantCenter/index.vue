@@ -2,7 +2,11 @@
     <div class="merchantCenterHome">
       <div class="mainInfo">
         <div class="userInfo" @click="goShopInfo">
-          <div v-if="shopObj.ybMerchantShopDto!== undefined"><img :src="imageDomain + shopObj.ybMerchantShopDto.logoImage" /><dl><dd>{{ shopObj.ybMerchantShopDto.name }}</dd><dt>主营类目：{{shopObj.ybMerchantShopDto.mainBusiness }}</dt></dl></div>
+          <div v-if="shopObj.ybMerchantShopDto!== undefined">
+            <img v-if="shopObj.ybMerchantShopDto.logoImage !== undefined || shopObj.ybMerchantShopDto.logoImage !== ''" :src="imageDomain + shopObj.ybMerchantShopDto.logoImage" :onerror="errorImg">
+            <img :src="failImg"  v-else>
+
+            <dl><dd>{{ shopObj.ybMerchantShopDto.name }}</dd><dt>主营类目：{{ mainType }}</dt></dl></div>
           <ul>
             <li><span>描述相符</span><span class="tips_warn">5.0</span></li>
             <li><span>服务态度</span><span class="tips_warn">5.0</span></li>
@@ -10,12 +14,12 @@
           </ul>
         </div>
         <ul class="flowDetail" >
-          <li @click="goTransition"><span><img src="../../assets/imgs/home1.png" alt="" /></span><span>今日成交金额</span><span class="tips_warn">{{ shopObj.todayTurnover}}</span></li>
-          <li @click="goTransition"><span><img src="../../assets/imgs/home2.png" alt="" /></span><span>近20天出货量</span><span class="tips_warn">{{ shopObj.deliverNum}}</span></li>
-          <li @click="goTransition"><span><img src="../../assets/imgs/home3.png" alt="" /></span><span>近20天成交金额</span><span class="tips_warn">{{ shopObj.turnover}}</span></li>
-          <li><span><img src="../../assets/imgs/home4.png" alt="" /></span><span>今日访客数</span><span class="tips_warn">1312321</span></li>
-          <li><span><img src="../../assets/imgs/home5.png" alt="" /></span><span>今日浏览量</span><span class="tips_warn">423422</span></li>
-          <li></li>
+          <li @click="goTransition"><span><img src="../../assets/imgs/home1.png" alt="" /></span><span>今日成交金额</span><span class="tips_warn">{{ shopObj.todayTurnover}}元</span></li>
+          <li @click="goTransition"><span><img src="../../assets/imgs/home2.png" alt="" /></span><span>近20天出货量</span><span class="tips_warn">{{ shopObj.deliverNum}}单</span></li>
+          <li @click="goTransition"><span><img src="../../assets/imgs/home3.png" alt="" /></span><span>近20天成交金额</span><span class="tips_warn">{{ shopObj.turnover}}元</span></li>
+          <!--<li><span><img src="../../assets/imgs/home4.png" alt="" /></span><span>今日访客数</span><span class="tips_warn">1312321</span></li>-->
+          <!--<li><span><img src="../../assets/imgs/home5.png" alt="" /></span><span>今日浏览量</span><span class="tips_warn">423422</span></li>-->
+          <!--<li></li>-->
         </ul>
       </div>
       <div class="manage_wrap">
@@ -71,7 +75,9 @@
 <script>
   import echarts from 'echarts'
   import { getShopInfo, getSaleNum,getApprovedStatus } from "@/api/userCenter"
-    export default {
+  import userPhoto from '@/assets/404_images/fail.png'
+  import { firstList } from "@/api/merchant"
+  export default {
         name: "merchantCenter-home",
         data() {
             return {
@@ -93,6 +99,9 @@
               shopPass: '0',
               shopObj: {},
               imageDomain : process.env.IMAGE_DOMAIN ,
+              errorImg:'this.src="' + userPhoto + '"',
+              failImg: userPhoto,
+              mainType : ''
             }
         },
         mounted() {
@@ -128,13 +137,22 @@
                     duration : 1500
                   });
                   setTimeout(() => {
-                    this.$router.push('/accountManage/admission/admissionShop/index?checkStatus='+this.shopPass)
+                    if(this.shopPass ==='1'){
+                      this.$router.push('/accountManage/admission/admissionShop/successAdd')
+
+                    }else if( this.shopPass === '3'){
+                      this.$router.push('/accountManage/admission/admissionShop/failAdd');
+                    }else if( this.shopPass === '0'){
+                      this.$router.push('/accountManage/admission/admissionShop/index')
+
+                    }
 
                   },2000)
                 }else{
                   getShopInfo().then( res => {
                     if(res.data.status === '000000000'){
                       this.shopObj = res.data.data ;
+                      this.getMainType();
                       this.getType('1');
 
                     }
@@ -144,6 +162,15 @@
               }
             });
 
+          },
+          getMainType(){
+            firstList().then(res=> {
+              res.data.data.map( i => {
+                if(i.id == this.shopObj.ybMerchantShopDto.mainBusiness ){
+                  this.mainType = i.name
+                }
+              });
+            })
           },
           getType(type){
 
@@ -360,7 +387,7 @@
         flex: 1 ;
         li{
           width: 33.33% ;
-          height : 1.75rem ;
+          /*height : 1.75rem ;*/
           display: flex;
           flex-direction: column;
           border-left: 1px solid #dcdfe6;
@@ -368,17 +395,24 @@
           padding : 0.15rem ;
 
           span{
-            display: inline-block;
+            display: flex;
             width: 100%;
             font-size : 0.26rem ;
             color : #333 ;
-            line-height : 0.4rem ;
+            line-height : 2 ;
             text-align: center ;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
           }
           span:nth-child(1){
             height : 40% ;
+            align-items: center;
             img{
               width : 15% ;
+              margin : auto ;
+              display: block;
+
 
             }
           }

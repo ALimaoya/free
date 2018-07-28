@@ -26,7 +26,7 @@
           <!-- <template v-for="(item index) in form.thirdShopUrl" > -->
             <span>{{ form.thirdShopUrl[0].platformName }}</span>
             <span style="margin-left:10px">{{ form.thirdShopUrl[0].url }}</span>
-            <el-button type="primary" round style="padding:2px 15px;margin-left:10px" @click="dialogVisible=true;">修改</el-button>
+            <el-button type="primary" size="mini" @click="dialogVisible=true;">修改</el-button>
           <!-- </template> -->
         </div>
       </el-form-item>
@@ -178,7 +178,7 @@
         token : getToken() ,
         goodsImgWarn: false,
         dialogVisible: false ,
-        
+
         platForm : [
           {
             name : '淘宝',
@@ -231,7 +231,7 @@
     },
     mounted() {
       this.getInfo();
-      
+
     },
     methods: {
       //  获取主营类目列表
@@ -279,7 +279,7 @@
           getPlatformType(item){
             // for(let i = 0; i<this.platForm.length;i++){
             //   if(this.platForm[i].id === item){
-            //     this.platformTypeName = this.platForm[i].name 
+            //     this.platformTypeName = this.platForm[i].name
             //     console.log(this.platformTypeName)
             //   }
             // }

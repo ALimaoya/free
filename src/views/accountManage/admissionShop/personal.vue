@@ -60,7 +60,12 @@
                         let data1 =  res.data.data.merchantAptitudeDto ;
                         let data2 = res.data.data.merchantShopResDto ;
                         let form = { ...data2,...data1};
+                        let editorId = {
+                           id1  : res.data.data.merchantAptitudeDto.id ,
+                           id2 : res.data.data.merchantShopResDto.id
+                        };
                         this.$store.commit('addForm',form);
+                        this.$store.commit('addEditorId',editorId);
                         this.editorDetail = 1 ;
 
                       }

@@ -41,10 +41,10 @@
 
               }
               if(res.data.data.status === '1'){
-                this.$router.push( '/accountManage/admission/admissionShop/index?checkStatus=1')
+                this.$router.push( '/accountManage/admission/admissionShop/successAdd')
               }
               if(res.data.data.status === '3'){
-                this.$router.push( '/admissionShop/failAdd')
+                this.$router.push( '/accountManage/admission/admissionShop/failAdd')
               }
             }
           })
