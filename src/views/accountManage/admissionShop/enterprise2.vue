@@ -33,7 +33,7 @@
           <el-input class="inputInfo" size="small" :maxlength="40" v-model.trim="form.enterpriseName" :disabled="readOnly" placeholder="请输入公司名称"></el-input>
         </el-form-item>
         <el-form-item v-if="form.companyAddress !== undefined" :labelWidth="labelWidth" label="公司经营地址：" prop="companyAddress">
-          <el-select v-model="form.companyAddress.province" clearable placeholder="请选择" size="mini">
+          <el-select v-if="form.companyAddress !== undefined" v-model="form.companyAddress.province" clearable placeholder="请选择" size="mini">
             <el-option
               v-for="item in provinceList"
               :key="item"
@@ -418,8 +418,6 @@
             };
 
 
-          }else{
-            // this.form.companyAddress = this.$store.state.shopInfo.enterForm2.companyAddress ;
           }
 
           if(typeof(this.form.thirdShopUrl) === 'string'&&this.form.thirdShopUrl !== null&&this.form.thirdShopUrl !== ''){

@@ -114,8 +114,10 @@
               imgType: [],
               tableData: [],
               dialogVisible: false ,
-              resultType: ['审核通过','审核拒绝']
-            }
+              resultType: ['审核通过','审核拒绝'],
+              registerType : ['旗舰店','专卖店','专营店','']
+
+        }
         },
         mounted() {
           this.getInfo() ;

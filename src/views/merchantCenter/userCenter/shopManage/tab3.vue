@@ -18,7 +18,7 @@
         </el-tooltip>
       </el-form-item>
       <el-form-item   labelWidth="180px"  label="第三方平台店铺：">
-        <div v-if="form.thirdShopUrl === '' || form.thirdShopUrl===null">
+        <div v-if="form.thirdShopUrl === ''|| form.thirdShopUrl===null|| form.thirdShopUrl !== undefined">
           <span>无</span>
           <el-button size="small" type="text" @click="dialogVisible=true;">添加第三方平台店铺链接</el-button>
         </div>
@@ -40,7 +40,7 @@
         <span class="imgWarn tips_warn" v-if="goodsImgWarn">请上传店铺LOGO</span>
       </el-form-item>
       <el-form-item   labelWidth="180px"  label="店铺详情：" prop="describes">
-        <el-input class="inputInfo" type="textarea" :rows="4" size="small" v-model.trim="form.describes" placeholder=""></el-input>
+        <el-input class="inputInfo" type="textarea" :rows="4" size="small" :maxlength="200" v-model.trim="form.describes" placeholder=""></el-input>
       </el-form-item>
       <el-form-item   labelWidth="180px"  label="店铺管理人姓名：" prop="name">
         <el-input class="inputInfo telInput" :maxlength="4" size="small" v-model.trim="form.name" placeholder="请输入店铺管理人姓名"></el-input>
@@ -56,7 +56,7 @@
         <el-input class="inputInfo telInput" :maxlength="4" size="small" v-model.trim="form.legalRepName" placeholder="请输入法定代表人姓名"></el-input>
       </el-form-item>
       <el-form-item   labelWidth="180px"  label="法定代表人手机号：" prop="legalRepMobile">
-        <el-input class="inputInfo telInput" size="small" v-model.trim="form.legalRepMobile" placeholder="请输入法定代表人手机号"></el-input>
+        <el-input class="inputInfo telInput" size="small" :maxlength="11" v-model.tel="form.legalRepMobile" placeholder="请输入法定代表人手机号"></el-input>
       </el-form-item>
       <el-form-item class="ruleDetail">
         <el-checkbox class="inputInfo"  size="small" v-model.trim="agree"></el-checkbox>
@@ -76,7 +76,7 @@
             :value="item.name">
           </el-option>
         </el-select>
-        <el-input type="text" size="small" v-model.trim="shopLink" placeholder="请输入第三方店铺链接"></el-input>
+        <el-input type="text" size="small" :maxlength="200" v-model.trim="shopLink" placeholder="请输入第三方店铺链接"></el-input>
       </div>
       <div slot="footer" class="dialog-footer" >
         <el-button type="primary" size="mini" @click="confirm(shopLink)">确定</el-button>
@@ -89,7 +89,7 @@
 <script>
   import { firstList } from "@/api/merchant"
   import { uploadImage  } from "@/api/activity"
-  import { getToken } from '@/utils/auth'
+  import { getToken , getMobile } from '@/utils/auth'
   import  { validatePhone , validateZipCode,validateURL,validateEmail} from '@/utils/validate';
   import { getBasicInfo,editorBasicInfo } from "@/api/userCenter"
 
@@ -235,24 +235,37 @@
     },
     methods: {
       //  获取主营类目列表
+
       getTypeList(){
-        firstList().then(res=> {
-          this.shopTypeList = res.data.data
-          for(let i = 0;i<this.shopTypeList.length;i++){
-            if(this.shopTypeList[i].id == this.form.mainBusiness){
-              this.shopTypeName = this.shopTypeList[i].name
+        if(!/^[0-9]+$/.test(this.form.mainBusiness*1)){
+          this.shopTypeName = this.form.mainBusiness ;
+        }else{
+          firstList().then(res=> {
+            this.shopTypeList = res.data.data;
+            for(let i = 0;i<this.shopTypeList.length;i++){
+              if(this.shopTypeList[i].id == this.form.mainBusiness){
+                this.shopTypeName = this.shopTypeList[i].name
+              }
             }
-          }
-        })
+          })
+
+        }
       },
 
       getInfo(){
         getBasicInfo().then( res => {
           if( res.data.status === '000000000'){
             this.form = res.data.data ;
-            this.form.thirdShopUrl = JSON.parse(res.data.data.thirdShopUrl)
-            this.platformType = this.form.thirdShopUrl[0].platformName
-            this.shopLink = this.form.thirdShopUrl[0].url
+            if(this.form.thirdShopUrl !== null && this.form.thirdShopUrl !== undefined&& this.form.thirdShopUrl !== ''){
+              this.form.thirdShopUrl = JSON.parse(res.data.data.thirdShopUrl);
+              this.platformType = this.form.thirdShopUrl[0].platformName;
+              this.shopLink = this.form.thirdShopUrl[0].url;
+
+            }
+            if( this.form.mobile === null ){
+              this.form.mobile = getMobile()
+            }
+
             this.getTypeList();
           }
         })
@@ -266,12 +279,9 @@
             type : 'error'
           })
         }else{
-          let arr = []
-          let obj = {}
-          obj['platformName'] = this.platformType;
-          obj['url'] = this.shopLink;
-          arr.push(obj)
-          this.form.thirdShopUrl = arr
+          let arr = [];
+          arr.push({ platformName :this.platformType , url : this.shopLink  });
+          this.form.thirdShopUrl = arr;
           this.dialogVisible = false ;
         }
       },
@@ -338,26 +348,29 @@
         }
         this.$refs[formName].validate((valid) => {
 
-          if(valid&&!this.goodsImgWarn&&this.agree){
-            let newForm = Object.assign({}, this.form)
-            newForm.thirdShopUrl = JSON.stringify(this.form.thirdShopUrl)
-            editorBasicInfo(newForm).then( res => {
-              if(res.data.status === '000000000'){
-                this.$message({
-                  message : '您修改的基本信息已成功提交，请稍后核对',
-                  center : true ,
-                  type : 'success'
-                })
-              }
-            })
-          }else{
+          if(valid&&!this.goodsImgWarn){
             if(!this.agree){
               this.$message({
                 message : '请先阅读并勾选声明',
                 type: 'error',
                 center : true
               })
+            }else{
+              let newForm = Object.assign({}, this.form);
+              newForm.thirdShopUrl = JSON.stringify(this.form.thirdShopUrl);
+              editorBasicInfo(newForm).then( res => {
+                if(res.data.status === '000000000'){
+                  this.$message({
+                    message : '您修改的基本信息已成功提交，请稍后核对',
+                    center : true ,
+                    type : 'success'
+                  })
+                }
+              })
             }
+
+          }else{
+
           }
         })
       }

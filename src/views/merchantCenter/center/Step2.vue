@@ -36,9 +36,7 @@
           }
         };
           return {
-            form : {
-
-            },
+            form : {},
             readOnly : true,
             message : '发送验证码',
             disabled : false,

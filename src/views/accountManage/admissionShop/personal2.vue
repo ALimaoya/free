@@ -86,7 +86,7 @@
       </el-dialog>
       <el-dialog title="丫贝网合作协议" :visible.sync="readRule" width="60%" center>
         <div class="wrap">
-          <img class="ruleImg" src="../../../assets/imgs/logo.png" />
+          <img class="ruleImg" src="../../../assets/imgs/register.png" />
           <div slot="footer" class="dialog-footer">
             <el-button type="danger" @click="readRule = false;">我知道了</el-button>
           </div>
