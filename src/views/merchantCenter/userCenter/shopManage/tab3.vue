@@ -9,17 +9,26 @@
         <div class="inputInfo">企业入驻</div>
       </el-form-item>
       <el-form-item  labelWidth="180px" label="主营类目：" >
-        <div class="inputInfo">{{ form.mainBusiness }}</div>
+        <div class="inputInfo">{{ shopTypeName }}</div>
       </el-form-item>
       <el-form-item   labelWidth="180px"  label="招商对接联系方式：">
-        <el-button size="small" type="text">查看</el-button>
+        <el-tooltip placement="right"  effect="light">
+          <div slot="content">400-999-7860</div>
+          <el-button size="small" type="text">查看</el-button>
+        </el-tooltip>
       </el-form-item>
       <el-form-item   labelWidth="180px"  label="第三方平台店铺：">
-        <div v-if="form.thirdShopUrl === ''">
+        <div v-if="form.thirdShopUrl === '' || form.thirdShopUrl===null">
           <span>无</span>
           <el-button size="small" type="text" @click="dialogVisible=true;">添加第三方平台店铺链接</el-button>
         </div>
-        <div v-else>{{ form.thirdShopUrl }}<el-button type="primary" round style="padding:2px 15px;margin-left:10px" @click="dialogVisible=true;">修改</el-button></div>
+        <div v-else>
+          <!-- <template v-for="(item index) in form.thirdShopUrl" > -->
+            <span>{{ form.thirdShopUrl[0].platformName }}</span>
+            <span style="margin-left:10px">{{ form.thirdShopUrl[0].url }}</span>
+            <el-button type="primary" round style="padding:2px 15px;margin-left:10px" @click="dialogVisible=true;">修改</el-button>
+          <!-- </template> -->
+        </div>
       </el-form-item>
       <el-form-item labelWidth="180px" label="店铺LOGO：" prop="logoImage">
         <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logoImage"
@@ -59,12 +68,12 @@
     </el-form>
     <el-dialog title="添加第三方平台店铺" :visible.sync="dialogVisible" width="50%" center >
       <div class="dialog_content">
-        <el-select class="search" v-model="form.platformType" placeholder="请选择第三方平台" size="small"  @change="getPlatformType(form.platformType)">
+        <el-select class="search" v-model="platformType" placeholder="请选择第三方平台" size="small"  @change="getPlatformType(platformType)">
           <el-option
             v-for="(item ,index) in platForm"
             :key="index"
             :label="item.name"
-            :value="item.id">
+            :value="item.name">
           </el-option>
         </el-select>
         <el-input type="text" size="small" v-model.trim="shopLink" placeholder="请输入第三方店铺链接"></el-input>
@@ -78,6 +87,7 @@
 </template>
 
 <script>
+  import { firstList } from "@/api/merchant"
   import { uploadImage  } from "@/api/activity"
   import { getToken } from '@/utils/auth'
   import  { validatePhone , validateZipCode,validateURL,validateEmail} from '@/utils/validate';
@@ -110,8 +120,12 @@
         form : {
           shopName: '',
           shopType: '',
-          platformType: '',
-          thirdShopUrl: '',
+          thirdShopUrl: [
+            {
+              platformName:'',
+              url:''
+            }
+          ],
           mainBusiness: '',
           logoImage : '',
           describes: '',
@@ -121,6 +135,8 @@
           legalRepMobile: '',
           legalRepName: ''
         },
+        platformType: '',
+        shopLink: '',
         platformTypeName:'',
         agree: false ,
         formRule: {
@@ -162,7 +178,7 @@
         token : getToken() ,
         goodsImgWarn: false,
         dialogVisible: false ,
-        shopLink: '',
+        
         platForm : [
           {
             name : '淘宝',
@@ -209,19 +225,35 @@
             id : '11'
           },
         ],
+        shopTypeList:'',
+        shopTypeName:''
       }
     },
     mounted() {
       this.getInfo();
-
+      
     },
     methods: {
+      //  获取主营类目列表
+      getTypeList(){
+        firstList().then(res=> {
+          this.shopTypeList = res.data.data
+          for(let i = 0;i<this.shopTypeList.length;i++){
+            if(this.shopTypeList[i].id == this.form.mainBusiness){
+              this.shopTypeName = this.shopTypeList[i].name
+            }
+          }
+        })
+      },
 
       getInfo(){
         getBasicInfo().then( res => {
-          console.log('res',res)
           if( res.data.status === '000000000'){
             this.form = res.data.data ;
+            this.form.thirdShopUrl = JSON.parse(res.data.data.thirdShopUrl)
+            this.platformType = this.form.thirdShopUrl[0].platformName
+            this.shopLink = this.form.thirdShopUrl[0].url
+            this.getTypeList();
           }
         })
       },
@@ -234,19 +266,23 @@
             type : 'error'
           })
         }else{
-          // this.form.thirdShopUrl = this.shopLink ;
-          this.form.thirdShopUrl =this.platformTypeName+':'+this.shopLink ;
+          let arr = []
+          let obj = {}
+          obj['platformName'] = this.platformType;
+          obj['url'] = this.shopLink;
+          arr.push(obj)
+          this.form.thirdShopUrl = arr
           this.dialogVisible = false ;
         }
       },
       //  选择平台
           getPlatformType(item){
-            for(let i = 0; i<this.platForm.length;i++){
-              if(this.platForm[i].id === item){
-                this.platformTypeName = this.platForm[i].name 
-                console.log(this.platformTypeName)
-              }
-            }
+            // for(let i = 0; i<this.platForm.length;i++){
+            //   if(this.platForm[i].id === item){
+            //     this.platformTypeName = this.platForm[i].name 
+            //     console.log(this.platformTypeName)
+            //   }
+            // }
           },
       //跳转修改手机号
       goChange(){
@@ -303,7 +339,9 @@
         this.$refs[formName].validate((valid) => {
 
           if(valid&&!this.goodsImgWarn&&this.agree){
-            editorBasicInfo(this.form).then( res => {
+            let newForm = Object.assign({}, this.form)
+            newForm.thirdShopUrl = JSON.stringify(this.form.thirdShopUrl)
+            editorBasicInfo(newForm).then( res => {
               if(res.data.status === '000000000'){
                 this.$message({
                   message : '您修改的基本信息已成功提交，请稍后核对',

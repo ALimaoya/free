@@ -23,16 +23,16 @@
         </div>
         <div class="infoWrap">
           <h2>类目资质</h2>
-          <el-form-item v-if="form.surveyReport !== ''|| form.surveyReport !== undefined" label="质检报告">
+          <el-form-item v-if="form.surveyReport !== ''|| form.surveyReport !== undefined" label="质检报告" labelWidth="200px">
             <img :src="imageDomain + form.surveyReport" />
           </el-form-item>
-          <el-form-item v-if="form.foodTradeLicence !== ''|| form.foodTradeLicence !== undefined" label="食品流通许可证">
+          <el-form-item v-if="form.foodTradeLicence !== ''|| form.foodTradeLicence !== undefined" label="食品流通许可证" labelWidth="200px">
             <img :src="imageDomain + form.foodTradeLicence" />
           </el-form-item>
-          <el-form-item v-if="form.drinkTradeLicence !== ''|| form.drinkTradeLicence !== undefined" label="酒类流通备案登记表">
+          <el-form-item v-if="form.drinkTradeLicence !== ''|| form.drinkTradeLicence !== undefined" label="酒类流通备案登记表" labelWidth="200px">
             <img :src="imageDomain + form.drinkTradeLicence" />
           </el-form-item>
-          <el-form-item v-if="form.businessImage !== ''|| form.businessImage !== undefined" label="营业执照">
+          <el-form-item v-if="form.businessImage !== ''|| form.businessImage !== undefined" label="营业执照" labelWidth="200px">
             <img :src="imageDomain + form.businessImage" />
           </el-form-item>
           <!--<el-form-item labelWidth="200px" :label="imgType[item.type]" v-for="(item,index) in form.imgList" :key="index">-->
@@ -42,16 +42,16 @@
               <!--<i v-else class="el-icon-plus avatar-uploader-icon"></i>-->
             <!--</el-upload>-->
           <!--</el-form-item>-->
-          <el-form-item  labelWidth="200px" label="营业执照有效期：" >
+          <el-form-item  labelWidth="200px" label="营业执照有效期：">
             <div class="inputInfo">{{ form.busLicenceDeadline }}</div>
           </el-form-item>
           <el-form-item  labelWidth="200px" label="营业执照编号：" >
             <div class="inputInfo">{{ form.socialCreditCode }}</div>
           </el-form-item>
-          <el-form-item v-if="form.paperTradeLicence !== ''|| form.paperTradeLicence !== undefined" label="出版物经营许可证">
+          <el-form-item v-if="form.paperTradeLicence !== ''|| form.paperTradeLicence !== undefined" label="出版物经营许可证" labelWidth="200px">
             <img :src="imageDomain + form.paperTradeLicence" />
           </el-form-item>
-          <el-form-item v-if="form.paperTradeDeadline !== ''||form.paperTradeDeadline !== undefined" labelWidth="200px" label="出版物经营许可证有效期：" >
+          <el-form-item v-if="form.paperTradeDeadline !== ''||form.paperTradeDeadline !== undefined" labelWidth="200px" label="出版物经营许可证有效期：">
             <div class="inputInfo">{{ form.paperTradeDeadline }}</div>
           </el-form-item>
         </div>
@@ -87,20 +87,20 @@
         <el-table :data="tableData" border fit>
           <el-table-column  label="审核结果">
             <template slot-scope="scope">
-              {{ resultType[scope.row.result]}}
+              {{ resultType[scope.row.approvalType]}}
             </template>
           </el-table-column>
-          <el-table-column prop="submitTime" label="提交时间" ></el-table-column>
+          <el-table-column prop="createTime" label="提交时间" ></el-table-column>
           <!--<el-table-column prop="changeModal" label="修改模块" ></el-table-column>-->
-          <el-table-column prop="checkTime" label="审核时间" ></el-table-column>
-          <el-table-column prop="checkView" label="审核意见" ></el-table-column>
+          <el-table-column prop="updateTime" label="审核时间" ></el-table-column>
+          <el-table-column prop="reason" label="审核意见" ></el-table-column>
         </el-table>
       </el-dialog>
     </div>
 </template>
 
 <script>
-  import { getAptitudeInfo } from "@/api/userCenter"
+  import { getAptitudeInfo ,getApproveList} from "@/api/userCenter"
   import ElFormItem from "element-ui/packages/form/src/form-item";
     export default {
       components: {ElFormItem},
@@ -114,26 +114,37 @@
               imgType: [],
               tableData: [],
               dialogVisible: false ,
-              resultType: ['','审核通过','审核拒绝']
+              resultType: ['审核通过','审核拒绝']
             }
         },
         mounted() {
           this.getInfo() ;
+          this.getApproveList();
         },
         methods: {
+
           getInfo(){
             getAptitudeInfo().then( res => {
-              console.log('res',res)
               if(res.data.status === '000000000'){
                 this.form = res.data.data ;
               }
             })
-          }
+          },
+          // 获取审批历史记录
+          getApproveList(){
+            getApproveList().then( res =>{
+              this.tableData = res.data.data
+              console.log(res)
+            })
+          },
         }
     }
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
   @import '../../../../styles/tab';
-
+img{
+    width: 100px;
+    height: 100px;
+  }
 </style>

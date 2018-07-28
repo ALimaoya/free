@@ -5,34 +5,34 @@
       <div class="check"><svg-icon icon-class="check_ico" /><span>审核通过</span><span @click="dialogVisible = true;">历史审核意见</span></div>
       <div class="infoWrap">
         <h2>店铺主体信息</h2>
-        <el-form-item  labelWidth="200px" label="店铺名称：" label-width='150px'>
+        <el-form-item  labelWidth="200px" label="店铺名称：" >
           <div class="inputInfo">{{ form.shopname }}</div>
         </el-form-item>
       </div>
       <div class="infoWrap">
         <h2>法定代表人证件信息</h2>
-        <el-form-item  labelWidth="200px" label="法定代表人姓名：" label-width='150px'>
+        <el-form-item  labelWidth="200px" label="法定代表人姓名：" >
           <div class="inputInfo">{{ form.legalRepName }}</div>
         </el-form-item>
-        <el-form-item  labelWidth="200px" label="法定代表人身份证号：" label-width='150px'>
+        <el-form-item  labelWidth="200px" label="法定代表人身份证号：" >
           <div class="inputInfo">{{ form.cardId }}</div>
         </el-form-item>
-        <el-form-item  labelWidth="200px" label="身份证号有效期：" label-width='150px'>
+        <el-form-item  labelWidth="200px" label="身份证号有效期：" >
           <div class="inputInfo">{{ form.cardDeadline }}</div>
         </el-form-item>
       </div>
       <div class="infoWrap">
         <h2>入驻企业信息</h2>
-        <el-form-item  labelWidth="200px" label="公司名称：" label-width='150px'>
+        <el-form-item  labelWidth="200px" label="公司名称：" >
           <div class="inputInfo">{{ form.companyName }}</div>
         </el-form-item>
-        <el-form-item  labelWidth="200px" label="公司经营地址：" label-width='150px'>
+        <el-form-item  labelWidth="200px" label="公司经营地址：" >
           <div class="inputInfo">{{ form.companyAddress }}</div>
         </el-form-item>
-        <el-form-item  labelWidth="200px" label="营业期限：" label-width='150px'>
+        <el-form-item  labelWidth="200px" label="营业期限：" >
           <div class="inputInfo">{{ form.busLicenceDeadline }}</div>
         </el-form-item>
-        <el-form-item  labelWidth="200px" label="社会信用代码：" label-width='150px'>
+        <el-form-item  labelWidth="200px" label="社会信用代码：" >
           <div class="inputInfo">{{ form.socialCreditCode }}</div>
         </el-form-item>
       </div>
@@ -54,28 +54,28 @@
         <el-form-item  labelWidth="200px" label="出版物经营许可证有效期：" >
           <div class="inputInfo">{{ form.publicationsTime }}</div>
         </el-form-item> -->
-        <el-form-item v-if="form.surveyReport !== ''|| form.surveyReport !== undefined" label="质检报告" label-width='150px'>
+        <el-form-item v-if="form.surveyReport !== ''|| form.surveyReport !== undefined" label="质检报告" labelWidth="200px">
             <img :src="imageDomain + form.surveyReport" />
           </el-form-item>
-          <el-form-item v-if="form.foodTradeLicence !== ''|| form.foodTradeLicence !== undefined" label="食品流通许可证" label-width='150px'>
+          <el-form-item v-if="form.foodTradeLicence !== ''|| form.foodTradeLicence !== undefined" label="食品流通许可证" labelWidth="200px">
             <img :src="imageDomain + form.foodTradeLicence" />
           </el-form-item>
-          <el-form-item v-if="form.drinkTradeLicence !== ''|| form.drinkTradeLicence !== undefined" label="酒类流通备案登记表" label-width='150px'>
+          <el-form-item v-if="form.drinkTradeLicence !== ''|| form.drinkTradeLicence !== undefined" label="酒类流通备案登记表" labelWidth="200px">
             <img :src="imageDomain + form.drinkTradeLicence" />
           </el-form-item>
-          <el-form-item v-if="form.businessImage !== ''|| form.businessImage !== undefined" label="营业执照" label-width='150px'>
+          <el-form-item v-if="form.businessImage !== ''|| form.businessImage !== undefined" label="营业执照" labelWidth="200px">
             <img :src="imageDomain + form.businessImage" />
           </el-form-item>
-          <el-form-item  labelWidth="200px" label="营业执照有效期：" label-width='150px'>
+          <el-form-item  labelWidth="200px" label="营业执照有效期：" >
             <div class="inputInfo">{{ form.busLicenceDeadline }}</div>
           </el-form-item>
-          <el-form-item  labelWidth="200px" label="营业执照编号：" label-width='150px'>
+          <el-form-item  labelWidth="200px" label="营业执照编号：" >
             <div class="inputInfo">{{ form.socialCreditCode }}</div>
           </el-form-item>
-          <el-form-item v-if="form.paperTradeLicence !== ''|| form.paperTradeLicence !== undefined" label="出版物经营许可证" label-width='150px'>
+          <el-form-item v-if="form.paperTradeLicence !== ''|| form.paperTradeLicence !== undefined" label="出版物经营许可证" labelWidth="200px">
             <img :src="imageDomain + form.paperTradeLicence" />
           </el-form-item>
-          <el-form-item v-if="form.paperTradeDeadline !== ''||form.paperTradeDeadline !== undefined" labelWidth="200px" label="出版物经营许可证有效期：" label-width='150px'>
+          <el-form-item v-if="form.paperTradeDeadline !== ''||form.paperTradeDeadline !== undefined" label="出版物经营许可证有效期：" labelWidth="200px">
             <div class="inputInfo">{{ form.paperTradeDeadline }}</div>
           </el-form-item>
       </div>
@@ -83,10 +83,10 @@
         <h2>商标信息</h2>
         <p class="tips">注：店铺包含“旗舰、专卖”，商家必须上传品牌授权或独占授权证明，需授权店铺从属人在丫贝网经营该品牌产品</p>
         <div v-for="(item, index ) in form.merchantBrandinfoResDtos" :key="index">
-          <el-form-item  label="注册类型：" label-width='150px'>
+          <el-form-item  label="注册类型：" labelWidth="200px">
             <div class="inputInfo">{{ item.brandRegistType }}</div>
           </el-form-item>
-          <el-form-item   label="商品注册号：" label-width='150px'>
+          <el-form-item   label="商品注册号：" labelWidth="200px">
             <div class="inputInfo">{{ item.brandRegistCode }}</div>
           </el-form-item>
           <!-- <el-form-item labelWidth="200px" label="商标注册证明：">
@@ -96,10 +96,10 @@
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </el-form-item> -->
-          <el-form-item v-if="item.brandCertifyImage !== ''|| item.brandCertifyImage !== undefined" label="品牌授权证明：" label-width='150px'>
+          <el-form-item v-if="item.brandCertifyImage !== ''|| item.brandCertifyImage !== undefined" label="品牌授权证明：" labelWidth="200px">
             <img :src="imageDomain + item.brandCertifyImage" />
           </el-form-item>
-          <el-form-item v-if="item.brandAuthImage !== ''|| item.brandAuthImage !== undefined" label="品牌授权证明：" label-width='150px'>
+          <el-form-item v-if="item.brandAuthImage !== ''|| item.brandAuthImage !== undefined" label="品牌授权证明：" labelWidth="200px">
             <img :src="imageDomain + item.brandAuthImage" />
           </el-form-item>
           <!-- <el-form-item labelWidth="200px" label="品牌授权证明：">
@@ -109,7 +109,7 @@
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </el-form-item> -->
-          <el-form-item   label="品牌授权有效期：" label-width='150px'>
+          <el-form-item   label="品牌授权有效期：" labelWidth="200px">
             <div class="inputInfo">{{ item.brandAuthDeadline }} （截止日期）</div>
           </el-form-item>
         </div>
@@ -137,6 +137,7 @@
     name: "tab4",
     data() {
       return {
+        labelWidth:'160px',
         form: {
           shopname:'',
           legalRepName: '',
@@ -197,5 +198,8 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
   @import '../../../../styles/tab';
-
+  img{
+    width: 100px;
+    height: 100px;
+  }
 </style>

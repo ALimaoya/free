@@ -9,17 +9,24 @@
           <div class="inputInfo">个人入驻</div>
         </el-form-item>
         <el-form-item  labelWidth="160px" label="主营类目：" >
-          <div class="inputInfo">{{ form.mainBusiness }}</div>
+          <div class="inputInfo">{{ shopTypeName }}</div>
         </el-form-item>
         <el-form-item   labelWidth="160px"  label="招商对接联系方式：">
-          <el-button size="small" type="text">查看</el-button>
+          <el-tooltip placement="right"  effect="light">
+            <div slot="content">400-999-7860</div>
+            <el-button size="small" type="text">查看</el-button>
+          </el-tooltip>
         </el-form-item>
         <el-form-item   labelWidth="160px"  label="第三方平台店铺：">
           <div v-if="form.thirdShopUrl === ''">
             <span>无</span>
             <el-button size="small" type="text" @click="dialogVisible=true;">添加第三方平台店铺链接</el-button>
           </div>
-          <div v-else>{{ form.thirdShopUrl }}<el-button type="primary" round style="padding:2px 15px;margin-left:10px" @click="dialogVisible=true;">修改</el-button></div>
+          <div v-else>
+            <span>{{ form.thirdShopUrl[0].platformName }}</span>
+            <span style="margin-left:10px">{{ form.thirdShopUrl[0].url }}</span>
+            <el-button type="primary" round style="padding:2px 15px;margin-left:10px" @click="dialogVisible=true;">修改</el-button>
+            </div>
         </el-form-item>
         <el-form-item labelWidth="160px" label="店铺LOGO：" prop="logoImage">
               <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logoImage"
@@ -56,7 +63,7 @@
               v-for="(item ,index) in platForm"
               :key="index"
               :label="item.name"
-              :value="item.id">
+              :value="item.name">
             </el-option>
           </el-select>
           <el-input type="text" size="small" v-model.trim="shopLink" placeholder="请输入第三方店铺链接"></el-input>
@@ -70,6 +77,7 @@
 </template>
 
 <script>
+  import { firstList } from "@/api/merchant"
   import { uploadImage  } from "@/api/activity"
   import { getToken } from '@/utils/auth'
   import { getBasicInfo,editorBasicInfo } from "@/api/userCenter"
@@ -102,8 +110,12 @@
               form : {
                 shopName: '',
                 mainBusiness: '',
-                
-                thirdShopUrl: '',
+                thirdShopUrl: [
+                  {
+                    platformName:'',
+                    url:''
+                  }
+                ],
                 logoImage : '',
                 describes: '',
                 email: '',
@@ -133,7 +145,6 @@
               token : getToken() ,
               goodsImgWarn: false,
               dialogVisible: false ,
-              shopLink: '',
               platformType: '',
               platformTypeName:'',
               platForm : [
@@ -182,6 +193,9 @@
                   id : '11'
                 },
               ],
+              shopLink: '',
+              shopTypeList:'',
+              shopTypeName:''
             }
         },
         mounted() {
@@ -189,23 +203,37 @@
           // this.form=
         },
         methods: {
+          //  获取主营类目列表
+          getTypeList(){
+            firstList().then(res=> {
+              this.shopTypeList = res.data.data
+              for(let i = 0;i<this.shopTypeList.length;i++){
+                if(this.shopTypeList[i].id == this.form.mainBusiness){
+                  this.shopTypeName = this.shopTypeList[i].name
+                }
+              }
+            })
+          },
           //  获取信息
           getInfo(){
             getBasicInfo().then( res => {
-              console.log('res',res)
               if( res.data.status === '000000000'){
                 this.form = res.data.data ;
+                this.form.thirdShopUrl = JSON.parse(res.data.data.thirdShopUrl)
+                this.platformType = this.form.thirdShopUrl[0].platformName
+                this.shopLink = this.form.thirdShopUrl[0].url
+                this.getTypeList();
               }
             })
           },
           //  选择平台
           getPlatformType(item){
-            for(let i = 0; i<this.platForm.length;i++){
-              if(this.platForm[i].id === item){
-                this.platformTypeName = this.platForm[i].name 
-                console.log(this.platformTypeName)
-              }
-            }
+            // for(let i = 0; i<this.platForm.length;i++){
+            //   if(this.platForm[i].id === item){
+            //     this.platformTypeName = this.platForm[i].name 
+            //     console.log(this.platformTypeName)
+            //   }
+            // }
           },
           //提交第三方平台链接
           confirm(link){
@@ -216,7 +244,12 @@
                 type : 'error'
               })
             }else{
-              this.form.thirdShopUrl =this.platformTypeName+':'+this.shopLink ;
+              let arr = []
+              let obj = {}
+              obj['platformName'] = this.platformType;
+              obj['url'] = this.shopLink;
+              arr.push(obj)
+              this.form.thirdShopUrl = arr
               this.dialogVisible = false ;
 
             }
@@ -276,7 +309,9 @@
             this.$refs[formName].validate((valid) => {
 
               if(valid&&!this.goodsImgWarn&&this.agree){
-                editorBasicInfo(this.form).then( res => {
+                let newForm = Object.assign({}, this.form)
+                newForm.thirdShopUrl = JSON.stringify(this.form.thirdShopUrl)
+                editorBasicInfo(newForm).then( res => {
                   if(res.data.status === '000000000'){
                     this.$message({
                       message : '您修改的基本信息已成功提交，请稍后核对',
