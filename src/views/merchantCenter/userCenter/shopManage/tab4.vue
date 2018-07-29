@@ -1,6 +1,6 @@
 <template>
   <div class="tab4 tab">
-    <el-form :model="form" ref="form" label-position="right" >
+    <el-form :model="form" ref="form" label-position="right" v-loading="loading"  element-loading-text="拼命加载中">
       <h1>资质信息</h1>
       <div class="check"><svg-icon icon-class="check_ico" /><span>审核通过</span><span @click="dialogVisible = true;">历史审核意见</span></div>
       <div class="infoWrap">
@@ -166,7 +166,7 @@
         registerType : ['旗舰店','专卖店','专营店',''],
         errorImg:'this.src="' + userPhoto + '"',
         failImg: userPhoto,
-
+        loading: false ,
       }
     },
     mounted() {
@@ -183,8 +183,11 @@
         })
       },
       getInfo(){
+        this.loading = true ;
         getAptitudeInfo().then( res => {
           // console.log('res',res)
+          this.loading = false ;
+
           if(res.data.status === '000000000'){
             this.form = res.data.data ;
           }

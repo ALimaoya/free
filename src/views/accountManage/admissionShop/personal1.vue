@@ -161,6 +161,7 @@
                   return time.getTime() < curDate || time.getTime()> endTime ;
                 }
               } ,
+              registerMobile : getMobile(),
             }
 
         },
@@ -189,7 +190,9 @@
                 this.cardType = false
               }
 
-
+          if(this.form.mobile !== ''&& this.form.mobile != this.registerMobile){
+            window.location.reload();
+          }
         },
         methods: {
 

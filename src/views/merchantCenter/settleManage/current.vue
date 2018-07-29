@@ -293,10 +293,8 @@
                     type: 'error'
                   })
               }else{
-                this.loading = true ;
 
                 settlementApple().then(res => {
-                  this.loading = false ;
 
                   if(res.data.status === '000000000'){
                   this.$message({

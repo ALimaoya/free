@@ -51,8 +51,6 @@ const shopInfo = {
         brandAuthType:''
       }]
     },
-
-
     cardType2:'',
     editorId: {},
     listId: [],
@@ -84,7 +82,8 @@ const shopInfo = {
     },
     addMerchantBrand(state,value){
         state.merchantBrandinfoReqDtos = value ;
-    }
+    },
+
   },
 };
 

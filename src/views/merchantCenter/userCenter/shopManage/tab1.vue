@@ -1,6 +1,6 @@
 <template>
     <div class="tab1 tab">
-      <el-form :model="form" ref="form" :rules="formRule" label-position="right" >
+      <el-form :model="form" ref="form" :rules="formRule" label-position="right"  v-loading="loading"  element-loading-text="拼命加载中">
         <h1>基本信息</h1>
         <el-form-item  labelWidth="160px" label="店铺名称：" >
           <div class="inputInfo">{{ form.shopName }}</div>
@@ -24,13 +24,13 @@
           </div>
           <div v-else="form.thirdShopUrl.length> 0">
             <span>{{ form.thirdShopUrl[0].platformName }}</span>
-            <span style="margin-left:10px">{{ form.thirdShopUrl[0].url }}</span>
+            <span style="display: block;white-space: pre-wrap;word-break: break-all;">{{ form.thirdShopUrl[0].url }}</span>
             <el-button type="primary" size="mini" @click="dialogVisible=true;">修改</el-button>
             </div>
         </el-form-item>
         <el-form-item labelWidth="160px" label="店铺LOGO：" prop="logoImage">
               <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logoImage"
-                          :show-file-list="false"  :before-upload="beforeImgUpload">
+                          :headers="{'yb-tryout-merchant-token':token}"          :show-file-list="false"  :before-upload="beforeImgUpload">
                 <img v-if="form.logoImage" :src="imageDomain + form.logoImage" class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
@@ -194,6 +194,7 @@
               ],
               shopLink: '',
               shopTypeList:'',
+              loading : false ,
               // shopTypeName:''
             }
         },
@@ -205,10 +206,13 @@
 
           //  获取信息
           getInfo(){
+            this.loading = true ;
             getBasicInfo().then( res => {
+              this.loading = false ;
+
               if( res.data.status === '000000000'){
                 this.form = res.data.data ;
-                if(this.form.thirdShopUrl !== null && this.form.thirdShopUrl !== undefined&& this.form.thirdShopUrl !== ''){
+                if(this.form.thirdShopUrl !== null &&this.form.thirdShopUrl !== 'null'&& this.form.thirdShopUrl !== undefined&& this.form.thirdShopUrl !== ''){
                   this.form.thirdShopUrl = JSON.parse(res.data.data.thirdShopUrl);
                   this.platformType = this.form.thirdShopUrl[0].platformName;
                   this.shopLink = this.form.thirdShopUrl[0].url;
@@ -310,7 +314,9 @@
                       message : '您提交的店铺基本信息已成功保存~',
                       center : true ,
                       type : 'success'
-                    })
+                    });
+                    this.getInfo();
+
                   }
                 })
               }else{

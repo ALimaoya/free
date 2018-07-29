@@ -20,6 +20,7 @@
   import { getApprovedStatus } from "@/api/userCenter"
   import { getRegisterInfo } from "@/api/enter"
 
+
   export default {
       name: "enterprise",
       components: {
@@ -29,6 +30,7 @@
         SuccessAdd
 
       },
+
         data() {
             return {
               isActive : false,
@@ -37,12 +39,14 @@
               stepObj: '',
               status:'',
               editorDetail: '',
+
             }
         },
         mounted() {
           this.getUserInfo();
 
         },
+
         methods: {
           getUserInfo() {
             getApprovedStatus().then( res => {
@@ -80,7 +84,7 @@
 
                   }
                   if( res.data.data.status === '1'){
-                    this.$router.push('/accountManage/admission/admissionShop/successAdd?checking=1')
+                    this.$router.push('/accountManage/admission/admissionShop/successAdd')
 
                   }
 

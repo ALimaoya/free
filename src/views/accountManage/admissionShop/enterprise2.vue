@@ -421,7 +421,7 @@
 
           this.form = this.$store.state.shopInfo.enterForm2 ;
           let _this = this ;
-          if(typeof (this.form.companyAddress) !== 'object' ){
+          if(typeof (this.form.companyAddress) !== 'object' && this.form.companyAddress !== null ){
             let label = this.form.companyAddress.split('-')[0] ;
             let provinceValue = this.form.companyAddress.split('-')[1];
             _this.form.companyAddress = {
@@ -430,6 +430,8 @@
             };
 
 
+          }else if(this.form.companyAddress === null){
+            this.form.companyAddress = { province : '', detail: ''}
           }
           if(this.form.busLicenceDeadline === '9999-12-31'){
             this.long = true ;

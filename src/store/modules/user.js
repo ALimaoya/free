@@ -1,5 +1,5 @@
 import { login, register, getInfo ,changePsw } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, setToken, removeToken,removeMobile,removeUser } from '@/utils/auth'
 
 const user = {
   state: {
@@ -117,6 +117,8 @@ const user = {
       return new Promise(resolve => {
         commit('SET_TOKEN', '');
         removeToken();
+        removeMobile();
+        removeUser();
         resolve()
       })
     }

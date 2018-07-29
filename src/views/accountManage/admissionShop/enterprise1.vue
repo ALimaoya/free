@@ -199,20 +199,24 @@
                   return time.getTime() < curDate ;
                 }
               } ,
+              registerMobile : getMobile(),
             }
         },
-        mounted() {
-           // if(this.lastStep === 1 ){
-            this.form = this.$store.state.shopInfo.enterForm2;
-            if(this.form['0'] !== undefined ){
-              delete this.form['0'] ;
-            }
-            if(this.$store.state.shopInfo.cardType2 ===1){
-              this.cardType = true
-            }else{
-              this.cardType = false
-            }
 
+        mounted() {
+             this.form = this.$store.state.shopInfo.enterForm2;
+
+             if (this.form['0'] !== undefined) {
+               delete this.form['0'];
+             }
+             if (this.$store.state.shopInfo.cardType2 === 1) {
+               this.cardType = true
+             } else {
+               this.cardType = false
+             }
+             if(this.form.mobile !== ''&& this.form.mobile != this.registerMobile){
+               window.location.reload();
+             }
         },
         watch : {
           editorInfo : function(val){
