@@ -18,7 +18,7 @@
         </el-form-item>
         <el-form-item   :labelWidth="labelWidth"  label="身份证有效期：" prop="cardDeadline">
           <el-col :span="9" >
-            <el-date-picker type="date" size="mini" placeholder="截止日期" :disabled="readOnly" value-format="yyyy-MM-dd" v-model="form.cardDeadline" style="width: 100%;" :readonly="cardType"></el-date-picker>
+            <el-date-picker type="date" size="mini" placeholder="截止日期" :picker-options="pickerOptions" :disabled="readOnly" value-format="yyyy-MM-dd" v-model="form.cardDeadline" style="width: 100%;" :readonly="cardType"></el-date-picker>
           </el-col>
           <el-col class="line" :span="20">
             <el-checkbox v-model="cardType" :disabled="readOnly">长期</el-checkbox>
@@ -154,6 +154,13 @@
               // imgTitle : '',
               showImg: '',
               readOnly: false ,
+              pickerOptions : {
+                disabledDate(time){
+                  let curDate = new Date().getTime() ;
+                  let endTime = new Date('9999-12-31').getTime();
+                  return time.getTime() < curDate || time.getTime()> endTime ;
+                }
+              } ,
             }
 
         },

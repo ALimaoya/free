@@ -9,7 +9,7 @@
           </div> -->
           <div>
             <el-radio-group size="mini" v-model="form.mainBusiness" fill="#f56c6c"  >
-              <el-radio-button border v-for="(item,index) in shopTypeList" :key="index" :label="item.id">{{ item.name }}</el-radio-button>
+              <el-radio-button border v-for="(item,index) in shopTypeList" :key="index" :label="item.name">{{ item.name }}</el-radio-button>
             </el-radio-group>
 
           </div>
@@ -65,7 +65,7 @@
             </div>
           </el-form-item>
           <el-form-item  :labelWidth="labelWidth" label="主营类目：">
-            <div class="inputInfo" ><span >{{ mainBusinessName }}</span>
+            <div class="inputInfo" ><span >{{ form.mainBusiness }}</span>
               <span class="tips_warn">入驻后主营类目不可修改</span>
             </div>
           </el-form-item>
@@ -216,6 +216,7 @@
               },
             ],
 
+
           }
         },
 
@@ -256,15 +257,15 @@
         })
 
           },
-          //  获得主营类目名字
-          getMainBusiness(id){
-            this.shopTypeList.map( i =>{
-              if(i.id == id){
-                this.mainBusinessName = i.name;
-              }
-            });
-
-          },
+          // //  获得主营类目名字
+          // getMainBusiness(id){
+          //   this.shopTypeList.map( i =>{
+          //     if(i.id == id){
+          //       this.mainBusinessName = i.name;
+          //     }
+          //   });
+          //
+          // },
           //返回上一步
           goBack(){
             this.$store.commit('addForm',this.form);
@@ -287,10 +288,10 @@
                     center: true
                   })
                 }else{
-                  if(this.form.mainBusiness !== ''){
-                    this.getMainBusiness(this.form.mainBusiness);
-
-                  }
+                  // if(this.form.mainBusiness !== ''){
+                  //   this.getMainBusiness(this.form.mainBusiness);
+                  //
+                  // }
                   this.dialogVisible = true ;
 
                 }

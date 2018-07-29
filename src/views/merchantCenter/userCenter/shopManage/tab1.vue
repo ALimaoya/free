@@ -9,7 +9,7 @@
           <div class="inputInfo">个人入驻</div>
         </el-form-item>
         <el-form-item  labelWidth="160px" label="主营类目：" >
-          <div class="inputInfo">{{ shopTypeName }}</div>
+          <div class="inputInfo">{{ form.mainBusiness }}</div>
         </el-form-item>
         <el-form-item   labelWidth="160px"  label="招商对接联系方式：">
           <el-tooltip placement="right"  effect="light">
@@ -18,7 +18,7 @@
           </el-tooltip>
         </el-form-item>
         <el-form-item   labelWidth="160px"  label="第三方平台店铺：">
-          <div v-if="form.thirdShopUrl === ''|| form.thirdShopUrl === undefined || form.thirdShopUrl === null">
+          <div v-if=" form.thirdShopUrl === undefined || form.thirdShopUrl === null">
             <span>无</span>
             <el-button size="small" type="text" @click="dialogVisible=true;">添加第三方平台店铺链接</el-button>
           </div>
@@ -77,7 +77,6 @@
 </template>
 
 <script>
-  import { firstList } from "@/api/merchant"
   import { uploadImage  } from "@/api/activity"
   import { getToken, getMobile } from '@/utils/auth'
   import { getBasicInfo,editorBasicInfo } from "@/api/userCenter"
@@ -195,7 +194,7 @@
               ],
               shopLink: '',
               shopTypeList:'',
-              shopTypeName:''
+              // shopTypeName:''
             }
         },
         mounted() {
@@ -203,17 +202,7 @@
           // this.form=
         },
         methods: {
-          //  获取主营类目列表
-          getTypeList(){
-            firstList().then(res=> {
-              this.shopTypeList = res.data.data;
-              for(let i = 0;i<this.shopTypeList.length;i++){
-                if(this.shopTypeList[i].id == this.form.mainBusiness){
-                  this.shopTypeName = this.shopTypeList[i].name
-                }
-              }
-            })
-          },
+
           //  获取信息
           getInfo(){
             getBasicInfo().then( res => {
@@ -228,7 +217,7 @@
                 if( this.form.mobile === null ){
                   this.form.mobile = getMobile()
                 }
-                this.getTypeList();
+                // this.getTypeList();
               }
             })
           },
@@ -313,12 +302,12 @@
             this.$refs[formName].validate((valid) => {
 
               if(valid&&!this.goodsImgWarn&&this.agree){
-                let newForm = Object.assign({}, this.form)
-                newForm.thirdShopUrl = JSON.stringify(this.form.thirdShopUrl)
+                let newForm = Object.assign({}, this.form);
+                newForm.thirdShopUrl = JSON.stringify(this.form.thirdShopUrl);
                 editorBasicInfo(newForm).then( res => {
                   if(res.data.status === '000000000'){
                     this.$message({
-                      message : '您修改的基本信息已成功提交，请稍后核对',
+                      message : '您提交的店铺基本信息已成功保存~',
                       center : true ,
                       type : 'success'
                     })
@@ -348,7 +337,7 @@
       font-size : 0.14rem ;
       color : #666;
       min-height : 0.4rem ;
-      line-height :0.2rem;
+      line-height :0.4rem;
       background : #fdf1ce;
       border : 1px solid #ffe18d ;
       border-radius : 0.05rem;

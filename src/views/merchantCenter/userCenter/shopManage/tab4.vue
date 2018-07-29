@@ -38,20 +38,20 @@
       </div>
       <div class="infoWrap">
         <h2>类目资质</h2>
-        <el-form-item v-if="form.surveyReport !== ''|| form.surveyReport !== undefined|| form.surveyReport !== null" label="质检报告" labelWidth="200px">
+        <el-form-item v-if="form.surveyReport !== ''|| form.surveyReport !== undefined|| form.surveyReport !== null" label="质检报告：" labelWidth="200px">
           <img v-if="form.surveyReport !== undefined " :src="imageDomain + form.surveyReport" :onerror="errorImg">
           <img :src="failImg"  v-else>
           </el-form-item>
-          <el-form-item v-if="form.foodTradeLicence !== ''|| form.foodTradeLicence !== undefined|| form.foodTradeLicence !== null" label="食品流通许可证" labelWidth="200px">
+          <el-form-item v-if="form.foodTradeLicence !== ''|| form.foodTradeLicence !== undefined|| form.foodTradeLicence !== null" label="食品流通许可证：" labelWidth="200px">
             <img v-if="form.foodTradeLicence !== undefined " :src="imageDomain + form.foodTradeLicence" :onerror="errorImg">
             <img :src="failImg"  v-else>
 
           </el-form-item>
-          <el-form-item v-if="form.drinkTradeLicence !== ''|| form.drinkTradeLicence !== undefined|| form.drinkTradeLicence !== null" label="酒类流通备案登记表" labelWidth="200px">
+          <el-form-item v-if="form.drinkTradeLicence !== ''|| form.drinkTradeLicence !== undefined|| form.drinkTradeLicence !== null" label="酒类流通备案登记表：" labelWidth="200px">
             <img v-if="form.drinkTradeLicence !== undefined " :src="imageDomain + form.drinkTradeLicence" :onerror="errorImg">
             <img :src="failImg"  v-else>
           </el-form-item>
-          <el-form-item v-if="form.businessImage !== ''|| form.businessImage !== undefined|| form.businessImage !== null" label="营业执照" labelWidth="200px">
+          <el-form-item v-if="form.businessImage !== ''|| form.businessImage !== undefined|| form.businessImage !== null" label="营业执照：" labelWidth="200px">
             <img v-if="form.businessImage !== undefined " :src="imageDomain + form.businessImage" :onerror="errorImg">
             <img :src="failImg"  v-else>
           </el-form-item>
@@ -61,7 +61,7 @@
           <el-form-item  labelWidth="200px" label="营业执照编号：" >
             <div class="inputInfo">{{ form.socialCreditCode }}</div>
           </el-form-item>
-          <el-form-item v-if="form.paperTradeLicence !== ''|| form.paperTradeLicence !== undefined|| form.paperTradeLicence !== null" label="出版物经营许可证" labelWidth="200px">
+          <el-form-item v-if="form.paperTradeLicence !== ''|| form.paperTradeLicence !== undefined|| form.paperTradeLicence !== null" label="出版物经营许可证：" labelWidth="200px">
             <img v-if="form.paperTradeLicence !== undefined || form.paperTradeLicence !== null" :src="imageDomain + form.paperTradeLicence" :onerror="errorImg">
             <img :src="failImg"  v-else>
           </el-form-item>
@@ -86,7 +86,7 @@
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </el-form-item> -->
-          <el-form-item v-if="item.brandCertifyImage !== ''|| item.brandCertifyImage !== undefined|| item.brandAuthImage !== null" label="品牌授权证明：" labelWidth="200px">
+          <el-form-item v-if="item.brandCertifyImage !== ''|| item.brandCertifyImage !== undefined|| item.brandCertifyImage !== null" label="商标注册证明：" labelWidth="200px">
             <img v-if="item.brandCertifyImage !== ''|| item.brandCertifyImage !== undefined" :src="imageDomain + item.brandCertifyImage" :onerror="errorImg">
             <img :src="failImg"  v-else>
 
@@ -200,5 +200,9 @@
   img{
     width: 100px;
     height: 100px;
+  }
+  .tips{
+    width : 80% !important ;
+    margin : auto ;
   }
 </style>

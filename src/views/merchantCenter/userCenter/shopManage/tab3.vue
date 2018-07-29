@@ -9,7 +9,7 @@
         <div class="inputInfo">企业入驻</div>
       </el-form-item>
       <el-form-item  labelWidth="180px" label="主营类目：" >
-        <div class="inputInfo">{{ shopTypeName }}</div>
+        <div class="inputInfo">{{ form.mainBusiness }}</div>
       </el-form-item>
       <el-form-item   labelWidth="180px"  label="招商对接联系方式：">
         <el-tooltip placement="right"  effect="light">
@@ -18,7 +18,7 @@
         </el-tooltip>
       </el-form-item>
       <el-form-item   labelWidth="180px"  label="第三方平台店铺：">
-        <div v-if="form.thirdShopUrl === ''|| form.thirdShopUrl===null|| form.thirdShopUrl !== undefined">
+        <div v-if="form.thirdShopUrl===null|| form.thirdShopUrl === undefined">
           <span>无</span>
           <el-button size="small" type="text" @click="dialogVisible=true;">添加第三方平台店铺链接</el-button>
         </div>
@@ -87,7 +87,6 @@
 </template>
 
 <script>
-  import { firstList } from "@/api/merchant"
   import { uploadImage  } from "@/api/activity"
   import { getToken , getMobile } from '@/utils/auth'
   import  { validatePhone , validateZipCode,validateURL,validateEmail} from '@/utils/validate';
@@ -178,7 +177,6 @@
         token : getToken() ,
         goodsImgWarn: false,
         dialogVisible: false ,
-
         platForm : [
           {
             name : '淘宝',
@@ -226,7 +224,6 @@
           },
         ],
         shopTypeList:'',
-        shopTypeName:''
       }
     },
     mounted() {
@@ -235,22 +232,6 @@
     },
     methods: {
       //  获取主营类目列表
-
-      getTypeList(){
-        if(!/^[0-9]+$/.test(this.form.mainBusiness*1)){
-          this.shopTypeName = this.form.mainBusiness ;
-        }else{
-          firstList().then(res=> {
-            this.shopTypeList = res.data.data;
-            for(let i = 0;i<this.shopTypeList.length;i++){
-              if(this.shopTypeList[i].id == this.form.mainBusiness){
-                this.shopTypeName = this.shopTypeList[i].name
-              }
-            }
-          })
-
-        }
-      },
 
       getInfo(){
         getBasicInfo().then( res => {
@@ -265,8 +246,8 @@
             if( this.form.mobile === null ){
               this.form.mobile = getMobile()
             }
+            // console.log(this.form.thirdShopUrl)
 
-            this.getTypeList();
           }
         })
       },
@@ -361,7 +342,7 @@
               editorBasicInfo(newForm).then( res => {
                 if(res.data.status === '000000000'){
                   this.$message({
-                    message : '您修改的基本信息已成功提交，请稍后核对',
+                    message : '您提交的店铺基本信息已成功保存~',
                     center : true ,
                     type : 'success'
                   })

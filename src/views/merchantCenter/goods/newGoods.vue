@@ -132,16 +132,16 @@
           <el-button type="primary" size="mini" @click="confirmBrand">选择</el-button>
         </div>
       </el-dialog>
-      <el-dialog class="shop_dialog" title="提示" top="20%" :visible.sync="hasShop" width="40%" center
-                  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
-        <p>{{ tips }}</p>
-        <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="applyShop">前往我要开店</el-button>
-      </span>
-      </el-dialog>
+      <!--<el-dialog class="shop_dialog" title="提示" top="20%" :visible.sync="hasShop" width="40%" center-->
+                  <!--:show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">-->
+        <!--<p>{{ tips }}</p>-->
+        <!--<span slot="footer" class="dialog-footer">-->
+        <!--<el-button type="primary" @click="applyShop">前往缴纳保证金</el-button>-->
+      <!--</span>-->
+      <!--</el-dialog>-->
       <el-dialog class="bondDialog" title="提示" :visible.sync="isBond" width="50%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
         <!--<img :src="ImgSrc" alt="" />-->
-        <p class="tips">您还未缴纳保证金，请先前往缴纳保证金后方可查看相关信息</p>
+        <p class="tips">您还未缴纳保证金，成功缴纳保证金后即可发布更多商品，请前往缴纳保证金吧</p>
         <div slot="footer">
           <el-button plain @click="goBond">前往缴纳保证金</el-button>
         </div>
@@ -160,7 +160,7 @@
 <script>
   // import wangeditor from '@/components/wangeditor'
   import { uploadImage  } from "@/api/activity"
-  import { newGoogds,getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo, getTao,getJD} from "@/api/merchant"
+  import { getGoodsList, newGoogds,getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo, getTao,getJD} from "@/api/merchant"
   import { getToken,getMobile } from '@/utils/auth'
   import { getBond } from "@/api/userCenter"
   import { checkFloat,validName } from "@/utils/validate"
@@ -296,7 +296,7 @@
               imgIndex : '',
               dialogVisible: false,
               // currentRow : null,
-              hasShop : false ,
+              // hasShop : false ,
               readOnly : false ,
               totalPages : 0,
               totalElements : 0,
@@ -319,41 +319,61 @@
 
         mounted(){
           // window.tinymce.init({});
+          this.getList() ;
           this.getBondInfo();
 
         },
 
         methods: {
+          getList(){
+            let formData = new FormData();
+            formData.append('EQ_category.id','');
+            formData.append('EQ_category.parent.id','');
+            formData.append('EQ_code','');
+            formData.append('LIKE_productName','');
+            formData.append('EQ_status','');
+            formData.append('currentPage',1);
+            formData.append('pageSize',10);
+            this.loading = true ;
+
+            getGoodsList(formData).then( res => {
+              this.loading = false ;
+              this.tableData = res.data.data;
+
+            })
+
+          },
 
           getBondInfo(){
+            this.loading = true ;
             getBond().then( res => {
               // console.log(res.data);
-              this.loading= true;
+              this.loading= false;
 
-              if(res.data.status === '000000000'){
+              if(res.data.status === '000000000') {
 
-                if(res.data.data.status === '3'){
-                  this.isBond = true ;
+                if (res.data.data.status === '3' && this.tableData.length >= 10) {
+                  this.isBond = true;
 
                 }else{
                   this.isBond = false ;
                   this.getShop();
-
                 }
               }else{
-                if(res.data.data === null ){
-                  this.isBond = true ;
+                  this.isBond = false ;
+                  this.getShop();
 
                 }
+              // }
 
-              }
+              // }
             })
           },
           //判断是否已有店铺
           getShop(){
             getShopInfo().then(res=> {
-              if(res.data.status === '000000000'){
-                this.hasShop = false ;
+              if(res.data.status === '000000000'|| (res.data.status === '015009001'&& this.tableData.length < 10)){
+                this.isBond = false ;
                 this.shopName = res.data.data.name;
                 this.copyGoods();
                 this.getFirstList();
@@ -364,7 +384,7 @@
 
               }else{
                 this.tips = res.data.message;
-                this.hasShop = true ;
+                this.isBond = true ;
 
 
               }
@@ -400,16 +420,6 @@
                   })
                 }
 
-                // if(this.form.imagesList.length < 5){
-                //   if(this.form.imagesList.length === 0){
-                //     this.form.imagesList =   [{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''}]
-                //
-                //   }else {
-                //     for(let i = this.form.imagesList.length ; i< 5;i++){
-                //       this.form.imagesList.push({ id: '', imgUrl:''});
-                //     }
-                //   }
-                // };
                 this.word = this.form.describes ;
                 this.brandCnName = res.data.data.brandCnName ;
                 this.thirdName = res.data.data.cateGoryMap.categoryId3;
@@ -593,20 +603,20 @@
           //提交表格
           submitForm(formName){
             // console.log(JSON.stringify(this.form));
-            this.$refs[formName].validate((valid) => {
-              if(valid){
-
-                let data = {
-                  id: '',
-                  productName:this.form.productName,
-                  brandId:this.form.brandId,
-                  class3Id:this.form.class3Id,
-                  price:this.form.price,
-                  carriage:this.form.carriage,
-                  ybProductItemReqDto : this.form.ybProductItemReqDto,
-                  imagesList : this.form.imagesList,
-                  describes: this.form.describes,
-                };
+            if(!this.isBond){
+              this.$refs[formName].validate((valid) => {
+                if(valid){
+                  let data = {
+                    id: '',
+                    productName:this.form.productName,
+                    brandId:this.form.brandId,
+                    class3Id:this.form.class3Id,
+                    price:this.form.price,
+                    carriage:this.form.carriage,
+                    ybProductItemReqDto : this.form.ybProductItemReqDto,
+                    imagesList : this.form.imagesList,
+                    describes: this.form.describes,
+                  };
 
             if( !/^[0-9]+$/.test(data.class3Id*1) ){
               data.class3Id = this.thirdName*1 ;
@@ -626,11 +636,19 @@
 
 
                     },2000)
-                })
-              }else{
+                  })
+                }else{
 
-              }
-            })
+                }
+              })
+
+            }else{
+              this.$message({
+                message : '您还未缴纳保证金，成功缴纳保证金后即可发布更多商品，请前往缴纳保证金吧',
+                center : true ,
+                type : 'error'
+              })
+            }
           },
           createEditor(){
 

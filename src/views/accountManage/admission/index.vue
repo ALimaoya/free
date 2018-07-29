@@ -17,7 +17,7 @@
 </template>
 
 <script>
-  import { getApprovedStatus } from "@/api/userCenter"
+  import { getStatus } from "@/api/enter"
 
   export default {
         name: "admissionManage",
@@ -26,6 +26,7 @@
 
           }
       },
+
       methods : {
         goTryout(){
           this.$router.push({ name : 'TryoutActivity'})
@@ -34,7 +35,7 @@
           this.getUserInfo();
         },
         getUserInfo() {
-          getApprovedStatus().then( res => {
+          getStatus().then( res => {
             if(res.data.status === '000000000'){
               if(res.data.data.status === '0'){
                 this.$router.push({ name : 'AdmissionShop'})
@@ -46,12 +47,8 @@
               if(res.data.data.status === '3'){
                 this.$router.push( '/accountManage/admission/admissionShop/failAdd')
               }else if(res.data.data.status === '2' || res.data.data.status === '4'){
-                this.$message({
-                  message : '您已成功入驻，不能再次申请了哦~',
-                  type: 'error',
-                  center : true
+                this.$router.push( '/merchantCenter/index')
 
-                })
               }
 
             }
