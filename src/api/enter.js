@@ -34,5 +34,11 @@ export function editorRegisterInfo(data,type){
   })
 }
 
-
+//查询入驻状态
+export function getStatus(){
+  return request({
+    url: '/center/merchant/checkin/isApprovedByManage',
+    method : 'get'
+  })
+}
 

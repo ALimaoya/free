@@ -6,7 +6,7 @@
             <img v-if="shopObj.ybMerchantShopDto.logoImage !== undefined || shopObj.ybMerchantShopDto.logoImage !== ''" :src="imageDomain + shopObj.ybMerchantShopDto.logoImage" :onerror="errorImg">
             <img :src="failImg"  v-else>
 
-            <dl><dd>{{ shopObj.ybMerchantShopDto.name }}</dd><dt>主营类目：{{ mainType }}</dt></dl></div>
+            <dl><dd>{{ shopObj.ybMerchantShopDto.name }}</dd><dt>主营类目：{{ shopObj.ybMerchantShopDto.mainBusiness }}</dt></dl></div>
           <ul>
             <li><span>描述相符</span><span class="tips_warn">5.0</span></li>
             <li><span>服务态度</span><span class="tips_warn">5.0</span></li>
@@ -55,12 +55,12 @@
         </div>
         <div id="myChart" ></div>
       </div>
-      <div class="mask" v-if="shopPass==='4'">
+      <div class="mask" v-if="shopPass==='2'">
         <div class="boxWrap">
           <div class="success_icon"></div>
           <div class="box_content">
             <p class="box_title">恭喜您的店铺申请通过审核</p>
-            <p class="tips_warn">吧啦啦啦啦</p>
+            <p class="tips_warn">您的店铺：{{ shopName }}</p>
             <p class="box_note">您可在商户中心 - 商家/店铺信息 内查看您的店铺信息</p>
             <div class="box_footer">
               <el-button type="danger" @click="goShopInfo">立即查看</el-button>
@@ -95,13 +95,14 @@
                   name : '销售量'
                 }
               ],
-              yLabel: ['金额','件数'],
+              yLabel: ['金额(元)','件数'],
               shopPass: '0',
               shopObj: {},
               imageDomain : process.env.IMAGE_DOMAIN ,
               errorImg:'this.src="' + userPhoto + '"',
               failImg: userPhoto,
-              mainType : ''
+              // mainType : '',
+              shopName : '',
             }
         },
         mounted() {
@@ -149,10 +150,10 @@
 
                   },2000)
                 }else{
+                  this.shopName = res.data.data.name ;
                   getShopInfo().then( res => {
                     if(res.data.status === '000000000'){
                       this.shopObj = res.data.data ;
-                      this.getMainType();
                       this.getType('1');
 
                     }
@@ -163,15 +164,19 @@
             });
 
           },
-          getMainType(){
-            firstList().then(res=> {
-              res.data.data.map( i => {
-                if(i.id == this.shopObj.ybMerchantShopDto.mainBusiness ){
-                  this.mainType = i.name
-                }
-              });
-            })
-          },
+          // getMainType(){
+          //   if(/^[0-9]+$/.test(this.shopObj.ybMerchantShopDto.mainBusiness*1)){
+          //     firstList().then(res=> {
+          //       res.data.data.map( i => {
+          //         if(i.id == this.shopObj.ybMerchantShopDto.mainBusiness ){
+          //           this.mainType = i.name
+          //         }
+          //       });
+          //     })
+          //   }else{
+          //     this.mainType = this.shopObj.ybMerchantShopDto.mainBusiness ;
+          //   }
+          // },
           getType(type){
 
             this.changeBtn = type ;
@@ -507,9 +512,10 @@
       background : rgba(0,0,0,0.3);
       z-index: 20000;
       .boxWrap{
-        width:60% ;
-        height : 40%;
-        margin : 1.5rem auto;
+        width:50% ;
+        height : 32%;
+        margin : 1.5rem auto 0.5rem ;
+        left : -170px;
         background : #fff;
         position: relative ;
         padding :1rem 0.4rem;

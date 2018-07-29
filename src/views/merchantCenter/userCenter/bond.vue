@@ -46,14 +46,15 @@
         <el-button plain size="mini" @click="dialogVisible= false;">取消</el-button>
       </div>
     </el-dialog>
-    <el-dialog class="bondDialog" title="提示" :visible.sync="isBond" width="60%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+    <el-dialog class="bondDialog" title="提示" :visible.sync="isBond" width="60%" center  :show-close="false"
+               :close-on-click-modal="false" :close-on-press-escape="false">
       <!--<img :src="ImgSrc" alt="" />-->
       <p class="tips">您还未缴纳保证金，<br/>请先缴纳保证金后方可享有商城所有功能</p>
       <el-form   center label-position="right">
-        <el-form-item  label="结算渠道" label-width="80px" >
+        <el-form-item  label="结算渠道" label-width="100px" >
           <el-input type="text" size="small" disabled placeholder="支付宝"></el-input>
         </el-form-item>
-        <el-form-item  label="额度" label-width="80px">
+        <el-form-item  label="额度" label-width="100px">
           <el-input type="text" size="small" disabled v-model="deposit" placeholder=""></el-input>
         </el-form-item>
 

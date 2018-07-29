@@ -9,12 +9,12 @@
           </el-checkbox-group> -->
           <div>
             <el-radio-group size="mini" fill="#f56c6c" v-model="form.mainBusiness"  >
-              <el-radio-button border v-for="(item,index) in shopTypeList" :key="index" :label="item.id">{{ item.name }}</el-radio-button>
+              <el-radio-button border v-for="(item,index) in shopTypeList" :key="index" :label="item.name">{{ item.name }}</el-radio-button>
             </el-radio-group>
           </div>
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth" label="店铺名称：" prop="shopName">
-          <el-input class="inputInfo" size="small" :maxlength="37" v-model.trim="form.shopName" @blur="haveShop(form.shopName)" :disabled="readOnly" placeholder="请输入店铺名称"></el-input>
+          <el-input class="inputInfo" size="small" :maxlength="37" v-model.trim="form.shopName" @change="haveShop(form.shopName)" :disabled="readOnly" placeholder="请输入店铺名称"></el-input>
           <span class="tip"><svg-icon icon-class="tips"/>入驻后店铺名称不可修改，请谨慎填写</span>
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth" label="名称预览：" >
@@ -33,7 +33,7 @@
           <el-input class="inputInfo" size="small" :maxlength="40" v-model.trim="form.enterpriseName" :disabled="readOnly" placeholder="请输入公司名称"></el-input>
         </el-form-item>
         <el-form-item v-if="form.companyAddress !== undefined" :labelWidth="labelWidth" label="公司经营地址：" prop="companyAddress">
-          <el-select v-model="form.companyAddress.province" clearable placeholder="请选择" size="mini">
+          <el-select v-if="form.companyAddress !== undefined" v-model="form.companyAddress.province" clearable placeholder="请选择" size="mini">
             <el-option
               v-for="item in provinceList"
               :key="item"
@@ -60,7 +60,7 @@
         </el-form-item>
         <el-form-item   :labelWidth="labelWidth"  label="营业期限：" prop="busLicenceDeadline">
           <el-col :span="9">
-            <el-date-picker type="date" size="mini" placeholder="截止日期" value-format="yyyy-MM-dd" :disabled="readOnly" v-model="form.busLicenceDeadline" style="width: 100%;" :readonly="long"></el-date-picker>
+            <el-date-picker type="date" size="mini" placeholder="截止日期" value-format="yyyy-MM-dd" :picker-options="pickerOptions" :disabled="readOnly" v-model="form.busLicenceDeadline" style="width: 100%;" :readonly="long"></el-date-picker>
           </el-col>
           <el-col class="line" :span="20">
             <el-checkbox v-model="long" :disabled="readOnly">长期</el-checkbox>
@@ -135,7 +135,7 @@
             </el-form-item>
             <el-form-item v-if="brandInfo !== '0'&& item.brandRegistType === '2'" :labelWidth="labelWidth" label="品牌授权截止日期："  :prop="'merchantBrandinfoReqDtos.'+index+'.brandAuthDeadline'" :rules="{ message : '请选择品牌授权截止日期', trigger : 'change' , required: true }">
               <el-col :span="9">
-                <el-date-picker type="date" size="mini" placeholder="请选择截止日期" value-format="yyyy-MM-dd" auto-complete="off"  :disabled="brandInfo==='0'||brandInfo==='3'" v-model="item.brandAuthDeadline" style="width: 100%;" ></el-date-picker>
+                <el-date-picker type="date" size="mini" placeholder="请选择截止日期" value-format="yyyy-MM-dd" auto-complete="off" :picker-options="pickerOptions2" :disabled="brandInfo==='0'||brandInfo==='3'" v-model="item.brandAuthDeadline" style="width: 100%;" ></el-date-picker>
               </el-col>
             </el-form-item>
           </div>
@@ -147,7 +147,7 @@
 
         <p class="h_title otherInfo">其他信息</p>
         <el-form-item v-if="form.thirdShopUrl !== undefined && form.thirdShopUrl[0] !== undefined " style="width: 95%;margin-top:0.5rem;"  :labelWidth="labelWidth" label="第三方店铺链接：" :prop="'thirdShopUrl.'+ 0">
-          <el-select class="search" v-model="form.thirdShopUrl[0].platformName" placeholder="请选择第三方平台" size="small">
+          <el-select class="search" v-model="form.thirdShopUrl[0].platformName" placeholder="请选择第三方平台" size="small" >
             <el-option
               v-for="item in platForm"
               :key="item.id"
@@ -155,7 +155,7 @@
               :value="item.name">
             </el-option>
           </el-select>
-          <el-input class="inputInfo" size="small" :maxlength="200" v-model.trim="form.thirdShopUrl[0].url" :disabled="readOnly" placeholder="请填写真实的第三方平台店铺链接可增加入驻成功率，没有可不填"></el-input>
+          <el-input class="inputInfo urlInput" size="small" :maxlength="200" v-model.trim="form.thirdShopUrl[0].url" :disabled="readOnly" placeholder="请填写真实的第三方平台店铺链接可增加入驻成功率，没有可不填"></el-input>
           <span class="tip"><svg-icon icon-class="tips"/>入驻后店铺名称不可修改，请谨慎填写</span>
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth" >
@@ -166,7 +166,7 @@
           <el-button type="danger" @click="goNext('form')">下一步</el-button>
         </el-form-item>
       </el-form>
-      <el-dialog title="温馨提示" :visible.sync="dialogVisible" width="80%" center>
+      <el-dialog class="checkBox" title="温馨提示" :visible.sync="dialogVisible" width="80%" center>
         <el-form :model="form" ref="form"  label-position="right">
           <span class="tip dialogTip"><svg-icon icon-class="tips"/>以下信息至关重要，请您再次确认后提交</span>
           <el-form-item  :labelWidth="labelWidth" label="店铺类型：" >
@@ -178,7 +178,7 @@
             </div>
           </el-form-item>
           <el-form-item  :labelWidth="labelWidth" label="主营类目：">
-            <div class="inputInfo" ><span >{{ shopTypeName  }}</span>
+            <div class="inputInfo" ><span >{{ form.mainBusiness  }}</span>
               <span class="tips_warn">入驻后主营类目不可修改</span>
             </div>
           </el-form-item>
@@ -186,7 +186,7 @@
             <div class="inputInfo" >{{ this.$store.state.shopInfo.enterForm2.name }}</div>
           </el-form-item>
           <el-form-item  :labelWidth="labelWidth" label="店铺管理人手机号：" >
-            <div class="inputInfo" >{{ this.$store.state.shopInfo.enterForm2.mobile }}
+            <div class="inputInfo" ><span style="display: inline-block;">{{ this.$store.state.shopInfo.enterForm2.mobile }}</span>
               <span class="tips_warn">该手机号将拥有店铺经营最高管理权限，暂不支持修改</span>
             </div>
 
@@ -399,7 +399,19 @@
                 id : '11'
               },
             ],
-
+            pickerOptions : {
+              disabledDate(time){
+                let curDate = new Date().getTime() ;
+                let endTime = new Date('9999-12-31').getTime();
+                return time.getTime() < curDate || time.getTime()> endTime ;
+              }
+            } ,
+            pickerOptions2 : {
+              disabledDate(time){
+                let curDate = new Date().getTime() ;
+                return time.getTime() < curDate  ;
+              }
+            } ,
           }
 
         },
@@ -418,8 +430,9 @@
             };
 
 
-          }else{
-            // this.form.companyAddress = this.$store.state.shopInfo.enterForm2.companyAddress ;
+          }
+          if(this.form.busLicenceDeadline === '9999-12-31'){
+            this.long = true ;
           }
 
           if(typeof(this.form.thirdShopUrl) === 'string'&&this.form.thirdShopUrl !== null&&this.form.thirdShopUrl !== ''){
@@ -443,15 +456,15 @@
               }
             })
           },
-          //  获得主营类目名字
-          getMainBusiness(id){
-            this.shopTypeList.map( i =>{
-              if(i.id == id){
-                this.shopTypeName = i.name;
-              }
-            });
-
-          },
+          // //  获得主营类目名字
+          // getMainBusiness(id){
+          //   this.shopTypeList.map( i =>{
+          //     if(i.id == id){
+          //       this.shopTypeName = i.name;
+          //     }
+          //   });
+          //
+          // },
           getProvince() {
             getProvinceList().then(res => {
               if (res.data.status === '000000000') {
@@ -654,7 +667,7 @@
 
 
               if(valid){
-                this.getMainBusiness(this.form.mainBusiness);
+                // this.getMainBusiness(this.form.mainBusiness);
                 if(!this.agree){
                   this.$message({
                     message : '请先阅读并同意《丫贝网合作协议》',
@@ -820,4 +833,17 @@
   .ruleImg{
     width : 90% !important ;
   }
+  .search{
+    margin-right : 0.2rem ;
+    width : 1.8rem ;
+  }
+
+  .checkBox .inputInfo {
+    width : 80%!important;
+  }
+  .urlInput{
+      width : 50%!important ;
+    }
+
+
 </style>
