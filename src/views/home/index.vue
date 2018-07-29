@@ -1,40 +1,10 @@
 <template>
     <div class="home">
-      <!--<div class="navBar_wrap">-->
-        <!--<div class="navBar">-->
-          <!--<div class="logo">-->
-            <!--<img src="img/logo.png" alt="logo" />-->
-          <!--</div>-->
-          <!--<div class="navBar-list">-->
-            <!--<span><a class="active">首页</a></span>-->
-            <!--&lt;!&ndash;<span class="line">|</span>&ndash;&gt;-->
-            <!--<span><a href="shopenter.html">商家入驻</a></span>-->
-            <!--&lt;!&ndash;<span class="line">|</span>&ndash;&gt;-->
-            <!--<span><a href="download.html">下载App</a></span>-->
-            <!--&lt;!&ndash;<span class="line">|</span>&ndash;&gt;-->
-            <!--<span><a href="helpcenter.html">帮助中心</a></span>-->
-            <!--&lt;!&ndash;<span class="line">|</span>&ndash;&gt;-->
-            <!--&lt;!&ndash;<span><a href="publish.html">发布信息</a></span>&ndash;&gt;-->
-            <!--&lt;!&ndash;<span class="line">|</span>&ndash;&gt;-->
-            <!--&lt;!&ndash;<span><a href="list.html">品牌专区</a></span>&ndash;&gt;-->
-          <!--</div>-->
-          <!--<div class="user">-->
-            <!--<img src="img/top.png" alt="" />-->
-            <!--<a href="http://sksj.yabei.shop/#/" target="_blank">登录</a>-->
-            <!--<a href="http://sksj.yabei.shop/#/" target="_blank">注册</a>-->
-          <!--</div>-->
-        <!--</div>-->
-
-      <!--</div>-->
       <div class="content">
         <div class="banner">
           <img src="../../assets/imgs/index/banner.png" alt="banner" />
           <router-link to="/login" class="join" ></router-link>
-          <img src="../../assets/imgs/index/promess.png" class="promise" />
         </div>
-        <!--<div class="video_play">-->
-          <!--<video src="video/01505270f69cf0574342794c84669126.mp4" controls width="47%" height="" autoplay></video>-->
-        <!--</div>-->
         <div class="six_advantage">
           <img src="../../assets/imgs/index/six_advantage.png" width="100%" />
         </div>
@@ -43,15 +13,6 @@
         </div>
         <div class="do_more">
           <img src="../../assets/imgs/index/do_more.png" width="100%" />
-        </div>
-        <div class="real_feedback">
-          <img src="../../assets/imgs/index/real_feedback.png" width="100%" />
-        </div>
-        <div class="normal_question">
-          <img src="../../assets/imgs/index/normal_question.png"  width="100%"/>
-        </div>
-        <div class="buyer">
-          <img src="../../assets/imgs/index/buyer.png"  width="100%"/>
         </div>
         <div class="mtb80">
           <router-link to="/register" >
@@ -62,7 +23,7 @@
           <img src="../../assets/imgs/footer.png" width="100%" />
           <div class="info">
 
-            <div>Copyright © 2006-2017 yabei.com 河南年青人电子商务有限公司<a style="margin-left: .2rem;" target="_blank" href="https://v.pinpaibao.com.cn/cert/site/?site=www.yabei.shop&at=realname" ><img src="https://static.anquan.org/static/outer/image/sm_124x47.png" width="80px"></img></a></div>
+            <div>Copyright © 2017-2018 yabei.com 河南年青人电子商务有限公司<a style="margin-left: .2rem;" target="_blank" href="https://v.pinpaibao.com.cn/cert/site/?site=www.yabei.shop&at=realname" ><img src="https://static.anquan.org/static/outer/image/sm_124x47.png" width="80px"></img></a></div>
             <a href="http://www.miitbeian.gov.cn/" target="_blank">豫ICP备17035119号</a>
 
           </div>
@@ -115,8 +76,8 @@
       height : .5rem ;
       background : url('../../assets/imgs/index/join.png') no-repeat;
       background-size : 100% ;
-      top : 50% ;
-      left : 50% ;
+      bottom: 20%;
+      right: 27%;
       margin-left : -.75rem ;
       /*right : -150px;*/
     }

@@ -113,6 +113,12 @@
           formData.append('currentPage', this.currentPage);
           formData.append('pageSize', this.pageSize);
           formData.append('EQ_code', this.settlement.EQ_code);
+          if(this.settlement.GT_settlementTime === null){
+            this.settlement.GT_settlementTime = '';
+          }
+          if(this.settlement.LT_settlementTime === null){
+            this.settlement.LT_settlementTime = '';
+          }
           formData.append('GT_settlementTime', this.settlement.GT_settlementTime);
           formData.append('LT_settlementTime', this.settlement.LT_settlementTime);
           formData.append('EQ_status', this.settlement.EQ_status);
