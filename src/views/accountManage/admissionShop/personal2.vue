@@ -243,11 +243,8 @@
           haveShop(shopName){
 
             if(shopName !== ''){
-              let id = this.$store.state.shopInfo.shopType ;
-              if(id === undefined){
-                id = -1 ;
-              }
-              haveShopName(shopName,id).then( res =>{
+              
+              haveShopName(shopName,-1).then( res =>{
               if(res.data.status === "000000000"){
                 if(res.data.data.status !== "1"){
                   this.form.shopName = '';
