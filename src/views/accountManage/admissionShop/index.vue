@@ -79,20 +79,40 @@
 
         },
         methods: {
+          getUserInfo() {
 
+          },
 
           goPersonal(){
             // if(this.registerType){
-            this.$store.commit('clearForm');
-            this.$router.push('/accountManage/admission/admissionShop/personal')
+            getStatus().then( res => {
+              if(res.data.status === '000000000'){
 
-            // }
+                if(res.data.data.status === '1'){
+                  this.$router.push( '/accountManage/admission/admissionShop/successAdd')
+                }else{
+                  this.$store.commit('clearForm');
+                  this.$router.push('/accountManage/admission/admissionShop/personal');
+                }
+
+              }
+            })
 
           },
           goEnterPrise(){
-            this.$store.commit('clearForm2');
-            this.$store.commit('shopType',this.shopType);
-              this.$router.push('/accountManage/admission/admissionShop/enterprise?type='+this.shopType);
+            getStatus().then( res => {
+              if(res.data.status === '000000000'){
+                if(res.data.data.status === '1'){
+                  this.$router.push( '/accountManage/admission/admissionShop/successAdd')
+                }else{
+                  this.$store.commit('clearForm2');
+                  this.$store.commit('shopType',this.shopType);
+                  this.$router.push('/accountManage/admission/admissionShop/enterprise?type='+this.shopType);
+                }
+
+              }
+            })
+
             }
 
 

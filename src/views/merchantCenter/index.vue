@@ -156,7 +156,7 @@
                     this.shopName = res.data.data.name ;
 
                   }else{
-                    this.shopName = res.data.data.name + this.lastName[res.data.data.shopType];
+                    this.shopName = res.data.data.name + this.lastName[res.data.data.shopType-0];
                   }
                   getShopInfo().then( res => {
                     if(res.data.status === '000000000'){

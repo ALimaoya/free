@@ -43,6 +43,18 @@
             }
         },
         mounted() {
+          let type = this.$route.query.type ;
+          if( type === undefined){
+            for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
+              if (v.path === this.$route.path) {
+                this.$store.state.tagsView.visitedViews.splice(i, 1);
+                // this.$router.push('/freeManage/publish/step3');
+                this.$router.push('/accountManage/admission/admissionShop/index')
+
+              }
+            }
+          }
+
           this.getUserInfo();
 
         },

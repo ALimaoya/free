@@ -3,7 +3,7 @@
       <div class="content">
         <div class="banner">
           <img src="../../assets/imgs/index/banner.png" alt="banner" />
-          <router-link to="/login" class="join" ></router-link>
+          <!--<router-link to="/login" class="join" ></router-link>-->
         </div>
         <div class="six_advantage">
           <img src="../../assets/imgs/index/six_advantage.png" width="100%" />

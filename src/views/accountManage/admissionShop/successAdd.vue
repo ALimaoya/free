@@ -44,7 +44,7 @@
         getStatus().then( res => {
           if(res.data.status === '000000000'){
             if(res.data.data.belongType === '2'){
-              this.shopName = res.data.data.name + this.lastName[res.data.data.shopType];
+              this.shopName = res.data.data.name + this.lastName[res.data.data.shopType-0];
 
             }else{
               this.shopName = res.data.data.name

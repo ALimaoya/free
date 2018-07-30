@@ -197,7 +197,7 @@
           <el-button plain @click="dialogVisible = false ;">取&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;消</el-button>
         </div>
       </el-dialog>
-      <el-dialog title="丫贝网合作协议" :visible.sync="readRule" width="60%" center>
+      <el-dialog title="丫贝网合作协议" :visible.sync="readRule" width="70%" center>
         <div class="wrap">
           <img class="ruleImg" src="../../../assets/imgs/register.png" />
           <div slot="footer" class="dialog-footer">
@@ -483,7 +483,7 @@
           haveShop(shopName){
 
             if(shopName !== ''){
-              let id = this.$store.state.shopInfo.editorId.id2 ;
+              let id = this.$store.state.shopInfo.shopType ;
               if(id === undefined){
                 id = -1;
               }

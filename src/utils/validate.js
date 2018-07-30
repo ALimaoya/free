@@ -141,9 +141,4 @@ export function validPercent(value){
   return reg.test(value)
 }
 
-/*验证输入商品名字*/
-export function validShopName(value){
 
-
-
-}

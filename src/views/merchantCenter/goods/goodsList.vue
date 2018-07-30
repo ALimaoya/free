@@ -28,6 +28,14 @@
           :value="item.id">
         </el-option>
       </el-select>
+      <el-select  size="small" clearable v-model="account.EQ_shelveStatus" filterable placeholder="请选择商品状态">
+        <el-option
+          v-for="item in goodsStatus"
+          :key="item.value"
+          :label="item.name"
+          :value="item.value">
+        </el-option>
+      </el-select>
       <el-select  size="small" clearable v-model="account.EQ_status" filterable placeholder="请选择审核状态">
         <el-option
           v-for="item in statusList"
@@ -138,14 +146,15 @@
             account : {
               EQ_code: '',
               LIKE_productName: '',
-              EQ_status: ''
+              EQ_status: '',
+              EQ_shelveStatus: ''
             },
             firstTypeList : [],
             secondTypeList : [],
             thirdTypeList : [],
             statusList : [
               {
-                name : '全部状态',
+                name : '全部审核状态',
                 value: ''
               },
               {
@@ -182,6 +191,20 @@
             imageDomain : process.env.IMAGE_DOMAIN ,
             mask : false ,
             bigImg : '',
+            goodsStatus : [
+              {
+                name : '全部商品状态',
+                value : ''
+              },
+              {
+                name : '上架',
+                value : '1'
+              },
+              {
+                name : '未上架',
+                value : '0'
+              }
+            ]
           }
       },
       mounted(){
@@ -209,6 +232,7 @@
           formData.append('EQ_code',this.account.EQ_code);
           formData.append('LIKE_productName',this.account.LIKE_productName);
           formData.append('EQ_status',this.account.EQ_status);
+          formData.append('EQ_shelveStatus',this.account.EQ_shelveStatus);
           formData.append('currentPage',this.currentPage);
           formData.append('pageSize',this.pageSize);
           this.loading = true ;
@@ -275,7 +299,8 @@
           this.account = {
             EQ_code: '',
             LIKE_productName: '',
-            EQ_status: ''
+            EQ_status: '',
+            EQ_shelveStatus: ''
           };
             this.firstType = '';
             this.secondType = '';

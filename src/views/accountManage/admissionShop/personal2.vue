@@ -76,7 +76,6 @@
             <div class="inputInfo" >{{ mobile }}
               <span class="tips_warn">该手机号将拥有店铺经营最高管理权限</span>
             </div>
-
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -84,7 +83,7 @@
           <el-button plain @click="dialogVisible = false ;">取&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;消</el-button>
         </div>
       </el-dialog>
-      <el-dialog title="丫贝网合作协议" :visible.sync="readRule" width="60%" center>
+      <el-dialog title="丫贝网合作协议" :visible.sync="readRule" width="70%" center>
         <div class="wrap">
           <img class="ruleImg" src="../../../assets/imgs/register.png" />
           <div slot="footer" class="dialog-footer">
@@ -132,12 +131,11 @@
               callback(new Error('请输入店铺名称'))
 
             }else{
-              let keywords=["丫贝特许","丫贝授权","旗舰","专营","专卖","官方","直营","官方认证","官方授权"];
-              keywords.some( i => {
+
+              value = value.replace(/\s+/g,'');
+              this.keywords.some( i => {
                 if(value.indexOf(i) !== -1){
                   callback(new Error('店铺名不能含有"丫贝特许","丫贝授权","旗舰","专营","专卖","官方","直营","官方认证","官方授权"等文字'))
-
-
                 }
               });
               callback();
@@ -221,6 +219,7 @@
                 id : '11'
               },
             ],
+            keywords:["丫贝特许","丫贝授权","旗舰","专营","专卖","官方","直营","官方认证","官方授权"],
 
 
           }
@@ -285,12 +284,17 @@
           },
           //下一步操作
           goNext(formName){
+            let checkName = false ;
+            this.form.shopName = this.form.shopName.replace(/\s+/g,'');
 
+            this.keywords.some( i => {
+              if(this.form.shopName.indexOf(i) !== -1){
+                checkName = true ;
+              }
+            });
             this.$refs[formName].validate((valid) => {
 
-              // this.$emit('stepObj',{ index : '3' ,component : 'personal3'});
-
-              if(valid){
+              if(valid && !checkName){
                 // console.log(this.agree,1);
                 if(!this.agree){
                   this.$message({
@@ -307,8 +311,12 @@
 
                 }
 
-              }else{
-
+              }else if(checkName){
+                this.$message({
+                  message : '您输入的店铺名有误，请重新输入',
+                  center : true ,
+                  type : 'error'
+                })
               }
             })
           },

@@ -113,6 +113,7 @@
   import { uploadImage  } from "@/api/activity"
   import { newGoogds,getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo} from "@/api/merchant"
   import { getToken,getMobile } from '@/utils/auth'
+  import { getStatus } from "@/api/enter"
   import { getQueryString,checkFloat } from "@/utils/validate"
   import E from 'wangeditor'
   import SvgIcon from "../../../components/SvgIcon/index";
@@ -254,6 +255,7 @@
         editor: '',  // 存放实例化的wangEditor对象，在多个方法中使用
         word: '',
         loading: true ,
+        lastName : ['旗舰店','专卖店','专营店',''],
 
       }
     },
@@ -270,12 +272,16 @@
     methods: {
       //判断是否已有店铺
       getShop(){
-        getShopInfo().then(res=> {
-          if(res.data.status === '000000000'|| res.data.status === '015009001'){
+        getStatus().then(res=> {
+          if(res.data.status === '000000000'){
             // this.hasShop = false ;
             this.loading = false ;
             this.isNewGoods();
-            this.shopName = res.data.data.name
+            if(res.data.data.belongType === '2'){
+              this.shopName = res.data.data.name + this.lastName[res.data.data.shopType-0];
+            }else{
+              this.shopName = res.data.data.name ;
+            }
             return true ;
 
           }else{

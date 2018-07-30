@@ -58,7 +58,6 @@
                   if(res.data.data.status === '3'){
                     getRegisterInfo(1,3).then( res => {
                       if( res.data.status === '000000000'){
-
                         this.editorDetail = 1 ;
                         if(res.data.data !== null){
                           let data1 =  res.data.data.merchantAptitudeDto ;
@@ -77,8 +76,6 @@
                   }
                 }else{
                   this.$store.commit('clearForm');
-
-                  // window.location.reload();
                 }
               }
             })

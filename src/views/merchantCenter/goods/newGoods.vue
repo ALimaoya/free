@@ -132,13 +132,13 @@
           <el-button type="primary" size="mini" @click="confirmBrand">选择</el-button>
         </div>
       </el-dialog>
-      <!--<el-dialog class="shop_dialog" title="提示" top="20%" :visible.sync="hasShop" width="40%" center-->
-                  <!--:show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">-->
-        <!--<p>{{ tips }}</p>-->
-        <!--<span slot="footer" class="dialog-footer">-->
-        <!--<el-button type="primary" @click="applyShop">前往缴纳保证金</el-button>-->
-      <!--</span>-->
-      <!--</el-dialog>-->
+      <el-dialog class="shop_dialog" title="提示" top="20%" :visible.sync="hasShop" width="40%" center
+                  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+        <p>{{ tips }}</p>
+        <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="applyShop">前往入驻</el-button>
+        </span>
+      </el-dialog>
       <el-dialog class="bondDialog" title="提示" :visible.sync="isBond" width="50%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
         <!--<img :src="ImgSrc" alt="" />-->
         <p class="tips">您还未缴纳保证金，成功缴纳保证金后即可发布更多商品，请前往缴纳保证金吧</p>
@@ -164,6 +164,7 @@
   import { getToken,getMobile } from '@/utils/auth'
   import { getBond } from "@/api/userCenter"
   import { checkFloat,validName } from "@/utils/validate"
+  import { getStatus } from "@/api/enter"
   import $ from '../../../../static/js/jquery-3.3.1.min.js'
   import E from 'wangeditor'
 
@@ -296,7 +297,7 @@
               imgIndex : '',
               dialogVisible: false,
               // currentRow : null,
-              // hasShop : false ,
+              hasShop : false ,
               readOnly : false ,
               totalPages : 0,
               totalElements : 0,
@@ -314,13 +315,15 @@
               thirdName:'',
               platformType: '',
               platformTitle: '',
+              lastName : ['旗舰店','专卖店','专营店',''],
             }
         },
 
         mounted(){
           // window.tinymce.init({});
           this.getList() ;
-          this.getBondInfo();
+          this.getRegister();
+          this.createEditor();
 
         },
 
@@ -343,6 +346,32 @@
             })
 
           },
+          //判断是否已入驻
+          getRegister(){
+            getStatus().then( res => {
+              if (res.data.status === '000000000') {
+                // console.log(res.data);
+                if(res.data.data.status === '4'||res.data.data.status === '2' ){
+                  if(res.data.data.belongType === '2'){
+                    this.shopName = res.data.data.name + this.lastName[res.data.data.shopType-0];
+                  }else{
+                    this.shopName = res.data.data.name ;
+                  }
+                  this.getBondInfo();
+
+                }else if(res.data.data.status === '0' ||res.data.data.status === '1' ){
+                  this.hasShop = true ;
+                  if(res.data.data.status === '0'){
+                    this.tips = '您还未入驻特卖商城，请前往入驻';
+
+                  }else if(res.data.data.status === '1'){
+                    this.tips = '您申请的入驻信息正在审核中，审核通过后即可新增商品';
+
+                  }
+                }
+              }
+            })
+          },
 
           getBondInfo(){
             this.loading = true ;
@@ -357,11 +386,9 @@
 
                 }else{
                   this.isBond = false ;
-                  this.getShop();
                 }
               }else{
                   this.isBond = false ;
-                  this.getShop();
 
                 }
               // }
@@ -369,27 +396,7 @@
               // }
             })
           },
-          //判断是否已有店铺
-          getShop(){
-            getShopInfo().then(res=> {
-              if(res.data.status === '000000000'|| (res.data.status === '015009001'&& this.tableData.length < 10)){
-                this.isBond = false ;
-                this.shopName = res.data.data.name;
-                this.copyGoods();
-                this.getFirstList();
-                this.createEditor();
 
-                return true ;
-
-
-              }else{
-                this.tips = res.data.message;
-                this.isBond = true ;
-
-
-              }
-            })
-          },
           //判断是否是复制商品
           copyGoods(){
             let id = this.$route.query.order ;
@@ -884,6 +891,9 @@
             }
             if(value.showImages!== null &&value.showImages.length > 0){
               this.form.imagesList = [];
+              if(value.showImages.length > 5){
+                value.showImages = value.showImages.slice(0,5);
+              }
               value.showImages.map( i => {
                 this.form.imagesList.push({ id: '', imgUrl:i })
               });
@@ -897,6 +907,8 @@
                     this.form.imagesList.push({ id: '', imgUrl:''});
                   }
                 }
+              }else{
+
               }
             }
             if(value.detailImages!== undefined &&value.detailImages.length > 0){
@@ -918,7 +930,7 @@
 
         //  跳转到申请店铺
           applyShop(){
-            this.$router.push('/merchantCenter/userCenter/bond')
+            this.$router.push('/accountManage/admission/admissionShop/index')
           },
           handleSizeChange(val) {
             this.radio = '';
