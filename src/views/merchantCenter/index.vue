@@ -3,10 +3,10 @@
       <div class="mainInfo">
         <div class="userInfo" @click="goShopInfo">
           <div v-if="shopObj.ybMerchantShopDto!== undefined">
-            <img v-if="shopObj.ybMerchantShopDto.logoImage !== undefined || shopObj.ybMerchantShopDto.logoImage !== ''" :src="imageDomain + shopObj.ybMerchantShopDto.logoImage" :onerror="errorImg">
+            <img v-if="shopObj.ybMerchantShopDto.logoImage !==null || shopObj.ybMerchantShopDto.logoImage !== undefined || shopObj.ybMerchantShopDto.logoImage !== ''" :src="imageDomain + shopObj.ybMerchantShopDto.logoImage" :onerror="errorImg">
             <img :src="failImg"  v-else>
 
-            <dl><dd>{{ shopObj.ybMerchantShopDto.name }}</dd><dt>主营类目：{{ shopObj.ybMerchantShopDto.mainBusiness }}</dt></dl></div>
+            <dl><dd>{{ shopName }}</dd><dt>主营类目：{{ shopObj.ybMerchantShopDto.mainBusiness }}</dt></dl></div>
           <ul>
             <li><span>描述相符</span><span class="tips_warn">5.0</span></li>
             <li><span>服务态度</span><span class="tips_warn">5.0</span></li>
@@ -103,6 +103,8 @@
               failImg: userPhoto,
               // mainType : '',
               shopName : '',
+              lastName : ['旗舰店','专卖店','专营店','']
+
             }
         },
         mounted() {
@@ -150,7 +152,12 @@
 
                   },2000)
                 }else{
-                  this.shopName = res.data.data.name ;
+                  if(res.data.data.belongType === '1'){
+                    this.shopName = res.data.data.name ;
+
+                  }else{
+                    this.shopName = res.data.data.name + this.lastName[res.data.data.shopType];
+                  }
                   getShopInfo().then( res => {
                     if(res.data.status === '000000000'){
                       this.shopObj = res.data.data ;
@@ -164,19 +171,7 @@
             });
 
           },
-          // getMainType(){
-          //   if(/^[0-9]+$/.test(this.shopObj.ybMerchantShopDto.mainBusiness*1)){
-          //     firstList().then(res=> {
-          //       res.data.data.map( i => {
-          //         if(i.id == this.shopObj.ybMerchantShopDto.mainBusiness ){
-          //           this.mainType = i.name
-          //         }
-          //       });
-          //     })
-          //   }else{
-          //     this.mainType = this.shopObj.ybMerchantShopDto.mainBusiness ;
-          //   }
-          // },
+
           getType(type){
 
             this.changeBtn = type ;

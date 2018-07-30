@@ -21,7 +21,7 @@
 </template>
 
 <script>
-  import { getApprovedStatus } from "@/api/userCenter"
+  import { getStatus } from "@/api/enter"
 
 
   export default {
@@ -29,6 +29,7 @@
     data() {
       return {
         shopName: '',
+        lastName : ['旗舰店','专卖店','专营店','']
         // checking:''
       }
     },
@@ -40,10 +41,14 @@
     },
     methods: {
       getUserInfo() {
-        getApprovedStatus().then( res => {
+        getStatus().then( res => {
           if(res.data.status === '000000000'){
+            if(res.data.data.belongType === '2'){
+              this.shopName = res.data.data.name + this.lastName[res.data.data.shopType];
 
-            this.shopName = res.data.data.name ;
+            }else{
+              this.shopName = res.data.data.name
+            }
             // this.goHomeEditor
           }
         })

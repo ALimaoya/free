@@ -15,7 +15,7 @@
               <span>{{ apilyInfo.thirdAccount}}</span>
             </div>
           </div>
-          <router-link v-else class="noAli" to="/accountManage/userInfor/account">绑定支付宝</router-link>
+          <router-link v-else class="noAli" to="/accountManage/accountInfo/account">绑定支付宝</router-link>
         </li>
         <li>
           <el-form-item prop="money">

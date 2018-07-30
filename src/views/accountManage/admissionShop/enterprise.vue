@@ -17,8 +17,8 @@
   import Enterprise1 from "@/views/accountManage/admissionShop/enterprise1"
   import Enterprise2 from "@/views/accountManage/admissionShop/enterprise2"
   import SuccessAdd from "@/views/accountManage/admissionShop/successAdd"
-  import { getApprovedStatus } from "@/api/userCenter"
-  import { getRegisterInfo } from "@/api/enter"
+  // import { getApprovedStatus } from "@/api/userCenter"
+  import { getRegisterInfo,getStatus } from "@/api/enter"
 
 
   export default {
@@ -49,35 +49,48 @@
 
         methods: {
           getUserInfo() {
-            getApprovedStatus().then( res => {
+            getStatus().then( res => {
               if(res.data.status === '000000000'){
 
                 if(res.data.data.status !== '0'){
                   if(res.data.data.status === '3'){
                     // this.$router.push('/accountManage/admission/admissionShop/failAdd');
-                    getRegisterInfo().then( res => {
+                    let shopType = this.$route.query.type ;
+                    if(shopType == undefined){
+                      shopType = ''
+                    }
+                    getRegisterInfo(2,shopType).then( res => {
                       if( res.data.status === '000000000'){
-                        let data1 =  res.data.data.merchantAptitudeDto ;
-                        let data2 = res.data.data.merchantShopResDto ;
-                        let merchantBrandinfoReqDtos = res.data.data.merchantBrandinfoResDtoList;
-                        let form = { ...data2,...data1 };
-                        form['merchantBrandinfoReqDtos'] = merchantBrandinfoReqDtos;
-                        // console.log(form);
-                        let listId = [];
-                        if(res.data.data.merchantBrandinfoResDtoList !== null ){
-                          res.data.data.merchantBrandinfoResDtoList.map( i => {
-                            listId.push(i.id);
-                          });
-                        }
-                        let editorId = {
-                          id1  : res.data.data.merchantAptitudeDto.id ,
-                          id2 : res.data.data.merchantShopResDto.id,
-                        };
-                        this.$store.commit('addForm2',form);
-                        this.$store.commit('addEditorId',editorId);
-                        this.$store.commit('addListId',listId);
+
                         // this.$store.commit('addMerchantBrand',merchantBrandinfoReqDtos);
                         this.editorDetail = 1 ;
+                        if(res.data.data !== null){
+                          let data1 =  res.data.data.merchantAptitudeDto ;
+                          let data2 = res.data.data.merchantShopResDto ;
+                          let merchantBrandinfoReqDtos = res.data.data.merchantBrandinfoResDtoList;
+                          let form = { ...data2,...data1 };
+                          form['merchantBrandinfoReqDtos'] = merchantBrandinfoReqDtos;
+                          // console.log(form);
+                          let listId = [];
+                          if(res.data.data.merchantBrandinfoResDtoList !== null ){
+                            res.data.data.merchantBrandinfoResDtoList.map( i => {
+                              listId.push(i.id);
+                            });
+                          }
+                          let editorId = {
+                            id1  : res.data.data.merchantAptitudeDto.id ,
+                            id2 : res.data.data.merchantShopResDto.id,
+                          };
+                          this.$store.commit('addForm2',form);
+                          this.$store.commit('addEditorId',editorId);
+                          this.$store.commit('addListId',listId);
+                          // window.location.href=window.location.href+"#reloaded";
+                        }else{
+                          if(window.location.href.indexOf("#reloaded")===-1){
+                            window.location.href=window.location.href+"#reloaded";
+                            window.location.reload();
+                          }
+                        }
 
                       }
                     })
@@ -87,6 +100,9 @@
                     this.$router.push('/accountManage/admission/admissionShop/successAdd')
 
                   }
+
+                }else{
+                  // window.location.reload();
 
                 }
                 // this.goHomeEditor

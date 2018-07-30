@@ -83,7 +83,62 @@ const shopInfo = {
     addMerchantBrand(state,value){
         state.merchantBrandinfoReqDtos = value ;
     },
-
+    clearForm(state){
+        state = {
+          enterForm: {
+            name: '',
+            email: '',
+            mobile: getMobile(),
+            cardId:'',
+            cardFaceImage: '',
+            cardBackImage : '',
+            cardSelfImage: '',
+            cardDeadline: '',
+            mainBusiness: '',
+            shopName:'',
+            // thirdShopUrl: '',
+            thirdShopUrl:[{ platformName : '',url : ''}]
+          },
+          cardType:'',
+          shopName:'',
+          shopType:'',
+          enterForm2: {
+            name: '',
+            email: '',
+            mobile: getMobile(),
+            legalRepName: '',
+            legalRepMobile: '',
+            cardId:'',
+            cardFaceImage: '',
+            cardBackImage : '',
+            // halfBody: '',
+            cardDeadline: '',
+            mainBusiness: '',
+            shopName:'',
+            thirdShopUrl:[{ platformName : '',url : ''}],
+            licenseCountryType: '1',
+            licenseMergeType: '1',
+            enterpriseName:'',
+            companyAddress:{ province : '', detail: ''},
+            socialCreditCode:'',
+            businessImage: '',
+            openLicenceImage: '',
+            busLicenceDeadline: '',
+            shopType: '',
+            merchantBrandinfoReqDtos:[ {
+              brandRegistType:'1',
+              brandRegistCode: '',
+              brandCertifyImage:'',
+              brandAuthImage:'',
+              brandAuthDeadline:'',
+              brandAuthType:''
+            }]
+          },
+          cardType2:'',
+          editorId: {},
+          listId: [],
+        }
+    }
   },
 };
 

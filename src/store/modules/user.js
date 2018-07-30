@@ -51,6 +51,7 @@ const user = {
       return new Promise((resolve, reject) => {
         register(userInfo).then(response => {
             const token = response.data.data;
+            removeMobile();
             setToken(token);
             commit('SET_TOKEN', token);
             resolve(response);

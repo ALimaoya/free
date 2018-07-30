@@ -82,7 +82,7 @@
       methods : {
         logout() {
           this.$store.dispatch('LogOut').then(() => {
-            window.location.reload();
+            // window.location.reload();
             this.$router.push('/login')
           });
 

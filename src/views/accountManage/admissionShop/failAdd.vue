@@ -19,7 +19,8 @@
 </template>
 
 <script>
-  import { getApprovedStatus } from "@/api/userCenter"
+  import { getStatus } from "@/api/enter"
+
 
   export default {
     name: "failAdd",
@@ -28,7 +29,9 @@
         shopName: '',
         status : '',
         type : '',
-        refusedReason: ''
+        refusedReason: '',
+        lastName : ['旗舰店','专卖店','专营店','']
+
       }
     },
     mounted() {
@@ -37,23 +40,31 @@
     methods: {
 
       getUserInfo() {
-        getApprovedStatus().then( res => {
+        getStatus().then( res => {
           if(res.data.status === '000000000'){
             this.type = res.data.data.belongType ;
-            this.shopName = res.data.data.name ;
+            if(this.type === '2'){
+              this.shopName = res.data.data.name + this.lastName[res.data.data.shopType];
+
+
+            }else{
+              this.shopName = res.data.data.name ;
+
+            }
             this.refusedReason = res.data.data.reason ;
             // this.goHomeEditor(type)
           }
         })
       },
       goHomeEditor() {
-        if(this.type === '1'){
-          this.$router.push('/accountManage/admission/admissionShop/personal')
-
-        }else if( this.type === '2'){
-          this.$router.push('/accountManage/admission/admissionShop/enterprise')
-
-        }
+        this.$router.push('/accountManage/admission/admissionShop/index')
+        // if(this.type === '1'){
+        //   this.$router.push('/accountManage/admission/admissionShop/personal')
+        //
+        // }else if( this.type === '2'){
+        //   this.$router.push('/accountManage/admission/admissionShop/enterprise')
+        //
+        // }
       }
     }
   }

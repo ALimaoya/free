@@ -18,10 +18,10 @@
         </el-form-item>
         <el-form-item   :labelWidth="labelWidth"  label="身份证有效期：" prop="cardDeadline">
           <el-col :span="9" >
-            <el-date-picker type="date" size="mini" placeholder="截止日期" :picker-options="pickerOptions" :disabled="readOnly" value-format="yyyy-MM-dd" v-model="form.cardDeadline" style="width: 100%;" :readonly="cardType"></el-date-picker>
+            <el-date-picker type="date" size="mini" placeholder="截止日期" :picker-options="pickerOptions" :disabled="readOnly" value-format="yyyy-MM-dd"  v-model="form.cardDeadline" style="width: 100%;" :readonly="cardType"></el-date-picker>
           </el-col>
           <el-col class="line" :span="20">
-            <el-checkbox v-model="cardType" :disabled="readOnly">长期</el-checkbox>
+            <el-checkbox v-model="cardType"  :disabled="readOnly">长期</el-checkbox>
             <span class="tip" style="background: none;border: 0; width: 65%"><svg-icon icon-class="tips"/>身份证剩余有效期时长必须大于2个月</span>
           </el-col>
         </el-form-item>
@@ -118,6 +118,13 @@
             callback();
           }
         };
+        const validDate = ( rule, value ,callback) => {
+          if(value === '' && this.cardType === false ){
+            callback(new Error('请选择身份证有效期'))
+          }
+
+          callback();
+        };
             return {
               form: {},
               cardType: false,
@@ -138,7 +145,7 @@
                   }
                 ],
                 cardDeadline: [
-                  {  required: true, message: '请选择身份证截止日期', trigger: 'change' }
+                  {  required: true, trigger: 'blur', validator : validDate  }
                 ]
               },
               labelWidth: '180px',
@@ -174,13 +181,13 @@
 
         }
       },
-
+      // created(){
+      //   this.$nextTick( () => {
+      //     this.$store.commit('clearForm')
+      //   })
+      // },
 
         mounted() {
-            // if(this.$store.state.shopInfo.editorType === 1){
-            //
-            // }
-
               this.form = this.$store.state.shopInfo.enterForm;
               // console.log(this.form);
 
@@ -324,7 +331,8 @@
           },
           //返回上一步
           goBack(){
-            this.$router.push({ name : 'AdmissionShop'})
+            this.$router.push({ name : 'AdmissionShop',params : { new : '0'}});
+
           },
           //查看示例图
           showDemo(index){

@@ -10,17 +10,17 @@ export function enterApply(data,type){
   }
 
   //  查询店铺是否被使用
-  export function haveShopName(data){
+  export function haveShopName(data,id){
     return request({
-      url: `/center/merchant/checkin/exitShopName/${data}`,
+      url: `/center/merchant/checkin/exitShopName/${data}/${id}`,
       method: 'get',
     })
   }
 
   //获取入驻信息
-  export function getRegisterInfo(){
+  export function getRegisterInfo(type,shopType){
   return request({
-    url: '/center/merchant/checkin/applyInfo',
+    url: '/center/merchant/checkin/applyInfo/'+ type + '/'+shopType,
     method:'get'
   })
   }

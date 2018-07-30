@@ -20,8 +20,8 @@
   import Personal1 from "@/views/accountManage/admissionShop/personal1"
   import Personal2 from "@/views/accountManage/admissionShop/personal2"
   import SuccessAdd from "@/views/accountManage/admissionShop/successAdd"
-  import { getApprovedStatus } from "@/api/userCenter"
-  import { getRegisterInfo } from "@/api/enter"
+  // import { getApprovedStatus } from "@/api/userCenter"
+  import { getRegisterInfo , getStatus } from "@/api/enter"
 
   export default {
       name: "personal",
@@ -40,37 +40,43 @@
               editorDetail: ''
             }
         },
+
         mounted() {
           this.getUserInfo();
 
         },
         methods: {
           getUserInfo() {
-            getApprovedStatus().then( res => {
+            getStatus().then( res => {
               if(res.data.status === '000000000'){
 
                 if(res.data.data.status !== '0'){
 
                   if( res.data.data.status === '1'){
-                    this.$router.push('/accountManage/admission/admissionShop/successAdd?checking=1')
+                    this.$router.push('/accountManage/admission/admissionShop/successAdd')
                   }
                   if(res.data.data.status === '3'){
-                    getRegisterInfo().then( res => {
+                    getRegisterInfo(1,3).then( res => {
                       if( res.data.status === '000000000'){
-                        let data1 =  res.data.data.merchantAptitudeDto ;
-                        let data2 = res.data.data.merchantShopResDto ;
-                        let form = { ...data2,...data1};
-                        let editorId = {
-                           id1  : res.data.data.merchantAptitudeDto.id ,
-                           id2 : res.data.data.merchantShopResDto.id
-                        };
-                        this.$store.commit('addForm',form);
-                        this.$store.commit('addEditorId',editorId);
+
                         this.editorDetail = 1 ;
+                        if(res.data.data !== null){
+                          let data1 =  res.data.data.merchantAptitudeDto ;
+                          let data2 = res.data.data.merchantShopResDto ;
+                          let form = { ...data2,...data1};
+                          let editorId = {
+                            id1  : res.data.data.merchantAptitudeDto.id ,
+                            id2 : res.data.data.merchantShopResDto.id
+                          };
+                          this.$store.commit('addForm',form);
+                          this.$store.commit('addEditorId',editorId);
+                        }
 
                       }
                     })
                   }
+                }else{
+                  // window.location.reload();
                 }
               }
             })

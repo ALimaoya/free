@@ -147,7 +147,7 @@
 
         <p class="h_title otherInfo">其他信息</p>
         <el-form-item v-if="form.thirdShopUrl !== undefined && form.thirdShopUrl[0] !== undefined " style="width: 95%;margin-top:0.5rem;"  :labelWidth="labelWidth" label="第三方店铺链接：" :prop="'thirdShopUrl.'+ 0">
-          <el-select class="search" v-model="form.thirdShopUrl[0].platformName" placeholder="请选择第三方平台" size="small" >
+          <el-select class="search" clearable v-model="form.thirdShopUrl[0].platformName" placeholder="请选择第三方平台" size="small" >
             <el-option
               v-for="item in platForm"
               :key="item.id"
@@ -173,7 +173,7 @@
             <div class="inputInfo" >企业店铺</div>
           </el-form-item>
           <el-form-item  :labelWidth="labelWidth" label="店铺名称：" >
-            <div class="inputInfo" >{{ form.shopName }}
+            <div class="inputInfo" >{{ form.shopName + lastName[brandInfo] }}
               <span class="tips_warn">入驻后店铺名称不可修改</span>
             </div>
           </el-form-item>
@@ -278,6 +278,12 @@
                   callback();
                 }
               };
+              const validDate = ( rule, value ,callback) => {
+                if(value === '' && this.long === false ){
+                  callback(new Error('请选择营业执照有效期'))
+                }
+                callback();
+              };
           return {
             labelWidth: '200px',
             form: {},
@@ -320,7 +326,7 @@
               ],
               busLicenceDeadline:[
                 {
-                  required : true ,trigger : 'change',message : '请选择营业期限'
+                  required : true ,trigger : 'change',validator: validDate
                 }
               ],
               thirdShopUrl:[
@@ -475,8 +481,13 @@
             })
           },
           haveShop(shopName){
+
             if(shopName !== ''){
-              haveShopName(shopName).then( res =>{
+              let id = this.$store.state.shopInfo.editorId.id2 ;
+              if(id === undefined){
+                id = -1;
+              }
+              haveShopName(shopName,id).then( res =>{
                 if(res.data.status === "000000000"){
                   if(res.data.data.status !== "1"){
                     this.form.shopName = '';

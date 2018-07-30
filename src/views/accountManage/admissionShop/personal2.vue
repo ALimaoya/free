@@ -25,7 +25,7 @@
             <el-popover placement="right"
                       width="200"
                       trigger="hover"
-                      content="1、未经平台许可，店名、电标、店铺详情不得使用含有“丫贝特许”、“丫贝授权”等含义的词句。
+                      content="1、未经平台许可，店名、店标、店铺详情不得使用含有“丫贝特许”、“丫贝授权”等含义的词句。
                               2、个人卖家店铺名称禁止使用“旗舰”、“专营”“专卖”、“官方”、“直营”、“官方认证”、“官方授权”、“知名品牌名”等表述或内容。">
               <span slot="reference" class="el-icon-question"></span>
             </el-popover>
@@ -34,7 +34,7 @@
         </el-form-item>
         <p class="h_title otherInfo">其他信息</p>
         <el-form-item style="width: 95%;margin-top:0.5rem;" v-if="form.thirdShopUrl !== undefined && form.thirdShopUrl[0] !== undefined "  :labelWidth="labelWidth" label="第三方店铺链接：" prop="thirdShopUrl">
-          <el-select class="search" v-model="form.thirdShopUrl[0].platformName" placeholder="请选择第三方平台" size="small" >
+          <el-select class="search" clearable v-model="form.thirdShopUrl[0].platformName" placeholder="请选择第三方平台" size="small" >
             <el-option
               v-for="(item ,index) in platForm"
               :key="index"
@@ -132,12 +132,18 @@
               callback(new Error('请输入店铺名称'))
 
             }else{
-              if(validShopName(value)){
-                callback(new Error('店铺名不能含有"丫贝特许","丫贝授权","旗舰","专营","专卖","官方","直营","官方认证","官方授权"等文字'))
-              }else{
-                callback();
+              let keywords=["丫贝特许","丫贝授权","旗舰","专营","专卖","官方","直营","官方认证","官方授权"];
+              keywords.some( i => {
+                if(value.indexOf(i) !== -1){
+                  callback(new Error('店铺名不能含有"丫贝特许","丫贝授权","旗舰","专营","专卖","官方","直营","官方认证","官方授权"等文字'))
+
+
+                }
+              });
+              callback();
+
               }
-            }
+            callback();
 
 
           };
@@ -236,8 +242,13 @@
         methods: {
           //  失去焦点的时候 判断是否重名
           haveShop(shopName){
+
             if(shopName !== ''){
-              haveShopName(shopName).then( res =>{
+              let id = this.$store.state.shopInfo.editorId.id2 ;
+              if(id === undefined){
+                id = -1 ;
+              }
+              haveShopName(shopName,id).then( res =>{
               if(res.data.status === "000000000"){
                 if(res.data.data.status !== "1"){
                   this.form.shopName = '';
@@ -306,7 +317,7 @@
             this.dialogVisible = false ;
             if(this.form.cardDeadline === '9999-12-31'){
               this.cardType = true;
-            };
+            }
             // console.log(this.form.thirdShopUrl);
             let thirdShopUrl = JSON.stringify(this.form.thirdShopUrl);
 

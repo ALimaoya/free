@@ -40,7 +40,7 @@
 </template>
 
 <script>
-
+    import { getStatus } from "@/api/enter"
     export default {
 
       name: "AdmissionShop",
@@ -66,62 +66,34 @@
               ],
               shopType: '0',
               dialogVisible: false ,
-              goRegister : false,
+              // registerType : '',
             }
         },
+      // created(){
+      //   this.$nextTick( () => {
+      //     this.$store.commit('clearForm')
+      //   })
+      // },
+
         mounted() {
-          this.goOther();
+          let isNew = this.$route.params.new ;
+          if(isNew !== undefined && isNew === '0'){
+            window.location.reload();
+          }
+          // this.getUserInfo();
 
         },
         methods: {
-          getUserInfo() {
-            getApprovedStatus().then( res => {
-              if(res.data.status === '000000000'){
-                if(res.data.data.status === '0'){
-                  this.$router.push({ name : 'AdmissionShop'})
 
-                }
-                if(res.data.data.status === '1'){
-                  this.$router.push( '/accountManage/admission/admissionShop/index?checkStatus=1')
-                }
-                if(res.data.data.status === '3'){
-                  this.$router.push( '/admissionShop/failAdd')
-                }
-              }
-            })
-          },
 
-          goOther(){
-            let status = this.$route.query.checkStatus;
-            if(status !== undefined){
-              if(status !== '0'){
-                if(status === '3'){
-                  this.$router.push('/accountManage/admission/admissionShop/failAdd')
-
-                }
-                if(status === '1'){
-                  this.$router.push('/accountManage/admission/admissionShop/successAdd')
-
-                }
-              }else{
-                  this.goRegister = true ;
-              }
-            }else{
-              this.goRegister = true ;
-
-            }
-          },
           goPersonal(){
-            this.goOther();
-            if(this.goRegister){
+            // if(this.registerType){
               this.$router.push('/accountManage/admission/admissionShop/personal')
 
-            }
+            // }
 
           },
           goEnterPrise(){
-            this.goOther();
-            if(this.goRegister){
               this.$store.commit('shopType',this.shopType);
               this.$router.push('/accountManage/admission/admissionShop/enterprise?type='+this.shopType);
             }
@@ -129,7 +101,7 @@
 
           },
 
-        }
+        // }
     }
 </script>
 

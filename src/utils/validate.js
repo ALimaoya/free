@@ -143,9 +143,7 @@ export function validPercent(value){
 
 /*验证输入商品名字*/
 export function validShopName(value){
-  let keywords=["丫贝特许","丫贝授权","旗舰","专营","专卖","官方","直营","官方认证","官方授权"];
-  for(var i=0;i<keywords.length;i++){
-    let reg = new RegExp(keywords[i],"g");  
-    return reg.test(value)
-  }
+
+
+
 }

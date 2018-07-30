@@ -145,6 +145,13 @@
               callback()
             }
           };
+          const validDate = ( rule, value ,callback) => {
+            if(value === '' && this.cardType === false ){
+              callback(new Error('请选择身份证有效期'))
+            }
+
+            callback();
+          };
             return {
               form: {},
               formRule: {
@@ -176,7 +183,7 @@
                   }
                 ],
                 cardDeadline: [
-                  {  required: true, message: '请选择身份证截止日期', trigger: 'change' }
+                  {  required: true,  validator : validDate , trigger: 'change' }
                 ]
               },
               labelWidth: '230px',
@@ -195,13 +202,19 @@
               cardType: false,
               pickerOptions : {
                 disabledDate(time){
-                  let curDate = new Date().getTime() ;
-                  return time.getTime() < curDate ;
+                  let curDate = new Date().getTime();
+                  let endTime = new Date('9999-12-31').getTime();
+                  return time.getTime() < curDate || time.getTime()> endTime ;
                 }
               } ,
               registerMobile : getMobile(),
             }
         },
+      // created(){
+      //   this.$nextTick( () => {
+      //     this.$store.commit('clearForm')
+      //   })
+      // },
 
         mounted() {
              this.form = this.$store.state.shopInfo.enterForm2;
@@ -214,9 +227,10 @@
              } else {
                this.cardType = false
              }
-             if(this.form.mobile !== ''&& this.form.mobile != this.registerMobile){
+             if(this.form.mobile !== ''&& this.form.mobile != this.registerMobile ){
                window.location.reload();
              }
+
         },
         watch : {
           editorInfo : function(val){
@@ -336,7 +350,7 @@
           },
           //返回上一步
           goBack(){
-            this.$router.push({ name : 'AdmissionShop'})
+            this.$router.push({ name : 'AdmissionShop',params : { new : '0'}});
           },
           //查看示例图
           showDemo(index){

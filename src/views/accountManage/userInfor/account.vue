@@ -222,12 +222,13 @@
       onSubmit(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            let formdata = new FormData()
+            let formdata = new FormData();
             formdata.append('thirdName', this.payForm.name);
             formdata.append('captcha', this.payForm.pswVerify);
             formdata.append('thirdAccount', this.payForm.account);
             setApilyAccount(formdata).then(res => {
-              this.$message({
+              if(res.data.status === '000000000'){
+                this.$message({
                   type: 'success',
                   message: '支付宝绑定成功',
                   center: true
@@ -236,6 +237,7 @@
                 this.accountBox=false;
                 this.getApilyAccount();
                 this.$refs[formName].resetFields();
+              }
             })
 
           }
