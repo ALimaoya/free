@@ -6,7 +6,7 @@ module.exports = {
   //AGE_DOMAIN : '"http://yabei.oss-cn-beijing.aliyuncs.com/"',//正式
 
   // 测试
-   BASE_API: '"http://120.27.12.205:8005"',
+   BASE_API: '"http://120.27.12.205:8005/tryout"',
    IMAGE_DOMAIN : '"http://lgf8953.oss-cn-beijing.aliyuncs.com/"', //测试
 
 };
