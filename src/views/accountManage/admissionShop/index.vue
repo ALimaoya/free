@@ -69,18 +69,13 @@
               // registerType : '',
             }
         },
-      // created(){
-      //   this.$nextTick( () => {
-      //     this.$store.commit('clearForm')
-      //   })
-      // },
+
 
         mounted() {
-          let isNew = this.$route.params.new ;
-          if(isNew !== undefined && isNew === '0'){
-            window.location.reload();
-          }
-          // this.getUserInfo();
+          // let isNew = this.$route.params.new ;
+          // if(isNew !== undefined && isNew === '0'){
+          //   window.location.reload();
+          // }
 
         },
         methods: {
@@ -88,13 +83,15 @@
 
           goPersonal(){
             // if(this.registerType){
-              this.$router.push('/accountManage/admission/admissionShop/personal')
+            this.$store.commit('clearForm');
+            this.$router.push('/accountManage/admission/admissionShop/personal')
 
             // }
 
           },
           goEnterPrise(){
-              this.$store.commit('shopType',this.shopType);
+            this.$store.commit('clearForm2');
+            this.$store.commit('shopType',this.shopType);
               this.$router.push('/accountManage/admission/admissionShop/enterprise?type='+this.shopType);
             }
 

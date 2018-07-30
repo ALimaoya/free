@@ -84,25 +84,23 @@ const shopInfo = {
         state.merchantBrandinfoReqDtos = value ;
     },
     clearForm(state){
-        state = {
-          enterForm: {
-            name: '',
-            email: '',
-            mobile: getMobile(),
-            cardId:'',
-            cardFaceImage: '',
-            cardBackImage : '',
-            cardSelfImage: '',
-            cardDeadline: '',
-            mainBusiness: '',
-            shopName:'',
-            // thirdShopUrl: '',
-            thirdShopUrl:[{ platformName : '',url : ''}]
-          },
-          cardType:'',
-          shopName:'',
-          shopType:'',
-          enterForm2: {
+      state.enterForm =  {
+        name: '',
+        email: '',
+        mobile: getMobile(),
+        cardId:'',
+        cardFaceImage: '',
+        cardBackImage : '',
+        cardSelfImage: '',
+        cardDeadline: '',
+        mainBusiness: '',
+        shopName:'',
+        // thirdShopUrl: '',
+        thirdShopUrl:[{ platformName : '',url : ''}]
+      };
+    },
+    clearForm2(state){
+      state.enterForm2 =  {
             name: '',
             email: '',
             mobile: getMobile(),
@@ -133,11 +131,9 @@ const shopInfo = {
               brandAuthDeadline:'',
               brandAuthType:''
             }]
-          },
-          cardType2:'',
-          editorId: {},
-          listId: [],
-        }
+          };
+
+
     }
   },
 };

@@ -331,7 +331,7 @@
           },
           //返回上一步
           goBack(){
-            this.$router.push({ name : 'AdmissionShop',params : { new : '0'}});
+            this.$router.push({ name : 'AdmissionShop'});
 
           },
           //查看示例图

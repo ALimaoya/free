@@ -84,12 +84,13 @@
                           this.$store.commit('addForm2',form);
                           this.$store.commit('addEditorId',editorId);
                           this.$store.commit('addListId',listId);
-                          // window.location.href=window.location.href+"#reloaded";
                         }else{
-                          if(window.location.href.indexOf("#reloaded")===-1){
-                            window.location.href=window.location.href+"#reloaded";
-                            window.location.reload();
-                          }
+                          this.$store.commit('clearForm2');
+
+                          // if(window.location.href.indexOf("#reloaded")===-1){
+                          //   window.location.href=window.location.href+"#reloaded";
+                          //   window.location.reload();
+                          // }
                         }
 
                       }

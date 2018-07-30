@@ -737,7 +737,7 @@
               merchantBrandinfoReqDtos: this.form.merchantBrandinfoReqDtos ,
 
             };
-            if(this.brandInfo ==='0'){
+            if(this.brandInfo ==='0'|| (this.form.merchantBrandinfoReqDtos.length === 1 && this.form.merchantBrandinfoReqDtos[0].brandRegistType === '1')){
               data.merchantBrandinfoReqDtos = [
                 {
                   brandRegistType:'1',

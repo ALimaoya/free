@@ -76,6 +76,8 @@
                     })
                   }
                 }else{
+                  this.$store.commit('clearForm');
+
                   // window.location.reload();
                 }
               }
