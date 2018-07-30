@@ -679,7 +679,7 @@
             this.$refs[formName].validate((valid) => {
 
 
-              if(valid){
+              if(valid&&this.form.shopName !== ''){
                 // this.getMainBusiness(this.form.mainBusiness);
                 if(!this.agree){
                   this.$message({

@@ -243,7 +243,7 @@
           haveShop(shopName){
 
             if(shopName !== ''){
-              let id = this.$store.state.shopInfo.editorId.id2 ;
+              let id = this.$store.state.shopInfo.shopType ;
               if(id === undefined){
                 id = -1 ;
               }
@@ -294,7 +294,7 @@
             });
             this.$refs[formName].validate((valid) => {
 
-              if(valid && !checkName){
+              if(valid && !checkName&&this.form.shopName !== ''){
                 // console.log(this.agree,1);
                 if(!this.agree){
                   this.$message({
@@ -303,10 +303,7 @@
                     center: true
                   })
                 }else{
-                  // if(this.form.mainBusiness !== ''){
-                  //   this.getMainBusiness(this.form.mainBusiness);
-                  //
-                  // }
+
                   this.dialogVisible = true ;
 
                 }

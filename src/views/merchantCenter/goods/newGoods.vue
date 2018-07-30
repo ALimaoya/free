@@ -388,12 +388,10 @@
                   this.isBond = false ;
                 }
               }else{
-                  this.isBond = false ;
+                  this.isBond = true ;
 
                 }
-              // }
 
-              // }
             })
           },
 
