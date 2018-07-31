@@ -380,7 +380,8 @@
             enterApply(data,type).then( res =>{
               if(res.data.status === "000000000"){
                 this.$store.commit('shopName',this.form.shopName);
-                this.$emit('stepObj',{ index : '3' ,component : 'successAdd'})
+                this.$router.push( '/accountManage/admission/admissionShop/successAdd')
+
               }
             })
 

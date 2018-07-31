@@ -53,7 +53,7 @@
             }else if(res.data.data.status === '3'){
               for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
                 if (v.path === this.$route.path) {
-                  this.$store.state.tagsView.visitedViews.splice(i, 1);
+                  // this.$store.state.tagsView.visitedViews.splice(i, 1);
                   this.$router.push( '/accountManage/admission/admissionShop/failAdd')
                 }
               }

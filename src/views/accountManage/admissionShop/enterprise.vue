@@ -16,7 +16,7 @@
 <script>
   import Enterprise1 from "@/views/accountManage/admissionShop/enterprise1"
   import Enterprise2 from "@/views/accountManage/admissionShop/enterprise2"
-  import SuccessAdd from "@/views/accountManage/admissionShop/successAdd"
+  // import SuccessAdd from "@/views/accountManage/admissionShop/successAdd"
   // import { getApprovedStatus } from "@/api/userCenter"
   import { getRegisterInfo,getStatus } from "@/api/enter"
 
@@ -27,7 +27,7 @@
 
         Enterprise1,
         Enterprise2,
-        SuccessAdd
+        // SuccessAdd
 
       },
 
