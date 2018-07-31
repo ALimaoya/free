@@ -120,7 +120,7 @@
               imgType: [],
               tableData: [],
               dialogVisible: false ,
-              resultType: ['审核通过','审核拒绝'],
+              resultType: ['审核拒绝','审核通过'],
               errorImg:'this.src="' + userPhoto + '"',
               failImg: userPhoto,
               loading : false ,

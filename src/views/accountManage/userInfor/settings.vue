@@ -327,7 +327,7 @@
             required: true
           }],
         },
-        pswType: '设置登录密码',
+        pswType: '设置支付密码',
         changePsw: {
           pswVerify: '',
           newPsw: '',
@@ -603,13 +603,15 @@
             formdata.append('account', _account);
             formdata.append('type', _typeId);
             setThirdAccount(formdata).then(res => {
-              this.$message({
+              if(res.data.status === '000000000'){
+                this.$message({
                   message: '修改成功',
                   type: 'success',
                   center: true
                 });
                 this.getThirdInfo();
                 this.$refs[ways].resetFields();
+              }
             })
 
           }

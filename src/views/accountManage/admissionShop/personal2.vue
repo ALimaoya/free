@@ -243,7 +243,7 @@
           haveShop(shopName){
 
             if(shopName !== ''){
-              
+
               haveShopName(shopName,-1).then( res =>{
               if(res.data.status === "000000000"){
                 if(res.data.data.status !== "1"){

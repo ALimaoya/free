@@ -96,9 +96,9 @@
         <el-form-item   labelWidth="150px"  label="结算方式：" >
           <div >支付宝</div>
         </el-form-item>
-        <el-form-item   labelWidth="150px"  label="结算账号："  >
-          <div >{{ mobile }}</div>
-        </el-form-item>
+        <!--<el-form-item   labelWidth="150px"  label="结算账号："  >-->
+          <!--<div >{{ mobile }}</div>-->
+        <!--</el-form-item>-->
         <!-- <el-form-item   labelWidth="130px"  label="确认密码：" prop="checkPsw">
           <el-input class="inputInfo" size="small" v-model.trim="form.checkPsw" placeholder="请输入登录密码"></el-input>
         </el-form-item> -->

@@ -108,9 +108,16 @@
                       }
                     })
 
-                  }
-                  if( res.data.data.status === '1'){
+                  }else if( res.data.data.status === '1'){
                     this.$router.push('/accountManage/admission/admissionShop/successAdd')
+
+                  }else if(res.data.data.status === '2'|| res.data.data.status === '4'){
+                    this.$message({
+                      message : '您已成功入驻，无需再次入驻',
+                      center : 'error',
+                      type : true
+                    });
+                    this.$router.push( '/merchantCenter/index')
 
                   }
 

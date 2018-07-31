@@ -90,9 +90,15 @@
 
                 if(res.data.data.status === '1'){
                   this.$router.push( '/accountManage/admission/admissionShop/successAdd')
-                }else{
+                }else if(res.data.data.status === '0'|| res.data.data.status === '3' ){
                   this.$store.commit('clearForm');
                   this.$router.push('/accountManage/admission/admissionShop/personal');
+                }else if(res.data.data.status === '2'|| res.data.data.status === '4'){
+                  this.$message({
+                    message : '您已成功入驻，无需再次入驻',
+                    center : 'error',
+                    type : true
+                  })
                 }
 
               }
@@ -104,10 +110,16 @@
               if(res.data.status === '000000000'){
                 if(res.data.data.status === '1'){
                   this.$router.push( '/accountManage/admission/admissionShop/successAdd')
-                }else{
+                }else if(res.data.data.status === '0'|| res.data.data.status === '3'){
                   this.$store.commit('clearForm2');
                   this.$store.commit('shopType',this.shopType);
                   this.$router.push('/accountManage/admission/admissionShop/enterprise?type='+this.shopType);
+                }else if(res.data.data.status === '2'|| res.data.data.status === '4'){
+                  this.$message({
+                    message : '您已成功入驻，无需再次入驻',
+                    center : 'error',
+                    type : true
+                  })
                 }
 
               }

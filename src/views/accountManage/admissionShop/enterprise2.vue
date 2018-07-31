@@ -105,7 +105,7 @@
                 <li>1、请上传《商标注册证》或《注册申请受理通知书》；</li>
                 <li>2、变更中的商标请同时上传《变更受理通知书》和《注册申请受理通知书》；</li>
                 <li>3、转入/已转让的商标需上传《转让受理通知书》或者《转让证明》；</li>
-                <li>4、《商标注册证》续证完成，而原《商标注册证》已经过期，需同时上传《核准续展注册证明。》</li>
+                <li>4、《商标注册证》续证完成，而原《商标注册证》已经过期，需同时上传《核准续展注册证明》。</li>
               </ul>
             </el-form-item>
             <el-form-item v-if="brandInfo !== '0'&& item.brandRegistType === '2'" class="uploadImg" :labelWidth="labelWidth" label="品牌授权证明：" :prop="'merchantBrandinfoReqDtos.'+index+'.brandAuthImage'">

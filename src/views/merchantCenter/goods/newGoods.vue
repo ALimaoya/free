@@ -369,6 +369,9 @@
 
                   }
                 }
+              }else{
+                this.hasShop = true ;
+                this.tips = res.data.message ;
               }
             })
           },
@@ -386,9 +389,20 @@
 
                 }else{
                   this.isBond = false ;
+                  this.copyGoods();
+                  this.getFirstList();
+
                 }
               }else{
+                if(this.tableData.length >= 10){
                   this.isBond = true ;
+
+                }else{
+                  this.isBond = false ;
+                  this.copyGoods();
+                  this.getFirstList();
+
+                }
 
                 }
 
@@ -428,7 +442,6 @@
                 this.word = this.form.describes ;
                 this.brandCnName = res.data.data.brandCnName ;
                 this.thirdName = res.data.data.cateGoryMap.categoryId3;
-                // this.getFirstList();
                 // this.getSecondList(this.form.class1Id);
                 // this.getThirdList(this.form.class2Id);
               })

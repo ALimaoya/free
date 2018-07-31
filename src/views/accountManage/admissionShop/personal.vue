@@ -54,8 +54,7 @@
 
                   if( res.data.data.status === '1'){
                     this.$router.push('/accountManage/admission/admissionShop/successAdd')
-                  }
-                  if(res.data.data.status === '3'){
+                  }else if(res.data.data.status === '3'){
                     getRegisterInfo(1,3).then( res => {
                       if( res.data.status === '000000000'){
                         this.editorDetail = 1 ;
@@ -73,6 +72,14 @@
 
                       }
                     })
+                  }else if(res.data.data.status === '2'|| res.data.data.status === '4'){
+                    this.$message({
+                      message : '您已成功入驻，无需再次入驻',
+                      center : 'error',
+                      type : true
+                    });
+                    this.$router.push( '/merchantCenter/index')
+
                   }
                 }else{
                   this.$store.commit('clearForm');

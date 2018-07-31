@@ -29,7 +29,7 @@
       <el-table-column prop="settleTime" label="结算时间" ></el-table-column>
       <el-table-column prop="amount" label="结算金额（元）" ></el-table-column>
       <el-table-column prop="serviceAmount" label="服务费（元）"></el-table-column>
-      <el-table-column prop="account" label="结算账号" ></el-table-column>
+      <!--<el-table-column prop="account" label="结算账号" ></el-table-column>-->
       <el-table-column prop="mobile" label="结算手机号" ></el-table-column>
       <el-table-column prop="status" label="状态">
         <template slot-scope="scope">

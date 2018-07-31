@@ -42,7 +42,7 @@
         getInfo(){
             getAptitudeInfo().then( res => {
               if(res.data.status === '000000000'){
-                this.userType = res.data.data.belongType
+                this.userType = res.data.data.belongType;
                 if(this.userType==='1'){
                   this.tabView = 'tab'+ 1 ;
                 }else if(this.userType==='2'){
@@ -54,7 +54,6 @@
 
         changeTab(index){
           this.show = index ;
-
           // this.store.dispatch('GetUserInfo',this.user);
           if(this.userType==='1'){
             this.tabView = 'tab'+ (index+1)*1 ;

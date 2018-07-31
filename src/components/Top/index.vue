@@ -44,7 +44,7 @@
       name: "top" ,
       data(){
         return {
-           userInfo : getMobile(),
+          userInfo : getMobile(),
           menuList : [
             {
               name : '首页',
@@ -73,12 +73,15 @@
         ...mapGetters([
           'avatar',
 
-        ])
+        ]),
+
       },
+
     // mounted(){
     //   this.userInfo = this.$store.state.user.userInfo.name ;
     //
     // },
+
       methods : {
         logout() {
           this.$store.dispatch('LogOut').then(() => {
