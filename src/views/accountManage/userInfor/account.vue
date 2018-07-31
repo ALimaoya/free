@@ -20,7 +20,7 @@
           <el-button class="getNum" @click="getNum" :disabled="disabled">{{ btntext }}</el-button>
         </el-form-item>
         <el-form-item label="支付宝姓名：" prop="name">
-          <el-input v-model.trim="payForm.name"></el-input>
+          <el-input  v-model.trim="payForm.name"></el-input>
           <b class="blank" ></b>
         </el-form-item>
         <el-form-item label="支付宝账号："  prop="account">

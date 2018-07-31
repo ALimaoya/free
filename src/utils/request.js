@@ -35,7 +35,7 @@ service.interceptors.request.use(config => {
 }, error => {
   // Do something with request error // for debug
   Promise.reject(error)
-})
+});
 
 // respone拦截器
 service.interceptors.response.use(
@@ -54,17 +54,17 @@ service.interceptors.response.use(
 
       if(needFailResponse){
         return response
-      };
+      }
     }
 
   },
   error => {
     if (!error.response) {
-      alert('请检查您的网络连接是否正常~')
+      alert('请检查您的网络连接是否正常~');
       return
     }
     if(error.response.data.status==401){
-      alert("登录已失效，请重新登录")
+      alert("登录已失效，请重新登录");
       store.dispatch('LogOut').then(() => {
         location.reload() // 为了重新实例化vue-router对象 避免bug
       })

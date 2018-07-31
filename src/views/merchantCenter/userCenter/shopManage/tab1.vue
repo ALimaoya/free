@@ -66,7 +66,7 @@
               :value="item.name">
             </el-option>
           </el-select>
-          <el-input type="text" size="small" :maxlength="200" v-model.trim="shopLink" placeholder="请输入第三方店铺链接"></el-input>
+          <el-input type="text" size="small" :maxlength="1000" v-model.trim="shopLink" placeholder="请输入第三方店铺链接"></el-input>
         </div>
         <div slot="footer" class="dialog-footer" >
           <el-button type="primary" size="mini" @click="confirm(shopLink)">确定</el-button>

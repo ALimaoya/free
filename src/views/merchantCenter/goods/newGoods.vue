@@ -341,8 +341,10 @@
 
             getGoodsList(formData).then( res => {
               this.loading = false ;
-              this.tableData = res.data.data;
+              if(res.data.status === '000000000'){
+                this.tableData = res.data.data;
 
+              }
             })
 
           },
@@ -642,8 +644,8 @@
                 // data = JSON.stringify(data);
                 // console.log(data,this.form);
                 newGoogds(data,this.user).then( res => {
-
-                   this.$message({
+                  if(res.data.status === '000000000'){
+                    this.$message({
                       message : '您添加的商品信息已提交，请稍后确认商品状态',
                       center: true ,
                       type : 'success',
@@ -654,6 +656,7 @@
 
 
                     },2000)
+                  }
                   })
                 }else{
 

@@ -43,7 +43,7 @@
         <el-input class="inputInfo" type="textarea" :rows="4" size="small" :maxlength="200" v-model.trim="form.describes" placeholder=""></el-input>
       </el-form-item>
       <el-form-item   labelWidth="180px"  label="店铺管理人姓名：" prop="name">
-        <el-input class="inputInfo telInput" :maxlength="4" size="small" v-model.trim="form.name" placeholder="请输入店铺管理人姓名"></el-input>
+        <el-input class="inputInfo telInput" :maxlength="6" size="small" v-model.trim="form.name" placeholder="请输入店铺管理人姓名"></el-input>
       </el-form-item>
       <el-form-item   labelWidth="180px"  label="店铺管理人邮箱：" prop="email">
         <el-input class="inputInfo telInput"  size="small" v-model.trim="form.email" placeholder="请输入店铺管理人邮箱"></el-input>
@@ -53,7 +53,7 @@
         <!-- <el-button type="text" size="mini" @click="goChange">修改</el-button> -->
       </el-form-item>
       <el-form-item   labelWidth="180px"  label="法定代表人姓名：" prop="legalRepName">
-        <el-input class="inputInfo telInput" :maxlength="4" size="small" v-model.trim="form.legalRepName" placeholder="请输入法定代表人姓名"></el-input>
+        <el-input class="inputInfo telInput" :maxlength="6" size="small" v-model.trim="form.legalRepName" placeholder="请输入法定代表人姓名"></el-input>
       </el-form-item>
       <el-form-item   labelWidth="180px"  label="法定代表人手机号：" prop="legalRepMobile">
         <el-input class="inputInfo telInput" size="small" :maxlength="11" v-model.tel="form.legalRepMobile" placeholder="请输入法定代表人手机号"></el-input>
@@ -76,7 +76,7 @@
             :value="item.name">
           </el-option>
         </el-select>
-        <el-input type="text" size="small" :maxlength="200" v-model.trim="shopLink" placeholder="请输入第三方店铺链接"></el-input>
+        <el-input type="text" size="small" :maxlength="1000" v-model.trim="shopLink" placeholder="请输入第三方店铺链接"></el-input>
       </div>
       <div slot="footer" class="dialog-footer" >
         <el-button type="primary" size="mini" @click="confirm(shopLink)">确定</el-button>
@@ -89,7 +89,7 @@
 <script>
   import { uploadImage  } from "@/api/activity"
   import { getToken , getMobile } from '@/utils/auth'
-  import  { validatePhone , validateZipCode,validateURL,validateEmail} from '@/utils/validate';
+  import  { validatePhone ,validName, validateZipCode,validateURL,validateEmail} from '@/utils/validate';
   import { getBasicInfo,editorBasicInfo } from "@/api/userCenter"
 
   export default {
@@ -103,6 +103,28 @@
             callback(new Error('请填写正确格式的邮箱'))
           }
           callback()
+        }
+      };
+      const validateName = (rule,value,callback) => {
+        if (value === '') {
+          if (rule.field === 'name') {
+            callback(new Error('请输入店铺管理人的真实姓名'))
+          }else if(rule.field === 'legalRepName'){
+            callback(new Error('请输入法定代表人的真实姓名'))
+          }
+          callback();
+        } else {
+          if (rule.field === 'name') {
+            if (!validName(this.form.name)) {
+              callback(new Error('请输入正确姓名字符'))
+            }
+          }
+          if (rule.field === 'legalRepName') {
+            if (!validName(this.form.legalRepName)) {
+              callback(new Error('请输入正确姓名字符'))
+            }
+          }
+          callback();
         }
       };
       const validTel = ( rule,value,callback) => {
@@ -151,13 +173,13 @@
           ],
           name:[
             {
-              required : true ,trigger: 'blur',message : '请填写店铺管理人姓名'
+              required : true ,trigger: 'blur',validator : validateName
 
             }
           ],
           legalRepName:[
             {
-              required : true ,trigger: 'blur',message : '请填写法定代表人姓名'
+              required : true ,trigger: 'blur',validator : validateName
             }
           ],
           mobile: [

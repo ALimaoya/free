@@ -3,7 +3,7 @@
       <el-form :model="form" ref="form" :rules="formRule" label-position="right">
         <h1 class="h_title">入驻人基本信息</h1>
         <el-form-item  :labelWidth="labelWidth" label="店铺管理人姓名："  prop="name">
-          <el-input class="inputInfo" :maxlength="4" size="small" :disabled="readOnly" v-model.trim="form.name" placeholder="请输入店铺管理人的真实姓名" ></el-input>
+          <el-input class="inputInfo" :maxlength="6" size="small" :disabled="readOnly" v-model.trim="form.name" placeholder="请输入店铺管理人的真实姓名" ></el-input>
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth" label="店铺管理人邮箱：" prop="email">
           <el-input class="inputInfo" size="small" v-model.trim="form.email" :disabled="readOnly" placeholder="请输入常用邮箱，便于信息及时送达"></el-input>
@@ -14,7 +14,7 @@
         </el-form-item>
         <p class="h_title otherInfo">企业法定代表人基本信息</p>
         <el-form-item  :labelWidth="labelWidth" label="法定代表人姓名："  prop="legalRepName">
-          <el-input class="inputInfo" :maxlength="4" size="small" :disabled="readOnly" v-model.trim="form.legalRepName" placeholder="请输入法定代表人的真实姓名" ></el-input>
+          <el-input class="inputInfo" :maxlength="6" size="small" :disabled="readOnly" v-model.trim="form.legalRepName" placeholder="请输入法定代表人的真实姓名" ></el-input>
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth " label="法定代表人手机号：" prop="legalRepMobile" >
           <el-input class="inputInfo" size="small" :maxlength="11" v-model.tel="form.legalRepMobile" :disabled="readOnly" placeholder="请输入法定代表人常用手机号，不支持座机号"></el-input>

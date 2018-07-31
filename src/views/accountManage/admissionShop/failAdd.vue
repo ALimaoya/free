@@ -46,25 +46,17 @@
             if(this.type === '2'){
               this.shopName = res.data.data.name + this.lastName[res.data.data.shopType];
 
-
             }else{
               this.shopName = res.data.data.name ;
 
             }
             this.refusedReason = res.data.data.reason ;
-            // this.goHomeEditor(type)
           }
         })
       },
       goHomeEditor() {
         this.$router.push('/accountManage/admission/admissionShop/index')
-        // if(this.type === '1'){
-        //   this.$router.push('/accountManage/admission/admissionShop/personal')
-        //
-        // }else if( this.type === '2'){
-        //   this.$router.push('/accountManage/admission/admissionShop/enterprise')
-        //
-        // }
+
       }
     }
   }

@@ -42,7 +42,7 @@
               :value="item.name">
             </el-option>
           </el-select>
-          <el-input class="inputInfo" size="small" :maxlength="200" v-model.trim="form.thirdShopUrl[0].url" :disabled="readOnly" placeholder="请填写真实的第三方平台店铺链接可增加入驻成功率，没有可不填"></el-input>
+          <el-input class="inputInfo" size="small" :maxlength="1000" v-model.trim="form.thirdShopUrl[0].url" :disabled="readOnly" placeholder="请填写真实的第三方平台店铺链接可增加入驻成功率，没有可不填"></el-input>
           <!-- <span class="tip"><svg-icon icon-class="tips"/>入驻后店铺名称不可修改，请谨慎填写</span> -->
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth" >

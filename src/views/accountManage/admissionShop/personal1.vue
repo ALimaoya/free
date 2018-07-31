@@ -3,7 +3,7 @@
       <el-form :model="form" ref="form" :rules="formRule" label-position="right">
         <h1 class="h_title">入驻人基本信息</h1>
         <el-form-item  :labelWidth="labelWidth" label="入驻人姓名："  prop="name">
-          <el-input class="inputInfo" :maxlength="4" size="small" :disabled="readOnly" v-model.trim="form.name" placeholder="请输入入驻人的真实姓名" ></el-input>
+          <el-input class="inputInfo" :maxlength="6" size="small" :disabled="readOnly" v-model.trim="form.name" placeholder="请输入入驻人的真实姓名" ></el-input>
         </el-form-item>
         <el-form-item  :labelWidth="labelWidth" label="入驻人邮箱：" prop="email">
           <el-input class="inputInfo" size="small" v-model.trim="form.email" :disabled="readOnly" placeholder="请输入常用邮箱，便于信息及时送达"></el-input>
