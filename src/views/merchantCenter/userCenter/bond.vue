@@ -46,11 +46,21 @@
         <el-button plain size="mini" @click="dialogVisible= false;">取消</el-button>
       </div>
     </el-dialog>
-    <el-dialog class="bondDialog" title="提示" :visible.sync="isBond" width="50%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+    <el-dialog class="bondDialog" title="提示" :visible.sync="isBond" width="60%" center  :show-close="false"
+               :close-on-click-modal="false" :close-on-press-escape="false">
       <!--<img :src="ImgSrc" alt="" />-->
-      <p class="tips">您还未缴纳保证金，请先前往缴纳保证金后方可查看相关信息</p>
+      <p class="tips">您还未缴纳保证金，<br/>请先缴纳保证金后方可享有商城所有功能</p>
+      <el-form   center label-position="right">
+        <el-form-item  label="结算渠道" label-width="100px" >
+          <el-input type="text" size="small" disabled placeholder="支付宝"></el-input>
+        </el-form-item>
+        <el-form-item  label="额度" label-width="100px">
+          <el-input type="text" size="small" disabled v-model="deposit" placeholder=""></el-input>
+        </el-form-item>
+
+      </el-form>
       <div slot="footer">
-        <el-button plain @click="goBond">前往缴纳保证金</el-button>
+        <el-button plain @click="handleBond">缴纳保证金</el-button>
       </div>
     </el-dialog>
     <el-dialog title="提示" :visible.sync="payVisible" width="40%" :before-close="handleClose" style="margin-top:0" >
@@ -70,23 +80,23 @@
         <el-button style="background:#3a8ee6;;color:white;" @click="dialogVisibleQuestion = false">确定</el-button>
       </span>
     </el-dialog>
-    <el-dialog class="bondDialog" title="提示" :visible.sync="infoTip" width="40%" center
-               :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"   >
-      <!--<img :src="ImgSrc" alt="" />-->
-      <p class="tips" v-if="infoStatus === '0'">您还未上传资质信息，请先前往上传资质信息</p>
-      <p class="tips" v-else-if="infoStatus === '1'">您上传的资质信息正在审核中，审核通过后即可进行保证金相关操作</p>
-      <p class="tips" v-else-if="infoStatus === '3'">您上传的资质信息未通过审核，请先前往修改资质信息，待通过后即可进行保证金相关操作</p>
+    <!--<el-dialog class="bondDialog" title="提示" :visible.sync="infoTip" width="40%" center-->
+               <!--:show-close="false" :close-on-click-modal="false" :close-on-press-escape="false"   >-->
+      <!--&lt;!&ndash;<img :src="ImgSrc" alt="" />&ndash;&gt;-->
+      <!--<p class="tips" v-if="infoStatus === '0'">您还未上传资质信息，请先前往上传资质信息</p>-->
+      <!--<p class="tips" v-else-if="infoStatus === '1'">您上传的资质信息正在审核中，审核通过后即可进行保证金相关操作</p>-->
+      <!--<p class="tips" v-else-if="infoStatus === '3'">您上传的资质信息未通过审核，请先前往修改资质信息，待通过后即可进行保证金相关操作</p>-->
 
-      <div slot="footer">
-        <el-button plain @click="goUpload" >前往资质上传</el-button>
+      <!--<div slot="footer">-->
+        <!--<el-button plain @click="goUpload" >前往</el-button>-->
 
-      </div>
-    </el-dialog>
+      <!--</div>-->
+    <!--</el-dialog>-->
   </div>
 </template>
 
 <script>
-  import { getInfo,getBond, applyBond ,getBondDetail,addBond } from "@/api/userCenter"
+  import { getStatus,getInfo,getBond, applyBond ,getBondDetail,addBond } from "@/api/userCenter"
   // import $ from '../../../../static/js/jquery-3.3.1.min.js'
   import { getToken } from "@/utils/auth";
 
@@ -103,6 +113,7 @@
               updateTime: '',
               status : ''
             },
+
             addAmount:'',
             dialogVisible : false ,
             isBond: false,
@@ -111,36 +122,36 @@
             dialogVisibleQuestion: false,
             typeList: ['已缴纳','解冻中','已解冻'],
             loading: true,
-            infoTip: false ,
+            // infoTip: false ,
             infoStatus: '',
             token: getToken(),
-
+            deposit:''
           }
       },
       mounted(){
-        this.getAccountInfo();
+        this.getForm();
       },
       methods : {
-        getAccountInfo(){
-          getInfo().then( res =>{
-            // console.log(res);
-            this.loading= false ;
-            if(res.data.data === null){
-              this.infoTip = true;
-              this.infoStatus = '0'
-            }else{
-              this.infoStatus = res.data.data.status;
-              if(this.infoStatus !== '2'){
-                this.infoTip = true;
-              }else{
-                this.getForm();
-                this.infoTip = false;
-
-              }
-            }
-
-          })
-        },
+        // getAccountInfo(){
+        //   getInfo().then( res =>{
+        //     // console.log(res);
+        //     this.loading= false ;
+        //     if(res.data.data === null){
+        //       this.infoTip = true;
+        //       this.infoStatus = '0'
+        //     }else{
+        //       this.infoStatus = res.data.data.status;
+        //       if(this.infoStatus !== '2'){
+        //         this.infoTip = true;
+        //       }else{
+        //         this.getForm();
+        //         this.infoTip = false;
+        //
+        //       }
+        //     }
+        //
+        //   })
+        // },
 
         //  获取保证金详情
         getForm(){
@@ -164,6 +175,12 @@
             }else{
               if(res.data.data === null ){
                   this.isBond = true ;
+                getStatus().then( res => {
+                  if(res.data.status === '000000000'){
+                    this.deposit = res.data.data.deposit ;
+
+                  }
+                })
                 // this.$message({
                 //   message : res.data.message,
                 //   center : true ,
@@ -193,13 +210,72 @@
               },1500)
           })
         },
-        goBond(){
-          this.$router.push({ name : 'MerchantCenter-home',params: { 'step3' : true}})
-        },
-        //去缴纳保证金
-        // handleBond(){
-        //   this.$router.push('/merchantCenter/center/index')
+        // goBond(){
+        //   this.$router.push({ name : 'MerchantCenter-home',params: { 'step3' : true}})
         // },
+        //去缴纳保证金
+        handleBond(){
+          let payStatus = false ;
+          let _this = this ;
+          let formData = new FormData ;
+          formData.append('returnUrl',window.location.href);
+          $.ajax({
+            url: process.env.BASE_API+"/center/recharge/deposit",
+            type: 'POST',
+            data: formData ,
+            async: false,
+            processData: false,
+            contentType: false,
+            headers: {
+              'yb-tryout-merchant-token':  this.token
+            },
+            // contentType: "application/json",
+            success: function (res) {
+              // rechargeBond(formData).then(res=> {
+              var __div = document.getElementById('myForm');
+              if (__div) {
+                document.body.removeChild(__div);
+              }
+              if (res.status === '000000000') {
+                // console.log(res);
+                _this.isBond = false ;
+                var _div = document.createElement('div');
+                _div.setAttribute('id', 'myForm');
+                _div.innerHTML = res.data;
+                document.body.appendChild(_div);
+                document.getElementById('myForm').getElementsByTagName("form")[0].setAttribute('target',
+                  "_blank");
+                payStatus = true;
+
+              } else {
+                payStatus = false;
+                _this.$message({
+                  message: res.message,
+                  type: 'error',
+                  center: true
+                });
+                return
+              }
+
+            },
+            error: function(err){
+              payStatus = false;
+              alert('服务器开小差啦，请稍等~');
+              return
+            }
+          });
+          var __div = document.getElementById('myForm');
+          if (payStatus) {
+            this.$message({
+              message: '支付成功，请稍后确认',
+              center: true,
+              type: 'success'
+            });
+            this.payVisible = true;
+            document.getElementById('myForm').getElementsByTagName("form")[0].submit();
+            document.body.removeChild(__div);
+          }
+        },
       //  补缴保证金
         addDeposit(){
           let _this = this ;
@@ -263,7 +339,7 @@
             });
 
             this.payVisible = true;
-            document.getElementById('myForm').getElementsByTagName("form")[0].submit()
+            document.getElementById('myForm').getElementsByTagName("form")[0].submit();
             document.body.removeChild(__div);
             setTimeout(() => {
               // window.location.reload();

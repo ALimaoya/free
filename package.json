@@ -47,6 +47,7 @@
     "chalk": "2.3.0",
     "copy-webpack-plugin": "4.2.3",
     "css-loader": "0.28.7",
+    "echarts": "^4.1.0",
     "es6-promise": "^4.2.4",
     "eslint": "4.13.1",
     "eslint-friendly-formatter": "3.0.0",

@@ -136,12 +136,12 @@
                   :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
         <p>{{ tips }}</p>
         <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="applyShop">前往我要开店</el-button>
-      </span>
+        <el-button type="primary" @click="applyShop">前往入驻</el-button>
+        </span>
       </el-dialog>
       <el-dialog class="bondDialog" title="提示" :visible.sync="isBond" width="50%" center  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
         <!--<img :src="ImgSrc" alt="" />-->
-        <p class="tips">您还未缴纳保证金，请先前往缴纳保证金后方可查看相关信息</p>
+        <p class="tips">您还未缴纳保证金，成功缴纳保证金后即可发布更多商品，请前往缴纳保证金吧</p>
         <div slot="footer">
           <el-button plain @click="goBond">前往缴纳保证金</el-button>
         </div>
@@ -160,10 +160,11 @@
 <script>
   // import wangeditor from '@/components/wangeditor'
   import { uploadImage  } from "@/api/activity"
-  import { newGoogds,getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo, getTao,getJD} from "@/api/merchant"
+  import { getGoodsList, newGoogds,getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo, getTao,getJD} from "@/api/merchant"
   import { getToken,getMobile } from '@/utils/auth'
   import { getBond } from "@/api/userCenter"
   import { checkFloat,validName } from "@/utils/validate"
+  import { getStatus } from "@/api/enter"
   import $ from '../../../../static/js/jquery-3.3.1.min.js'
   import E from 'wangeditor'
 
@@ -314,62 +315,102 @@
               thirdName:'',
               platformType: '',
               platformTitle: '',
+              lastName : ['旗舰店','专卖店','专营店',''],
             }
         },
 
         mounted(){
           // window.tinymce.init({});
-          this.getBondInfo();
+          this.getList() ;
+          this.getRegister();
+          this.createEditor();
 
         },
 
         methods: {
+          getList(){
+            let formData = new FormData();
+            formData.append('EQ_category.id','');
+            formData.append('EQ_category.parent.id','');
+            formData.append('EQ_code','');
+            formData.append('LIKE_productName','');
+            formData.append('EQ_status','');
+            formData.append('currentPage',1);
+            formData.append('pageSize',10);
+            this.loading = true ;
+
+            getGoodsList(formData).then( res => {
+              this.loading = false ;
+              if(res.data.status === '000000000'){
+                this.tableData = res.data.data;
+
+              }
+            })
+
+          },
+          //判断是否已入驻
+          getRegister(){
+            getStatus().then( res => {
+              if (res.data.status === '000000000') {
+                // console.log(res.data);
+                if(res.data.data.status === '4'||res.data.data.status === '2' ){
+                  if(res.data.data.belongType === '2'){
+                    this.shopName = res.data.data.name + this.lastName[res.data.data.shopType-0];
+                  }else{
+                    this.shopName = res.data.data.name ;
+                  }
+                  this.getBondInfo();
+
+                }else if(res.data.data.status === '0' ||res.data.data.status === '1' ){
+                  this.hasShop = true ;
+                  if(res.data.data.status === '0'){
+                    this.tips = '您还未入驻特卖商城，请前往入驻';
+
+                  }else if(res.data.data.status === '1'){
+                    this.tips = '您申请的入驻信息正在审核中，审核通过后即可新增商品';
+
+                  }
+                }
+              }else{
+                this.hasShop = true ;
+                this.tips = res.data.message ;
+              }
+            })
+          },
 
           getBondInfo(){
+            this.loading = true ;
             getBond().then( res => {
               // console.log(res.data);
-              this.loading= true;
+              this.loading= false;
 
-              if(res.data.status === '000000000'){
+              if(res.data.status === '000000000') {
 
-                if(res.data.data.status === '3'){
+                if (res.data.data.status === '3' && this.tableData.length >= 10) {
+                  this.isBond = true;
+
+                }else{
+                  this.isBond = false ;
+                  this.copyGoods();
+                  this.getFirstList();
+
+                }
+              }else{
+                if(this.tableData.length >= 10){
                   this.isBond = true ;
 
                 }else{
                   this.isBond = false ;
-                  this.getShop();
-
-                }
-              }else{
-                if(res.data.data === null ){
-                  this.isBond = true ;
+                  this.copyGoods();
+                  this.getFirstList();
 
                 }
 
-              }
+                }
+
             })
           },
-          //判断是否已有店铺
-          getShop(){
-            getShopInfo().then(res=> {
-              if(res.data.status === '000000000'){
-                this.hasShop = false ;
-                this.shopName = res.data.data.name;
-                this.copyGoods();
-                this.getFirstList();
-                this.createEditor();
 
-                return true ;
-
-
-              }else{
-                this.tips = res.data.message;
-                this.hasShop = true ;
-
-
-              }
-            })
-          },
           //判断是否是复制商品
           copyGoods(){
             let id = this.$route.query.order ;
@@ -400,20 +441,9 @@
                   })
                 }
 
-                // if(this.form.imagesList.length < 5){
-                //   if(this.form.imagesList.length === 0){
-                //     this.form.imagesList =   [{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''}]
-                //
-                //   }else {
-                //     for(let i = this.form.imagesList.length ; i< 5;i++){
-                //       this.form.imagesList.push({ id: '', imgUrl:''});
-                //     }
-                //   }
-                // };
                 this.word = this.form.describes ;
                 this.brandCnName = res.data.data.brandCnName ;
                 this.thirdName = res.data.data.cateGoryMap.categoryId3;
-                // this.getFirstList();
                 // this.getSecondList(this.form.class1Id);
                 // this.getThirdList(this.form.class2Id);
               })
@@ -593,20 +623,20 @@
           //提交表格
           submitForm(formName){
             // console.log(JSON.stringify(this.form));
-            this.$refs[formName].validate((valid) => {
-              if(valid){
-
-                let data = {
-                  id: '',
-                  productName:this.form.productName,
-                  brandId:this.form.brandId,
-                  class3Id:this.form.class3Id,
-                  price:this.form.price,
-                  carriage:this.form.carriage,
-                  ybProductItemReqDto : this.form.ybProductItemReqDto,
-                  imagesList : this.form.imagesList,
-                  describes: this.form.describes,
-                };
+            if(!this.isBond){
+              this.$refs[formName].validate((valid) => {
+                if(valid){
+                  let data = {
+                    id: '',
+                    productName:this.form.productName,
+                    brandId:this.form.brandId,
+                    class3Id:this.form.class3Id,
+                    price:this.form.price,
+                    carriage:this.form.carriage,
+                    ybProductItemReqDto : this.form.ybProductItemReqDto,
+                    imagesList : this.form.imagesList,
+                    describes: this.form.describes,
+                  };
 
             if( !/^[0-9]+$/.test(data.class3Id*1) ){
               data.class3Id = this.thirdName*1 ;
@@ -614,8 +644,8 @@
                 // data = JSON.stringify(data);
                 // console.log(data,this.form);
                 newGoogds(data,this.user).then( res => {
-
-                   this.$message({
+                  if(res.data.status === '000000000'){
+                    this.$message({
                       message : '您添加的商品信息已提交，请稍后确认商品状态',
                       center: true ,
                       type : 'success',
@@ -626,11 +656,20 @@
 
 
                     },2000)
-                })
-              }else{
+                  }
+                  })
+                }else{
 
-              }
-            })
+                }
+              })
+
+            }else{
+              this.$message({
+                message : '您还未缴纳保证金，成功缴纳保证金后即可发布更多商品，请前往缴纳保证金吧',
+                center : true ,
+                type : 'error'
+              })
+            }
           },
           createEditor(){
 
@@ -866,6 +905,9 @@
             }
             if(value.showImages!== null &&value.showImages.length > 0){
               this.form.imagesList = [];
+              if(value.showImages.length > 5){
+                value.showImages = value.showImages.slice(0,5);
+              }
               value.showImages.map( i => {
                 this.form.imagesList.push({ id: '', imgUrl:i })
               });
@@ -879,6 +921,8 @@
                     this.form.imagesList.push({ id: '', imgUrl:''});
                   }
                 }
+              }else{
+
               }
             }
             if(value.detailImages!== undefined &&value.detailImages.length > 0){
@@ -895,12 +939,12 @@
 
           },
           goBond(){
-            this.$router.push({ name : 'MerchantCenter-home',params: { 'step3' : true}})
+            this.$router.push('/merchantCenter/userCenter/bond')
           },
 
         //  跳转到申请店铺
           applyShop(){
-            this.$router.push('/merchantCenter/userCenter/openShop')
+            this.$router.push('/accountManage/admission/admissionShop/index')
           },
           handleSizeChange(val) {
             this.radio = '';

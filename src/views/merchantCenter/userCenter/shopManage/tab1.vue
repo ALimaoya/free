@@ -1,6 +1,6 @@
 <template>
     <div class="tab1 tab">
-      <el-form :model="form" ref="form" :rules="formRule" label-position="right" >
+      <el-form :model="form" ref="form" :rules="formRule" label-position="right"  v-loading="loading"  element-loading-text="拼命加载中">
         <h1>基本信息</h1>
         <el-form-item  labelWidth="160px" label="店铺名称：" >
           <div class="inputInfo">{{ form.shopName }}</div>
@@ -9,36 +9,44 @@
           <div class="inputInfo">个人入驻</div>
         </el-form-item>
         <el-form-item  labelWidth="160px" label="主营类目：" >
-          <div class="inputInfo">{{ form.goodsType }}</div>
+          <div class="inputInfo">{{ form.mainBusiness }}</div>
         </el-form-item>
         <el-form-item   labelWidth="160px"  label="招商对接联系方式：">
-          <el-button size="small" type="text">查看</el-button>
+          <el-tooltip placement="right"  effect="light">
+            <div slot="content">400-999-7860</div>
+            <el-button size="small" type="text">查看</el-button>
+          </el-tooltip>
         </el-form-item>
         <el-form-item   labelWidth="160px"  label="第三方平台店铺：">
-          <div v-if="form.shopUrl === ''">
+          <div v-if=" form.thirdShopUrl === undefined || form.thirdShopUrl === null">
             <span>无</span>
             <el-button size="small" type="text" @click="dialogVisible=true;">添加第三方平台店铺链接</el-button>
           </div>
-          <div v-else>{{ form.shopUrl }}</div>
+          <div v-else="form.thirdShopUrl.length> 0">
+            <span>{{ form.thirdShopUrl[0].platformName }}</span>
+            <span style="display: block;white-space: pre-wrap;word-break: break-all;">{{ form.thirdShopUrl[0].url }}</span>
+            <el-button type="primary" size="mini" @click="dialogVisible=true;">修改</el-button>
+            </div>
         </el-form-item>
-        <el-form-item labelWidth="160px" label="店铺LOGO：" prop="logo">
-              <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logo"
-                          :show-file-list="false"  :before-upload="beforeImgUpload">
-                <img v-if="form.logo" :src="imageDomain + form.logo" class="avatar">
+        <el-form-item labelWidth="160px" label="店铺LOGO：" prop="logoImage">
+              <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logoImage"
+                          :headers="{'yb-tryout-merchant-token':token}"          :show-file-list="false"  :before-upload="beforeImgUpload">
+                <img v-if="form.logoImage" :src="imageDomain + form.logoImage" class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
           <p class="require">请上传尺寸为300px×300px，500k以内的图片</p>
           <span class="imgWarn tips_warn" v-if="goodsImgWarn">请上传店铺LOGO</span>
         </el-form-item>
-        <el-form-item   labelWidth="160px"  label="店铺详情：" prop="shopDetail">
-          <el-input class="inputInfo" type="textarea" :rows="4" size="small" v-model.trim="form.shopDetail" placeholder=""></el-input>
+        <el-form-item   labelWidth="160px"  label="店铺详情：" prop="describes">
+          <el-input class="inputInfo" type="textarea" :rows="4" size="small" :maxlength="200" v-model.trim="form.describes" placeholder=""></el-input>
         </el-form-item>
         <el-form-item   labelWidth="160px"  label="入驻人邮箱：" prop="email">
           <el-input class="inputInfo telInput"  size="small" v-model.trim="form.email" placeholder="请输入入驻人邮箱"></el-input>
         </el-form-item>
-        <el-form-item   labelWidth="160px" label="入驻人手机号：" prop="tel">
-          <el-input class="inputInfo telInput"  size="small" v-model.trim="form.tel" disabled="disabled"></el-input>
-          <el-button type="text" size="mini" @click="goChange">修改</el-button>
+        <el-form-item   labelWidth="160px" label="入驻人手机号：" prop="mobile">
+          <el-input class="inputInfo telInput"  size="small" :maxlength="11" v-model.tel="form.mobile" disabled="disabled"></el-input>
+          <!-- <el-button type="text" size="mini" @click="goChange">修改</el-button> -->
+          <span class="tip"><svg-icon icon-class="tips"/>此手机号为商家首次登陆后台的账号，有最高管理权限，暂不支持修改</span>
         </el-form-item>
         <el-form-item class="ruleDetail">
           <el-checkbox class="inputInfo"  size="small" v-model.trim="agree"></el-checkbox>
@@ -48,17 +56,17 @@
           <el-button @click="submitForm('form')" type="primary" >保存</el-button>
         </el-form-item>
       </el-form>
-      <el-dialog title="添加第三方平台店铺" :visible.sync="dialogVisible" width="50%" center >
+      <el-dialog title="添加第三方平台店铺" :visible.sync="dialogVisible" width="60%" center >
         <div class="dialog_content">
-          <el-select class="search" v-model="form.platformType" placeholder="请选择第三方平台" size="small">
+          <el-select class="search" v-model="platformType" placeholder="请选择第三方平台" size="small" @change="getPlatformType(platformType)">
             <el-option
               v-for="(item ,index) in platForm"
               :key="index"
               :label="item.name"
-              :value="item.id">
+              :value="item.name">
             </el-option>
           </el-select>
-          <el-input type="text" size="small" v-model.trim="shopLink" placeholder="请输入第三方店铺链接"></el-input>
+          <el-input type="text" size="small" :maxlength="1000" v-model.trim="shopLink" placeholder="请输入第三方店铺链接"></el-input>
         </div>
         <div slot="footer" class="dialog-footer" >
           <el-button type="primary" size="mini" @click="confirm(shopLink)">确定</el-button>
@@ -70,18 +78,19 @@
 
 <script>
   import { uploadImage  } from "@/api/activity"
-  import { getToken } from '@/utils/auth'
-  import  { validatePhone , validateZipCode,validateURL} from '@/utils/validate';
+  import { getToken, getMobile } from '@/utils/auth'
+  import { getBasicInfo,editorBasicInfo } from "@/api/userCenter"
+  import  { validatePhone , validateZipCode,validateURL,validateEmail} from '@/utils/validate';
 
   export default {
         name: "tab1",
         data() {
           const validZipCode = (rule,value,callback) => {
             if(value === ''){
-              callback(new Error('请填写邮编'))
+              callback(new Error('请填写邮箱'))
             }else{
-              if(!validateZipCode(value)){
-                callback(new Error('请填写正确格式的邮编'))
+              if(!validateEmail(value)){
+                callback(new Error('请填写正确格式的邮箱'))
               }
               callback()
             }
@@ -99,18 +108,21 @@
             return {
               form : {
                 shopName: '',
-                shopType: '',
-                platformType: '',
-                shopUrl: '',
-                goodsType: '',
-                logo : '',
-                shopDetail: '',
+                mainBusiness: '',
+                thirdShopUrl: [
+                  {
+                    platformName:'',
+                    url:''
+                  }
+                ],
+                logoImage : '',
+                describes: '',
                 email: '',
-                tel: '',
+                mobile:'' ,
               },
               agree: false ,
               formRule: {
-                shopDetail: [
+                describes: [
                   {
                     required : true ,trigger: 'blur',message : '请填写店铺详情'
                   }
@@ -120,7 +132,7 @@
                     required : true ,trigger: 'blur', validator: validZipCode
                   }
                 ],
-                tel: [
+                mobile: [
                   {
                     required : true ,trigger : 'blur',validator : validTel
                   }
@@ -132,7 +144,8 @@
               token : getToken() ,
               goodsImgWarn: false,
               dialogVisible: false ,
-              shopLink: '',
+              platformType: '',
+              platformTypeName:'',
               platForm : [
                 {
                   name : '淘宝',
@@ -146,17 +159,81 @@
                   name : '京东',
                   id : '3'
                 },
-                // {
-                //   name : '拼多多',
-                //   id : '4'
-                // }
+                {
+                  name : '拼多多',
+                  id : '4'
+                },
+                {
+                  name : '唯品会',
+                  id : '5'
+                },
+                {
+                  name : '折800',
+                  id : '6'
+                },
+                {
+                  name : '贝贝',
+                  id : '7'
+                },
+                {
+                  name : '卷皮',
+                  id : '8'
+                },
+                {
+                  name : '蘑菇街',
+                  id : '9'
+                },
+                {
+                  name : '聚美优品',
+                  id : '10'
+                },
+                {
+                  name : '其他',
+                  id : '11'
+                },
               ],
+              shopLink: '',
+              shopTypeList:'',
+              loading : false ,
+              // shopTypeName:''
             }
         },
         mounted() {
+          this.getInfo();
           // this.form=
         },
         methods: {
+
+          //  获取信息
+          getInfo(){
+            this.loading = true ;
+            getBasicInfo().then( res => {
+              this.loading = false ;
+
+              if( res.data.status === '000000000'){
+                this.form = res.data.data ;
+                if(this.form.thirdShopUrl !== null &&this.form.thirdShopUrl !== 'null'&& this.form.thirdShopUrl !== undefined&& this.form.thirdShopUrl !== ''){
+                  this.form.thirdShopUrl = JSON.parse(res.data.data.thirdShopUrl);
+                  this.platformType = this.form.thirdShopUrl[0].platformName;
+                  this.shopLink = this.form.thirdShopUrl[0].url;
+
+                }
+                if( this.form.mobile === null ){
+                  this.form.mobile = getMobile()
+                }
+                // this.getTypeList();
+              }
+            })
+          },
+          //  选择平台
+          getPlatformType(item){
+            // for(let i = 0; i<this.platForm.length;i++){
+            //   if(this.platForm[i].id === item){
+            //     this.platformTypeName = this.platForm[i].name
+            //     console.log(this.platformTypeName)
+            //   }
+            // }
+          },
           //提交第三方平台链接
           confirm(link){
             if(!validateURL(link)){
@@ -166,8 +243,12 @@
                 type : 'error'
               })
             }else{
-              this.form.shopUrl = this.shopLink ;
+              let arr = [];
+
+              arr.push({ platformName :this.platformType , url : this.shopLink  });
+              this.form.thirdShopUrl = arr;
               this.dialogVisible = false ;
+
             }
           },
           //跳转修改手机号
@@ -195,7 +276,7 @@
                   uploadImage(formData).then(res => {
                     if (res.data.status === '000000000') {
 
-                        _this.form.logo = res.data.data.fileName;
+                        _this.form.logoImage = res.data.data.fileName;
                         // console.log(_this.form.imgList)
 
                     } else {
@@ -216,7 +297,7 @@
           },
           //提交表单
           submitForm(formName){
-            if(this.form.logo === ''){
+            if(this.form.logoImage === ''){
               this.goodsImgWarn = true ;
             }else{
               this.goodsImgWarn = false ;
@@ -225,7 +306,19 @@
             this.$refs[formName].validate((valid) => {
 
               if(valid&&!this.goodsImgWarn&&this.agree){
+                let newForm = Object.assign({}, this.form);
+                newForm.thirdShopUrl = JSON.stringify(this.form.thirdShopUrl);
+                editorBasicInfo(newForm).then( res => {
+                  if(res.data.status === '000000000'){
+                    this.$message({
+                      message : '您提交的店铺基本信息已成功保存~',
+                      center : true ,
+                      type : 'success'
+                    });
+                    this.getInfo();
 
+                  }
+                })
               }else{
                 if(!this.agree){
                   this.$message({
@@ -242,6 +335,26 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  @import '../../../styles/tab';
+  @import '../../../../styles/tab';
+  .tip{
+      width : 80% ;
+      margin : auto;
+      display: inline-block;
+      font-size : 0.14rem ;
+      color : #666;
+      min-height : 0.4rem ;
+      line-height :0.4rem;
+      background : #fdf1ce;
+      border : 1px solid #ffe18d ;
+      border-radius : 0.05rem;
+      padding : 0 0.2rem;
+      box-sizing: border-box;
+      .svg-icon{
+        width : 0.3rem;
+        height : 0.3rem;
+        margin : 0.04rem 0.05rem;
+        float : left;
 
+      }
+    }
 </style>

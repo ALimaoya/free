@@ -28,7 +28,7 @@
           </el-dropdown-item>
         </router-link>
         <el-dropdown-item divided>
-          <span @click="logout" style="display:block;">退出登录</span>
+          <span @click="logout" style="display:block;" >退出登录</span>
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
@@ -44,7 +44,7 @@
       name: "top" ,
       data(){
         return {
-           userInfo : getMobile(),
+          userInfo : getMobile(),
           menuList : [
             {
               name : '首页',
@@ -73,15 +73,19 @@
         ...mapGetters([
           'avatar',
 
-        ])
+        ]),
+
       },
+
     // mounted(){
     //   this.userInfo = this.$store.state.user.userInfo.name ;
     //
     // },
+
       methods : {
         logout() {
           this.$store.dispatch('LogOut').then(() => {
+            // window.location.reload();
             this.$router.push('/login')
           });
 

@@ -5,7 +5,7 @@
         <span>适合个人、个体户入驻，提供身份证即可入驻</span>
         <span class="blank" ></span>
         <span class="blank" ></span>
-        <el-button type="warning" @click="goPersonal">马上入驻</el-button>
+        <el-button type="danger" @click="goPersonal">马上入驻</el-button>
       </div>
       <div class="enterPriseAdd">
         <p class="title">企业入驻</p>
@@ -14,7 +14,7 @@
           <el-radio v-for="(item,index) in typeList" :label="item.value" :key="index">{{ item.name }}</el-radio>
         </el-radio-group>
         <el-button class="typeBtn" type="text" @click="dialogVisible = true ;">店铺类型说明</el-button>
-        <el-button type="warning" @click="goEnterPrise">马上入驻</el-button>
+        <el-button type="danger" @click="goEnterPrise">马上入驻</el-button>
       </div>
       <el-dialog title="店铺类型说明" :visible.sync="dialogVisible" width="60%" center>
         <div class="dialog_content">
@@ -40,48 +40,97 @@
 </template>
 
 <script>
-    import ElRadioGroup from "element-ui/packages/radio/src/radio-group";
-
+    import { getStatus } from "@/api/enter"
     export default {
-      components: {ElRadioGroup},
+
       name: "AdmissionShop",
         data() {
             return {
               typeList: [
                 {
-                  value : '1',
+                  value : '0',
                   name : '旗舰店'
                 },
                 {
-                  value : '2',
+                  value : '1',
                   name : '专卖店'
                 },
                 {
-                  value : '3',
+                  value : '2',
                   name : '专营店'
                 },
                 {
-                  value : '4',
+                  value : '3',
                   name : '普通店'
                 },
               ],
-              shopType: '1',
+              shopType: '0',
               dialogVisible: false ,
+              // registerType : '',
             }
         },
+
+
         mounted() {
+          // let isNew = this.$route.params.new ;
+          // if(isNew !== undefined && isNew === '0'){
+          //   window.location.reload();
+          // }
 
         },
         methods: {
+          getUserInfo() {
+
+          },
+
           goPersonal(){
-            this.$router.push('/merchantCenter/userCenter/admissionShop/personal')
+            // if(this.registerType){
+            getStatus().then( res => {
+              if(res.data.status === '000000000'){
+
+                if(res.data.data.status === '1'){
+                  this.$router.push( '/accountManage/admission/admissionShop/successAdd')
+                }else if(res.data.data.status === '0'|| res.data.data.status === '3' ){
+                  this.$store.commit('clearForm');
+                  this.$router.push('/accountManage/admission/admissionShop/personal');
+                }else if(res.data.data.status === '2'|| res.data.data.status === '4'){
+                  this.$message({
+                    message : '您已成功入驻，无需再次入驻',
+                    center : 'error',
+                    type : true
+                  })
+                }
+
+              }
+            })
+
           },
           goEnterPrise(){
-            this.$router.push('/merchantCenter/userCenter/admissionShop/enterprise')
+            getStatus().then( res => {
+              if(res.data.status === '000000000'){
+                if(res.data.data.status === '1'){
+                  this.$router.push( '/accountManage/admission/admissionShop/successAdd')
+                }else if(res.data.data.status === '0'|| res.data.data.status === '3'){
+                  this.$store.commit('clearForm2');
+                  this.$store.commit('shopType',this.shopType);
+                  this.$router.push('/accountManage/admission/admissionShop/enterprise?type='+this.shopType);
+                }else if(res.data.data.status === '2'|| res.data.data.status === '4'){
+                  this.$message({
+                    message : '您已成功入驻，无需再次入驻',
+                    center : 'error',
+                    type : true
+                  })
+                }
+
+              }
+            })
+
+            }
+
 
           },
 
-        }
+        // }
     }
 </script>
 
@@ -93,13 +142,13 @@
     flex-direction: row;
     justify-content: space-around;
     .personalAdd,.enterPriseAdd{
-      width :35% ;
+      width :45% ;
       border : 1px solid #999;
       border-radius : 0.1rem ;
       justify-content: space-around;
       display: flex;
       flex-direction: column;
-      padding : 0.3rem ;
+      padding : 0.5rem 0.3rem;
       box-sizing: border-box;
       p{
         font-size : 0.28rem ;
@@ -203,7 +252,7 @@
           color : #66CC00;
         }
         .wrong{
-          color : rgba(255, 0, 0, 0.6) ;
+          color : rgba(255, 0, 0, 0.6) !important ;
         }
       }
       .note{

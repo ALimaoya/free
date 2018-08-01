@@ -33,3 +33,6 @@ export function setMobile(mobile) {
   return Cookies.set(Mobile, mobile)
 }
 
+export function removeMobile(){
+  return Cookies.remove(Mobile)
+}

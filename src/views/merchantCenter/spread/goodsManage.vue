@@ -263,7 +263,7 @@
               this.loading2 = false ;
               this.goodsList = res.data.data ;
               this.subTotalPages = res.data.totalPages;
-              this.subTotalElements = res.data.totalElements
+              this.subTotalElements = res.data.totalElements;
               this.goodsList.map( i=> {
                 i.brokerageRate = '';
               });
@@ -350,7 +350,7 @@
               } )
 
 
-            };
+            }
 
           },
           //确认新增
@@ -380,7 +380,7 @@
               let arr = [];
               this.chooseList.map( i =>{
                 arr.push( { productId: i.id ,brokerageRate: i.brokerageRate})
-              })
+              });
               if(arr.length > 0){
                 addSpread(arr).then( res => {
                   if(res.data.status === '000000000'){

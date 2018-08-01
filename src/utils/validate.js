@@ -140,3 +140,5 @@ export function validPercent(value){
   const reg = /^(100|[1-9]?\d(\.\d\d?\d?)?)%$/;
   return reg.test(value)
 }
+
+

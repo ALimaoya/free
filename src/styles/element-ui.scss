@@ -157,9 +157,9 @@
    border: 1px solid #dcdfe6;
    border-radius: 0.05rem!important;
    width : 100px;
-   height : 40px;
-   font-size : 0.18rem;
-   line-height : 40px;
+   height : 30px;
+   font-size : 0.16rem;
+   line-height : 30px;
    padding : 0;
    text-align : center;
  }
@@ -171,5 +171,10 @@
  }
  .el-select-dropdown{
    z-index: 20000!important;
+ }
+ .el-radio-button__inner{
+   border : 1px solid #dcdfe6;
+   border-radius : 4px!important ;
+   width: 80px;
  }
 

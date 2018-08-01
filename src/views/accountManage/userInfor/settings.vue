@@ -327,7 +327,7 @@
             required: true
           }],
         },
-        pswType: '设置登录密码',
+        pswType: '设置支付密码',
         changePsw: {
           pswVerify: '',
           newPsw: '',
@@ -533,11 +533,13 @@
             formdata.append('captcha', this.pswForm.pswVerify);
             formdata.append('payPassword', this.pswForm.payPsw);
             editPayPsw(formdata).then(res => {
-              this.$message({
+              if(res.data.status === '000000000'){
+                this.$message({
                   message: '支付密码设置成功',
                   type: 'success',
                   center: true
                 });
+              }
                 this.$refs[formName].resetFields();
                 this.getThirdInfo();
                 this.pswVisible = false;
@@ -558,9 +560,19 @@
             formdata.append('password', this.changePsw.newPsw);
             formdata.append('captcha', this.changePsw.pswVerify);
               editLoginPsw(formdata).then(res => {
-                this.$store.dispatch('LogOut').then(() => {
-                    location.reload()
-                  })
+                if(res.data.status === '000000000'){
+                  this.$message({
+                    message : '登录密码已修改成功，请重新登录',
+                    center : true ,
+                    type : 'success'
+                  });
+                  setTimeout(() => {
+                    this.$store.dispatch('LogOut').then(() => {
+                      location.reload()
+                    })
+                  });
+
+                }
               })
 
           }
@@ -588,16 +600,18 @@
 
             }
             let formdata = new FormData();
-            formdata.append('account', _account)
-            formdata.append('type', _typeId)
+            formdata.append('account', _account);
+            formdata.append('type', _typeId);
             setThirdAccount(formdata).then(res => {
-              this.$message({
+              if(res.data.status === '000000000'){
+                this.$message({
                   message: '修改成功',
                   type: 'success',
                   center: true
                 });
                 this.getThirdInfo();
                 this.$refs[ways].resetFields();
+              }
             })
 
           }
@@ -648,7 +662,7 @@
 
           }
 
-        }, 1000)
+        }, 1000);
         getCaptcha().then(
           res => {
             if (res.data.status == '000000000') {

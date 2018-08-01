@@ -7,6 +7,53 @@ export function getStatus(){
     method: 'get'
   })
 }
+//获取入驻状态
+export function getApprovedStatus(){
+  return request({
+    url: '/center/merchant/checkin/isApproved',
+    method : 'get'
+  })
+}
+//首页信息
+export function getShopInfo(){
+  return request({
+    url: '/center/query/transaction',
+    method: 'get'
+  })
+}
+//获取近期数据
+export function getSaleNum(data){
+  return request({
+    url: '/center/query/sale/data',
+    method: 'get',
+    params : {
+      dataType: data
+    }
+  })
+}
+//获取商家基本信息
+export function getBasicInfo(){
+  return request({
+    url: '/center/merchant/checkin/getBasicInfo',
+    method : 'get'
+  })
+}
+//修改商家基本信息
+export function editorBasicInfo(data){
+  return request({
+    url: '/center/merchant/checkin/editBasicInfo',
+    method : 'post',
+    data
+  })
+}
+//获取商家资质信息
+export function getAptitudeInfo(){
+  return request({
+    url: '/center/merchant/checkin/getAptitudeInfo',
+    method: 'get'
+  })
+}
+
 //资质上传
 export function infoUpload(data){
   return request({
@@ -115,7 +162,7 @@ export function changeAddress(data){
 //获取省份列表
 export function getProvinceList(){
   return request({
-    url: '/center/merchant/address/provinces',
+    url: '/area/province',
     method: 'get'
   })
 }
@@ -163,5 +210,12 @@ export function addBond(data){
     method : 'post',
     data,
     needFailResponse:true,
+  })
+}
+//  获取审批历史记录
+export function getApproveList(data){
+  return request({
+    url : '/center/merchant/checkin/approveList',
+    method : 'get',
   })
 }

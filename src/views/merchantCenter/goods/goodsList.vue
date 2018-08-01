@@ -28,6 +28,14 @@
           :value="item.id">
         </el-option>
       </el-select>
+      <el-select  size="small" clearable v-model="account.EQ_shelveStatus" filterable placeholder="请选择商品状态">
+        <el-option
+          v-for="item in goodsStatus"
+          :key="item.value"
+          :label="item.name"
+          :value="item.value">
+        </el-option>
+      </el-select>
       <el-select  size="small" clearable v-model="account.EQ_status" filterable placeholder="请选择审核状态">
         <el-option
           v-for="item in statusList"
@@ -88,7 +96,7 @@
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
           <el-button size="mini" type="warning" v-if="scope.row.status === '1'&& scope.row.shelveStatus === '1'"  @click="handleShelves(scope.$index,scope.row.id,0)">下架</el-button>
-          <el-button size="mini" type="warning" :disabled="limit" v-if="scope.row.status === '1'&& scope.row.shelveStatus === '0'" @click="handleShelves(scope.$index,scope.row.id,1)">上架</el-button>
+          <el-button size="mini" type="warning"  v-if="scope.row.status === '1'&& scope.row.shelveStatus === '0'" @click="handleShelves(scope.$index,scope.row.id,1)">上架</el-button>
           <el-button size="mini" type="primary" v-if="scope.row.status === '0'|| scope.row.status === '2'|| scope.row.status === '1'&& scope.row.shelveStatus === '0'" @click="editor(scope.$index,scope.row.id)">修改</el-button>
           <el-button size="mini" type="warning" v-if="scope.row.status === '2'" @click="handleReason(scope.$index,scope.row.reason)">查看原因</el-button>
           <el-button size="mini" type="primary" @click="copyGoods(scope.$index,scope.row.id)">复制</el-button>
@@ -138,14 +146,15 @@
             account : {
               EQ_code: '',
               LIKE_productName: '',
-              EQ_status: ''
+              EQ_status: '',
+              EQ_shelveStatus: ''
             },
             firstTypeList : [],
             secondTypeList : [],
             thirdTypeList : [],
             statusList : [
               {
-                name : '全部状态',
+                name : '全部审核状态',
                 value: ''
               },
               {
@@ -182,6 +191,20 @@
             imageDomain : process.env.IMAGE_DOMAIN ,
             mask : false ,
             bigImg : '',
+            goodsStatus : [
+              {
+                name : '全部商品状态',
+                value : ''
+              },
+              {
+                name : '上架',
+                value : '1'
+              },
+              {
+                name : '未上架',
+                value : '0'
+              }
+            ]
           }
       },
       mounted(){
@@ -209,6 +232,7 @@
           formData.append('EQ_code',this.account.EQ_code);
           formData.append('LIKE_productName',this.account.LIKE_productName);
           formData.append('EQ_status',this.account.EQ_status);
+          formData.append('EQ_shelveStatus',this.account.EQ_shelveStatus);
           formData.append('currentPage',this.currentPage);
           formData.append('pageSize',this.pageSize);
           this.loading = true ;
@@ -225,7 +249,6 @@
         getBondInfo(){
           getBond().then( res => {
             // console.log(res.data);
-            this.loading= true;
 
             if(res.data.status === '000000000'){
 
@@ -275,13 +298,14 @@
           this.account = {
             EQ_code: '',
             LIKE_productName: '',
-            EQ_status: ''
-          },
-            this.firstType = '',
-            this.secondType = '',
-            this.thirdType = '',
-            this.currentPage = 1,
-            this.pageSize = 10,
+            EQ_status: '',
+            EQ_shelveStatus: ''
+          };
+            this.firstType = '';
+            this.secondType = '';
+            this.thirdType = '';
+            this.currentPage = 1;
+            this.pageSize = 10;
           this.getList();
         },
         //上/下架操作
@@ -313,11 +337,30 @@
         },
         //新增商品
         newGoods(){
-          this.$router.push('/merchantCenter/goods/newGoods')
+          if(this.tableData.length>=10 && this.limit === true){
+            this.$message({
+              message : '您还未缴纳保证金，成功缴纳保证金后即可发布更多商品，请前往缴纳保证金吧',
+              center : true ,
+              type : 'error'
+            })
+          }else{
+            this.$router.push('/merchantCenter/goods/newGoods')
+
+          }
 
         },
         copyGoods(index,id){
-          this.$router.push('/merchantCenter/goods/newGoods?order='+id);
+          if(this.tableData.length>=10 && this.limit === true){
+            this.$message({
+              message : '您还未缴纳保证金，成功缴纳保证金后即可发布更多商品，请前往缴纳保证金吧',
+              center : true ,
+              type : 'error'
+            })
+          }else{
+            this.$router.push('/merchantCenter/goods/newGoods?order='+id);
+
+
+          }
 
         },
         handleSizeChange(val) {

@@ -283,16 +283,7 @@
       name: "step",
 
       data(){
-        // const validBrand = (rule,value,callback) => {
-        //   if(value === ''){
-        //     callback(new Error('请填写商品品牌'))
-        //   }else{
-        //     if(value.length > 40){
-        //       callback(new Error('商品品牌不得超过40个字'))
-        //     }
-        //     callback();
-        //   }
-        // };
+
         const validTitle = (rule , value ,callback) => {
           if(value === ''){
             callback(new Error('请填写活动标题'))

@@ -226,6 +226,9 @@
         }
       },
       mounted(){
+         if(this.$route.query.type !== undefined){
+           this.refund.status = this.$route.query.type ;
+         }
         this.getList();
       },
       methods : {
@@ -235,9 +238,9 @@
           formData.append('pageSize', this.pageSize);
           formData.append('LIKE_code', this.refund.orderId);
           formData.append('EQ_ybDeliveryProduct.deliveryOrder.code',this.refund.subOrderId);
-          formData.append('EQ_status',this.refund.status)
-          formData.append('GT_createTime',this.refund.startDate)
-          formData.append('LT_createTime',this.refund.endDate)
+          formData.append('EQ_status',this.refund.status);
+          formData.append('GT_createTime',this.refund.startDate);
+          formData.append('LT_createTime',this.refund.endDate);
 
           refusedList(formData).then( res => {
             // console.log('data',res)

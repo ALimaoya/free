@@ -17,20 +17,43 @@
 </template>
 
 <script>
-    export default {
+  import { getStatus } from "@/api/enter"
+
+  export default {
         name: "admissionManage",
       data(){
           return{
 
           }
       },
+
       methods : {
         goTryout(){
           this.$router.push({ name : 'TryoutActivity'})
         },
         goShop(){
-          this.$router.push({ name : 'MerchantCenter-home'})
-        }
+          this.getUserInfo();
+        },
+        getUserInfo() {
+          getStatus().then( res => {
+            if(res.data.status === '000000000'){
+              if(res.data.data.status === '0'){
+                this.$router.push({ name : 'AdmissionShop'})
+
+              }
+              if(res.data.data.status === '1'){
+                this.$router.push( '/accountManage/admission/admissionShop/successAdd')
+              }
+              if(res.data.data.status === '3'){
+                this.$router.push( '/accountManage/admission/admissionShop/failAdd')
+              }else if(res.data.data.status === '2' || res.data.data.status === '4'){
+                this.$router.push( '/merchantCenter/index')
+
+              }
+
+            }
+          })
+        },
       }
     }
 </script>

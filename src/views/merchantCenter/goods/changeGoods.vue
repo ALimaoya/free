@@ -99,13 +99,13 @@
     </el-form>
 
 
-    <el-dialog class="shop_dialog" title="提示" top="20%" :visible.sync="hasShop" width="40%" center
-               :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
-      <p>{{ tips }}</p>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="applyShop">前往我要开店</el-button>
-      </span>
-    </el-dialog>
+    <!--<el-dialog class="shop_dialog" title="提示" top="20%" :visible.sync="hasShop" width="40%" center-->
+               <!--:show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">-->
+      <!--<p>{{ tips }}</p>-->
+      <!--<span slot="footer" class="dialog-footer">-->
+        <!--<el-button type="primary" @click="applyShop">前往我要开店</el-button>-->
+      <!--</span>-->
+    <!--</el-dialog>-->
   </div>
 </template>
 
@@ -113,6 +113,7 @@
   import { uploadImage  } from "@/api/activity"
   import { newGoogds,getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo} from "@/api/merchant"
   import { getToken,getMobile } from '@/utils/auth'
+  import { getStatus } from "@/api/enter"
   import { getQueryString,checkFloat } from "@/utils/validate"
   import E from 'wangeditor'
   import SvgIcon from "../../../components/SvgIcon/index";
@@ -254,6 +255,7 @@
         editor: '',  // 存放实例化的wangEditor对象，在多个方法中使用
         word: '',
         loading: true ,
+        lastName : ['旗舰店','专卖店','专营店',''],
 
       }
     },
@@ -270,17 +272,21 @@
     methods: {
       //判断是否已有店铺
       getShop(){
-        getShopInfo().then(res=> {
+        getStatus().then(res=> {
           if(res.data.status === '000000000'){
-            this.hasShop = false ;
+            // this.hasShop = false ;
             this.loading = false ;
             this.isNewGoods();
-            this.shopName = res.data.data.name
+            if(res.data.data.belongType === '2'){
+              this.shopName = res.data.data.name + this.lastName[res.data.data.shopType-0];
+            }else{
+              this.shopName = res.data.data.name ;
+            }
             return true ;
 
           }else{
-            this.tips = res.data.message;
-            this.hasShop = true ;
+            // this.tips = res.data.message;
+            // this.hasShop = true ;
 
 
           }
