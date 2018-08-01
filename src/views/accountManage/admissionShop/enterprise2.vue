@@ -422,10 +422,16 @@
 
         },
         mounted() {
+          this.backTop();
           this.getTypeList();
           this.getProvince();
 
           this.form = this.$store.state.shopInfo.enterForm2 ;
+          this.busLicenceType = this.$store.state.shopInfo.busLicenceType ;
+          if(this.busLicenceType ==='1'){
+            this.long = true ;
+            this.form.busLicenceDeadline = '';
+          }
           let _this = this ;
           if(typeof (this.form.companyAddress) !== 'object' && this.form.companyAddress !== null ){
             let label = this.form.companyAddress.split('-')[0] ;
@@ -441,6 +447,7 @@
           }
           if(this.form.busLicenceDeadline === '9999-12-31'){
             this.long = true ;
+            this.form.busLicenceDeadline = '';
           }
 
           if(typeof(this.form.thirdShopUrl) === 'string'&&this.form.thirdShopUrl !== null&&this.form.thirdShopUrl !== ''){
@@ -456,7 +463,15 @@
           }
         },
         methods: {
+          backTop(){
+            const start = document.documentElement.scrollTop || document.body.scrollTop ;
+            let i = 0;
+            if(start > 0){
+              window.requestAnimationFrame(this.backTop);
+              window.scrollTo(0,start -(start /5));
+            }
 
+          },
           getTypeList(){
             firstList().then(res=> {
               if(res.data.status === '000000000'){
@@ -464,15 +479,7 @@
               }
             })
           },
-          // //  获得主营类目名字
-          // getMainBusiness(id){
-          //   this.shopTypeList.map( i =>{
-          //     if(i.id == id){
-          //       this.shopTypeName = i.name;
-          //     }
-          //   });
-          //
-          // },
+
           getProvince() {
             getProvinceList().then(res => {
               if (res.data.status === '000000000') {
@@ -483,7 +490,7 @@
           haveShop(shopName){
 
             if(shopName !== ''){
-              let id = this.$store.state.shopInfo.shopType ;
+              let id = this.$route.query.type ;
               if(id === undefined){
                 id = -1;
               }
@@ -639,11 +646,23 @@
             // this.imgTitle = this.demo[index].title ;
             this.showImg = index ;
           },
-
+          changeType(){
+            if(this.long){
+              this.busLicenceType = '1';
+            }else if(this.long === false){
+              this.busLicenceType = '0';
+              if(this.form.busLicenceDeadline === ''){
+                this.form.busLicenceDeadline = '';
+              }
+            }
+          },
 
           //返回上一步
           goBack(){
+            this.changeType();
             this.$store.commit('addForm2',this.form);
+            this.$store.commit('addBusLicenceType',this.busLicenceType);
+
             this.$emit('stepObj',{ index : '1' ,component : 'enterprise1',status : 1})
 
           },
@@ -668,16 +687,10 @@
                 }
               });
             }
-            if(this.long){
-              this.busLicenceType = '1';
-              this.form.busLicenceDeadline = '9999-12-31';
-            }else{
-              this.busLicenceType = '0';
+            this.changeType();
 
-            }
 
             this.$refs[formName].validate((valid) => {
-
 
               if(valid&&this.form.shopName !== ''){
                 // this.getMainBusiness(this.form.mainBusiness);
@@ -689,8 +702,6 @@
                   })
                 }else{
                   this.dialogVisible = true ;
-
-
                 }
 
               }else{
@@ -701,7 +712,18 @@
           //  确认提交
           confirm(){
             let thirdShopUrl = JSON.stringify(this.form.thirdShopUrl);
-
+            let cardType = this.$store.state.shopInfo.cardType2;
+            let cardDeadline = this.$store.state.shopInfo.enterForm2.cardDeadline ;
+            let busLicenceDeadline = this.form.busLicenceDeadline;
+            if(cardDeadline === '9999-12-31'){
+              cardType = 1;
+            }
+            if(cardType === 1){
+              cardDeadline = '9999-12-31'
+            }
+            if(this.busLicenceType ==='1'){
+              busLicenceDeadline = '9999-12-31'
+            }
             this.dialogVisible = false ;
             let data = {
               merchantShopReqDto: {
@@ -718,16 +740,16 @@
                 companyAddress:this.form.companyAddress.province + '-'+ this.form.companyAddress.detail,
                 socialCreditCode:this.form.socialCreditCode,
                 businessImage: this.form.businessImage ,
-                busLicenceDeadline: this.form.busLicenceDeadline===null?'':this.form.busLicenceDeadline,
+                busLicenceDeadline: busLicenceDeadline,
                 openLicenceImage: this.form.openLicenceImage,
                 busLicenceType: this.busLicenceType,
                 name:this.$store.state.shopInfo.enterForm2.name,
                 cardId:this.$store.state.shopInfo.enterForm2.cardId,
-                cardType:this.$store.state.shopInfo.cardType2,
+                cardType:cardType,
                 email: this.$store.state.shopInfo.enterForm2.email,
                 cardFaceImage: this.$store.state.shopInfo.enterForm2.cardFaceImage,
                 cardBackImage: this.$store.state.shopInfo.enterForm2.cardBackImage,
-                cardDeadline: this.$store.state.shopInfo.enterForm2.cardDeadline,
+                cardDeadline: cardDeadline,
                 mobile: this.$store.state.shopInfo.enterForm2.mobile,
                 legalRepName: this.$store.state.shopInfo.enterForm2.legalRepName ,
                 legalRepMobile: this.$store.state.shopInfo.enterForm2.legalRepMobile,
@@ -762,7 +784,9 @@
                 }
               ]
             }
+            let type = '';
             if(this.editorInfo === 1){
+              type = 'edit';
               data.merchantAptitudeReqDto['id'] = this.$store.state.shopInfo.editorId.id1 ;
               data.merchantShopReqDto['id'] = this.$store.state.shopInfo.editorId.id2 ;
 
@@ -782,23 +806,19 @@
 
 
 
-              enterApply(data,'edit').then( res =>{
-                if(res.data.status === "000000000"){
-                  this.$store.commit('shopName',this.form.shopName);
-                  this.$router.push( '/accountManage/admission/admissionShop/successAdd')
-                  // this.$emit('stepObj',{ index : '3' ,component : 'successAdd'})
-                }
-              })
-            }else{
-              enterApply(data,'add').then( res =>{
-                if(res.data.status === "000000000"){
-                  this.$store.commit('shopName',this.form.shopName);
-                  this.$router.push( '/accountManage/admission/admissionShop/successAdd');
-                  // this.$emit('stepObj',{ index : '3' ,component : 'successAdd'})
-                }
-              })
-            }
 
+            }else{
+              type = 'add';
+
+              // console.log(data);
+            }
+            enterApply(data,type).then( res =>{
+              if(res.data.status === "000000000"){
+                this.$store.commit('shopName',this.form.shopName);
+                this.$router.push( '/accountManage/admission/admissionShop/successAdd')
+                // this.$emit('stepObj',{ index : '3' ,component : 'successAdd'})
+              }
+            })
 
           }
         }

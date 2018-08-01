@@ -19,7 +19,7 @@
   import {  getUser,getToken } from '@/utils/auth'
   import Personal1 from "@/views/accountManage/admissionShop/personal1"
   import Personal2 from "@/views/accountManage/admissionShop/personal2"
-  import SuccessAdd from "@/views/accountManage/admissionShop/successAdd"
+  // import SuccessAdd from "@/views/accountManage/admissionShop/successAdd"
   // import { getApprovedStatus } from "@/api/userCenter"
   import { getRegisterInfo , getStatus } from "@/api/enter"
 
@@ -28,7 +28,7 @@
       components: {
         Personal1,
         Personal2,
-        SuccessAdd
+        // SuccessAdd
       },
         data() {
             return {
@@ -68,6 +68,8 @@
                           };
                           this.$store.commit('addForm',form);
                           this.$store.commit('addEditorId',editorId);
+                          this.$store.commit('addCardType',res.data.data.merchantAptitudeDto.cardType-0);
+
                         }
 
                       }
