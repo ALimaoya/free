@@ -54,6 +54,7 @@ const shopInfo = {
     cardType2:'',
     editorId: {},
     listId: [],
+    busLicenceType: ''
   },
   mutations:{
       addForm(state,item){
@@ -82,6 +83,9 @@ const shopInfo = {
     },
     addMerchantBrand(state,value){
         state.merchantBrandinfoReqDtos = value ;
+    },
+    addBusLicenceType(state,value){
+      state.busLicenceType = value
     },
     clearForm(state){
       state.enterForm =  {
@@ -132,7 +136,6 @@ const shopInfo = {
               brandAuthType:''
             }]
           };
-
 
     }
   },

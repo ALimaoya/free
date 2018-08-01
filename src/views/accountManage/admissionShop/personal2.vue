@@ -226,7 +226,7 @@
         },
 
         mounted() {
-
+          this.backTop();
           this.getTypeList();
           this.form = this.$store.state.shopInfo.enterForm;
           // console.log(this.form);
@@ -264,15 +264,17 @@
         })
 
           },
-          // //  获得主营类目名字
-          // getMainBusiness(id){
-          //   this.shopTypeList.map( i =>{
-          //     if(i.id == id){
-          //       this.mainBusinessName = i.name;
-          //     }
-          //   });
-          //
-          // },
+          backTop(){
+            const start = document.documentElement.scrollTop || document.body.scrollTop ;
+            let i = 0;
+            if(start > 0){
+              window.requestAnimationFrame(this.backTop);
+              window.scrollTo(0,start -(start /5));
+            }
+
+          },
+
+
           //返回上一步
           goBack(){
             this.$store.commit('addForm',this.form);
@@ -317,8 +319,13 @@
           //  确认提交
           confirm(){
             this.dialogVisible = false ;
-            if(this.form.cardDeadline === '9999-12-31'){
-              this.cardType = true;
+            let cardType = this.$store.state.shopInfo.cardType;
+            let cardDeadline = this.$store.state.shopInfo.enterForm.cardDeadline ;
+            if(cardDeadline === '9999-12-31'){
+              cardType = 1;
+            }
+            if(cardType === 1){
+              cardDeadline = '9999-12-31';
             }
             // console.log(this.form.thirdShopUrl);
             let thirdShopUrl = JSON.stringify(this.form.thirdShopUrl);
@@ -334,12 +341,12 @@
               merchantAptitudeReqDto: {
                 name: this.$store.state.shopInfo.enterForm.name,
                 cardId:this.$store.state.shopInfo.enterForm.cardId,
-                cardType: this.$store.state.shopInfo.cardType,
+                cardType: cardType,
                 email: this.$store.state.shopInfo.enterForm.email,
                 cardFaceImage: this.$store.state.shopInfo.enterForm.cardFaceImage,
                 cardBackImage: this.$store.state.shopInfo.enterForm.cardBackImage,
                 cardSelfImage: this.$store.state.shopInfo.enterForm.cardSelfImage,
-                cardDeadline: this.$store.state.shopInfo.enterForm.cardDeadline,
+                cardDeadline: cardDeadline,
                 mobile: this.$store.state.shopInfo.enterForm.mobile,
                 belongType: 1,
                 busLicenceDeadline:  '0000-00-00',
@@ -377,6 +384,7 @@
             }else{
               type = 'add';
             }
+            // console.log(data);
             enterApply(data,type).then( res =>{
               if(res.data.status === "000000000"){
                 this.$store.commit('shopName',this.form.shopName);

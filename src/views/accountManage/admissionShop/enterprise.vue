@@ -96,6 +96,9 @@
                           this.$store.commit('addForm2',form);
                           this.$store.commit('addEditorId',editorId);
                           this.$store.commit('addListId',listId);
+                          this.$store.commit('addCardType2',res.data.data.merchantAptitudeDto.cardType-0);
+                          this.$store.commit('addBusLicenceType',res.data.data.merchantAptitudeDto.busLicenceType);
+
                         }else{
                           this.$store.commit('clearForm2');
 
