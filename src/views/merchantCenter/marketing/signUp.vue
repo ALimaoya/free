@@ -87,6 +87,9 @@
       <div class="mask" v-if="bigImg !== ''" @click="bigImg = '' ">
         <img :src="imageDomain+ bigImg" alt="" />
       </div>
+      <div class="sign-up">
+        <component  :is="tabView" @getContent="sign"></component>
+      </div>
     </div>
 
 </template>
@@ -98,101 +101,105 @@
   import share from "../../../assets/imgs/share.jpg"
 
   export default {
-      name: "sign-up",
-      components: {
-        chooseDate,
-        signContent
-      },
-        data() {
-            return {
-              type : '1',
-              tabView: '',
-              goOther: false ,
-              content: [
-                {
-                  img : seconds,
-                  title : '首页—0.9元秒杀频道活动报名',
-
-                },
-                {
-                  img :share ,
-                  title : '首页—0.9元秒杀频道活动报名',
-
-                }
-              ],
-              progress : ['进行中'],
-              list: ['活动介绍','资质要求','报名记录'],
-              show: '0',
-              dialogVisible: false ,
-              intro: [
-                ['丫贝APP端首页—0.9秒杀频道','活动时间：长期招商','资源位：首页0.9秒杀频道','收费方式：免费','活动要求：','品类要求：无特殊要求',
-                '图片要求：高清图、缩略图、图上不得有字，不得有标；图片清晰美观','价格要求：在特价时间内做5-8折的限时活动；低至0.9元','名额有限，先到先得，请尽早提报！'],
-                ['丫贝APP端首页—推荐商品分享购大图资源位频道','活动时间：长期招商','资源位：首页推荐商品分享购大图资源位频道','收费方式：免费','活动要求：','品类要求：无特殊要求',
-                  '图片要求：高清图、缩略图、图上不得有字，不得有标；图片清晰美观','价格要求：在特价时间内做5-8折的限时活动','名额有限，先到先得，请尽早提报！']
-              ],
-              tableData: [],
-              checkStatus : ['审核中','审核拒绝','审核通过','已取消'],
-              refuseVisible: false ,
-              detailVisible:false,
-              reason : '',
-              activityInfo: {},
-              isCancel: false ,
-              bigImg: '',
-              imageDomain : process.env.IMAGE_DOMAIN ,
-
-            }
-        },
-        mounted() {
-          //获取活动类型
-          this.type = this.$route.query.type ;
-          this.getList();
-          console.log(this.tableData);
-
-        },
-        methods: {
-          getList(){
-            this.tableData = [
-              {
-                id : '1',
-                productName:'的西城时代',
-                oldPrice:'123',
-                activityPrice:'333',
-                stock:'345',
-                status: '1',
-                date : '2018-12-5-25'
-              }
-            ]
-          },
-          signNow(){
-            this.tabView = 'chooseDate';
-            this.goOther = true ;
-          },
-          sign(){
+    name: "sign-up",
+    components: {
+      chooseDate,
+      signContent
+    },
+    data() {
+      return {
+        type: '1',
+        tabView: '',
+        getContent: '',
+        goOther: false,
+        content: [
+          {
+            img: seconds,
+            title: '首页—0.9元秒杀频道活动报名',
 
           },
-          cancelActivity(index,id){
-            this.isCancel = true;
-            this.detailVisible = true ;
+          {
+            img: share,
+            title: '首页—0.9元秒杀频道活动报名',
 
-          },
-          detail(index,id){
-            this.detailVisible = true ;
-            this.isCancel = false;
-
-          },
-          refuseReason(index,id){
-            this.refuseVisible = true ;
-            // this.reason =
-          },
-          handleCancel(){
-            this.detailVisible = false ;
-
-          },
-          showImg(){
-            // this.bigImg =
           }
-        }
+        ],
+        progress: ['进行中'],
+        list: ['活动介绍', '资质要求', '报名记录'],
+        show: '0',
+        dialogVisible: false,
+        intro: [
+          ['丫贝APP端首页—0.9秒杀频道', '活动时间：长期招商', '资源位：首页0.9秒杀频道', '收费方式：免费', '活动要求：', '品类要求：无特殊要求',
+            '图片要求：高清图、缩略图、图上不得有字，不得有标；图片清晰美观', '价格要求：在特价时间内做5-8折的限时活动；低至0.9元', '名额有限，先到先得，请尽早提报！'],
+          ['丫贝APP端首页—推荐商品分享购大图资源位频道', '活动时间：长期招商', '资源位：首页推荐商品分享购大图资源位频道', '收费方式：免费', '活动要求：', '品类要求：无特殊要求',
+            '图片要求：高清图、缩略图、图上不得有字，不得有标；图片清晰美观', '价格要求：在特价时间内做5-8折的限时活动', '名额有限，先到先得，请尽早提报！']
+        ],
+        tableData: [],
+        checkStatus: ['审核中', '审核拒绝', '审核通过', '已取消'],
+        refuseVisible: false,
+        detailVisible: false,
+        reason: '',
+        activityInfo: {},
+        isCancel: false,
+        bigImg: '',
+        imageDomain: process.env.IMAGE_DOMAIN,
+
+      }
+    },
+    mounted() {
+      //获取活动类型
+      this.type = this.$route.query.type;
+      this.getList();
+      console.log(this.tableData);
+
+    },
+    methods: {
+      getList() {
+        this.tableData = [
+          {
+            id: '1',
+            productName: '的西城时代',
+            oldPrice: '123',
+            activityPrice: '333',
+            stock: '345',
+            status: '1',
+            date: '2018-12-5-25'
+          }
+        ]
+      },
+      signNow() {
+        this.tabView = 'chooseDate';
+        this.goOther = true;
+      },
+
+      cancelActivity(index, id) {
+        this.isCancel = true;
+        this.detailVisible = true;
+
+      },
+      detail(index, id) {
+        this.detailVisible = true;
+        this.isCancel = false;
+
+      },
+      refuseReason(index, id) {
+        this.refuseVisible = true;
+        // this.reason =
+      },
+      handleCancel() {
+        this.detailVisible = false;
+
+      },
+      showImg() {
+        // this.bigImg =
+      },
+
+      sign(res) {
+        this.tabView = res.component;
+      }
     }
+  }
+
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
