@@ -13,7 +13,7 @@
           <td>{{ item.name}}<b></b></td>
           <td>{{ item.date}}</td>
           <td>{{ item.title}}</td>
-          <td><span class="detail" @click="detail(newItems[index],1)">查看详情</span></td>
+          <td><span class="detail" @click="detail(newItems[news],1)">查看详情</span></td>
         </tr>
       </table>
       <table border="1" bordercolor="#D3D3D3" v-else="isRead==='2'">
@@ -21,12 +21,12 @@
           <td>{{ item.name}}</td>
           <td>{{ item.date}}</td>
           <td>{{ item.title}}</td>
-          <td><span class="detail" @click="detail(oldItems[index],2)">查看详情</span></td>
+          <td><span class="detail" @click="detail(oldItems[news],2)">查看详情</span></td>
         </tr>
       </table>
     </div>
     <div class="detailBox" v-if="detailInfo">
-    <div class="detailTitle">公告标题<img src="../../assets/imgs/close.png"  @click="detailInfo= false"/></div>
+    <div class="detailTitle">公告标题<img src="../../assets/imgs/close.png" @click="detailInfo= false"/></div>
       <div class="detailContent">
         <span>{{ inforDate }}</span>
         <div class="passage">{{ content }}</div>
@@ -107,7 +107,7 @@
       },
       methods : {
         reading(index){
-          this.isRead = index ;
+          this.isRead = news ;
           this.detailInfo = false  ;
 
         },

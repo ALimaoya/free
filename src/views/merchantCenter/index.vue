@@ -313,6 +313,7 @@
         padding : 0.2rem ;
         box-sizing: border-box;
         border-bottom: 1px solid #dcdfe6;
+        cursor: pointer;
 
         div{
           /*display: flex;*/
@@ -393,6 +394,7 @@
           border-left: 1px solid #dcdfe6;
           border-bottom: 1px solid #dcdfe6;
           padding : 0.15rem ;
+          cursor: pointer;
 
           span{
             display: flex;
@@ -404,6 +406,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
+
           }
           span:nth-child(1){
             height : 40% ;
@@ -440,10 +444,12 @@
             justify-content: center;
             align-items: center;
             background : #b3d8ff;
+            cursor: pointer;
             span{
               display: inline-block;
               line-height: 2 ;
               font-size : 0.22rem ;
+              cursor: pointer;
 
             }
           }

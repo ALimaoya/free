@@ -297,6 +297,14 @@ export const constantRouterMap = [
               hidden : true ,
               meta: { title: '商户中心首页', icon: 'merchantCenter' },
 
+            },
+            {
+              path: 'news',
+              name: 'News',
+              component:() => import('@/views/merchantCenter/news'),
+              hidden : true ,
+              meta: { title: '消息', icon: 'news' },
+
             }
           ]
       },
@@ -502,6 +510,29 @@ export const constantRouterMap = [
           },
         ]
       },
+      {
+        path: '/merchantCenter/marketing',
+        name: 'Marketing',
+        component: FreeManage,
+        meta: { title: '店铺营销', icon: 'marketing' },
+        children : [
+          {
+            path: 'activityApply',
+            name: 'ActivityApply',
+            component: () => import('@/views/merchantCenter/marketing/index'),
+            meta: { title: '活动报名', icon: 'activityApply' },
+
+          },
+          {
+            path: 'signUp',
+            name: 'SignUp',
+            component: () => import('@/views/merchantCenter/marketing/signUp'),
+            meta: { title: '报名', icon: 'signUp' },
+            // hidden: true ,
+
+          }
+          ]
+      }
       // {
       //   path: '/merchantCenter/shopManage',
       //   name: 'ShopManage',

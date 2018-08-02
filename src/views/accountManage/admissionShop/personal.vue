@@ -8,8 +8,7 @@
           <li :class="{isActive:show === '3' }"><span>3</span><span>入驻成功</span></li>
         </ul>
       <div class="wrap" >
-
-        <component  :is="tabView" @stepObj="getStep" :last-step= 'status' :editor-info="editorDetail"></component>
+      <component  :is="tabView" @stepObj="getStep" :last-step= 'status' :editor-info="editorDetail"></component>
 
       </div>
     </div>
