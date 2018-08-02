@@ -502,6 +502,21 @@ export const constantRouterMap = [
           },
         ]
       },
+      {
+        path: '/merchantCenter/serviceMarket',
+        name: 'ServiceMarket',
+        component: FreeManage,
+        meta: {title: '服务市场', icon: 'service'},
+        children: [
+          {
+            path: 'partner',
+            name: 'Partner',
+            component: () => import('@/views/merchantCenter/serviceMarket/partner'),
+            meta: {title: '第三方合作软件', icon: 'partner'},
+
+          },
+        ]
+      }
       // {
       //   path: '/merchantCenter/shopManage',
       //   name: 'ShopManage',
