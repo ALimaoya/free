@@ -527,8 +527,8 @@ export const constantRouterMap = [
             path: 'signUp',
             name: 'SignUp',
             component: () => import('@/views/merchantCenter/marketing/signUp'),
-            meta: { title: '报名', icon: 'signUp' },
-            // hidden: true ,
+            meta: { title: '立即报名', icon: 'signUp' },
+            hidden: true ,
 
           }
           ]
