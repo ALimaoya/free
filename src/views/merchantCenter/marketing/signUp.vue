@@ -87,9 +87,7 @@
       <div class="mask" v-if="bigImg !== ''" @click="bigImg = '' ">
         <img :src="imageDomain+ bigImg" alt="" />
       </div>
-      <div class="sign-up">
-        <component  :is="tabView" @getContent="sign"></component>
-      </div>
+      <!--<component v-else="goOther" :is="tabView" @getContent="sign"></component>-->
     </div>
 
 </template>
@@ -195,7 +193,7 @@
       },
 
       sign(res) {
-        this.tabView = res.component;
+        this.tabView = res;
       }
     }
   }
@@ -210,7 +208,7 @@
       box-sizing: border-box;
       display: flex;
       .logo{
-        width : 12% ;
+        width : 10% ;
         margin-right : 0.2rem ;
 
       }
