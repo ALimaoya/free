@@ -1,7 +1,7 @@
 <template>
     <div class="sign-up">
       <el-button type="danger" @click="signNow" size="mini" v-if="!goOther">立即报名</el-button>
-      <component  :is="tabView" @getContent="signContent"></component>
+      <component  :is="tabView" @getContent="sign"></component>
 
     </div>
 
@@ -21,6 +21,7 @@
             return {
               type : '1',
               tabView: '',
+              getContent:'',
               goOther: false ,
             }
         },
@@ -33,6 +34,9 @@
           signNow(){
             this.tabView = 'chooseDate';
             this.goOther = true ;
+          },
+          sign(res){
+            this.tabView = res.component ;
           }
         }
     }
