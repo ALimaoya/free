@@ -1,6 +1,8 @@
 <template>
     <div class="activityApply">
-      <h1 class="h_title"><span>活动报名</span><el-button type="danger" size="mini" style="float:right;">我报名的活动</el-button></h1>
+      <h1 class="h_title"><span>活动报名</span>
+        <!--<el-button type="danger" size="mini" style="float:right;">我报名的活动</el-button>-->
+      </h1>
       <ul class="activityList">
         <li>
           <dl><dd><svg-icon icon-class="u9"></svg-icon></dd><dt>0.9秒杀</dt></dl>
@@ -99,6 +101,9 @@
       .sign_btn{
           width : 2rem ;
           height : 0.5rem ;
+          padding: 0;
+          text-align: center;
+          line-height : 0.5rem ;
       }
     }
   }
