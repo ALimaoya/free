@@ -38,7 +38,8 @@
         data() {
             return {
                 radio2: 3,
-                status: 1
+                status: 1,
+                value1:''
             }
         },
         mounted() {
