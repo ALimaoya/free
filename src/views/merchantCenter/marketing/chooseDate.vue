@@ -8,7 +8,7 @@
     <div class="right" v-if="activity.date === ''">
       <img src="../../../assets/imgs/u189.jpg" alt=""/>
     </div>
-    <div class="right" v-else="activity.date === ''">
+    <div class="right" v-else="activity.date !== ''">
       <div v-if="type ==='1'">
         <h1>选择秒杀时段</h1>
         <el-radio-group v-model="activity.time">
@@ -117,6 +117,7 @@
         })
       },
       goShop() {
+          this.$emit('getContent', 'signContent')
         if(this.activity.date === ''){
           this.$message({
             message : '请选择活动日期',
