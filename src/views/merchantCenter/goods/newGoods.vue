@@ -643,7 +643,7 @@
             }
                 // data = JSON.stringify(data);
                 // console.log(data,this.form);
-                newGoogds(data,this.user).then( res => {
+                newGoogds(data).then( res => {
                   if(res.data.status === '000000000'){
                     this.$message({
                       message : '您添加的商品信息已提交，请稍后确认商品状态',

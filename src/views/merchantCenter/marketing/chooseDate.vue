@@ -12,7 +12,7 @@
       <div v-if="type ==='1'">
         <h1>选择秒杀时段</h1>
         <el-radio-group v-model="activity.time">
-          <el-radio :label="item.value" v-for="(item,index) in timeList" :key="index">{{ item.name }}</el-radio>
+          <el-radio :label="item.id" v-for="(item,index) in timeList" :key="index">{{ item.name }}</el-radio>
         </el-radio-group>
       </div>
       <div v-else="type==='2'">
@@ -34,7 +34,8 @@
 </template>
 
 <script>
-  import Calendar from 'vue-calendar-component';
+  import Calendar from '@/components/Calender';
+  import { getTimeList } from "@/api/enter"
   export default {
     name: "choose-date",
     components: {
@@ -98,13 +99,22 @@
     },
     mounted() {
       this.type = this.$route.query.type;
-
+      if(this.type === '1'){
+        this.getTime() ;
+      }
       this.getCalendar();
       this.getStatus();
       },
     methods: {
       getStatus(){
         this.activityStatus = '0';
+      },
+      getTime(){
+        getTimeList().then(res => {
+          if(res.data.status === '000000000'){
+            this.timeList = res.data.data.secKillTimeResDtos ;
+          }
+        })
       },
       goShop() {
         if(this.activity.date === ''){
@@ -147,6 +157,7 @@
         this.dayMark = [];
         this.dayMark.push(date);
         this.activity.date = date.replace(/\/+/g,'-') ;
+
       },
       getCalendar() {
 

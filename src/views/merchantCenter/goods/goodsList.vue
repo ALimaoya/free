@@ -143,12 +143,7 @@
         name: "goods-list",
       data(){
           return{
-            account : {
-              EQ_code: '',
-              LIKE_productName: '',
-              EQ_status: '',
-              EQ_shelveStatus: ''
-            },
+            account : {},
             firstTypeList : [],
             secondTypeList : [],
             thirdTypeList : [],
@@ -209,6 +204,12 @@
       },
       mounted(){
         this.time = parseTime(new Date());
+        this.account = this.$store.state.searchBar.goodsList.account;
+        this.currentPage = this.$store.state.searchBar.goodsList.currentPage;
+        this.pageSize = this.$store.state.searchBar.goodsList.pageSize;
+        this.thirdType = this.$store.state.searchBar.goodsList.thirdType;
+        this.secondType = this.$store.state.searchBar.goodsList.secondType;
+
         this.getList();
         this.getFirstList();
         this.getBondInfo();
@@ -235,6 +236,16 @@
           formData.append('EQ_shelveStatus',this.account.EQ_shelveStatus);
           formData.append('currentPage',this.currentPage);
           formData.append('pageSize',this.pageSize);
+          let dataStorage = {
+              account : {
+                ...this.account,
+              },
+              currentPage :this.currentPage,
+              pageSize : this.pageSize,
+              thirdType:this.thirdType,
+              secondType: this.secondType
+          };
+          this.$store.commit('saveSearchGoods',dataStorage);
           this.loading = true ;
 
           getGoodsList(formData).then( res => {

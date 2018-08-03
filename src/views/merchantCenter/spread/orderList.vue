@@ -75,11 +75,7 @@ export default {
   data() {
     return {
       loading: true,
-      search: {
-        startDate: "",
-        endDate: "",
-        status: ""
-      },
+      search: {},
       tableData: [
         {
           brokerage:'',
@@ -140,6 +136,10 @@ export default {
     };
   },
   mounted() {
+    this.search = this.$store.state.searchBar.spreadList.search ;
+    this.currentPage = this.$store.state.searchBar.spreadList.currentPage ;
+    this.pageSize = this.$store.state.searchBar.spreadList.pageSize ;
+
     this.getList()
   },
   methods: {
@@ -147,15 +147,19 @@ export default {
       let formData = new FormData();
       formData.append("currentPage", this.currentPage);
       formData.append("pageSize", this.pageSize);
-      formData.append('EQ_status',this.search.status)
-      formData.append('GT_createTime',this.search.startDate)
-      formData.append('LT_createTime',this.search.endDate)
-
+      formData.append('EQ_status',this.search.status);
+      formData.append('GT_createTime',this.search.startDate);
+      formData.append('LT_createTime',this.search.endDate);
+      let data = {
+        search : { ...this.search },
+        currentPage : this.currentPage ,
+        pageSize: this.pageSize
+      };
+      this.$store.commit('saveSpread',data);
       getOrderLists(formData).then( res =>{
-        // console.log('res',res)
         this.loading= false;
-        if(res.data.status =="000000000"){
-          this.tableData =  res.data.data
+        if(res.data.status ==="000000000"){
+          this.tableData =  res.data.data;
           this.totalPages = res.data.totalPages ;
           this.totalElements = res.data.totalElements ;
         }

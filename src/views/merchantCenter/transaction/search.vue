@@ -210,16 +210,7 @@
         //   }
         // }
           return{
-            transition: {
-              EQ_payOrder: '',
-              EQ_code: '',
-              productCode: '',
-              LIKE_payOrder: '',
-              GT_createTime: '',
-              LT_createTime: '',
-              EQ_status: '',
-              EQ_activityType:'',
-            },
+            transition: {},
             typeList:[
               {
                 value: '',
@@ -355,6 +346,10 @@
           }
       },
       mounted(){
+        this.transition = this.$store.state.searchBar.transitionList.transition;
+        this.currentPage = this.$store.state.searchBar.transitionList.currentPage;
+        this.pageSize = this.$store.state.searchBar.transitionList.pageSize;
+
         this.getList();
       },
       computed: {
@@ -390,20 +385,34 @@
         //  获取交易列表
         getList(){
           let formData = new FormData();
+          if(this.transition.GT_createTime === null){
+            this.transition.GT_createTime = '';
+          }
+          if(this.transition.LT_createTime === null){
+            this.transition.LT_createTime = '';
+          }
           formData.append('currentPage',this.currentPage);
           formData.append('pageSize',this.pageSize);
           formData.append('EQ_payOrder.code',this.transition.EQ_payOrder);
           formData.append('EQ_code',this.transition.EQ_code);
           formData.append('productCode',this.transition.productCode);
           formData.append('LIKE_payOrder.user.accountName',this.transition.LIKE_payOrder);
-          formData.append('GT_createTime',this.transition.GT_createTime===null?'':this.transition.GT_createTime);
-          formData.append('LT_createTime',this.transition.LT_createTime===null?'':this.transition.LT_createTime);
+          formData.append('GT_createTime',this.transition.GT_createTime);
+          formData.append('LT_createTime',this.transition.LT_createTime);
           formData.append('EQ_status',this.transition.EQ_status);
           formData.append('EQ_activityType',this.transition.EQ_activityType);
           this.loading = true ;
-
+          let data = {
+            transition : {
+              ...this.transition
+            },
+            currentPage: this.currentPage ,
+            pageSize: this.pageSize ,
+          };
+          this.$store.commit('saveTransition',data);
           getOrderList(formData).then( res => {
             this.loading = false ;
+
 
              this.deliverList=  res.data.data.tExpressResDtos ;
               this.tableData = res.data.data.pageResultDto.data ;

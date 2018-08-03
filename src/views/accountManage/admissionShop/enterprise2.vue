@@ -83,7 +83,7 @@
           <el-form-item  :labelWidth="labelWidth" label="注册类型：" :prop="'merchantBrandinfoReqDtos.'+index+'.brandRegistType'" :rules="{ message : '请选择注册类型', trigger : 'change' , required: true }">
             <el-radio-group v-model="item.brandRegistType" @change="resetInfo(item.brandRegistType)">
               <el-radio label="1" :disabled="form.merchantBrandinfoReqDtos.length> 1">自有商标</el-radio>
-              <el-radio label="2" :disabled="brandInfo === '0'">授权商标</el-radio>
+              <el-radio label="2">授权商标</el-radio>
             </el-radio-group>
             <el-button v-if="form.merchantBrandinfoReqDtos.length> 1" style="float: right ;" class="tips_warn" type="text" @click="deleteBrand(item)">删除</el-button>
           </el-form-item>
@@ -759,7 +759,7 @@
               merchantBrandinfoReqDtos: this.form.merchantBrandinfoReqDtos ,
 
             };
-            if(this.brandInfo ==='0'|| (this.form.merchantBrandinfoReqDtos.length === 1 && this.form.merchantBrandinfoReqDtos[0].brandRegistType === '1')){
+            if(this.form.merchantBrandinfoReqDtos.length === 1 && this.form.merchantBrandinfoReqDtos[0].brandRegistType === '1'){
               data.merchantBrandinfoReqDtos = [
                 {
                   brandRegistType:'1',

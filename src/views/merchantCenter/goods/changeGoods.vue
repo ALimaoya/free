@@ -485,7 +485,7 @@
             // data = JSON.stringify(data);
             this.loading = true ;
 
-            changeGoods(data,this.user).then( res => {
+            changeGoods(data).then( res => {
               this.loading = false ;
 
                 this.$message({

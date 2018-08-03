@@ -7,16 +7,19 @@
         <li>
           <dl><dd><svg-icon icon-class="u9"></svg-icon></dd><dt>0.9秒杀</dt></dl>
           <div class="activityType"><p>首页--0.9元秒杀频道活动报名<span>{{ progress[0]}}</span></p><p>活动时间：长期招商</p></div>
-          <!--<div class="sign_btn">-->
+          <div class="btn_wrap">
             <el-button class="sign_btn" type="danger" size="small" @click="goSign('1')">立即报名</el-button>
-          <!--</div>-->
+            <el-button  type="text" @click="goList('1')">报名记录</el-button>
+          </div>
         </li>
         <li>
           <dl><dd><svg-icon icon-class="u22"></svg-icon></dd><dt>分享购</dt></dl>
           <div class="activityType"><p>首页--推荐商品分享购大图资源位活动报名<span>{{ progress[0]}}</span></p><p>活动时间：长期招商</p></div>
-          <!--<div class="sign_btn">-->
+          <div class="btn_wrap">
             <el-button class="sign_btn" type="danger" size="small"  @click="goSign('2')">立即报名</el-button>
-          <!--</div>-->
+            <el-button  type="text" @click="goList('2')">报名记录</el-button>
+
+          </div>
         </li>
       </ul>
     </div>
@@ -36,6 +39,9 @@
         methods: {
           goSign(type){
             this.$router.push('/merchantCenter/marketing/signUp?type='+ type);
+          },
+          goList(type){
+            this.$router.push('/merchantCenter/marketing/history?type=' + type);
           }
         }
     }
@@ -98,13 +104,24 @@
           }
         }
       }
-      .sign_btn{
+      .btn_wrap{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        .sign_btn{
           width : 2rem ;
           height : 0.5rem ;
           padding: 0;
           text-align: center;
           line-height : 0.5rem ;
+        }
+        .el-button:nth-child(2){
+          padding-bottom : 0;
+          margin-left : 0;
+        }
       }
+
     }
   }
 </style>

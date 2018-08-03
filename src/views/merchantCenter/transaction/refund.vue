@@ -142,13 +142,7 @@
         }
 
         return{
-          refund: {
-            orderId: '',
-            subOrderId:'',
-            status:'',
-            startDate:'',
-            endDate:''
-          },
+          refund: {},
           statusList : [
             {
               name : '全部状态',
@@ -226,7 +220,10 @@
         }
       },
       mounted(){
-         if(this.$route.query.type !== undefined){
+          this.refund = this.$store.state.searchBar.refundList.refund ;
+          this.currentPage = this.$store.state.searchBar.refundList.currentPage;
+          this.pageSize = this.$store.state.searchBar.refundList.pageSize;
+        if(this.$route.query.type !== undefined){
            this.refund.status = this.$route.query.type ;
          }
         this.getList();
@@ -241,7 +238,12 @@
           formData.append('EQ_status',this.refund.status);
           formData.append('GT_createTime',this.refund.startDate);
           formData.append('LT_createTime',this.refund.endDate);
-
+          let data = {
+            refund : { ...this.refund },
+            currentPage: this.currentPage ,
+            pageSize: this.pageSize
+          };
+          this.$store.commit('saveRefund',data);
           refusedList(formData).then( res => {
             // console.log('data',res)
             this.loading= false;

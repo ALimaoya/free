@@ -50,9 +50,9 @@ export function changeStatus(id,type,name){
 }
 
 //新增商品
-export function newGoogds(data,user){
+export function newGoogds(data){
   return request({
-    url: '/center/product/add/'+ user,
+    url: '/center/product/add',
     method : 'post',
     data,
     headers: {
@@ -69,9 +69,9 @@ export function getGoodsDetail(id){
   })
 }
 //修改商品
-export function changeGoods(data,id){
+export function changeGoods(data){
   return request({
-    url: '/center/product/edit/'+ id ,
+    url: '/center/product/edit' ,
     method: 'post',
     data
   })

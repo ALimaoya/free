@@ -41,4 +41,33 @@ export function getStatus(){
     method : 'get'
   })
 }
+//获取报名活动时间段
+export function getTimeList(){
+  return request({
+    url : 'center/SecKillTime/query',
+    method : 'get'
+  })
+}
+//查询店铺状态
+export function getShopStatus(){
+  return request({
+    url: 'center/shop/getShopStatus',
+    method :'get'
+  })
+}
 
+//获取报名活动商品详情
+export function getActivityGoods(id) {
+  return request({
+    url : 'center/SecKillActivity/getDetail/'+ id,
+    method : 'get'
+  })
+}
+//获取秒杀活动商品列表
+export function getSecondsList(data){
+  return request({
+    url : 'center/SecKillActivity/query/extending/product',
+    method : 'post',
+    data
+  })
+}

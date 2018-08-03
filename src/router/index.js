@@ -530,6 +530,14 @@ export const constantRouterMap = [
             meta: { title: '立即报名', icon: 'signUp' },
             hidden: true ,
 
+          },
+          {
+            path: 'history',
+            name: 'History',
+            component: () => import('@/views/merchantCenter/marketing/history'),
+            meta: { title: '报名记录', icon: 'history' },
+            hidden: true ,
+
           }
           ]
       },
