@@ -22,13 +22,13 @@
                 <a href="javascript:void(0);" title="选择商品" @click="getShop"><span></span><i></i></a>
             </div>
             <el-form :model="form" ref="form" :rules="formRule" label-width="80px">
-                <el-form-item label="商品活动图" labelWidth="160px" prop="shopImage">
+                <el-form-item label="商品白底图" labelWidth="160px" prop="shopImage">
                     <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.shopImage"
                                 :headers="{'yb-tryout-merchant-token':token}"          :show-file-list="false"  :before-upload="beforeImgUpload">
                         <img v-if="form.shopImage" :src="imageDomain + form.shopImage" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
-                    <p class="require">图片必须清晰，不能带logo，750*285像素，JPG.JPEG格式，大小不超过1M，图片不能有文字，在分享购相应频道展示</p>
+                    <p class="require">必须白底图，800*800像素，JPG.JPEG格式，大小不超过1M，图片不能有文字，在0.9秒杀相应频道展示</p>
                 </el-form-item>
                 <el-form-item label="商品分享活动价格" labelWidth="180px" prop="price">
                     <el-input v-model="form.price"></el-input><span>在特价时间内做5-8折的限时活动。不得高于正常售价的8折</span>
@@ -49,7 +49,8 @@
         <el-dialog
             title="选择秒杀报名商品"
             :visible.sync="dialogVisible"
-            width="75%"
+            width="65%"
+            center
             :show-close="false">
             <div class="search">
                 <el-input size="small" :maxlength="40" v-model.trim="search.shopName" placeholder="请输入商品名称" clearable></el-input>
@@ -57,31 +58,47 @@
                 <el-button type="primary" size="mini" @click="getGoods">搜索</el-button>
             </div>
             <p class="top">商品名称</p>
-            <template>
-                <el-radio v-model="radio" label="">
-                    <div class="item" v-for="(item , index ) in commodity" :key="index">
-                        <div class="img" v-if="shop.shopImgUrl !== ''|| shop.shopImgUrl !== undefined">
-                            <img v-if="shop.shopImgUrl !== ''|| shop.shopImgUrl !== undefined" :src="imageDomain + shop.shopImgUrl" :onerror="errorImg">
+            <div class="shopName" v-for="(item , index ) in commodity" :key="index"> 
+                <el-radio v-model="radio" :label=item.code @change="selectShop(item.code)">
+                    <div class="item">
+                        <div class="img" v-if="item.shopImgUrl !== ''|| item.shopImgUrl !== undefined">
+                            <img v-if="item.shopImgUrl !== ''|| item.shopImgUrl !== undefined" :src="imageDomain + item.shopImgUrl" :onerror="errorImg">
                             <img :src="failImg"  v-else>
                         </div>
                         <div class="content">
                             <div class="name">
-                                {{shop.name}}
+                                {{item.name}}
                             </div>
                             <div class="encoding">
-                                商品编码：{{shop.code}}
+                                商品编码：{{item.code}}
                             </div>
                             <div class="price">
-                                ￥:{{shop.price}}
+                                ￥:{{item.price}}
                             </div>
                         </div>
                     </div>
                 </el-radio>
-            </template>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-            </span>
+            </div>
+            <div class="block2">
+                <el-pagination
+                    @size-change="handleSubSizeChange"
+                    @current-change="handleSubCurrentChange"
+                    :current-page.sync="subCurrentPage"
+                    :page-sizes="[10, 15, 20]"
+                    :page-size="subPageSize"
+                    :pager-count="5"
+                    layout=" sizes, prev, pager, next, jumper"
+                    :total="subTotalElements">
+                </el-pagination>
+                <span class="totalItems" >共{{ subTotalPages }}页，{{ subTotalElements }}条记录</span>
+
+            </div>
+            <div slot="footer" class="dialog-footer" style="padding-bottom: 0px;height: 0.7rem ;">
+                <el-button type="primary" size="mini" @click="dialogVisible = false">确认选择</el-button>
+                <el-button plain size="mini" @click="dialogVisible = false">取消</el-button>
+                <p>活动单次报名不能超过2款宝贝，且已选择宝贝当前时段未报名任意特价打折活动</p>
+            </div>
+
         </el-dialog>
 
     </div>
@@ -111,8 +128,12 @@
                 }else{
                   if(!int(value)){
                     callback(new Error('商品分享活动数量只能为整数'))
+                  }else{
+                      if(value<10){
+                          callback(new Error('商品分享活动数量必须大于10件'))
+                      }
+                      callback();
                   }
-                  callback();
                 }
               };
             return {
@@ -166,10 +187,33 @@
                     {
                     shopImgUrl:'',
                     name:'姚明专卖店',
-                    code:'20181917',
+                    code:'2018191427',
                     price:'100.00'  
-                    }
-                ]
+                    },
+                    {
+                    shopImgUrl:'',
+                    name:'姚明专卖店',
+                    code:'20181914327',
+                    price:'100.00'  
+                    },
+                    {
+                    shopImgUrl:'',
+                    name:'姚明专卖店',
+                    code:'201819173',
+                    price:'100.00'  
+                    },
+                    {
+                    shopImgUrl:'',
+                    name:'姚明专卖店',
+                    code:'201819172',
+                    price:'100.00'  
+                    },
+                ],
+                radio:'',
+                subTotalElements: 0,
+                subTotalPages: 0,
+                subCurrentPage: 1,
+                subPageSize: 10,
             }
         },
         mounted() {
@@ -189,12 +233,31 @@
                 }
             })
         },
+        selectShop(item){
+            alert(item)
+        },
         getShop(){
             this.dialogVisible = true;
+            
+        },
+        handleSubSizeChange(val) {
+
+            this.subPageSize = val ;
+            this.getGoods();
+        },
+        handleSubCurrentChange(val) {
+
+            this.subCurrentPage = val ;
+            this.getGoods();
         },
         // 选择商品
         getGoods(){
             alert(111)
+            // this.commodity = [];
+            // formData.append('currentPage',this.subCurrentPage);
+            // formData.append('pageSize',this.subPageSize);
+            // formData.append('EQ_code',this.goodsCode);
+            // formData.append('LIKE_productName',this.shopName);
         },
         // 上传图片
         beforeImgUpload(file) {
@@ -327,7 +390,8 @@
           line-height: 0.6rem;
       }
       .item{
-          width: 100%;
+          margin-left: 100px;
+          width: 80%;
           display: flex;
           .img{
               width: 100px;
@@ -371,6 +435,8 @@
               width : 70% ;
               .upload{
                 width : 25%;
+                display: inline-block;
+                vertical-align:bottom;
                 // float : left;
 
                 img{
@@ -385,8 +451,12 @@
                     font-size: 0.12rem ;
                     }
                 }
+                .el-input{
+                    width: 25%;
+                }
                 .require{
-                    // width: 50%;
+                    display:inline-block;
+                    width: 70%;
                 }
           }
       }
@@ -415,6 +485,66 @@
       width: 70%;
       background-color: #ccc;
       padding-left: 30px;
+  }
+  .shopName{
+      width: 100%;
+      .el-radio{
+          border: 1px solid red;
+        .el-radio__input{
+            display: inline-block !important;
+            width: 14px !important;
+            height: 14px !important;
+        }
+        .el-radio__label{
+            display: inline-block !important;
+            .item{
+                width: 60%;
+                display: flex;
+                .img{
+                    width: 100px;
+                    height: 100px;
+                }
+                .content{
+                    width: 200px;
+                    margin-left: 10px;
+                    .name,.encoding,.price{
+                        font-size: 0.18rem;
+                        line-height: 30px;
+                    }
+                }
+            }
+        }
+        
+      }
+      
+      
+  }
+  .block2{
+    padding : 0 0.3rem ;
+    width : 90% ;
+    margin : 0 auto;
+    box-sizing: border-box;
+    .totalItems{
+      display : block ;
+      height : 0.3rem ;
+      color : #666 ;
+      text-align : right ;
+      margin-top : 0.3rem ;
+    }
+  }
+  .dialog-footer{
+    text-align: left;
+    height : 1rem ;
+        .el-button {
+        width : 0.9rem ;
+        padding : 0;
+        text-align : center ;
+        line-height : 0.35rem ;
+        }
+        p{
+            display: inline-block;
+            margin-left: 1rem;
+        }
   }
 }
 </style>

@@ -2,9 +2,9 @@
     <div class="signUp">
       <div v-if="!goOther">
         <div class="topTitle">
-          <img class="logo" :src="content[type-1].img" alt="" />
+          <img class="logo" v-if="content[type-1]!== undefined" :src="content[type-1].img" alt="" />
           <div class="titleContent">
-            <p>{{ content[type-1].title}}<span>{{ progress[0] }}</span></p>
+            <p v-if="content[type-1]!== undefined">{{ content[type-1].title}}<span>{{ progress[0] }}</span></p>
             <div>活动时间：长期招商</div>
             <div><span>报名资质：</span>
               <div class="tips"><img  src="../../../assets/imgs/success.png"/><div>您的店铺已达到报名要求</div></div>
@@ -50,7 +50,6 @@
           </el-table>
         </div>
       </div>
-      <component  :is="tabView" @getContent="sign"></component>
       <el-dialog  title="店铺需要符合报名要求如下：" :visible.sync="dialogVisible" width="50%" center>
         <div>1、店铺缴纳保证金方可报名活动。</div>
       </el-dialog>
@@ -87,16 +86,16 @@
       <div class="mask" v-if="bigImg !== ''" @click="bigImg = '' ">
         <img :src="imageDomain+ bigImg" alt="" />
       </div>
-      <div class="sign-up">
-        <component  :is="tabView" @getContent="sign"></component>
-      </div>
+      <component v-else="goOther" :is="tabView" @getContent="sign"></component>
     </div>
 
 </template>
 
 <script>
   import chooseDate from "@/views/merchantCenter/marketing/chooseDate";
-  import signContent from "@/views/merchantCenter/marketing/signContent"
+  import signContent from "@/views/merchantCenter/marketing/signContent";
+  import success from "@/views/merchantCenter/marketing/success"
+
   import seconds from "../../../assets/imgs/seconds.jpg"
   import share from "../../../assets/imgs/share.jpg"
 
@@ -104,11 +103,12 @@
     name: "sign-up",
     components: {
       chooseDate,
-      signContent
+      signContent,
+      success
     },
     data() {
       return {
-        type: '1',
+        type: '',
         tabView: '',
         getContent: '',
         goOther: false,
@@ -144,13 +144,13 @@
         bigImg: '',
         imageDomain: process.env.IMAGE_DOMAIN,
 
+
       }
     },
     mounted() {
       //获取活动类型
       this.type = this.$route.query.type;
       this.getList();
-      console.log(this.tableData);
 
     },
     methods: {
@@ -195,7 +195,7 @@
       },
 
       sign(res) {
-        this.tabView = res.component;
+        this.tabView = res;
       }
     }
   }
@@ -210,7 +210,8 @@
       box-sizing: border-box;
       display: flex;
       .logo{
-        width : 12% ;
+        width : 11% ;
+        max-height: 100%;
         margin-right : 0.2rem ;
 
       }
@@ -260,9 +261,13 @@
           }
         }
         .sign_btn{
-          margin-left : 1.2rem;
+          margin-left : 1.5rem;
           margin-top : 0.3rem ;
           width : 1.2rem ;
+          padding : 0;
+          height : 0.4rem ;
+          line-height : 0.4rem ;
+          text-align: center;
         }
       }
     }
