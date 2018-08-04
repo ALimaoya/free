@@ -6,7 +6,7 @@
       <ul class="activityList">
         <li>
           <dl><dd><svg-icon icon-class="u9"></svg-icon></dd><dt>0.9秒杀</dt></dl>
-          <div class="activityType"><p>首页--0.9元秒杀频道活动报名<span>{{ progress[0]}}</span></p><p>活动时间：长期招商</p></div>
+          <div class="activityType"><p>首页——0.9元秒杀频道活动报名<span>{{ progress[0]}}</span></p><p>活动时间：长期招商</p></div>
           <div class="btn_wrap">
             <el-button class="sign_btn" type="danger" size="small" @click="goSign('1')">立即报名</el-button>
             <el-button  type="text" @click="goList('1')">报名记录</el-button>
@@ -14,7 +14,7 @@
         </li>
         <li>
           <dl><dd><svg-icon icon-class="u22"></svg-icon></dd><dt>分享购</dt></dl>
-          <div class="activityType"><p>首页--推荐商品分享购大图资源位活动报名<span>{{ progress[0]}}</span></p><p>活动时间：长期招商</p></div>
+          <div class="activityType"><p>首页——推荐商品分享购大图资源位活动报名<span>{{ progress[0]}}</span></p><p>活动时间：长期招商</p></div>
           <div class="btn_wrap">
             <el-button class="sign_btn" type="danger" size="small"  @click="goSign('2')">立即报名</el-button>
             <el-button  type="text" @click="goList('2')">报名记录</el-button>

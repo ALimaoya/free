@@ -22,9 +22,9 @@
       </div>
 
       <div class="condition">
-        <p>报名时间：活动开始前第16天-活动开始前2天，报名时间一共14天</p>
+        <p>报名时间：活动开始前第2天——活动开始前16天，报名时间一共14天</p>
         <div class="button">
-          <el-button size="mini" :type="statusList[activityStatus-0].type">{{ statusList[activityStatus-0].name }}</el-button>
+          <el-button size="mini" type="danger">报名中</el-button>
         </div>
       </div>
       <el-button type="primary" @click="goShop">下一步，选择报名商品</el-button>
@@ -47,52 +47,34 @@
           date: '',
           time: '',
         },
-        timeList: [
-          {
-            name : '09:00',
-            value : '1'
-          },
-          {
-            name : '12:00',
-            value : '2'
-          },
-          {
-            name : '14:00',
-            value : '3'
-          },
-          {
-            name : '16:00',
-            value : '4'
-          },
-        ],
-        statusList: [
-          {
-            name: '即将开始',
-            type: 'primary'
-          },
-          {
-            name: '报名中',
-            type: 'danger'
-          },
-          {
-            name: '已结束',
-            type: 'info'
-          }
-        ],
+        timeList: [],
+        // statusList: [
+        //   {
+        //     name: '即将开始',
+        //     type: 'primary'
+        //   },
+        //   {
+        //     name: '报名中',
+        //     type: 'danger'
+        //   },
+        //   {
+        //     name: '已结束',
+        //     type: 'info'
+        //   }
+        // ],
         type: '',
         today: '',
         dayMark:[],
-        activityStatus: ''
       }
     },
     computed: {
       limitStart: function(){
-        let start = new Date(new Date().getTime()/1000 + 2 * 24 * 3600) ;
+        let start = new Date(new Date().getTime()/1000 + 24 * 3600) ;
         return start.getTime()+'';
 
       },
       limitEnd: function(){
-        let end = new Date(new Date().getTime()/1000 + 16 * 24 * 3600) ;
+        let end = new Date(new Date().getTime()/1000 + 15 * 24 * 3600) ;
         return   end.getTime()+'';
       },
 
@@ -102,22 +84,18 @@
       if(this.type === '1'){
         this.getTime() ;
       }
-      this.getCalendar();
-      this.getStatus();
+
       },
     methods: {
-      getStatus(){
-        this.activityStatus = '0';
-      },
+
       getTime(){
         getTimeList().then(res => {
           if(res.data.status === '000000000'){
-            this.timeList = res.data.data.secKillTimeResDtos ;
+            this.timeList = res.data.data ;
           }
         })
       },
       goShop() {
-          this.$emit('getContent', 'signContent')
         if(this.activity.date === ''){
           this.$message({
             message : '请选择活动日期',
@@ -135,21 +113,21 @@
           return false ;
 
         }
-        if(this.activityStatus !== '1'){
-          let tips = '';
-          if(this.activityStatus === '0'){
-            tips = '活动尚未开始，请耐心等候~';
-          }else if(this.activityStatus === '2'){
-            tips = '本期活动已结束，敬请期待下次活动吧~'
-          }
-          this.$message({
-            message :tips,
-            type: 'error',
-            center : true
+
+        if(this.activity.date !== ''&& (this.activity.time !== ''&&this.type === '1')|| this.type === '2'){
+          let data = {
+            startDate : this.activity.date ,
+            endDate : this.activity.date ,
+            startTime: '',
+            endTime: ''
+          };
+          this.timeList.map( i => {
+            if(i.id === this.activity.time){
+              data.startTime = i.startTime ;
+              data.endTime = i.endTime ;
+            }
           });
-          return false ;
-        }
-        if(this.activity.date !== ''&& ((this.activity.time !== ''&&this.type === '1')|| this.type === '2')&& this.activityStatus === '1'){
+          this.$store.commit('addSecondKill',data);
           this.$emit('getContent', 'signContent')
 
         }
@@ -160,11 +138,7 @@
         this.activity.date = date.replace(/\/+/g,'-') ;
 
       },
-      getCalendar() {
 
-
-
-      }
     }
   }
 </script>

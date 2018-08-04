@@ -57,7 +57,7 @@
           this.activity = res.data.data ;
             if(res.data.data.payStatus === '1'){
               for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
-                if (v.path === this.$route.path) {
+                if (v.fullPath === this.$route.fullPath) {
                   this.$store.state.tagsView.visitedViews.splice(i, 1);
                   this.$router.push('/freeManage/publish/step3');
 
@@ -85,7 +85,7 @@
 
                 if(res.data.status=== '000000000'){
                   for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
-                    if (v.path === this.$route.path) {
+                    if (v.fullPath === this.$route.fullPath) {
                       this.$store.state.tagsView.visitedViews.splice(i, 1);
                       this.$router.push('/freeManage/publish/step3');
 

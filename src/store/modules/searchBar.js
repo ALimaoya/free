@@ -56,13 +56,29 @@ const searchBar = {
       currentPage : 1,
       pageSize : 10,
     },
-    signUpList : {
+    secKillList : {
       history: {
-        EQ_code: '',
-        LIKE_productName: ''
+        GTE_startDate: '',
+        LTE_endDate:'',
+        EQ_product: '',
+        EQ_status:'',
+
       },
       currentPage : 1,
       pageSize : 10,
+      type : ''
+    },
+    shareList : {
+      history: {
+        GTE_startDate: '',
+        LTE_endDate:'',
+        EQ_product: '',
+        EQ_status:'',
+
+      },
+      currentPage : 1,
+      pageSize : 10,
+      type : ''
     }
 
   },
@@ -82,8 +98,11 @@ const searchBar = {
     saveSpread: (state,obj) => {
       state.spreadList = obj ;
     },
-    saveSignUp : ( state,obj) => {
-      state.signUpList = obj ;
+    saveSecKill : ( state,obj) => {
+      state.secKillList = obj ;
+    },
+    saveShare: (state, obj) => {
+      state.shareList = obj ;
     }
 
   }

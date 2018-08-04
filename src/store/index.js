@@ -7,6 +7,7 @@ import tagsView from './modules/tagsView'
 import publishInfo from './modules/publishInfo'
 import shopInfo from './modules/shopInfo'
 import searchBar from './modules/searchBar'
+import signUp from './modules/signUp'
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
@@ -16,7 +17,8 @@ const store = new Vuex.Store({
     tagsView,
     publishInfo,
     shopInfo,
-    searchBar
+    searchBar,
+    signUp
   },
   getters
 });

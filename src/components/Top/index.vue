@@ -14,9 +14,9 @@
         <!--<router-link to="/freeManage/index">去试用</router-link>-->
       <!--</li>-->
     </ul>
-    <div class="news">
-      <router-link to="/merchantCenter/news"><span class="news_icon"></span><svg-icon icon-class="message"></svg-icon></router-link>
-    </div>
+    <!--<div class="news">-->
+      <!--<router-link to="/merchantCenter/news"><span class="news_icon"></span><svg-icon icon-class="message"></svg-icon></router-link>-->
+    <!--</div>-->
     <el-dropdown class="avatar-container" trigger="click">
       <div class="avatar-wrapper">
         您好！{{  userInfo }}

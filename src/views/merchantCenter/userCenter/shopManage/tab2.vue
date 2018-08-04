@@ -18,7 +18,7 @@
             <div class="inputInfo">{{ form.cardId }}</div>
           </el-form-item>
           <el-form-item  labelWidth="200px" label="身份证号有效期：" >
-            <div class="inputInfo">{{ form.cardDeadline }}</div>
+            <div class="inputInfo"><span v-if="form.cardType ==='1'">长期</span><span v-else="">{{ form.cardDeadline }}</span></div>
           </el-form-item>
         </div>
         <div class="infoWrap">

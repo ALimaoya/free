@@ -533,7 +533,7 @@ export const constantRouterMap = [
           },
           {
             path: 'history',
-            name: 'History',
+            name: 'SignHistory',
             component: () => import('@/views/merchantCenter/marketing/history'),
             meta: { title: '报名记录', icon: 'history' },
             hidden: true ,

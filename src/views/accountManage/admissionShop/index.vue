@@ -111,7 +111,7 @@
               if(res.data.status === '000000000'){
                 if(res.data.data.status === '1'){
                   for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
-                    if (v.path === this.$route.path) {
+                    if (v.fullPath === this.$route.fullPath) {
                       this.$store.state.tagsView.visitedViews.splice(i, 1);
                       this.$router.push( '/accountManage/admission/admissionShop/successAdd')
 
@@ -130,7 +130,7 @@
                   });
                   setTimeout(() => {
                     for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
-                      if (v.path === this.$route.path) {
+                      if (v.fullPath === this.$route.fullPath) {
                         this.$store.state.tagsView.visitedViews.splice(i, 1);
                         this.$router.push( '/merchantCenter/index')
 

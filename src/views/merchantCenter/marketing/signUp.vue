@@ -42,7 +42,6 @@
   import success from "@/views/merchantCenter/marketing/success"
   import { getShopStatus,getActivityGoods,getSecondsList } from "@/api/enter"
   import { getBond } from "@/api/userCenter"
-  import { parseTime } from "@/utils"
   import seconds from "../../../assets/imgs/seconds.jpg"
   import share from "../../../assets/imgs/share.jpg"
 
@@ -67,7 +66,7 @@
           },
           {
             img: share,
-            title: '首页—0.9元秒杀频道活动报名',
+            title: '首页—分享购频道活动报名',
 
           }
         ],
@@ -91,7 +90,18 @@
     mounted() {
       //获取活动类型
       this.type = this.$route.query.type;
-      this.checkShopStatus() ;
+      console.log(this.$route);
+      if(this.type === undefined){
+        for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
+          if (v.fullPath === this.$route.fullPath) {
+            this.$store.state.tagsView.visitedViews.splice(i, 1);
+            this.$router.push('/merchantCenter/marketing/activityApply');
+          }
+        }
+      }else{
+        this.checkShopStatus() ;
+
+      }
 
     },
     methods: {
