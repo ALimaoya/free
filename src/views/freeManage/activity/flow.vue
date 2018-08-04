@@ -125,17 +125,7 @@
       },
       data(){
           return {
-            activity : {
-              EQ_platformType : '',
-              EQ_activityCode : '',
-              EQ_activityStatus : '',
-              GT_activityEndTime: '',
-              LT_activityStartTime : '',
-              shopId : '',
-              EQ_activityType: '4'
-              // currentPage : 1,
-              // pageSize : 10
-            },
+            activity : {},
             form : {},
             formRule : {},
             choosePlat : '',
@@ -216,6 +206,9 @@
           }
       },
       mounted(){
+        this.activity = this.$store.state.searchBar.flow.activity;
+        this.currentPage = this.$store.state.searchBar.flow.currentPage;
+        this.pageSize = this.$store.state.searchBar.flow.pageSize;
         this.getData();
         let now = new Date();
         this.time = parseTime(now);
@@ -250,7 +243,14 @@
         formData.append('currentPage',this.currentPage);
         formData.append('pageSize',this.pageSize);
         this.loading= true;
-
+        let dataStorage = {
+          activity : {
+            ...this.activity,
+          },
+          currentPage :this.currentPage,
+          pageSize : this.pageSize,
+        };
+        this.$store.commit('saveFlow',dataStorage);
         getActivity(formData).then(res => {
           this.loading= false;
           this.tableData = res.data.data;
@@ -262,13 +262,14 @@
       },
       //根据搜索条件获取订单列表
       getSearchData(res){
-        this.activity.EQ_platformType = res.platformType ;
-        this.activity.EQ_activityCode = res.activityCode ;
+        this.activity.EQ_platformType = res.platformType===undefined?'':res.platformType ;
+        this.activity.EQ_activityCode = res.activityCode===undefined?'':res.activityCode ;
         // this.activity.EQ_activityType = res.EQ_activityType ;
-        this.activity.EQ_activityStatus = res.EQ_activityStatus ;
-        this.activity.GT_activityEndTime = res.activityStartTime ;
-        this.activity.LT_activityStartTime = res.activityEndTime ;
-        this.currentPage = 1 ;
+        this.activity.EQ_activityStatus = res.EQ_activityStatus===undefined?'':res.EQ_activityStatus ;
+        this.activity.GT_activityEndTime = res.activityStartTime===undefined?'':res.activityStartTime ;
+        this.activity.LT_activityStartTime = res.activityEndTime===undefined?'':res.activityEndTime ;
+        // this.currentPage = 1 ;
+
 
         // console.log(this.activity);
         this.getData();

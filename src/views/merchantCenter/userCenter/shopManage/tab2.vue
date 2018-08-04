@@ -35,8 +35,8 @@
             <img v-if="form.drinkTradeLicence !== ''|| form.drinkTradeLicence !== undefined" :src="imageDomain + form.drinkTradeLicence" :onerror="errorImg">
             <img :src="failImg"  v-else>
           </el-form-item>
-          <el-form-item v-if="form.businessImage !== ''|| form.businessImage !== undefined" label="营业执照：" labelWidth="200px">
-            <img v-if="form.businessImage !== ''|| form.businessImage !== undefined" :src="imageDomain + form.businessImage" :onerror="errorImg">
+          <el-form-item v-if="form.businessImage !== null" label="营业执照：" labelWidth="200px">
+            <img v-if="form.businessImage !== ''|| form.businessImage !== undefined|| form.businessImage !== null" :src="imageDomain + form.businessImage" :onerror="errorImg">
             <img :src="failImg"  v-else>
           </el-form-item>
           <!--<el-form-item labelWidth="200px" :label="imgType[item.type]" v-for="(item,index) in form.imgList" :key="index">-->
@@ -46,12 +46,12 @@
               <!--<i v-else class="el-icon-plus avatar-uploader-icon"></i>-->
             <!--</el-upload>-->
           <!--</el-form-item>-->
-          <el-form-item  labelWidth="200px" label="营业执照有效期：">
+          <el-form-item v-if="form.busLicenceDeadline !== null" labelWidth="200px" label="营业执照有效期：">
             <div class="inputInfo">{{ form.busLicenceDeadline }}</div>
           </el-form-item>
-          <el-form-item  labelWidth="200px" label="营业执照编号：" >
-            <div class="inputInfo">{{ form.socialCreditCode }}</div>
-          </el-form-item>
+          <!--<el-form-item v-if="form.socialCreditCode !== null" labelWidth="200px" label="营业执照编号：" >-->
+            <!--<div class="inputInfo">{{ form.socialCreditCode }}</div>-->
+          <!--</el-form-item>-->
           <el-form-item v-if="form.paperTradeLicence !== ''|| form.paperTradeLicence !== undefined" label="出版物经营许可证" labelWidth="200px">
             <img v-if="form.paperTradeLicence !== ''|| form.paperTradeLicence !== undefined" :src="imageDomain + form.paperTradeLicence" :onerror="errorImg">
             <img :src="failImg"  v-else>

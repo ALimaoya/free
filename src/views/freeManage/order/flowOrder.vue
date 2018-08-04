@@ -1,7 +1,7 @@
 <template>
   <div class="flowOrder tableBox"    v-loading="loading"  element-loading-text="拼命加载中">
     <h1>流量订单查询</h1>
-    <search-bar @searchobj="getData" :platform-type="true" :activity-shop="true" :activity-code="true" :flow-status="true" :flow="true"></search-bar>
+    <search-bar @searchobj="getData" :platform-type="true" :activity-shop="true" :activity-code="true" :flow-status="true" :flow="'flowOrder'"></search-bar>
     <!--<div class="note">备注：以上搜索条件可根据单一条件进行搜索，当单独试客淘宝号搜索不到有用信息时，可尝试输入淘宝订单编号，反之亦然</div>-->
     <el-table :data="tableData" border>
       <el-table-column label="序号" width="80" prop="orderId" ></el-table-column>
@@ -101,19 +101,7 @@
               //   name : '拼多多'
               // }
             ],
-            order : {
-              EQ_status: '',
-              // thirdAccount: '',
-              platformType : '' ,
-              activityCode : '',
-              thirdOrderCode: '',
-              EQ_activityShop : '',
-              activityStartTime : '',
-              activityEndTime : '',
-              EQ_activityType : '4'
-              // currentPage : 1,
-              // pageSize : 10
-            },
+            order : {},
             tableData : [],
             currentPage : 1 ,
             pageSize : 10 ,
@@ -130,6 +118,9 @@
           }
       },
       mounted(){
+        this.order = this.$store.state.searchBar.flowOrder.order;
+        this.currentPage = this.$store.state.searchBar.flowOrder.currentPage;
+        this.pageSize = this.$store.state.searchBar.flowOrder.pageSize;
         this.getList();
       },
       methods : {
@@ -169,7 +160,14 @@
           formData.append('currentPage', this.currentPage);
           formData.append('pageSize', this.pageSize);
           this.loading = true ;
-
+          let dataStorage = {
+            order : {
+              ...this.order,
+            },
+            currentPage :this.currentPage,
+            pageSize : this.pageSize,
+          };
+          this.$store.commit('saveFlowOrder',dataStorage);
           getOrderList(formData).then( res=> {
                // console.log(res)
               this.loading = false ;
@@ -191,9 +189,17 @@
         },
         //根据搜索条件获取订单列表
         getData(res){
-          this.order ={...res }  ;
-          // console.log(this.order);
-          this.currentPage = 1 ;
+          this.order ={
+            EQ_status: res.EQ_status===undefined?'':res.EQ_status,
+            platformType :  res.platformType===undefined?'':res.platformType ,
+            activityCode :  res.activityCode===undefined?'':res.activityCode,
+            EQ_activityShop :  res.EQ_activityShop===undefined?'':res.EQ_activityShop,
+            activityStartTime :  res.activityStartTime===undefined?'':res.activityStartTime ,
+            activityEndTime :  res.activityEndTime===undefined?'':res.activityEndTime,
+            EQ_activityType :  res.EQ_activityType===undefined?'':res.EQ_activityType
+          }  ;
+          // this.currentPage = 1 ;
+
           this.getList();
         },
         //查看订单详情

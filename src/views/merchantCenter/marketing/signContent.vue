@@ -282,7 +282,7 @@
           return false ;
 
         }
-        console.log(this.goodsId);
+        // console.log(this.goodsId);
         if(this.goodsId === ''){
           this.$message({
             message : '请选择活动商品',
@@ -305,7 +305,7 @@
 
               if(this.type === '1'){
                 let data= { ...this.form , productId : this.goodsId ,...timeObj,status : '' };
-                console.log(data);
+                // console.log(data);
                 addSecKill(data).then( res => {
                   if(res.data.status === '000000000'){
                     this.$message({

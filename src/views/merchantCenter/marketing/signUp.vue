@@ -90,7 +90,7 @@
     mounted() {
       //获取活动类型
       this.type = this.$route.query.type;
-      console.log(this.$route);
+      // console.log(this.$route);
       if(this.type === undefined){
         for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
           if (v.fullPath === this.$route.fullPath) {

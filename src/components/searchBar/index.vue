@@ -94,15 +94,15 @@
       data(){
           return {
             order:{
-              EQ_status: '',
-              // thirdAccount: '',
-              platformType : '' ,
-              activityCode : '',
-              thirdOrderCode: '',
-              GT_activityEndTime : '',
-              LT_activityStartTime : '',
-              EQ_activityType:'',
-              EQ_activityStatus : ''
+              // EQ_status: '',
+              // // thirdAccount: '',
+              // platformType : '' ,
+              // activityCode : '',
+              // thirdOrderCode: '',
+              // GT_activityEndTime : '',
+              // LT_activityStartTime : '',
+              // EQ_activityType:'',
+              // EQ_activityStatus : ''
             },
             platformOptions : [
               {
@@ -322,19 +322,34 @@
       },
       props : ['platformType','activityCode','activityType','thirdOrderCode','eq_status','activity','activityShop','activityStatus','taskStatus','flowStatus','flow','date'],
       mounted(){
+          if(this.activityMode === 'freeActivity'){
+            this.order = this.$store.state.searchBar.approval.activity;
+          }else if( this.activityMode === 'freeActivityOrder'){
+            this.order = this.$store.state.searchBar.activityOrder.order;
+          }else if( this.activityMode === 'bonus'){
+            this.order = this.$store.state.searchBar.bonus.order;
+
+          }else if(this.activityMode === 'view'){
+            this.order = this.$store.state.searchBar.view.order;
+
+          }
+          if(this.flowMode === 'flowTask'){
+            this.order = this.$store.state.searchBar.flow.activity;
+
+          }else if( this.flowMode === 'flowOrder'){
+            this.order = this.$store.state.searchBar.flowOrder.order;
+
+          }else if( this.flowMode === 'checkFlow'){
+            this.order = this.$store.state.searchBar.checkFlow.order;
+
+          }
+
         this.getShop();
       },
       methods : {
         //获取店铺列表
         getShop(){
-          // let formData = new FormData();
-          // formData.append('EQ_platformType' , this.order.platformType);
-          // formData.append('EQ_status','2');
-          // formData.append('currentPage' ,'2');
-          // formData.append('pageSize' , this.pageSize);
-          // formData.append('EQ_payStatus','1');
           getShopList(this.order.platformType).then( res => {
-
              this.shopList = res.data.data ;
           })
         },

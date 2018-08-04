@@ -1,7 +1,7 @@
 <template>
   <div class="activityOrder tableBox"  v-loading="loading"  element-loading-text="拼命加载中">
     <h1>试用订单查询</h1>
-    <search-bar @searchobj="getData" :platform-type="true" :activity-type="true" :third-order-code="true" :activity-code="true" :eq_status="true" :activity="true"></search-bar>
+    <search-bar @searchobj="getData" :platform-type="true" :activity-type="true" :third-order-code="true" :activity-code="true" :eq_status="true" :activity="'freeActivityOrder'"></search-bar>
 
     <!--<div class="search">-->
         <!--<el-select size="small" clearable v-model="order.platformType" filterable placeholder="请选择试用平台">-->
@@ -190,16 +190,7 @@
             value : '99'
           }
         ],
-        order : {
-          EQ_status: '',
-          // thirdAccount: '',
-          EQ_activityType:'',
-          platformType : '' ,
-          activityCode : '',
-          thirdOrderCode: '',
-          // currentPage : 1,
-          // pageSize : 10
-        },
+        order : {},
         tableData : [],
         currentPage : 1 ,
         pageSize : 10 ,
@@ -216,6 +207,9 @@
       }
     },
     mounted(){
+        this.order = this.$store.state.searchBar.activityOrder.order;
+        this.currentPage = this.$store.state.searchBar.activityOrder.currentPage;
+        this.pageSize = this.$store.state.searchBar.activityOrder.pageSize;
       this.getList();
     },
     methods : {
@@ -244,6 +238,15 @@
           formData.append('EQ_status',this.order.EQ_status);
           formData.append('currentPage', this.currentPage);
           formData.append('pageSize', this.pageSize);
+
+          let dataStorage = {
+          order : {
+            ...this.order,
+          },
+          currentPage :this.currentPage,
+          pageSize : this.pageSize,
+        };
+        this.$store.commit('saveActivityOder',dataStorage);
         this.loading = true ;
 
         getOrderList(formData).then( res=> {
@@ -255,9 +258,15 @@
       },
       //根据搜索条件获取订单列表
       getData(res){
-        this.order ={...res }  ;
+        this.order ={
+          EQ_status: res.EQ_status===undefined?'':res.EQ_status,
+          EQ_activityType:res.EQ_activityType===undefined?'':res.EQ_activityType,
+          platformType : res.platformType===undefined?'':res.platformType ,
+          activityCode : res.activityCode===undefined?'':res.activityCode,
+          thirdOrderCode: res.thirdOrderCode===undefined?'':res.thirdOrderCode,
+        }  ;
         // console.log(this.order);
-        this.currentPage = 1 ;
+        // this.currentPage = 1 ;
 
         this.getList();
       },

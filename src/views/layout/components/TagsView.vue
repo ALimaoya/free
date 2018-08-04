@@ -56,7 +56,7 @@ export default {
       return false
     },
     isActive(route) {
-      return route.path === this.$route.fullPath || route.name === this.$route.name
+      return route.fullPath === this.$route.fullPath || route.name === this.$route.name
     },
     addViewTags() {
       const route = this.generateRoute()
@@ -81,7 +81,7 @@ export default {
         if (this.isActive(view)) {
           const latestView = views.slice(-1)[0]
           if (latestView) {
-            this.$router.push(latestView.path)
+            this.$router.push(latestView.fullPath)
           } else {
             this.$router.push('/')
           }

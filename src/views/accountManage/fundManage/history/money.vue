@@ -71,11 +71,7 @@
     name: "money",
       data(){
           return{
-            searchForm : {
-              detail : '',
-              startDate : '',
-              endDate : ''
-            },
+            searchForm : {},
             options : [
               {
                 label : '全部类型',
@@ -116,6 +112,9 @@
           }
       },
       mounted(){
+        this.searchForm = this.$store.state.searchBar.moneyHistory.searchForm;
+        this.currentPage = this.$store.state.searchBar.moneyHistory.currentPage;
+        this.pageSize = this.$store.state.searchBar.moneyHistory.pageSize;
         this.getMoneyList();
       },
       methods : {
@@ -140,7 +139,12 @@
             formdata.append('LT_createTime','');
           }
           this.loading = true ;
-
+          let data = {
+            searchForm : {...this.searchForm} ,
+            currentPage: this.currentPage ,
+            pageSize: this.pageSize
+          };
+          this.$store.commit('saveMoneyList',data);
           getWalletLog(formdata).then( res => {
             this.loading = false ;
             this.tableData = res.data.data;
