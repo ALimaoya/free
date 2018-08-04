@@ -178,6 +178,9 @@
           }
       },
       mounted(){
+          this.order = this.$store.state.searchBar.bonus.order;
+          this.currentPage = this.$store.state.searchBar.bonus.currentPage;
+          this.pageSize = this.$store.state.searchBar.bonus.pageSize;
           this.getList();
       },
       methods : {
@@ -221,7 +224,14 @@
           this.order ={...res }  ;
           // console.log(this.order);
           this.currentPage = 1 ;
-
+          let dataStorage = {
+            order : {
+              ...this.order,
+            },
+            currentPage :this.currentPage,
+            pageSize : this.pageSize,
+          };
+          this.$store.commit('saveView',dataStorage);
           this.getList();
         },
         //查看订单详情

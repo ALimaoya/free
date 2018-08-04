@@ -4,7 +4,7 @@
       <p>店铺管理<button @click="toNew">绑定新店铺</button></p>
     </div>
     <div class="search">
-      <el-select size="small" clearable v-model="shop.EQ_platformType" filterable placeholder="请选择平台类型">
+      <el-select size="small" clearable v-model="selectShop.EQ_platformType" filterable placeholder="请选择平台类型">
         <el-option
           v-for="item in platformOptions"
           :key="item.id"
@@ -12,7 +12,7 @@
           :value="item.id">
         </el-option>
       </el-select>
-      <el-select size="small" v-model="shop.EQ_status"  filterable placeholder="请选择店铺状态" clearable>
+      <el-select size="small" v-model="selectShop.EQ_status"  filterable placeholder="请选择店铺状态" clearable>
         <el-option
           v-for="item in activityOptions"
           :key="item.value"
@@ -20,7 +20,7 @@
           :value="item.value">
         </el-option>
       </el-select>
-      <el-select size="small" v-model="shop.EQ_payStatus"  filterable placeholder="请选择支付状态" clearable>
+      <el-select size="small" v-model="selectShop.EQ_payStatus"  filterable placeholder="请选择支付状态" clearable>
         <el-option
           v-for="item in payStatus"
           :key="item.id"
@@ -137,7 +137,7 @@
                 id : '1'
               }
             ],
-            shop : {
+            selectShop : {
               EQ_platformType :'',
               EQ_status : '',
               EQ_payStatus : ''
@@ -153,6 +153,9 @@
           }
         },
         mounted(){
+          this.selectShop = this.$store.state.searchBar.shop.selectShop;
+          this.currentPage = this.$store.state.searchBar.shop.currentPage;
+          this.pageSize = this.$store.state.searchBar.shop.pageSize;
           this.getShopList();
         },
         methods : {
@@ -162,11 +165,19 @@
           //获取店铺列表
           getShopList(){
               let formData = new FormData();
-              formData.append('EQ_platformType' , this.shop.EQ_platformType);
-              formData.append('EQ_status',this.shop.EQ_status);
+              formData.append('EQ_platformType' , this.selectShop.EQ_platformType);
+              formData.append('EQ_status',this.selectShop.EQ_status);
               formData.append('currentPage' ,this.currentPage);
               formData.append('pageSize' , this.pageSize);
-              formData.append('EQ_payStatus',this.shop.EQ_payStatus);
+              formData.append('EQ_payStatus',this.selectShop.EQ_payStatus);
+              let dataStorage = {
+                selectShop : {
+                  ...this.selectShop,
+                },
+                currentPage :this.currentPage,
+                pageSize : this.pageSize,
+              };
+            this.$store.commit('saveselectShop',dataStorage);
             this.loading = true ;
 
             shopList(formData).then( res => {

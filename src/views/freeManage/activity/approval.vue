@@ -337,6 +337,10 @@
 
     },
     mounted(){
+      this.activity = this.$store.state.searchBar.approval.activity;
+      this.currentPage = this.$store.state.searchBar.approval.currentPage;
+      this.pageSize = this.$store.state.searchBar.approval.pageSize;
+      console.log('activity',this.activity)
       this.getData();
       let now = new Date();
       this.time = parseTime(now);
@@ -375,6 +379,7 @@
           formData.append('LT_activityStartTime',end);
           formData.append('currentPage',this.currentPage);
           formData.append('pageSize',this.pageSize);
+
         this.loading= true;
 
         getActivity(formData).then(res => {
@@ -398,6 +403,14 @@
         this.activity.LT_activityStartTime = res.LT_activityStartTime ;
         this.currentPage = 1 ;
 
+        let dataStorage = {
+          activity : {
+            ...this.activity,
+          },
+          currentPage :this.currentPage,
+          pageSize : this.pageSize,
+        };
+        this.$store.commit('saveApproval',dataStorage);
         this.getData();
       },
       //获取活动详情数据

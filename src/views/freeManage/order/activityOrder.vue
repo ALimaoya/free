@@ -216,6 +216,9 @@
       }
     },
     mounted(){
+        this.order = this.$store.state.searchBar.activityOrder.order;
+        this.currentPage = this.$store.state.searchBar.activityOrder.currentPage;
+        this.pageSize = this.$store.state.searchBar.activityOrder.pageSize;
       this.getList();
     },
     methods : {
@@ -244,6 +247,15 @@
           formData.append('EQ_status',this.order.EQ_status);
           formData.append('currentPage', this.currentPage);
           formData.append('pageSize', this.pageSize);
+
+          let dataStorage = {
+          order : {
+            ...this.order,
+          },
+          currentPage :this.currentPage,
+          pageSize : this.pageSize,
+        };
+        this.$store.commit('saveActivityOder',dataStorage);
         this.loading = true ;
 
         getOrderList(formData).then( res=> {

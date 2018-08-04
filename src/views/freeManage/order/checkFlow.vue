@@ -177,6 +177,9 @@
       }
     },
     mounted(){
+      this.order = this.$store.state.searchBar.checkFlow.order;
+      this.currentPage = this.$store.state.searchBar.checkFlow.currentPage;
+      this.pageSize = this.$store.state.searchBar.checkFlow.pageSize;
       this.getList();
     },
     methods : {
@@ -215,7 +218,14 @@
       getData(res){
         this.order ={...res }  ;
         this.currentPage = 1 ;
-
+          let dataStorage = {
+            order : {
+              ...this.order,
+            },
+            currentPage :this.currentPage,
+            pageSize : this.pageSize,
+          };
+          this.$store.commit('saveCheckFlow',dataStorage);
         // console.log(this.order);
         this.getList();
       },

@@ -126,12 +126,12 @@
       data(){
           return {
             activity : {
-              EQ_platformType : '',
-              EQ_activityCode : '',
-              EQ_activityStatus : '',
-              GT_activityEndTime: '',
-              LT_activityStartTime : '',
-              shopId : '',
+              // EQ_platformType : '',
+              // EQ_activityCode : '',
+              // EQ_activityStatus : '',
+              // GT_activityEndTime: '',
+              // LT_activityStartTime : '',
+              // shopId : '',
               EQ_activityType: '4'
               // currentPage : 1,
               // pageSize : 10
@@ -216,6 +216,9 @@
           }
       },
       mounted(){
+        this.activity = this.$store.state.searchBar.flow.activity;
+        this.currentPage = this.$store.state.searchBar.flow.currentPage;
+        this.pageSize = this.$store.state.searchBar.flow.pageSize;
         this.getData();
         let now = new Date();
         this.time = parseTime(now);
@@ -270,6 +273,14 @@
         this.activity.LT_activityStartTime = res.activityEndTime ;
         this.currentPage = 1 ;
 
+        let dataStorage = {
+          activity : {
+            ...this.activity,
+          },
+          currentPage :this.currentPage,
+          pageSize : this.pageSize,
+        };
+        this.$store.commit('saveFlow',dataStorage);
         // console.log(this.activity);
         this.getData();
       },

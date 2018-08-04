@@ -63,8 +63,101 @@ const searchBar = {
       },
       currentPage : 1,
       pageSize : 10,
+    },
+    shop : {
+      selectShop : {
+        EQ_platformType : '',
+        EQ_status : '',
+        EQ_payStatus : ''
+      },
+      currentPage : 1,
+      pageSize : 10,
+    },
+    approval : {
+      activity : {
+        EQ_platformType : '',
+        EQ_activityCode : '',
+        EQ_activityType : '',
+        EQ_activityStatus : '',
+        GT_activityEndTime: '',
+        LT_activityStartTime : '',
+      },
+      currentPage : 1,
+      pageSize : 10,
+    },
+    flow : {
+      activity : {
+        EQ_platformType : '',
+        EQ_activityCode : '',
+        EQ_activityStatus : '',
+        GT_activityEndTime : '',
+        LT_activityStartTime : '',
+        shopId : '',
+        EQ_activityType : '',
+      },
+      currentPage : 1,
+      pageSize : 10,
+    },
+    activityOrder : {
+      order : {
+        EQ_status: '',
+        EQ_activityType:'',
+        platformType : '' ,
+        activityCode : '',
+        thirdOrderCode: '',
+      },
+      currentPage : 1,
+      pageSize : 10,
+    },
+    flowOrder : {
+      order : {
+        EQ_status: '',
+        platformType : '' ,
+        activityCode : '',
+        EQ_activityShop : '',
+        activityStartTime : '',
+        activityEndTime : '',
+        EQ_activityType : '4'
+      },
+      currentPage : 1,
+      pageSize : 10,
+    },
+    bonus:{
+      order : {
+        EQ_status: '',
+        EQ_activityType:'',
+        platformType : '' ,
+        activityCode : '',
+        thirdOrderCode: '',
+      },
+      currentPage : 1,
+      pageSize : 10,
+    },
+    view:{
+      order : {
+        EQ_status: '',
+        EQ_activityType:'',
+        platformType : '' ,
+        activityCode : '',
+        thirdOrderCode: '',
+      },
+      currentPage : 1,
+      pageSize : 10,
+    },
+    checkFlow : {
+      order : {
+        EQ_status: '4',
+        platformType : '' ,
+        activityCode : '',
+        thirdOrderCode: '',
+        EQ_activityShop : '',
+        activityStartTime : '',
+        activityEndTime : '',
+        EQ_activityType : '4'
+      },
+      currentPage : 1,
+      pageSize : 10,
     }
-
   },
   mutations : {
     saveSearchGoods : (state,obj) => {
@@ -84,8 +177,31 @@ const searchBar = {
     },
     saveSignUp : ( state,obj) => {
       state.signUpList = obj ;
-    }
-
+    },
+    saveselectShop : (state,obj) => {
+      state.shop = obj ;
+    },
+    saveApproval : (state,obj) => {
+      state.approval = obj ;
+    },
+    saveFlow : (state,obj) => {
+      state.flow = obj ;
+    },
+    saveActivityOder : (state,obj) => {
+      state.activityOrder = obj ;
+    },
+    saveFlowOrder : (state,obj) => {
+      state.flowOrder = obj ;
+    },
+    saveBonus : (state,obj) => {
+      state.bonus = obj ;
+    },
+    saveView : (state,obj) => {
+      state.view = obj ;
+    },
+    saveCheckFlow : (state,obj) => {
+      state.checkFlow = obj ;
+    },
   }
 };
 export default searchBar ;
