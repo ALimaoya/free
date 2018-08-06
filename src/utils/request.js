@@ -40,7 +40,7 @@ service.interceptors.request.use(config => {
 // respone拦截器
 service.interceptors.response.use(
   response=>{
-    if(response.data.status=='000000000'){
+    if(response.data.status ==='000000000'){
       return response
     }else{
       if(!noTips){
@@ -49,7 +49,7 @@ service.interceptors.response.use(
           message : response.data.message ,
           center : true ,
           type : 'error'
-        })
+        });
       }
 
       if(needFailResponse){

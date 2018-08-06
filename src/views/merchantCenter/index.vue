@@ -486,6 +486,7 @@
           font-size : 0.2rem ;
           color : #666 ;
           border : 2px solid #b3d8ff ;
+          cursor: pointer;
         }
         button:nth-child(1){
           border-right : 0;

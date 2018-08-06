@@ -132,26 +132,6 @@
         this.getForm();
       },
       methods : {
-        // getAccountInfo(){
-        //   getInfo().then( res =>{
-        //     // console.log(res);
-        //     this.loading= false ;
-        //     if(res.data.data === null){
-        //       this.infoTip = true;
-        //       this.infoStatus = '0'
-        //     }else{
-        //       this.infoStatus = res.data.data.status;
-        //       if(this.infoStatus !== '2'){
-        //         this.infoTip = true;
-        //       }else{
-        //         this.getForm();
-        //         this.infoTip = false;
-        //
-        //       }
-        //     }
-        //
-        //   })
-        // },
 
         //  获取保证金详情
         getForm(){
@@ -197,8 +177,8 @@
 
           applyBond().then( res => {
             this.loading= false;
-
-            this.$message({
+            if( res.data.status === '000000000'){
+              this.$message({
                 message : '您的申请已提交，请稍后确认',
                 center : true ,
                 type : 'success',
@@ -208,6 +188,7 @@
                 window.location.reload();
 
               },1500)
+            }
           })
         },
         // goBond(){

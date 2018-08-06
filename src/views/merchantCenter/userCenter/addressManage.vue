@@ -178,42 +178,16 @@
 
       },
       methods : {
-        //判断是否已有店铺
-        // getShop(){
-        //   getShopInfo().then(res=> {
-        //
-        //     this.loading= false ;
-        //
-        //     if(res.data.status === '000000000'){
-        //       this.hasShop = false ;
-        //       this.getAddressList();
-        //       this.getProvince();
-        //
-        //       return true ;
-        //
-        //
-        //     }else{
-        //       // this.$message({
-        //       //   message : res.data.message,
-        //       //   center: true ,
-        //       //   type : 'error'
-        //       // });
-        //       this.tips = res.data.message;
-        //       this.hasShop = true ;
-        //
-        //
-        //     }
-        //   })
-        //   //   .catch( err =>{
-        //   //   console.log(err);
-        //   // })
-        // },
+
           //获取地址列表
           getAddressList(){
             getAddress().then( res => {
               this.loading= false ;
+              if( res.data.status === '000000000'){
+                this.tableData = res.data.data
 
-             this.tableData = res.data.data
+              }
+
             })
           },
         changeProvince(){
@@ -239,8 +213,8 @@
 
           changeAddrStatus(this.changeData).then( res => {
             // this.loading= false ;
-
-            this.$message({
+            if( res.data.status === '000000000'){
+              this.$message({
                 message : '操作成功，请稍后确认' ,
                 center: true ,
                 type : 'success',
@@ -253,12 +227,16 @@
                 this.getAddressList();
 
               },2000)
+            }
           })
         },
         //获取省份列表
         getProvince(){
           getProvinceList().then( res => {
-            this.provinceList = res.data.data ;
+            if( res.data.status === '000000000'){
+              this.provinceList = res.data.data ;
+
+            }
           })
         },
         editorAddr(index,id){
@@ -266,9 +244,10 @@
 
           getAddrDetail(id).then( res => {
             this.loading= false ;
-
-           this.form = res.data.data ;
+            if( res.data.status === '000000000'){
+              this.form = res.data.data ;
               this.isNew = '1' ;
+            }
 
           })
         },
@@ -284,7 +263,8 @@
 
               newAddress(this.form).then( res => {
                 this.loading= false ;
-                this.$message({
+                if( res.data.status === '000000000'){
+                  this.$message({
                     message : '提交成功，请稍后确认' ,
                     center: true ,
                     type : 'success',
@@ -294,6 +274,7 @@
                     this.isNew = '' ;
                     this.getAddressList();
                   },1500)
+                }
               })
 
             }else{
@@ -310,7 +291,8 @@
 
               changeAddress(this.form).then( res => {
                 this.loading= false ;
-                this.$message({
+                if( res.data.status === '000000000'){
+                  this.$message({
                     message : '修改成功，请稍后确认' ,
                     center: true ,
                     type : 'success',
@@ -319,6 +301,7 @@
                     this.isNew = '' ;
                     this.getAddressList();
                   },1500)
+                }
 
               })
 

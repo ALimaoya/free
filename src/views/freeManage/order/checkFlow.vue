@@ -222,9 +222,11 @@
         this.$store.commit('saveCheckFlow',dataStorage);
         getOrderList(formData).then( res=> {
           this.loading = false ;
-          this.tableData = res.data.data ;
-            this.totalPages = res.data.totalPages ;
-            this.totalElements = res.data.totalElements ;
+            if( res.data.status === '000000000'){
+              this.tableData = res.data.data ;
+              this.totalPages = res.data.totalPages ;
+              this.totalElements = res.data.totalElements ;
+            }
         })
       },
       //根据搜索条件获取订单列表
@@ -261,7 +263,8 @@
         orderDetail(order).then( res => {
           // console.log(res);
           this.loading = false ;
-          if(res.data.data.orderImageList.length){
+          if( res.data.status === '000000000'){
+            if(res.data.data.orderImageList.length){
               res.data.data.orderImageList.forEach( i => {
                 if(i.type === '5'){
                   this.searchImg = i.imageUrl ;
@@ -273,6 +276,7 @@
                 }
               } )
             }
+          }
         })
       },
 
@@ -297,7 +301,8 @@
 
         checkOrder({ orderId : this.orderId , status : this.status ,reason : this.refuseReason ,activityType : this.order.EQ_activityType}).then( res => {
           this.loading = false ;
-          this.$message({
+          if( res.data.status === '000000000'){
+            this.$message({
               message : '审核提交成功，请稍后确认' ,
               center : true ,
               type : 'success',
@@ -305,8 +310,9 @@
             setTimeout(()=> {
               window.location.reload();
             }, 3000);
+          }
 
-        })
+        });
         this.detailInfo = false ;
         this.viewImg = '' ;
       },

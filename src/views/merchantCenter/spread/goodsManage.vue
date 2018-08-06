@@ -227,25 +227,27 @@
             formData.append('pageSize', this.pageSize);
             this.loading = true ;
             hasSpreadGoods(formData).then(res => {
-              this.tableData = res.data.data ;
-              this.totalPages = res.data.totalPages;
-              this.totalElements = res.data.totalElements;
-              if(this.tableData.length !== 0){
-                this.tableData.map((i, index) => {
-                  this.date.push(i.totalSeconds);
-                });
-                this.date.map((i, index) => {
-
-                  this.pageTimer["timer" + index] = setInterval(() => {
-
-                    this.$set(this.date,index,countTime(i));
-                    i++;
-
-                  }, 1000);
-
-                });
-              }
               this.loading = false;
+              if( res.data.status === '000000000'){
+                this.tableData = res.data.data ;
+                this.totalPages = res.data.totalPages;
+                this.totalElements = res.data.totalElements;
+                if(this.tableData.length !== 0){
+                  this.tableData.map((i, index) => {
+                    this.date.push(i.totalSeconds);
+                  });
+                  this.date.map((i, index) => {
+
+                    this.pageTimer["timer" + index] = setInterval(() => {
+
+                      this.$set(this.date,index,countTime(i));
+                      i++;
+
+                    }, 1000);
+
+                  });
+                }
+              }
             })
           },
           //获取商品列表
@@ -261,12 +263,14 @@
 
             getSpreadList(formData).then( res => {
               this.loading2 = false ;
-              this.goodsList = res.data.data ;
-              this.subTotalPages = res.data.totalPages;
-              this.subTotalElements = res.data.totalElements;
-              this.goodsList.map( i=> {
-                i.brokerageRate = '';
-              });
+              if( res.data.status === '000000000'){
+                this.goodsList = res.data.data ;
+                this.subTotalPages = res.data.totalPages;
+                this.subTotalElements = res.data.totalElements;
+                this.goodsList.map( i=> {
+                  i.brokerageRate = '';
+                });
+              }
 
             })
 
@@ -543,7 +547,7 @@
               this.$set(this.show,index,'')  ;
 
             }
-          };
+          }
 
           },
           //取消编辑

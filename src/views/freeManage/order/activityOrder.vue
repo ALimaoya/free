@@ -251,9 +251,11 @@
 
         getOrderList(formData).then( res=> {
           this.loading = false ;
-          this.tableData = res.data.data ;
-            this.totalPages = res.data.totalPages ;
-            this.totalElements = res.data.totalElements ;
+            if( res.data.status === '000000000'){
+              this.tableData = res.data.data ;
+              this.totalPages = res.data.totalPages ;
+              this.totalElements = res.data.totalElements ;
+            }
         })
       },
       //根据搜索条件获取订单列表

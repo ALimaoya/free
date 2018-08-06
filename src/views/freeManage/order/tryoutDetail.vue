@@ -71,7 +71,10 @@
         orderDetail(order).then( res => {
           this.loading = false ;
           // console.log(res);
-          this.detailInfo = res.data.data
+          if( res.data.status === '000000000'){
+            this.detailInfo = res.data.data
+
+          }
         })
       },
       methods : {

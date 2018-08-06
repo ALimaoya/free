@@ -45,8 +45,10 @@
         mounted() {
           this.$store.dispatch('GetInfo').then(res => {
 
-            this.wallet = this.$store.state.user.wallet ;
+            if( res.data.status === '000000000'){
+              this.wallet = this.$store.state.user.wallet ;
 
+            }
           })
         },
         methods: {

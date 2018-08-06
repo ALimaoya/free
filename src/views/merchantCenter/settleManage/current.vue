@@ -239,8 +239,10 @@
 
           amountDetail().then(res => {
             this.loading = false ;
-         this.serviceFee = res.data.data.serviceAmount ;
+            if( res.data.status === '000000000'){
+              this.serviceFee = res.data.data.serviceAmount ;
               this.money = res.data.data.settlementAmount ;
+            }
           })
         },
         getOrder(type){
@@ -255,10 +257,11 @@
             this.loading = true ;
             deliveryOrder(formData).then(res => {
               this.loading = false ;
-
-             this.tableData = res.data.data ;
+              if( res.data.status === '000000000'){
+                this.tableData = res.data.data ;
                 this.totalPages = res.data.totalPages;
                 this.totalElements = res.data.totalElements
+              }
             })
           }else{
 
@@ -266,10 +269,11 @@
 
             refundOrder(formData).then(res => {
               this.loading = false ;
-
-              this.tableData = res.data.data ;
+              if( res.data.status === '000000000'){
+                this.tableData = res.data.data ;
                 this.totalPages = res.data.totalPages;
                 this.totalElements = res.data.totalElements;
+              }
             })
           }
         },

@@ -54,7 +54,8 @@
       mounted(){
         let order = this.$route.params.id ;
         getPayDetail(order).then( res => {
-          this.activity = res.data.data ;
+          if( res.data.status === '000000000'){
+            this.activity = res.data.data ;
             if(res.data.data.payStatus === '1'){
               for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
                 if (v.fullPath === this.$route.fullPath) {
@@ -64,6 +65,7 @@
                 }
               }
             }
+          }
         })
 
 

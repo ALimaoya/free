@@ -250,10 +250,11 @@
 
           getGoodsList(formData).then( res => {
             this.loading = false ;
-
-             this.tableData = res.data.data;
+            if( res.data.status === '000000000'){
+              this.tableData = res.data.data;
               this.totalPages = res.data.totalPages ;
               this.totalElements = res.data.totalElements ;
+            }
           })
 
         },
@@ -288,19 +289,28 @@
         //  获取一级分类
         getFirstList(){
           firstList().then(res=> {
-            this.firstTypeList = res.data.data
+            if( res.data.status === '000000000'){
+              this.firstTypeList = res.data.data
+
+            }
           })
         },
         //  获取二级分类
         getSecondList(type){
           secondList(type).then(res=> {
-            this.secondTypeList = res.data.data
+            if( res.data.status === '000000000'){
+              this.secondTypeList = res.data.data
+
+            }
           })
         },
         //获取三级分类
         getThirdList(type){
           thirdList(type).then(res=> {
-            this.thirdTypeList = res.data.data
+            if( res.data.status === '000000000'){
+              this.thirdTypeList = res.data.data
+
+            }
           })
         },
 
@@ -322,7 +332,7 @@
         //上/下架操作
         handleShelves(index,order,type){
           this.loading = true ;
-          changeStatus(order,type,this.user).then(res=> {
+          changeStatus(order,type).then(res=> {
             this.loading = false ;
             if(res.data.status === '000000000'){
               this.$message({

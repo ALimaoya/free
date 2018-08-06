@@ -84,7 +84,10 @@
       getVipInfo() {
 
         getMember().then(res => {
-          this.statusData.push(res.data.data);
+          if( res.data.status === '000000000'){
+            this.statusData.push(res.data.data);
+
+          }
         })
       },
       getOrderList() {
@@ -95,8 +98,10 @@
 
         getMemberOrder(formdata).then(res => {
           this.loading = false ;
+          if( res.data.status === '000000000'){
+            this.historyData = res.data
 
-          this.historyData = res.data
+          }
         })
       },
       handleSizeChange(val) {

@@ -178,7 +178,10 @@
       // 获取审批历史记录
       getApproveList(){
         getApproveList().then( res =>{
-          this.tableData = res.data.data
+          if( res.data.status === '000000000'){
+            this.tableData = res.data.data
+
+          }
           // console.log(res)
         })
       },

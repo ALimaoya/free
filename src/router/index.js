@@ -303,7 +303,7 @@ export const constantRouterMap = [
               name: 'News',
               component:() => import('@/views/merchantCenter/news'),
               hidden : true ,
-              meta: { title: '消息', icon: 'news' },
+              meta: { title: '消息中心', icon: 'news' },
 
             }
           ]
@@ -836,35 +836,6 @@ export const constantRouterMap = [
       }
     ]
   },
-  // { path: '/ruleCenter',
-  //   redirect : '/ruleCenter/index',
-  //   component : Layout,
-  //   // meta: { title: '特卖商城', icon: 'center' },
-  //   hidden: true,
-  //   children :[
-  //     {
-  //       path: '/ruleCenter/index',
-  //       name: 'RuleCenter',
-  //       component: () => import('@/views/ruleCenter/index'),
-  //
-  //     }
-  //   ]
-  // },
-  // { path: '/a',
-  //   // name: 'Test',
-  //   component : Layout,
-  //   redirect : '/a/index',
-  //   meta: { title: 'test', icon: 'center' },
-  //   hidden: true,
-  //   children :[
-  //     {
-  //       path: '/a/index',
-  //       name: 'Test',
-  //       component: () => import('@/views/merchantCenter/test'),
-  //
-  //     }
-  //   ]
-  // },
 
   // {
   //   path: '/invitation',
@@ -900,7 +871,7 @@ export const constantRouterMap = [
   // },
   { path: '/404', component: () => import('@/views/404'), hidden: true },
   { path: '*', redirect: '/404', hidden: true }
-]
+];
 
 export default new Router({
   // mode: 'history', //后端支持可开

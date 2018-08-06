@@ -90,36 +90,14 @@
 
       },
       methods : {
-        //判断是否已有店铺
-        // getShop(){
-        //   getShopInfo().then(res=> {
-        //     this.loading= false ;
-        //
-        //     if(res.data.status === '000000000'){
-        //       this.hasShop = false ;
-        //
-        //       return true ;
-        //
-        //
-        //     }else{
-        //       // this.$message({
-        //       //   message : res.data.message,
-        //       //   center: true ,
-        //       //   type : 'error'
-        //       // });
-        //       this.tips = res.data.message;
-        //       this.hasShop = true ;
-        //
-        //
-        //     }
-        //   })
-        // },
         getCarriage(){
           carriageList().then( res => {
             this.loading= false ;
-            if(res.data.data.length >0){
+            if( res.data.status === '000000000'){
+              if(res.data.data.length >0){
                 this.carriageForm.regulation= res.data.data
               }
+            }
           })
         },
         submitForm(formName){
@@ -129,7 +107,8 @@
               this.loading= true ;
               addCarriage(this.carriageForm.regulation).then( res => {
                 this.loading= false ;
-                this.$message({
+                if( res.data.status === '000000000'){
+                  this.$message({
                     message: '您新增运费规则已提交，请稍后确认',
                     center: true,
                     type: 'success'
@@ -137,6 +116,7 @@
                   setTimeout(() => {
                     window.location.reload();
                   },1500)
+                }
               })
             }
           })
@@ -147,7 +127,6 @@
               'id':'',
               'reachQuantity': '',
               'carriageAmount': '',
-
             })
 
           } else {
@@ -162,32 +141,26 @@
           let index = this.carriageForm.regulation.indexOf(item);
           if (index !== -1&&this.carriageForm.regulation.length > 0 ) {
             this.carriageForm.regulation.splice(index, 1);
-
             if(item.id  !==  ''){
               deleteCarriage(item.id).then( res => {
-
-                this.$message({
-                  message : '您已删除成功，请稍后确认' ,
-                  center : true ,
-                  type : 'success'
-                })
-
+                if( res.data.status === '000000000'){
+                  this.$message({
+                    message : '您已删除成功，请稍后确认' ,
+                    center : true ,
+                    type : 'success'
+                  })
+                }
               })
-
             }
-
 
           }
 
           if(this.carriageForm.regulation.length > 0){
             return  ;
-
           }else{
             this.newRule();
-
           }
           // console.log(index,this.carriageForm.regulation)
-
         },
         //  跳转到申请店铺
         applyShop(){

@@ -136,7 +136,10 @@ export default {
       refuseOrder(order).then(res => {
           // console.log("data", res);
         this.loading = false ;
-        this.form = res.data.data;
+        if( res.data.status === '000000000'){
+          this.form = res.data.data;
+
+        }
         })
       // this.form =
     },

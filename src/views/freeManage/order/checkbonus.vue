@@ -213,9 +213,11 @@
           this.$store.commit('saveView',dataStorage);
           getOrderList(formData).then( res=> {
             this.loading = false ;
-            this.tableData = res.data.data ;
-              this.totalPages = res.data.totalPages ;
-              this.totalElements = res.data.totalElements ;
+              if( res.data.status === '000000000'){
+                this.tableData = res.data.data ;
+                this.totalPages = res.data.totalPages ;
+                this.totalElements = res.data.totalElements ;
+              }
           })
         },
         //根据搜索条件获取订单列表
@@ -283,15 +285,17 @@
           checkOrder({ orderId : this.orderId , status : this.status ,reason : this.refuseReason ,activityType : this.order.EQ_activityType}).then( res => {
             this.loading = false ;
 
-            this.$message({
-                 message : '审核提交成功，请稍后确认' ,
-                 center : true ,
-                 type : 'success',
-               });
-               setTimeout(()=> {
-                 window.location.reload();
-               }, 3000);
-          })
+            if( res.data.status === '000000000'){
+              this.$message({
+                message : '审核提交成功，请稍后确认' ,
+                center : true ,
+                type : 'success',
+              });
+              setTimeout(()=> {
+                window.location.reload();
+              }, 3000);
+            }
+          });
           this.detailInfo = false ;
 
         },

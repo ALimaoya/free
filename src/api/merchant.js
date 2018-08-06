@@ -42,9 +42,9 @@ export function thirdList(data){
 }
 
 //商品状态修改
-export function changeStatus(id,type,name){
+export function changeStatus(id,type){
   return request({
-    url: '/center/product/updateStatus/'+ id+ '/'+type+ '/'+ name,
+    url: '/center/product/updateStatus/'+ id+ '/'+type,
     method : 'get'
   })
 }

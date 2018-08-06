@@ -147,8 +147,10 @@
           this.$store.commit('saveMoneyList',data);
           getWalletLog(formdata).then( res => {
             this.loading = false ;
-            this.tableData = res.data.data;
+            if( res.data.status === '000000000'){
+              this.tableData = res.data.data;
               this.moneyRecord=res.data
+            }
           })
         },
 

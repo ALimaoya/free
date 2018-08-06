@@ -171,9 +171,11 @@
           getOrderList(formData).then( res=> {
                // console.log(res)
               this.loading = false ;
-              this.tableData = res.data.data ;
-              this.totalPages = res.data.totalPages ;
-              this.totalElements = res.data.totalElements ;
+              if( res.data.status === '000000000'){
+                this.tableData = res.data.data ;
+                this.totalPages = res.data.totalPages ;
+                this.totalElements = res.data.totalElements ;
+              }
               // let imgList = res.data.data.imageList
               // imgList.map( i => {
               //   if(i.type === '5'){

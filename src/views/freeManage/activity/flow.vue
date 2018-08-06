@@ -277,27 +277,34 @@
       //获取活动详情数据
       detail( index,order ){
         getDetail(order).then( res =>{
-          this.activityDetail = res.data.data ;
-            this.$router.push({ path : '/freeManage/publish/flow_step1' ,query : { editor : '2', order : order }})
+         if( res.data.status === '000000000'){
+           this.activityDetail = res.data.data ;
+           this.$router.push({ path : '/freeManage/publish/flow_step1' ,query : { editor : '2', order : order }})
+         }
 
-        })
+         })
       },
 
       //修改关键词
       changeKeys(index,order){
         this.keyBox = true ;
         this.$store.dispatch('getPublishDetail',order).then( res => {
-          this.form = res.data.data;
+          if( res.data.status === '000000000'){
+            this.form = res.data.data;
             this.choosePlat = this.platForm[this.form.platformType-1].name ;
             this.getType(this.form.platformType);
 
+          }
         })
       },
       //获取平台类型
       getType(value){
 
         searchTypeList(value).then( res => {
-          this.searchOptions = res.data.data ;
+          if( res.data.status === '000000000'){
+            this.searchOptions = res.data.data ;
+
+          }
         })
       },
       //删除APP端关键词
@@ -365,12 +372,14 @@
             };
             if(keyArr.length){
               updateKeyword(data).then((res)=>{
-                this.$message({
+                if( res.data.status === '000000000'){
+                  this.$message({
                     message : '修改成功',
                     center : true ,
                     type : 'success'
                   });
                   this.keyBox = false ;
+                }
               })
 
             }else{
@@ -417,16 +426,18 @@
 
         changeStatus(formData).then( res => {
           this.loading= false;
-          this.$message({
+          if( res.data.status === '000000000'){
+            this.$message({
               message : '操作成功',
               type : 'success',
               center : true ,
               duration : 1000
             });
-          setTimeout(() => {
-            window.location.reload();
+            setTimeout(() => {
+              window.location.reload();
 
-          },2000)
+            },2000)
+          }
         })
       },
 
@@ -435,17 +446,19 @@
         this.loading= true;
         applyPay(id).then( res => {
           this.loading= false;
-          this.$message({
+          if( res.data.status === '000000000'){
+            this.$message({
               message : '申请结算成功，请稍后确认',
               center : true ,
               type : 'success',
               duration : 1000
 
             });
-          setTimeout(() => {
-            window.location.reload();
+            setTimeout(() => {
+              window.location.reload();
 
-          },2000)
+            },2000)
+          }
         })
       },
 
@@ -455,17 +468,19 @@
 
         cancelPay(id).then( res => {
           this.loading= false;
-          this.$message({
+          if( res.data.status === '000000000'){
+            this.$message({
               message : '取消结算成功，请稍后确认',
               type : 'success' ,
               center : true ,
               duration : 1000
 
             });
-          setTimeout(() => {
-            window.location.reload();
+            setTimeout(() => {
+              window.location.reload();
 
-          },2000)
+            },2000)
+          }
         })
       },
       //查看大图

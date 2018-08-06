@@ -412,13 +412,13 @@
           this.$store.commit('saveTransition',data);
           getOrderList(formData).then( res => {
             this.loading = false ;
-
-
-             this.deliverList=  res.data.data.tExpressResDtos ;
+            if( res.data.status === '000000000'){
+              this.deliverList=  res.data.data.tExpressResDtos ;
               this.tableData = res.data.data.pageResultDto.data ;
               this.totalElements = res.data.data.pageResultDto.totalElements;
               this.totalPages = res.data.data.pageResultDto.totalPages;
               this.merchantId = res.data.data.merchantId;
+            }
           })
 
         },

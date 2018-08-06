@@ -136,7 +136,7 @@
 
           getShop().then( res => {
             this.loading = false ;
-
+            if( res.data.status === '000000000'){
               if(res.data.data !== null){
                 this.form = res.data.data ;
                 this.status = res.data.data.status ;
@@ -154,6 +154,8 @@
                   this.readOnly = false ;
                 }
               }
+
+            }
           })
         },
         goDetail(){
@@ -229,7 +231,7 @@
 
                   shopInfo(this.form).then( res => {
                     this.loading = false ;
-
+                    if( res.data.status === '000000000'){
                       this.$message({
                         message : '您的店铺信息已提交，通过审核后即可添加商品' ,
                         type : 'success',
@@ -240,13 +242,15 @@
                         window.location.reload();
 
                       },2000)
+                    }
                   })
                 }else if( type === '修改'){
                   //  修改表单
                   this.loading = true ;
 
                   changeShop(this.form).then( res => {
-                    this.$message({
+                    if( res.data.status === '000000000'){
+                      this.$message({
                         message : '您的店铺信息已修改，通过审核后即可添加商品' ,
                         type : 'success',
                         center : true,
@@ -258,6 +262,7 @@
                         window.location.reload();
 
                       },2000)
+                    }
 
                   })
                 }

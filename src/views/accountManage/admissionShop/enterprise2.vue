@@ -108,7 +108,7 @@
                 <li>4、《商标注册证》续证完成，而原《商标注册证》已经过期，需同时上传《核准续展注册证明》。</li>
               </ul>
             </el-form-item>
-            <el-form-item v-if="brandInfo !== '0'&& item.brandRegistType === '2'" class="uploadImg" :labelWidth="labelWidth" label="品牌授权证明：" :prop="'merchantBrandinfoReqDtos.'+index+'.brandAuthImage'">
+            <el-form-item v-if="item.brandRegistType === '2'" class="uploadImg" :labelWidth="labelWidth" label="品牌授权证明：" :prop="'merchantBrandinfoReqDtos.'+index+'.brandAuthImage'">
               <div @click="chooseBrand = index ;">
                 <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="item.brandAuthImage"
                             :headers="{'yb-tryout-merchant-token':token}" :show-file-list="false"  :before-upload="beforeBrandAuth" >
@@ -133,9 +133,9 @@
                 <!--<li>3、如果是旗舰店，请点击下载模板填写，加盖授权及开店公司红色公章后上传照片或扫描件。</li>-->
               </ul>
             </el-form-item>
-            <el-form-item v-if="brandInfo !== '0'&& item.brandRegistType === '2'" :labelWidth="labelWidth" label="品牌授权截止日期："  :prop="'merchantBrandinfoReqDtos.'+index+'.brandAuthDeadline'" :rules="{ message : '请选择品牌授权截止日期', trigger : 'change' , required: true }">
+            <el-form-item v-if="item.brandRegistType === '2'" :labelWidth="labelWidth" label="品牌授权截止日期："  :prop="'merchantBrandinfoReqDtos.'+index+'.brandAuthDeadline'" :rules="{ message : '请选择品牌授权截止日期', trigger : 'change' , required: true }">
               <el-col :span="9">
-                <el-date-picker type="date" size="mini" placeholder="请选择截止日期" value-format="yyyy-MM-dd" auto-complete="off" :picker-options="pickerOptions2" :disabled="brandInfo==='0'||brandInfo==='3'" v-model="item.brandAuthDeadline" style="width: 100%;" ></el-date-picker>
+                <el-date-picker type="date" size="mini" placeholder="请选择截止日期" value-format="yyyy-MM-dd" auto-complete="off" :picker-options="pickerOptions2" :disabled="brandInfo==='3'" v-model="item.brandAuthDeadline" style="width: 100%;" ></el-date-picker>
               </el-col>
             </el-form-item>
           </div>

@@ -202,7 +202,10 @@
 
         getMember().then(res => {
           this.loading = false ;
-          this.statusData = res.data.data;
+          if( res.data.status === '000000000'){
+            this.statusData = res.data.data;
+
+          }
         })
       },
       showPwd() {
@@ -214,7 +217,10 @@
       },
       getDepositMoney() {
         getDeposit().then(res => {
-          this.deposit = res.data.data
+          if( res.data.status === '000000000'){
+            this.deposit = res.data.data
+
+          }
         })
       },
       getVipList() {
@@ -222,10 +228,12 @@
 
         getVipType().then(res => {
           this.loading = false ;
-          if( res.data.data.length){
+          if( res.data.status === '000000000'){
+            if( res.data.data.length){
               this.vipInfo = res.data.data;
               this.choose = this.vipInfo[0];
             }
+          }
         })
       },
       chooseVip(item) {
@@ -310,7 +318,7 @@
                 alert('服务器开小差啦，请稍等~');
                 return
               }
-            })
+            });
             var __div = document.getElementById('myForm');
             if ( _this.depositStatus) {
                this.dialogVisible = true;

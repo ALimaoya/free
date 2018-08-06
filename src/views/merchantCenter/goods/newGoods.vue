@@ -434,18 +434,19 @@
                   describes: res.data.data.describes,
                   id: ''
                 }  ;
+                if( res.data.status === '000000000'){
+                  if(res.data.data.productImages.length > 0){
+                    res.data.data.productImages.map( (i,index) => {
+                      this.form.imagesList[index] = { id : '', imgUrl: i.imgUrl }  ;
+                    })
+                  }
 
-                if(res.data.data.productImages.length > 0){
-                  res.data.data.productImages.map( (i,index) => {
-                    this.form.imagesList[index] = { id : '', imgUrl: i.imgUrl }  ;
-                  })
+                  this.word = this.form.describes ;
+                  this.brandCnName = res.data.data.brandCnName ;
+                  this.thirdName = res.data.data.cateGoryMap.categoryId3;
+                  // this.getSecondList(this.form.class1Id);
+                  // this.getThirdList(this.form.class2Id);
                 }
-
-                this.word = this.form.describes ;
-                this.brandCnName = res.data.data.brandCnName ;
-                this.thirdName = res.data.data.cateGoryMap.categoryId3;
-                // this.getSecondList(this.form.class1Id);
-                // this.getThirdList(this.form.class2Id);
               })
             }else{
               // this.title = '新增商品';
@@ -454,9 +455,11 @@
           getBrandList(){
 
             getBrand(this.brandName, this.currentPage ,this.pageSize).then(res => {
-              this.brandData = res.data.data ;
+              if( res.data.status === '000000000'){
+                this.brandData = res.data.data ;
                 this.totalPages = res.data.totalPages ;
                 this.totalElements = res.data.totalElements ;
+              }
             })
 
           },
@@ -497,13 +500,15 @@
             this.clearType('1');
 
             firstList().then(res=> {
-              this.firstTypeList = res.data.data;
-              // if(this.form.class1Id!== ''){
-              //   this.getSecondList(this.form.class1Id);
-              //
-              // }
-              if(/^[0-9]+$/.test(this.form.firstType*1)&&this.form.firstType!== ''){
-                this.getSecondList(this.form.firstType)
+              if( res.data.status === '000000000'){
+                this.firstTypeList = res.data.data;
+                // if(this.form.class1Id!== ''){
+                //   this.getSecondList(this.form.class1Id);
+                //
+                // }
+                if(/^[0-9]+$/.test(this.form.firstType*1)&&this.form.firstType!== ''){
+                  this.getSecondList(this.form.firstType)
+                }
               }
             })
           },
@@ -511,14 +516,15 @@
           getSecondList(type){
             this.clearType('2');
             secondList(type).then(res=> {
-
-              this.secondTypeList = res.data.data;
-              // if(this.form.class2Id!== ''){
-              //   this.getThirdList(this.form.class2Id);
-              //
-              // }
-              if(/^[0-9]+$/.test(this.form.secondType*1)&&this.form.secondType!== ''){
-                this.getThirdList(this.form.secondType)
+              if( res.data.status === '000000000'){
+                this.secondTypeList = res.data.data;
+                // if(this.form.class2Id!== ''){
+                //   this.getThirdList(this.form.class2Id);
+                //
+                // }
+                if(/^[0-9]+$/.test(this.form.secondType*1)&&this.form.secondType!== ''){
+                  this.getThirdList(this.form.secondType)
+                }
               }
             })
 
@@ -527,7 +533,10 @@
           getThirdList(type){
             this.clearType('3');
             thirdList(type).then(res=> {
-              this.thirdTypeList = res.data.data
+              if( res.data.status === '000000000'){
+                this.thirdTypeList = res.data.data
+
+              }
             })
           },
           //重选清除原有分类

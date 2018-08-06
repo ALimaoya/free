@@ -58,8 +58,10 @@
         // console.log(order);
         orderDetail(order).then( res => {
           this.loading = false ;
-
+          if( res.data.status === '000000000'){
             this.detailInfo = res.data.data
+
+          }
         })
       },
       methods : {

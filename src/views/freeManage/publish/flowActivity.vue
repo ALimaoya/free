@@ -362,14 +362,16 @@
                if(res.data.data.length){
               getMember().then( res => {
                 //判断用户是否是会员身份
-                if(res.data.data.vipLevel*1){
-                  // if(this.$route.query.order !== undefined ) {
-                  //判断活动是新建还是已存在活动
-                  this.activityDetail();
+                if( res.data.status === '000000000'){
+                  if(res.data.data.vipLevel*1){
+                    // if(this.$route.query.order !== undefined ) {
+                    //判断活动是新建还是已存在活动
+                    this.activityDetail();
 
 
-                }else{
-                  this.vipVisible = true ;
+                  }else{
+                    this.vipVisible = true ;
+                  }
                 }
               })
             }else{
@@ -390,13 +392,15 @@
 
             this.$store.dispatch('getPublishDetail',order).then( res => {
               this.loading = false ;
-              this.form = res.data.data;
-                //判断活动是否已支付
-                if(this.$route.query.payStatus === '1'){
-                  this.readonly = true ;
+                if( res.data.status === '000000000'){
+                  this.form = res.data.data;
+                  //判断活动是否已支付
+                  if(this.$route.query.payStatus === '1'){
+                    this.readonly = true ;
+                  }
+                  //已存在活动相关操作
+                  this.activityStatus();
                 }
-                //已存在活动相关操作
-                this.activityStatus();
 
             })
           } else{
@@ -503,7 +507,10 @@
         getType(value){
 
           searchTypeList(value).then( res => {
-            this.searchOptions = res.data.data ;
+            if( res.data.status === '000000000'){
+              this.searchOptions = res.data.data ;
+
+            }
           })
         },
 
@@ -642,7 +649,10 @@
         //获取活动佣金
         activityCommission(){
           getCommission().then(res => {
-            this.form.brokeragePrice = res.data.data ;
+            if( res.data.status === '000000000'){
+              this.form.brokeragePrice = res.data.data ;
+
+            }
           })
         },
         //上传商品主图
