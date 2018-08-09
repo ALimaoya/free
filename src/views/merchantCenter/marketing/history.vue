@@ -3,10 +3,10 @@
       <h1 class="h_title">{{ typeLabel }}活动报名记录</h1>
       <div class="search">
         <div class="block">
-          <el-date-picker size="small" v-model="history.GTE_startDate" value-format="yyyy-MM-dd hh:mm:ss" type="datetime" placeholder="选择活动开始日期" ></el-date-picker>
+          <el-date-picker size="small" v-model="history.GTE_startDate" value-format="yyyy-MM-dd hh:00:00" type="datetime" placeholder="选择活动开始日期" ></el-date-picker>
         </div>
         <div class="block">
-          <el-date-picker size="small" v-model="history.LTE_endDate" value-format="yyyy-MM-dd hh:mm:ss" type="datetime" placeholder="选择活动结束日期" ></el-date-picker>
+          <el-date-picker size="small" v-model="history.LTE_endDate" value-format="yyyy-MM-dd hh:00:00" type="datetime" placeholder="选择活动结束日期" ></el-date-picker>
         </div>
         <el-input class="sub_search" size="small" :maxlength="40" v-model.trim="history.EQ_product" clearable placeholder="商品编号"></el-input>
         <el-select class="sub_search"  size="small" clearable v-model="history.EQ_status" filterable placeholder="请选择审核状态">
@@ -17,8 +17,8 @@
             :value="item.value">
           </el-option>
         </el-select>
-        <el-button  size="small" type="primary"  @click="getList()" class="searchOrder">查询</el-button>
-        <el-button  size="small" type="primary"  @click="reset()" class="searchOrder">重置</el-button>
+        <el-button  size="mini" type="primary"  @click="getList()" class="searchOrder">查询</el-button>
+        <el-button  size="mini" type="primary"  @click="reset()" class="searchOrder">重置</el-button>
       </div>
 
         <el-table  :data="tableData"  border fit >

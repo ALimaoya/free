@@ -7,8 +7,8 @@
             <p v-if="content[type-1]!== undefined">{{ content[type-1].title}}<span>{{ progress[0] }}</span></p>
             <div>活动时间：长期招商</div>
             <div><span>报名资质：</span>
-              <div class="tips" v-if="permitSign"><img src="../../../assets/imgs/success.png"/><div>您的店铺已达到报名要求</div></div>
-              <div class="tips" v-else="!permitSign"><img src="../../../assets/imgs/wrong.png"/><div>很抱歉，您的店铺还未达到报名要求</div></div>
+              <div class="tips" v-if="permitSign&&hasBond"><img src="../../../assets/imgs/success.png"/><div>您的店铺已达到报名要求</div></div>
+              <div class="tips" v-else="!permitSign|| !hasBond"><img src="../../../assets/imgs/wrong.png"/><div>很抱歉，您的店铺还未达到报名要求</div></div>
               <el-button type="text" @click="dialogVisible = true ;">详情</el-button>
             </div>
             <el-button class="sign_btn" type="danger" @click="signNow" size="mini" >立即报名</el-button>
@@ -83,8 +83,6 @@
         permitSign : false,
         hasBond: false ,
 
-
-
       }
     },
     mounted() {
@@ -120,7 +118,7 @@
       checkBond(){
         getBond().then( res => {
           if( res.data.status === '000000000' ){
-            if(res.data.data.status === '1'){
+            if(res.data.data.status === '1'|| res.data.data.status === '2'){
               this.hasBond = true ;
 
             }else{

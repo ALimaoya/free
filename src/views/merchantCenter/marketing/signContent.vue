@@ -135,6 +135,10 @@
           if (!checkFloat(value)) {
             callback(new Error('商品'+ this.typeLabel +'活动价格最多有两位小数'))
           }
+          if(value > this.shop.price * 0.8){
+            callback(new Error('商品'+ this.typeLabel +'活动价格不得大于当前价格的80%'))
+
+          }
           callback();
         }
       };
@@ -516,7 +520,7 @@
         text-align: left;
         .name, .encoding, .price {
           font-size: 0.18rem;
-          line-height: 30px;
+          line-height: 0.3rem;
         }
       }
       .addGoods{

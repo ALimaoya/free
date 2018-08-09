@@ -139,7 +139,7 @@
             this.newItems = this.tableData1 ;
 
           }
-          console.log(this.newItems)
+          // console.log(this.newItems)
         },
         //标记已读
         readIt(){

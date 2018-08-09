@@ -98,17 +98,16 @@
         <el-button style="background:#3a8ee6;;color:white;" @click="dialogVisibleQuestion = false">确定</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="请输入支付密码" :visible.sync="dialogPswVisible" width="30%" :before-close="handleClose" top="20vh" center >
-      <el-form ref="pswForm" :model="pswForm" :rules="pswRule" >
-        <el-form-item label="支付密码：" class="payPsw" prop="payPsw" label-width="100px">
+    <el-dialog title="请输入支付密码" :visible.sync="dialogPswVisible" width="40%" :before-close="handleClose" top="20vh" center >
+      <el-form ref="pswForm" :model="pswForm" :rules="pswRule" label-position="left">
+        <el-form-item label="支付密码：" class="payPsw" prop="payPsw" label-width="120px">
           <el-input size="small" class="pswIpt" :type="pwdType" placeholder="请输入支付密码" v-model.trim="pswForm.payPsw">
             <span slot="suffix" class="show-pwd" @click="showPwd">
-            <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
-            <svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>
-          </span>
+              <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
+              <svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>
+            </span>
           </el-input>
           <!--<div class="getNum" style="width : 1.5rem ;float : right ;"></div>-->
-
           <router-link to="/accountManage/userInfor/settings" v-if="!settingPsw"><span style="color:#409EFF;position:absolute;display:inline-block;width:1rem">设置支付密码</span></router-link>
         </el-form-item>
 
@@ -640,11 +639,11 @@
         width : 90% ;
         margin : 0.4rem auto 0;
         justify-content: center;
-
+        .pswIpt {
+          width: 80%;
+        }
       }
-      /*.pswIpt {*/
-        /*position: relative;*/
-      /*}*/
+
       .show-pwd {
         /*position: absolute;*/
         /*right: .2rem;*/

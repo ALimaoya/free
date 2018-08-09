@@ -57,7 +57,11 @@
       <el-table-column prop="code" label="商品编号" width="100"></el-table-column>
       <!--<el-table-column prop="shopName" label="所属店铺" ></el-table-column>-->
       <el-table-column prop="brandCnName" label="商品品牌" width="100"></el-table-column>
-      <el-table-column prop="productName" label="商品名称" width="100"></el-table-column>
+      <el-table-column prop="productName" label="商品名称" width="100">
+        <template slot-scope="scope">
+          <span class="name_input">{{ scope.row.productName }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="商品主图" width="100">
         <template slot-scope="scope">
           <img v-if="scope.row.mainImageUrl!==''||scope.row.mainImageUrl!== null"
@@ -140,7 +144,7 @@
   import userPhoto from '@/assets/404_images/fail.png'
 
   export default {
-        name: "goods-list",
+      name: "goods-list",
       data(){
           return{
             account : {},
@@ -209,12 +213,12 @@
         this.pageSize = this.$store.state.searchBar.goodsList.pageSize;
         this.thirdType = this.$store.state.searchBar.goodsList.thirdType;
         this.secondType = this.$store.state.searchBar.goodsList.secondType;
-
         this.getList();
         this.getFirstList();
         this.getBondInfo();
 
       },
+
       methods : {
         //  获取商品列表
         getList(){
@@ -247,13 +251,13 @@
           };
           this.$store.commit('saveSearchGoods',dataStorage);
           this.loading = true ;
-
           getGoodsList(formData).then( res => {
             this.loading = false ;
             if( res.data.status === '000000000'){
               this.tableData = res.data.data;
               this.totalPages = res.data.totalPages ;
               this.totalElements = res.data.totalElements ;
+
             }
           })
 
@@ -291,7 +295,6 @@
           firstList().then(res=> {
             if( res.data.status === '000000000'){
               this.firstTypeList = res.data.data
-
             }
           })
         },
@@ -416,6 +419,10 @@
 
     .cell{
       height : 0.5rem ;
+      .name_input{
+        white-space:pre-wrap!important ;
+      }
+
       img{
         width : 0.7rem ;
         height: 0.7rem ;
