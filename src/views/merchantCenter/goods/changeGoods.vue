@@ -111,7 +111,7 @@
 
 <script>
   import { uploadImage  } from "@/api/activity"
-  import { newGoogds,getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo} from "@/api/merchant"
+  import { getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo} from "@/api/merchant"
   import { getToken,getMobile } from '@/utils/auth'
   import { getStatus } from "@/api/enter"
   import { getQueryString,checkFloat } from "@/utils/validate"
@@ -189,11 +189,11 @@
               required : true ,trigger : 'blur' ,validator : validGoodsName
             }
           ],
-          brandId: [
-            {
-              required : true  ,trigger : 'change',validator: validBrand
-            }
-          ],
+          // brandId: [
+          //   {
+          //     required : true  ,trigger : 'change',validator: validBrand
+          //   }
+          // ],
           firstType: [
             {
               required : true ,trigger : 'change' ,message: '请选择一级分类'

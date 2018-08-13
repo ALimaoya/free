@@ -160,7 +160,7 @@
 <script>
   // import wangeditor from '@/components/wangeditor'
   import { uploadImage  } from "@/api/activity"
-  import { getGoodsList, newGoogds,getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo, getTao,getJD} from "@/api/merchant"
+  import { getGoodsList, newGoogds,getGoodsDetail, getBrand ,firstList,secondList,thirdList, getShopInfo, getTao,getJD} from "@/api/merchant"
   import { getToken,getMobile } from '@/utils/auth'
   import { getBond } from "@/api/userCenter"
   import { checkFloat,validName } from "@/utils/validate"
@@ -245,11 +245,11 @@
                     required : true ,trigger : 'blur' ,validator : validGoodsName
                   }
                 ],
-                brandId: [
-                  {
-                    required : true  ,trigger : 'change',validator: validBrand
-                  }
-                ],
+                // brandId: [
+                //   {
+                //     required : false  ,trigger : 'change',validator: validBrand
+                //   }
+                // ],
                 firstType: [
                   {
                     required : true ,trigger : 'change' ,message: '请选择一级分类'
