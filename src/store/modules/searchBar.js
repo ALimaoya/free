@@ -191,6 +191,15 @@ const searchBar = {
       },
       currentPage : 1,
       pageSize : 10,
+    },
+    brandList : {
+      brand : {
+        brandCnName:'',
+        brandEnName:'',
+        EQ_status:''
+      },
+      currentPage : 1,
+      pageSize : 10,
     }
   },
   mutations : {
@@ -244,6 +253,9 @@ const searchBar = {
     },
     saveCashList : (state,obj) => {
       state.cashHistory = obj ;
+    },
+    saveBrandList : (state,obj) => {
+      state.brandList = obj ;
     }
 
   }

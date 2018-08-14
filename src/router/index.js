@@ -364,6 +364,12 @@ export const constantRouterMap = [
             meta: { title: '修改商品', icon: 'changeGoods' },
             hidden: true
           },
+          {
+            path: 'brandManage',
+            name: 'BrandManage',
+            component: () => import('@/views/merchantCenter/goods/brandManage'),
+            meta: { title: '品牌管理', icon: 'brandManage' },
+          },
         ]
       },
       {

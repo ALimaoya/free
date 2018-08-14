@@ -104,6 +104,7 @@
         <div class="dialogTop">
           <span>品牌名称：</span><el-input type="text" class="middleInput" v-model.trim="brandName" size="small" @keyup.enter.native="getBrandList()"></el-input>
           <el-button type="primary" size="small" @click="getBrandList()">查询</el-button>
+          <span class="brandTips tips_warn" @click="goBrand">没有您的品牌？点击添加>></span>
         </div>
         <el-table :data="brandData" border stripe highlight-current-row fit >
           <el-table-column  width="32" >
@@ -955,6 +956,11 @@
           applyShop(){
             this.$router.push('/accountManage/admission/admissionShop/index')
           },
+          //跳转到品牌管理
+          goBrand(){
+            this.$router.push('/merchantCenter/goods/brandManage')
+
+          },
           handleSizeChange(val) {
             this.radio = '';
             this.pageSize = val ;
@@ -1002,5 +1008,12 @@
         margin-left: 0.15rem;
       }
     }
+
+  }
+  .brandTips{
+    text-decoration: underline;
+    margin-left : 0.2rem ;
+    font-size : 0.12rem ;
+    cursor : pointer;
   }
 </style>

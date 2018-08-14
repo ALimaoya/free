@@ -54,24 +54,24 @@ export function validateIDCard(val){
 }
 /* 小写字母*/
 export function validateLowerCase(str) {
-  const reg = /^[a-z]+$/
+  const reg = /^[a-z]+$/;
   return reg.test(str)
 }
 
 /* 大写字母*/
 export function validateUpperCase(str) {
-  const reg = /^[A-Z]+$/
+  const reg = /^[A-Z]+$/;
   return reg.test(str)
 }
 
 /* 大小写字母*/
 export function validatAlphabets(str) {
-  const reg = /^[A-Za-z]+$/
+  const reg = /^[A-Za-z]+$/;
   return reg.test(str)
 }
 /*短信验证码*/
 export function validateCode(textval) {
-  const urlregex = /^[0-9]{6}$/
+  const urlregex = /^[0-9]{6}$/;
   return urlregex.test(textval)
 }
 
@@ -83,7 +83,7 @@ export function validateCaptcha(str){
 /*登录密码*/
 export function validLoginPassWord(str){
   // const reg =  /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}/;
-  const reg = /^(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}/
+  const reg = /^(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}/;
   return reg.test(str)
 }
 /*注册、修改登录密码*/

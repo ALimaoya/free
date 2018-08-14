@@ -298,6 +298,57 @@ export function batchDelete(data){
     data
   })
 }
+//推广订单 列表
+export function getOrderLists(data){
+  return request({
+    url: '/center/extend/order/list',
+    method: 'post',
+    data
+  })
+}
+//查询品牌列表
+export function getBrandList(data){
+  return request({
+    url : '/brand/querySelf',
+    method : 'post',
+    data
+  })
+}
+//删除品牌
+export function deleteBrand(id){
+  return request({
+    url : '/brand/delete/'+id,
+    method : 'get'
+  })
+}
+//新增商品
+export function addBrand(data){
+  return request({
+    url : '/center/brand/add',
+    method : 'post',
+    data
+  })
+}
+//校验中文品牌名
+export function checkCnName(data){
+  return request({
+    url : '/center/brand/validate/brandCnName',
+    method : 'get',
+    params : {
+      brandCnName : data
+    }
+  })
+}
+//校验英文品牌名
+export function checkEnName(data){
+  return request({
+    url : '/center/brand/validate/brandEnName',
+    method : 'get',
+    params : {
+      brandEnName : data
+    }
+  })
+}
 //test
 export function test(){
   return request({
@@ -306,11 +357,5 @@ export function test(){
 
   })
 }
-//推广订单 列表
-export function getOrderLists(data){
-  return request({
-    url: 'center/extend/order/list',
-    method: 'post',
-    data
-  })
-}
+
+
