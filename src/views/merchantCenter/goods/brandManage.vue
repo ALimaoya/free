@@ -104,7 +104,7 @@
           if( value === ''){
             callback( new Error('请输入品牌中文名称'))
           }else{
-            let reg = /^[0-9\u4e00-\u9fa5\.\&\s\•]+$/ ;
+            let reg = /^[0-9\u4e00-\u9fa5\s\.\&\•\▪\·]+$/ ;
             if( !reg.test(value)){
               callback( new Error('请输入正确的中文字符'))
             }
@@ -115,7 +115,7 @@
           if( value === ''){
             callback( new Error('请输入品牌英文名称'))
           }else{
-            let reg = /^[0-9A-Za-z\.\&\s\•]+$/;
+            let reg = /^[0-9A-Za-z\.\&\s\•\▪\·]+$/;
             if( !reg.test(value)){
               callback( new Error('请输入正确的英文字符'))
             }
@@ -247,34 +247,40 @@
             reader.readAsDataURL(file);
           },
           checkCn(value){
-            checkCnName(value).then( res => {
-              if( res.data.status === '000000000'){
-                if(!res.data.data){
-                  this.$message({
-                    message: '您输入的中文品牌名称已存在，请重新输入',
-                    type : 'error',
-                    center : true
-                  });
-                  this.brandForm.brandCnName = '';
+            if(value !== ''){
+              checkCnName(value).then( res => {
+                if( res.data.status === '000000000'){
+                  if(!res.data.data){
+                    this.$message({
+                      message: '您输入的中文品牌名称已存在，请重新输入',
+                      type : 'error',
+                      center : true
+                    });
+                    this.brandForm.brandCnName = '';
 
+                  }
                 }
-              }
-            })
+              })
+
+            }
           },
           checkEn(value){
-            checkEnName(value).then( res => {
-              if( res.data.status === '000000000'){
-                if(!res.data.data){
-                  this.$message({
-                    message: '您输入的英文品牌名称已存在，请重新输入',
-                    type : 'error',
-                    center : true
-                  });
-                  this.brandForm.brandEnName = '';
+            if(value !== ''){
+              checkEnName(value).then( res => {
+                if( res.data.status === '000000000'){
+                  if(!res.data.data){
+                    this.$message({
+                      message: '您输入的英文品牌名称已存在，请重新输入',
+                      type : 'error',
+                      center : true
+                    });
+                    this.brandForm.brandEnName = '';
 
+                  }
                 }
-              }
-            })
+              })
+
+            }
           },
           //查看品牌审核拒绝原因
           checkRefuse(index,reason){
@@ -310,6 +316,7 @@
                    });
                    setTimeout( ()=> {
                      this.dialogVisible = false ;
+                     this.$refs[formName].resetFields();
                      this.getList();
 
 
