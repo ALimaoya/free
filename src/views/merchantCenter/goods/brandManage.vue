@@ -95,7 +95,6 @@
     import { getToken } from "@/utils/auth";
     import { uploadImage  } from "@/api/activity"
     import { getBrandList , deleteBrand, addBrand ,checkCnName, checkEnName} from "@/api/merchant"
-    import { validName, validatAlphabets } from "@/utils/validate"
     import userPhoto from '@/assets/404_images/fail.png'
 
     export default {
@@ -234,6 +233,7 @@
                   uploadImage(formData).then(res => {
                     if( res.data.status === '000000000'){
                       _this.brandForm.brandImage = res.data.data.fileName ;
+                      _this.brandImageWarn = false ;
 
                     }else{
                       _this.brandImageWarn = true ;
@@ -305,12 +305,15 @@
                    this.$message({
                      message : '新增品牌成功，请稍后查看',
                      type : 'success',
-                     center : true
+                     center : true,
+                     duration: 1500
                    });
-                   setTimeout(function () {
-                     window.location.reload();
+                   setTimeout( ()=> {
+                     this.dialogVisible = false ;
+                     this.getList();
 
-                   },1500)
+
+                   },2000)
                   }
                 });
 

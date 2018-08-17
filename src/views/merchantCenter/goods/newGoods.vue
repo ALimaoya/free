@@ -100,9 +100,9 @@
         </el-form-item>
       </el-form>
 
-      <el-dialog class="tableBox" title="品牌速查" :visible.sync="dialogVisible" width="70%" >
+      <el-dialog class="tableBox" title="品牌速查" top="0" :visible.sync="dialogVisible" width="70%" >
         <div class="dialogTop">
-          <span>品牌名称：</span><el-input type="text" class="middleInput" v-model.trim="brandName" size="small" @keyup.enter.native="getBrandList()"></el-input>
+          <span>品牌名称：</span><el-input type="text" clearable class="middleInput" v-model.trim="brandName" size="small" @keyup.enter.native="getBrandList()"></el-input>
           <el-button type="primary" size="small" @click="getBrandList()">查询</el-button>
           <span class="brandTips tips_warn" @click="goBrand">没有您的品牌？点击添加>></span>
         </div>
@@ -477,13 +477,15 @@
           handleBrand(index,val,name) {
             this.brandName = name;
             this.radio = index ;
+            this.form.brandId = val ;
           },
           //确认选择的品牌
           confirmBrand(){
-            if(this.brandData[this.radio].id  !== undefined){
-              this.form.brandId = this.brandData[this.radio].id ;
-              this.brandCnName = this.brandData[this.radio].brandCnName ;
+            if(this.form.brandId  !== ''&&this.brandData[this.radio*1].id  !== undefined){
+              this.form.brandId = this.brandData[this.radio*1].id ;
+              this.brandCnName = this.brandData[this.radio*1].brandCnName ;
               this.dialogVisible = false;
+
             }else{
               this.$message({
                 message: '请选择品牌',
@@ -1009,6 +1011,9 @@
       }
     }
 
+  }
+  .block2{
+    margin-top : 0.2rem ;
   }
   .brandTips{
     text-decoration: underline;
