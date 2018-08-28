@@ -50,10 +50,22 @@
               }else{
                 this.shopName = res.data.data.name
               }
+              if(res.data.data.status !== '1'){
+                this.$message({
+                  message : '您已成功入驻，快去特卖商城查看吧~',
+                  center : true,
+                  type : 'success',
+                  duration : 1500
+                });
+                setTimeout(() => {
+                  this.$router.push( '/merchantCenter/index')
+
+                },2000)
+              }
             }else if(res.data.data.status === '3'){
               for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
-                if (v.path === this.$route.path) {
-                  // this.$store.state.tagsView.visitedViews.splice(i, 1);
+                if (v.fullPath === this.$route.fullPath) {
+                  this.$store.state.tagsView.visitedViews.splice(i, 1);
                   this.$router.push( '/accountManage/admission/admissionShop/failAdd')
                 }
               }

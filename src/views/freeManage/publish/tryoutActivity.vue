@@ -628,19 +628,20 @@
         shopList().then( res => {
           this.loading = false ;
            //获取用户是否已绑定店铺
-            if(res.data.data.length){
+            if( res.data.status === '000000000'){
+              if(res.data.data.length){
 
-              getMember().then( res => {
-                //判断用户是否是会员身份
-                if(res.data.data.vipLevel*1){
+                getMember().then( res => {
+                  //判断用户是否是会员身份
+                  if(res.data.data.vipLevel*1){
 
-                  // if(this.$route.query.order !== undefined ) {
-                  //判断活动是新建还是已存在活动
-                  this.activityDetail();
+                    // if(this.$route.query.order !== undefined ) {
+                    //判断活动是新建还是已存在活动
+                    this.activityDetail();
 
-                  //获取商品类型列表
-                  getCategory().then( res => {
-                    this.options = res.data.data ;
+                    //获取商品类型列表
+                    getCategory().then( res => {
+                      this.options = res.data.data ;
                       if(this.form.categoryId !== ''){
                         let arr = [] ;
                         this.options.forEach( i => {
@@ -653,13 +654,14 @@
                         }
 
                       }
-                  })
-                }else{
-                  this.vipVisible = true ;
-                }
-              })
-            }else{
-              this.activityVisible = true ;
+                    })
+                  }else{
+                    this.vipVisible = true ;
+                  }
+                })
+              }else{
+                this.activityVisible = true ;
+              }
             }
         })
 
@@ -679,14 +681,15 @@
 
             this.$store.dispatch('getPublishDetail',order).then( res => {
               this.loading = false ;
-
-              this.form = res.data.data;
+              if( res.data.status === '000000000'){
+                this.form = res.data.data;
                 //判断活动是否已支付
                 if(this.$route.query.payStatus === '1'){
                   this.readonly = true ;
                 }
                 //已存在活动相关操作
                 this.activityStatus();
+              }
 
             })
           } else{
@@ -869,7 +872,8 @@
             this.getType();
           }
           getShopList(value).then( res => {
-            this.shopOptions = res.data.data ;
+            if( res.data.status === '000000000'){
+              this.shopOptions = res.data.data ;
               if(this.shopOptions.length){
                 if(this.editor!=='2'){
                   this.readShop = false;
@@ -891,6 +895,7 @@
                 this.readShop = 'disabled';
                 this.form.shopId = '没有可选店铺';
               }
+            }
           })
 
         },
@@ -899,7 +904,10 @@
         getType(value){
 
           searchTypeList(value).then( res => {
-            this.searchOptions = res.data.data ;
+            if( res.data.status === '000000000'){
+              this.searchOptions = res.data.data ;
+
+            }
           })
         },
 

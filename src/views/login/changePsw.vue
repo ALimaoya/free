@@ -197,8 +197,10 @@
         changeCaptcha() {
           getCaptcha().then(res => {
             // console.log(res);
-            this.imgCode = res.data.data.image;
+            if( res.data.status === '000000000'){
+              this.imgCode = res.data.data.image;
               this.userToken = res.data.data.token;
+            }
           })
         },
         //获取短信验证码

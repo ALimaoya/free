@@ -46,7 +46,7 @@
           let type = this.$route.query.type ;
           if( type === undefined){
             for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
-              if (v.path === this.$route.path) {
+              if (v.fullPath === this.$route.fullPath) {
                 this.$store.state.tagsView.visitedViews.splice(i, 1);
                 // this.$router.push('/freeManage/publish/step3');
                 this.$router.push('/accountManage/admission/admissionShop/index')
@@ -96,6 +96,9 @@
                           this.$store.commit('addForm2',form);
                           this.$store.commit('addEditorId',editorId);
                           this.$store.commit('addListId',listId);
+                          this.$store.commit('addCardType2',res.data.data.merchantAptitudeDto.cardType-0);
+                          this.$store.commit('addBusLicenceType',res.data.data.merchantAptitudeDto.busLicenceType);
+
                         }else{
                           this.$store.commit('clearForm2');
 

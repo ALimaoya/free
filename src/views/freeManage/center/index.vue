@@ -104,10 +104,12 @@
           // console.log(token) ;
           this.$store.dispatch('GetInfo').then(res => {
 
-           this.attendant = this.$store.state.user.attendant ;
-              this.userInfo = this.$store.state.user.userInfo ;
-              this.wallet = this.$store.state.user.wallet ;
-              this.pub_plans = this.$store.state.user.pub_plans ;
+              if( res.data.status === '000000000'){
+                this.attendant = this.$store.state.user.attendant ;
+                this.userInfo = this.$store.state.user.userInfo ;
+                this.wallet = this.$store.state.user.wallet ;
+                this.pub_plans = this.$store.state.user.pub_plans ;
+              }
           })
         },
         methods : {

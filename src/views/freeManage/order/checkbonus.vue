@@ -145,15 +145,7 @@
               //   name : '拼多多'
               // }
             ],
-            order : {
-              EQ_status: '',
-              // thirdAccount: '',
-              EQ_activityType:'',
-              platformType : '' ,
-              activityCode : '',
-              thirdOrderCode: '',
-
-            },
+            order : {},
             tableData : [],
             currentPage : 1 ,
             pageSize : 10 ,
@@ -178,6 +170,9 @@
           }
       },
       mounted(){
+          this.order = this.$store.state.searchBar.bonus.order;
+          this.currentPage = this.$store.state.searchBar.bonus.currentPage;
+          this.pageSize = this.$store.state.searchBar.bonus.pageSize;
           this.getList();
       },
       methods : {
@@ -208,19 +203,33 @@
           formData.append('EQ_status','4');
           formData.append('pageSize', this.pageSize);
           this.loading = true ;
-
+          let dataStorage = {
+            order : {
+              ...this.order,
+            },
+            currentPage :this.currentPage,
+            pageSize : this.pageSize,
+          };
+          this.$store.commit('saveView',dataStorage);
           getOrderList(formData).then( res=> {
             this.loading = false ;
-            this.tableData = res.data.data ;
-              this.totalPages = res.data.totalPages ;
-              this.totalElements = res.data.totalElements ;
+              if( res.data.status === '000000000'){
+                this.tableData = res.data.data ;
+                this.totalPages = res.data.totalPages ;
+                this.totalElements = res.data.totalElements ;
+              }
           })
         },
         //根据搜索条件获取订单列表
         getData(res){
-          this.order ={...res }  ;
-          // console.log(this.order);
-          this.currentPage = 1 ;
+          this.order ={
+            EQ_status:  res.EQ_status === undefined?'':res.EQ_status,
+            EQ_activityType:res.EQ_activityType === undefined?'':res.EQ_activityType,
+            platformType : res.platformType === undefined?'':res.platformType ,
+            activityCode : res.activityCode === undefined?'':res.activityCode,
+            thirdOrderCode: res.thirdOrderCode === undefined?'':res.thirdOrderCode,
+          }  ;
+
 
           this.getList();
         },
@@ -276,15 +285,17 @@
           checkOrder({ orderId : this.orderId , status : this.status ,reason : this.refuseReason ,activityType : this.order.EQ_activityType}).then( res => {
             this.loading = false ;
 
-            this.$message({
-                 message : '审核提交成功，请稍后确认' ,
-                 center : true ,
-                 type : 'success',
-               });
-               setTimeout(()=> {
-                 window.location.reload();
-               }, 3000);
-          })
+            if( res.data.status === '000000000'){
+              this.$message({
+                message : '审核提交成功，请稍后确认' ,
+                center : true ,
+                type : 'success',
+              });
+              setTimeout(()=> {
+                window.location.reload();
+              }, 3000);
+            }
+          });
           this.detailInfo = false ;
 
         },

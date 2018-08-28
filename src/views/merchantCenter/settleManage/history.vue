@@ -62,12 +62,7 @@
         name: "SettleHistory",
       data(){
           return{
-            settlement: {
-              EQ_code: '',
-              GT_settlementTime: '',
-              LT_settlementTime: '',
-              EQ_status: ''
-            },
+            settlement: {},
             statusList: [
               {
                 name : '全部状态',
@@ -104,6 +99,10 @@
           }
       },
       mounted(){
+        this.settlement = this.$store.state.searchBar.historyList.settlement;
+        this.currentPage = this.$store.state.searchBar.historyList.currentPage;
+        this.pageSize = this.$store.state.searchBar.historyList.pageSize;
+
         this.getList();
 
       },
@@ -123,13 +122,19 @@
           formData.append('LT_settlementTime', this.settlement.LT_settlementTime);
           formData.append('EQ_status', this.settlement.EQ_status);
           this.loading = true ;
-
+          let data = {
+            settlement : { ...this.settlement },
+            currentPage : this.currentPage ,
+            pageSize : this.pageSize
+          };
+          this.$store.commit('saveHistorySettlement',data);
           historyList(formData).then( res => {
             this.loading = false ;
-
-            this.tableData = res.data.data ;
-                this.totalPages = res.data.totalPages;
-                this.totalElements = res.data.totalElements
+            if( res.data.status === '000000000'){
+              this.tableData = res.data.data ;
+              this.totalPages = res.data.totalPages;
+              this.totalElements = res.data.totalElements
+            }
           })
         } ,
 

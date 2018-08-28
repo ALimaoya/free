@@ -42,17 +42,17 @@ export function thirdList(data){
 }
 
 //商品状态修改
-export function changeStatus(id,type,name){
+export function changeStatus(id,type){
   return request({
-    url: '/center/product/updateStatus/'+ id+ '/'+type+ '/'+ name,
+    url: '/center/product/updateStatus/'+ id+ '/'+type,
     method : 'get'
   })
 }
 
 //新增商品
-export function newGoogds(data,user){
+export function newGoogds(data){
   return request({
-    url: '/center/product/add/'+ user,
+    url: '/center/product/add',
     method : 'post',
     data,
     headers: {
@@ -69,9 +69,9 @@ export function getGoodsDetail(id){
   })
 }
 //修改商品
-export function changeGoods(data,id){
+export function changeGoods(data){
   return request({
-    url: '/center/product/edit/'+ id ,
+    url: '/center/product/edit' ,
     method: 'post',
     data
   })
@@ -298,6 +298,57 @@ export function batchDelete(data){
     data
   })
 }
+//推广订单 列表
+export function getOrderLists(data){
+  return request({
+    url: '/center/extend/order/list',
+    method: 'post',
+    data
+  })
+}
+//查询品牌列表
+export function getBrandList(data){
+  return request({
+    url : '/brand/querySelf',
+    method : 'post',
+    data
+  })
+}
+//删除品牌
+export function deleteBrand(id){
+  return request({
+    url : '/brand/delete/'+id,
+    method : 'get'
+  })
+}
+//新增商品
+export function addBrand(data){
+  return request({
+    url : '/center/brand/add',
+    method : 'post',
+    data
+  })
+}
+//校验中文品牌名
+export function checkCnName(data){
+  return request({
+    url : '/center/brand/validate/brandCnName',
+    method : 'get',
+    params : {
+      brandCnName : data
+    }
+  })
+}
+//校验英文品牌名
+export function checkEnName(data){
+  return request({
+    url : '/center/brand/validate/brandEnName',
+    method : 'get',
+    params : {
+      brandEnName : data
+    }
+  })
+}
 //test
 export function test(){
   return request({
@@ -306,11 +357,5 @@ export function test(){
 
   })
 }
-//推广订单 列表
-export function getOrderLists(data){
-  return request({
-    url: 'center/extend/order/list',
-    method: 'post',
-    data
-  })
-}
+
+

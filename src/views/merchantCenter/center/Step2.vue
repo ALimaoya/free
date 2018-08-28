@@ -77,10 +77,10 @@
 
             }
 
-          }, 1000)
+          }, 1000);
           getCaptcha().then(
             res => {
-              if (res.data.status == '000000000') {
+              if (res.data.status === '000000000') {
                 this.$message({
                   message: '短信验证码发送成功',
                   type: 'success',

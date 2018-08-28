@@ -125,17 +125,7 @@
       },
       data(){
           return {
-            activity : {
-              EQ_platformType : '',
-              EQ_activityCode : '',
-              EQ_activityStatus : '',
-              GT_activityEndTime: '',
-              LT_activityStartTime : '',
-              shopId : '',
-              EQ_activityType: '4'
-              // currentPage : 1,
-              // pageSize : 10
-            },
+            activity : {},
             form : {},
             formRule : {},
             choosePlat : '',
@@ -216,6 +206,9 @@
           }
       },
       mounted(){
+        this.activity = this.$store.state.searchBar.flow.activity;
+        this.currentPage = this.$store.state.searchBar.flow.currentPage;
+        this.pageSize = this.$store.state.searchBar.flow.pageSize;
         this.getData();
         let now = new Date();
         this.time = parseTime(now);
@@ -250,7 +243,14 @@
         formData.append('currentPage',this.currentPage);
         formData.append('pageSize',this.pageSize);
         this.loading= true;
-
+        let dataStorage = {
+          activity : {
+            ...this.activity,
+          },
+          currentPage :this.currentPage,
+          pageSize : this.pageSize,
+        };
+        this.$store.commit('saveFlow',dataStorage);
         getActivity(formData).then(res => {
           this.loading= false;
           this.tableData = res.data.data;
@@ -262,13 +262,14 @@
       },
       //根据搜索条件获取订单列表
       getSearchData(res){
-        this.activity.EQ_platformType = res.platformType ;
-        this.activity.EQ_activityCode = res.activityCode ;
+        this.activity.EQ_platformType = res.platformType===undefined?'':res.platformType ;
+        this.activity.EQ_activityCode = res.activityCode===undefined?'':res.activityCode ;
         // this.activity.EQ_activityType = res.EQ_activityType ;
-        this.activity.EQ_activityStatus = res.EQ_activityStatus ;
-        this.activity.GT_activityEndTime = res.activityStartTime ;
-        this.activity.LT_activityStartTime = res.activityEndTime ;
-        this.currentPage = 1 ;
+        this.activity.EQ_activityStatus = res.EQ_activityStatus===undefined?'':res.EQ_activityStatus ;
+        this.activity.GT_activityEndTime = res.activityStartTime===undefined?'':res.activityStartTime ;
+        this.activity.LT_activityStartTime = res.activityEndTime===undefined?'':res.activityEndTime ;
+        // this.currentPage = 1 ;
+
 
         // console.log(this.activity);
         this.getData();
@@ -276,27 +277,34 @@
       //获取活动详情数据
       detail( index,order ){
         getDetail(order).then( res =>{
-          this.activityDetail = res.data.data ;
-            this.$router.push({ path : '/freeManage/publish/flow_step1' ,query : { editor : '2', order : order }})
+         if( res.data.status === '000000000'){
+           this.activityDetail = res.data.data ;
+           this.$router.push({ path : '/freeManage/publish/flow_step1' ,query : { editor : '2', order : order }})
+         }
 
-        })
+         })
       },
 
       //修改关键词
       changeKeys(index,order){
         this.keyBox = true ;
         this.$store.dispatch('getPublishDetail',order).then( res => {
-          this.form = res.data.data;
+          if( res.data.status === '000000000'){
+            this.form = res.data.data;
             this.choosePlat = this.platForm[this.form.platformType-1].name ;
             this.getType(this.form.platformType);
 
+          }
         })
       },
       //获取平台类型
       getType(value){
 
         searchTypeList(value).then( res => {
-          this.searchOptions = res.data.data ;
+          if( res.data.status === '000000000'){
+            this.searchOptions = res.data.data ;
+
+          }
         })
       },
       //删除APP端关键词
@@ -364,12 +372,14 @@
             };
             if(keyArr.length){
               updateKeyword(data).then((res)=>{
-                this.$message({
+                if( res.data.status === '000000000'){
+                  this.$message({
                     message : '修改成功',
                     center : true ,
                     type : 'success'
                   });
                   this.keyBox = false ;
+                }
               })
 
             }else{
@@ -416,16 +426,18 @@
 
         changeStatus(formData).then( res => {
           this.loading= false;
-          this.$message({
+          if( res.data.status === '000000000'){
+            this.$message({
               message : '操作成功',
               type : 'success',
               center : true ,
               duration : 1000
             });
-          setTimeout(() => {
-            window.location.reload();
+            setTimeout(() => {
+              window.location.reload();
 
-          },2000)
+            },2000)
+          }
         })
       },
 
@@ -434,17 +446,19 @@
         this.loading= true;
         applyPay(id).then( res => {
           this.loading= false;
-          this.$message({
+          if( res.data.status === '000000000'){
+            this.$message({
               message : '申请结算成功，请稍后确认',
               center : true ,
               type : 'success',
               duration : 1000
 
             });
-          setTimeout(() => {
-            window.location.reload();
+            setTimeout(() => {
+              window.location.reload();
 
-          },2000)
+            },2000)
+          }
         })
       },
 
@@ -454,17 +468,19 @@
 
         cancelPay(id).then( res => {
           this.loading= false;
-          this.$message({
+          if( res.data.status === '000000000'){
+            this.$message({
               message : '取消结算成功，请稍后确认',
               type : 'success' ,
               center : true ,
               duration : 1000
 
             });
-          setTimeout(() => {
-            window.location.reload();
+            setTimeout(() => {
+              window.location.reload();
 
-          },2000)
+            },2000)
+          }
         })
       },
       //查看大图

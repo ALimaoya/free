@@ -382,8 +382,8 @@
 
               infoUpload(this.form).then( res => {
                 this.loading = false ;
-
-               this.$message({
+                if( res.data.status === '000000000'){
+                  this.$message({
                     message : '您的资质信息已上传成功，通过审核后即可进行相关操作' ,
                     type : 'success',
                     center : true,
@@ -393,6 +393,7 @@
                     window.location.reload();
 
                   },2000)
+                }
               })
             }else{
 

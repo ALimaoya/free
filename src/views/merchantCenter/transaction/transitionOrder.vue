@@ -243,7 +243,10 @@
         let order = this.$route.params.id;
         getOrderDetail(order).then(res => {
           this.loading = false;
-          this.form = res.data.data;
+          if( res.data.status === '000000000'){
+            this.form = res.data.data;
+
+          }
         })
       },
       goBack() {

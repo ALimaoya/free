@@ -18,7 +18,7 @@
           <div class="inputInfo">{{ form.cardId }}</div>
         </el-form-item>
         <el-form-item  labelWidth="200px" label="身份证号有效期：" >
-          <div class="inputInfo">{{ form.cardDeadline }}</div>
+          <div class="inputInfo"><span v-if="form.cardType ==='1'">长期</span><span v-else="">{{ form.cardDeadline }}</span></div>
         </el-form-item>
       </div>
       <div class="infoWrap">
@@ -30,7 +30,7 @@
           <div class="inputInfo">{{ form.companyAddress }}</div>
         </el-form-item>
         <el-form-item  labelWidth="200px" label="营业期限：" >
-          <div class="inputInfo">{{ form.busLicenceDeadline }}</div>
+          <div class="inputInfo"><span v-if="form.busLicenceType ==='1'">长期</span><span v-else="">{{ form.busLicenceDeadline }}</span></div>
         </el-form-item>
         <el-form-item  labelWidth="200px" label="社会信用代码：" >
           <div class="inputInfo">{{ form.socialCreditCode }}</div>
@@ -178,7 +178,10 @@
       // 获取审批历史记录
       getApproveList(){
         getApproveList().then( res =>{
-          this.tableData = res.data.data
+          if( res.data.status === '000000000'){
+            this.tableData = res.data.data
+
+          }
           // console.log(res)
         })
       },

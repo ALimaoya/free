@@ -1,7 +1,7 @@
 <template>
   <div class="tags-view-container">
     <scroll-pane class='tags-view-wrapper' ref='scrollPane'>
-      <router-link ref='tag' class="tags-view-item" :class="isActive(tag)?'active':''" v-for="tag in Array.from(visitedViews)" :to="tag.path" :key="tag.path" @contextmenu.prevent.native="openMenu(tag,$event)">
+      <router-link ref='tag' class="tags-view-item" :class="isActive(tag)?'active':''" v-for="tag in Array.from(visitedViews)" :to="tag.fullPath" :key="tag.path" @contextmenu.prevent.native="openMenu(tag,$event)">
         {{tag.title}}
         <span class='el-icon-close' @click.prevent.stop='closeSelectedTag(tag)'></span>
       </router-link>
@@ -56,7 +56,7 @@ export default {
       return false
     },
     isActive(route) {
-      return route.path === this.$route.path || route.name === this.$route.name
+      return route.fullPath === this.$route.fullPath || route.name === this.$route.name
     },
     addViewTags() {
       const route = this.generateRoute()
@@ -69,7 +69,7 @@ export default {
       const tags = this.$refs.tag
       this.$nextTick(() => {
         for (const tag of tags) {
-          if (tag.to === this.$route.path) {
+          if (tag.to === this.$route.fullPath) {
             this.$refs.scrollPane.moveToTarget(tag.$el)
             break
           }
@@ -81,7 +81,7 @@ export default {
         if (this.isActive(view)) {
           const latestView = views.slice(-1)[0]
           if (latestView) {
-            this.$router.push(latestView.path)
+            this.$router.push(latestView.fullPath)
           } else {
             this.$router.push('/')
           }

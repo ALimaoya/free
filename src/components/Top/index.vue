@@ -14,7 +14,9 @@
         <!--<router-link to="/freeManage/index">去试用</router-link>-->
       <!--</li>-->
     </ul>
-
+    <!--<div class="news">-->
+      <!--<router-link to="/merchantCenter/news"><span class="news_icon"></span><svg-icon icon-class="message"></svg-icon></router-link>-->
+    <!--</div>-->
     <el-dropdown class="avatar-container" trigger="click">
       <div class="avatar-wrapper">
         您好！{{  userInfo }}
@@ -39,9 +41,11 @@
 <script>
   import { mapGetters } from 'vuex'
   import { getMobile } from '@/utils/auth'
+  import SvgIcon from "../SvgIcon/index";
 
   export default {
-      name: "top" ,
+    components: {SvgIcon},
+    name: "top" ,
       data(){
         return {
           userInfo : getMobile(),
@@ -172,7 +176,34 @@
 
       }
     }
+    .news{
+      position : absolute ;
+      top: 18px;
+      right : 180px ;
+      width : 24px;
+      height : 24px;
+      a{
+        position: relative ;
+        height: 100% ;
+        display: inline-block;
+        .news_icon{
+          position :absolute ;
+          top : 2px ;
+          left : 0 ;
+          width : 6px ;
+          height : 6px ;
+          border-radius: 50%;
+          background : red ;
+          display: inline-block;
+        }
 
+      }
+      .svg-icon{
+        width : 100% ;
+        height : 100% ;
+
+      }
+    }
     .router-link-active{
       color : #fff ;
     }

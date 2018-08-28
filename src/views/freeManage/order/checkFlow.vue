@@ -177,6 +177,9 @@
       }
     },
     mounted(){
+      this.order = this.$store.state.searchBar.checkFlow.order;
+      this.currentPage = this.$store.state.searchBar.checkFlow.currentPage;
+      this.pageSize = this.$store.state.searchBar.checkFlow.pageSize;
       this.getList();
     },
     methods : {
@@ -199,22 +202,45 @@
         formData.append('EQ_activityType',this.order.EQ_activityType);
         formData.append('currentPage', this.currentPage);
         formData.append('EQ_status','4');
+        if(this.order.activityStartTime === null){
+          this.order.activityStartTime = ''
+        }
+        if(this.order.activityEndTime === null){
+          this.order.activityEndTime = ''
+        }
         formData.append('GT_createTime',this.order.activityStartTime);
         formData.append('LT_createTime',this.order.activityEndTime);
         formData.append('pageSize', this.pageSize);
         this.loading = true ;
-
+        let dataStorage = {
+          order : {
+            ...this.order,
+          },
+          currentPage :this.currentPage,
+          pageSize : this.pageSize,
+        };
+        this.$store.commit('saveCheckFlow',dataStorage);
         getOrderList(formData).then( res=> {
           this.loading = false ;
-          this.tableData = res.data.data ;
-            this.totalPages = res.data.totalPages ;
-            this.totalElements = res.data.totalElements ;
+            if( res.data.status === '000000000'){
+              this.tableData = res.data.data ;
+              this.totalPages = res.data.totalPages ;
+              this.totalElements = res.data.totalElements ;
+            }
         })
       },
       //根据搜索条件获取订单列表
       getData(res){
-        this.order ={...res }  ;
-        this.currentPage = 1 ;
+        this.order ={
+          EQ_status: res.EQ_status === undefined?'':res.EQ_status ,
+          platformType :res.platformType === undefined?'':res.platformType  ,
+          activityCode : res.activityCode === undefined?'':res.activityCode ,
+          thirdOrderCode: res.thirdOrderCode === undefined?'':res.thirdOrderCode ,
+          EQ_activityShop : res.EQ_activityShop === undefined?'':res.EQ_activityShop ,
+          activityStartTime : res.activityStartTime === undefined?'':res.activityStartTime ,
+          activityEndTime : res.activityEndTime === undefined?'':res.activityEndTime ,
+          EQ_activityType : res.EQ_activityType === undefined?'':res.EQ_activityType
+        }  ;
 
         // console.log(this.order);
         this.getList();
@@ -237,7 +263,8 @@
         orderDetail(order).then( res => {
           // console.log(res);
           this.loading = false ;
-          if(res.data.data.orderImageList.length){
+          if( res.data.status === '000000000'){
+            if(res.data.data.orderImageList.length){
               res.data.data.orderImageList.forEach( i => {
                 if(i.type === '5'){
                   this.searchImg = i.imageUrl ;
@@ -249,6 +276,7 @@
                 }
               } )
             }
+          }
         })
       },
 
@@ -273,7 +301,8 @@
 
         checkOrder({ orderId : this.orderId , status : this.status ,reason : this.refuseReason ,activityType : this.order.EQ_activityType}).then( res => {
           this.loading = false ;
-          this.$message({
+          if( res.data.status === '000000000'){
+            this.$message({
               message : '审核提交成功，请稍后确认' ,
               center : true ,
               type : 'success',
@@ -281,8 +310,9 @@
             setTimeout(()=> {
               window.location.reload();
             }, 3000);
+          }
 
-        })
+        });
         this.detailInfo = false ;
         this.viewImg = '' ;
       },

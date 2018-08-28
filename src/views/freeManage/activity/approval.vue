@@ -1,7 +1,7 @@
 <template>
   <div class="approval activityTable"  v-loading="loading"  element-loading-text="拼命加载中">
     <h1>试用管理</h1>
-    <search-bar @searchobj="getSearchData" :platform-type="true" :activity-type="true" :activity-code="true" :activity-status="true" :activity="true" :date="true"></search-bar>
+    <search-bar @searchobj="getSearchData" :platform-type="true" :activity-type="true" :activity-code="true" :activity-status="true" :activity="'freeActivity'" :date="true"></search-bar>
 
     <!--<div class="search">-->
       <!--<el-select size="small" clearable v-model="activity.EQ_platformType" filterable placeholder="请选择活动平台">-->
@@ -191,12 +191,12 @@
     data(){
       return{
         activity : {
-            EQ_platformType : '',
-            EQ_activityCode : '',
-            EQ_activityType : '',
-            EQ_activityStatus : '',
-            GT_activityEndTime: '',
-            LT_activityStartTime : '',
+            // EQ_platformType : '',
+            // EQ_activityCode : '',
+            // EQ_activityType : '',
+            // EQ_activityStatus : '',
+            // GT_activityEndTime: '',
+            // LT_activityStartTime : '',
 
             // currentPage : 1,
             // pageSize : 10
@@ -337,6 +337,9 @@
 
     },
     mounted(){
+      this.activity = this.$store.state.searchBar.approval.activity;
+      this.currentPage = this.$store.state.searchBar.approval.currentPage;
+      this.pageSize = this.$store.state.searchBar.approval.pageSize;
       this.getData();
       let now = new Date();
       this.time = parseTime(now);
@@ -345,7 +348,6 @@
 
       //请求数据
       getData() {
-        // console.log(form);
           let formData = new FormData();
           formData.append('EQ_platformType', this.activity.EQ_platformType);
           let reg = /^[0-9]*$/;
@@ -375,8 +377,16 @@
           formData.append('LT_activityStartTime',end);
           formData.append('currentPage',this.currentPage);
           formData.append('pageSize',this.pageSize);
-        this.loading= true;
 
+        this.loading= true;
+        let dataStorage = {
+          activity : {
+            ...this.activity,
+          },
+          currentPage :this.currentPage,
+          pageSize : this.pageSize,
+        };
+        this.$store.commit('saveApproval',dataStorage);
         getActivity(formData).then(res => {
             this.loading= false;
 
@@ -390,14 +400,13 @@
       },
       //根据搜索条件获取订单列表
       getSearchData(res){
-        this.activity.EQ_platformType = res.platformType ;
-        this.activity.EQ_activityCode = res.activityCode ;
-        this.activity.EQ_activityType = res.EQ_activityType ;
-        this.activity.EQ_activityStatus = res.EQ_activityStatus ;
-        this.activity.GT_activityEndTime = res.GT_activityEndTime ;
-        this.activity.LT_activityStartTime = res.LT_activityStartTime ;
-        this.currentPage = 1 ;
-
+        this.activity.EQ_platformType = res.platformType===undefined?'': res.platformType;
+        this.activity.EQ_activityCode = res.activityCode===undefined?'': res.activityCode ;
+        this.activity.EQ_activityType = res.EQ_activityType===undefined?'': res.EQ_activityType ;
+        this.activity.EQ_activityStatus = res.EQ_activityStatus===undefined?'': res.EQ_activityStatus ;
+        this.activity.GT_activityEndTime = res.GT_activityEndTime===undefined?'': res.GT_activityEndTime ;
+        this.activity.LT_activityStartTime = res.LT_activityStartTime===undefined?'': res.LT_activityStartTime ;
+        // this.currentPage = 1 ;
         this.getData();
       },
       //获取活动详情数据
@@ -497,12 +506,14 @@
             };
             if(keyArr.length){
               updateKeyword(data).then((res)=>{
-                this.$message({
+                if(res.data.status === '000000000'){
+                  this.$message({
                     message : '修改成功',
                     center : true ,
                     type : 'success'
                   });
                   this.keyBox = false ;
+                }
               })
 
             }else{
@@ -543,16 +554,18 @@
 
         changeStatus(formData).then( res => {
           this.loading= false;
-          this.$message({
+          if( res.data.status === '000000000'){
+            this.$message({
               message : '操作成功',
               type : 'success',
               center : true ,
               duration : 1000
             });
-          setTimeout(() => {
-            window.location.reload();
+            setTimeout(() => {
+              window.location.reload();
 
-          },1500)
+            },1500)
+          }
         })
       },
 
@@ -562,17 +575,19 @@
 
         applyPay(id).then( res => {
           this.loading= false;
-          this.$message({
+          if( res.data.status === '000000000'){
+            this.$message({
               message : '申请结算成功，请稍后确认',
               center : true ,
               type : 'success',
               duration : 1000
 
             });
-          setTimeout(() => {
-            window.location.reload();
+            setTimeout(() => {
+              window.location.reload();
 
-          },1500)
+            },1500)
+          }
         })
       },
 
@@ -582,17 +597,19 @@
 
         cancelPay(id).then( res => {
           this.loading= false;
-          this.$message({
+          if( res.data.status === '000000000'){
+            this.$message({
               message : '取消结算成功，请稍后确认',
               type : 'success' ,
               center : true ,
               duration : 1000
 
             });
-          setTimeout(() => {
-            window.location.reload();
+            setTimeout(() => {
+              window.location.reload();
 
-          },1500)
+            },1500)
+          }
         })
       },
 
@@ -608,18 +625,19 @@
 
         cancelActivity(id).then( res => {
           this.loading= false;
-
-          this.$message({
+          if( res.data.status === '000000000'){
+            this.$message({
               message : '已成功取消该活动发布，请稍后确认',
               type : 'success' ,
               center : true ,
               duration : 1000
 
             });
-          setTimeout(() => {
-            window.location.reload();
+            setTimeout(() => {
+              window.location.reload();
 
-          },1500)
+            },1500)
+          }
         })
       },
 

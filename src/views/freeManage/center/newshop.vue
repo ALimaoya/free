@@ -72,7 +72,7 @@
       ElButton
     },
     data(){
-      var validateAddr = (rule,value,callback) => {
+      const validateAddr = (rule,value,callback) => {
         if(value === ''){
           callback(new Error('请输入店铺首页网址'))
         }else{
@@ -85,8 +85,8 @@
           }
           callback();
         }
-      }
-      var validateName = (rule,value,callback) => {
+      };
+      const validateName = (rule,value,callback) => {
         if(value === ''){
           callback(new Error('请输入店铺名称'))
         }else{
@@ -100,8 +100,8 @@
 
         }
 
-      }
-      var validateID = (rule,value,callback) => {
+      };
+      const validateID = (rule,value,callback) => {
         if(value === ''){
           callback(new Error('请输入旺旺/咚咚ID'))
 
@@ -116,8 +116,8 @@
 
         }
 
-      }
-      var validGoodsAddr = (rule,value,callback) => {
+      };
+      const validGoodsAddr = (rule,value,callback) => {
         if(value === ''){
           callback(new Error('请输入待验证商品链接'))
         }else{
@@ -130,8 +130,8 @@
           callback();
 
         }
-      }
-      var validateQQ = (rule,value ,callback) => {
+      };
+      const validateQQ = (rule,value ,callback) => {
         if(value === ''){
           callback(new Error('请输入负责人QQ号'))
         }else {
@@ -140,8 +140,8 @@
           }
           callback();
         }
-      }
-      var validateWx = (rule,value ,callback) => {
+      };
+      const validateWx = (rule,value ,callback) => {
         if(value === ''){
           callback(new Error('请输入负责人微信号'))
         }else{
@@ -151,8 +151,8 @@
           callback();
 
         }
-      }
-      var validateTel = (rule ,value ,callback) => {
+      };
+      const validateTel = (rule ,value ,callback) => {
         if(value === ''){
           callback(new Error('请输入负责人的手机号'))
         }else{
@@ -162,7 +162,7 @@
           callback();
 
         }
-      }
+      };
       return{
         tips : true ,
         editor : '',
@@ -240,19 +240,24 @@
         this.editor = this.$route.query.editor ;
         this.shopId = this.$route.query.id ;
         shopDetail(this.shopId).then( res => {
-          this.sizeForm = res.data.data ;
+          if( res.data.status === '000000000'){
+            this.sizeForm = res.data.data ;
             this.type = this.sizeForm.shopUrl ;
+          }
         })
       }else{
         shopCaptcha().then( res => {
-          this.sizeForm.captcha = res.data.data ;
+          if( res.data.status === '000000000'){
+            this.sizeForm.captcha = res.data.data ;
+
+          }
         })
       }
 
     },
     methods : {
       copy(text,event){
-        clip(text, event)
+        clip(text, event);
         this.$message({
           message: '复制成功',
           type: 'success',
@@ -280,8 +285,8 @@
                     type : 'success',
                     message : '提交成功',
                     center : true ,
-                    duration : 500
-                  })
+                    duration : 1000
+                  });
                   this.$router.push('/freeManage/shop')
                 }
 
@@ -294,9 +299,9 @@
                     type : 'success',
                     message : '提交成功',
                     center : true ,
-                    duration : 500
+                    duration : 1000
 
-                  })
+                  });
                   this.$router.push('/freeManage/shop')
                 }
               })

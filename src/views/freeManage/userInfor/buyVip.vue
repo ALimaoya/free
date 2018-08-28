@@ -98,17 +98,16 @@
         <el-button style="background:#3a8ee6;;color:white;" @click="dialogVisibleQuestion = false">确定</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="请输入支付密码" :visible.sync="dialogPswVisible" width="30%" :before-close="handleClose" top="20vh" center >
-      <el-form ref="pswForm" :model="pswForm" :rules="pswRule" >
-        <el-form-item label="支付密码：" class="payPsw" prop="payPsw" label-width="100px">
+    <el-dialog title="请输入支付密码" :visible.sync="dialogPswVisible" width="40%" :before-close="handleClose" top="20vh" center >
+      <el-form ref="pswForm" :model="pswForm" :rules="pswRule" label-position="left">
+        <el-form-item label="支付密码：" class="payPsw" prop="payPsw" label-width="120px">
           <el-input size="small" class="pswIpt" :type="pwdType" placeholder="请输入支付密码" v-model.trim="pswForm.payPsw">
             <span slot="suffix" class="show-pwd" @click="showPwd">
-            <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
-            <svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>
-          </span>
+              <svg-icon icon-class="eyeopen" v-if="pwdType===''" />
+              <svg-icon v-else="pwdType==='password'" icon-class="eyeclose"></svg-icon>
+            </span>
           </el-input>
           <!--<div class="getNum" style="width : 1.5rem ;float : right ;"></div>-->
-
           <router-link to="/accountManage/userInfor/settings" v-if="!settingPsw"><span style="color:#409EFF;position:absolute;display:inline-block;width:1rem">设置支付密码</span></router-link>
         </el-form-item>
 
@@ -202,7 +201,10 @@
 
         getMember().then(res => {
           this.loading = false ;
-          this.statusData = res.data.data;
+          if( res.data.status === '000000000'){
+            this.statusData = res.data.data;
+
+          }
         })
       },
       showPwd() {
@@ -214,7 +216,10 @@
       },
       getDepositMoney() {
         getDeposit().then(res => {
-          this.deposit = res.data.data
+          if( res.data.status === '000000000'){
+            this.deposit = res.data.data
+
+          }
         })
       },
       getVipList() {
@@ -222,10 +227,12 @@
 
         getVipType().then(res => {
           this.loading = false ;
-          if( res.data.data.length){
+          if( res.data.status === '000000000'){
+            if( res.data.data.length){
               this.vipInfo = res.data.data;
               this.choose = this.vipInfo[0];
             }
+          }
         })
       },
       chooseVip(item) {
@@ -310,7 +317,7 @@
                 alert('服务器开小差啦，请稍等~');
                 return
               }
-            })
+            });
             var __div = document.getElementById('myForm');
             if ( _this.depositStatus) {
                this.dialogVisible = true;
@@ -632,11 +639,11 @@
         width : 90% ;
         margin : 0.4rem auto 0;
         justify-content: center;
-
+        .pswIpt {
+          width: 80%;
+        }
       }
-      /*.pswIpt {*/
-        /*position: relative;*/
-      /*}*/
+
       .show-pwd {
         /*position: absolute;*/
         /*right: .2rem;*/

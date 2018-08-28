@@ -60,9 +60,7 @@
     data() {
       return {
         searchForm: {
-          detail: '',
-          startDate: '',
-          endDate: ''
+
         },
         options: [{
             label: '全部类型',
@@ -95,6 +93,9 @@
       }
     },
     mounted() {
+      this.searchForm = this.$store.state.searchBar.cashHistory.searchForm;
+      this.currentPage = this.$store.state.searchBar.cashHistory.currentPage;
+      this.pageSize = this.$store.state.searchBar.cashHistory.pageSize;
       this.getMoneyList();
     },
     methods: {
@@ -119,12 +120,19 @@
           formdata.append('LT_createTime','');
         }
         this.loading = true ;
-
+        let data = {
+          searchForm : {...this.searchForm } ,
+          currentPage: this.currentPage ,
+          pageSize: this.pageSize
+        };
+        this.$store.commit('saveCashList',data);
         getCashList(formdata).then(res => {
           this.loading = false ;
 
-          this.tableData = res.data.data;
+          if( res.data.status === '000000000'){
+            this.tableData = res.data.data;
             this.moneyRecord = res.data
+          }
         })
       },
 

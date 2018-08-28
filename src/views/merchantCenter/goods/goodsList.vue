@@ -57,7 +57,11 @@
       <el-table-column prop="code" label="商品编号" width="100"></el-table-column>
       <!--<el-table-column prop="shopName" label="所属店铺" ></el-table-column>-->
       <el-table-column prop="brandCnName" label="商品品牌" width="100"></el-table-column>
-      <el-table-column prop="productName" label="商品名称" width="100"></el-table-column>
+      <el-table-column prop="productName" label="商品名称" width="100">
+        <template slot-scope="scope">
+          <span class="name_input">{{ scope.row.productName }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="商品主图" width="100">
         <template slot-scope="scope">
           <img v-if="scope.row.mainImageUrl!==''||scope.row.mainImageUrl!== null"
@@ -96,7 +100,7 @@
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
           <el-button size="mini" type="warning" v-if="scope.row.status === '1'&& scope.row.shelveStatus === '1'"  @click="handleShelves(scope.$index,scope.row.id,0)">下架</el-button>
-          <el-button size="mini" type="warning"  v-if="scope.row.status === '1'&& scope.row.shelveStatus === '0'" @click="handleShelves(scope.$index,scope.row.id,1)">上架</el-button>
+          <el-button size="mini" type="warning"  v-if="scope.row.status === '1'&& scope.row.shelveStatus === '0'&& scope.row.quantity > 0" @click="handleShelves(scope.$index,scope.row.id,1)">上架</el-button>
           <el-button size="mini" type="primary" v-if="scope.row.status === '0'|| scope.row.status === '2'|| scope.row.status === '1'&& scope.row.shelveStatus === '0'" @click="editor(scope.$index,scope.row.id)">修改</el-button>
           <el-button size="mini" type="warning" v-if="scope.row.status === '2'" @click="handleReason(scope.$index,scope.row.reason)">查看原因</el-button>
           <el-button size="mini" type="primary" @click="copyGoods(scope.$index,scope.row.id)">复制</el-button>
@@ -140,15 +144,10 @@
   import userPhoto from '@/assets/404_images/fail.png'
 
   export default {
-        name: "goods-list",
+      name: "goods-list",
       data(){
           return{
-            account : {
-              EQ_code: '',
-              LIKE_productName: '',
-              EQ_status: '',
-              EQ_shelveStatus: ''
-            },
+            account : {},
             firstTypeList : [],
             secondTypeList : [],
             thirdTypeList : [],
@@ -209,11 +208,17 @@
       },
       mounted(){
         this.time = parseTime(new Date());
+        this.account = this.$store.state.searchBar.goodsList.account;
+        this.currentPage = this.$store.state.searchBar.goodsList.currentPage;
+        this.pageSize = this.$store.state.searchBar.goodsList.pageSize;
+        this.thirdType = this.$store.state.searchBar.goodsList.thirdType;
+        this.secondType = this.$store.state.searchBar.goodsList.secondType;
         this.getList();
         this.getFirstList();
         this.getBondInfo();
 
       },
+
       methods : {
         //  获取商品列表
         getList(){
@@ -235,14 +240,25 @@
           formData.append('EQ_shelveStatus',this.account.EQ_shelveStatus);
           formData.append('currentPage',this.currentPage);
           formData.append('pageSize',this.pageSize);
+          let dataStorage = {
+              account : {
+                ...this.account,
+              },
+              currentPage :this.currentPage,
+              pageSize : this.pageSize,
+              thirdType:this.thirdType,
+              secondType: this.secondType
+          };
+          this.$store.commit('saveSearchGoods',dataStorage);
           this.loading = true ;
-
           getGoodsList(formData).then( res => {
             this.loading = false ;
-
-             this.tableData = res.data.data;
+            if( res.data.status === '000000000'){
+              this.tableData = res.data.data;
               this.totalPages = res.data.totalPages ;
               this.totalElements = res.data.totalElements ;
+
+            }
           })
 
         },
@@ -277,19 +293,27 @@
         //  获取一级分类
         getFirstList(){
           firstList().then(res=> {
-            this.firstTypeList = res.data.data
+            if( res.data.status === '000000000'){
+              this.firstTypeList = res.data.data
+            }
           })
         },
         //  获取二级分类
         getSecondList(type){
           secondList(type).then(res=> {
-            this.secondTypeList = res.data.data
+            if( res.data.status === '000000000'){
+              this.secondTypeList = res.data.data
+
+            }
           })
         },
         //获取三级分类
         getThirdList(type){
           thirdList(type).then(res=> {
-            this.thirdTypeList = res.data.data
+            if( res.data.status === '000000000'){
+              this.thirdTypeList = res.data.data
+
+            }
           })
         },
 
@@ -311,7 +335,7 @@
         //上/下架操作
         handleShelves(index,order,type){
           this.loading = true ;
-          changeStatus(order,type,this.user).then(res=> {
+          changeStatus(order,type).then(res=> {
             this.loading = false ;
             if(res.data.status === '000000000'){
               this.$message({
@@ -395,6 +419,10 @@
 
     .cell{
       height : 0.5rem ;
+      .name_input{
+        white-space:pre-wrap!important ;
+      }
+
       img{
         width : 0.7rem ;
         height: 0.7rem ;

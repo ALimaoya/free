@@ -210,38 +210,49 @@
               registerMobile : getMobile(),
             }
         },
-      // created(){
-      //   this.$nextTick( () => {
-      //     this.$store.commit('clearForm')
-      //   })
-      // },
 
         mounted() {
-             this.form = this.$store.state.shopInfo.enterForm2;
+          this.backTop();
+          this.form = this.$store.state.shopInfo.enterForm2;
 
              if (this.form['0'] !== undefined) {
                delete this.form['0'];
              }
-             if (this.$store.state.shopInfo.cardType2 === 1) {
-               this.cardType = true
-             } else {
-               this.cardType = false
-             }
+
              if(this.form.mobile !== ''&& this.form.mobile != this.registerMobile ){
                window.location.reload();
              }
-
+          if(this.$store.state.shopInfo.cardType2 === 1){
+            this.cardType = true;
+            this.form.cardDeadline = '';
+          }else{
+            this.cardType = false
+          }
         },
         watch : {
           editorInfo : function(val){
             if(val === 1){
               this.form = this.$store.state.shopInfo.enterForm2;
-
+              if(this.$store.state.shopInfo.cardType2 === 1){
+                this.cardType = true;
+                this.form.cardDeadline = '';
+              }else{
+                this.cardType = false
+              }
             }
 
           }
         },
         methods: {
+          backTop(){
+            const start = document.documentElement.scrollTop || document.body.scrollTop ;
+            let i = 0;
+            if(start > 0){
+              window.requestAnimationFrame(this.backTop);
+              window.scrollTo(0,start -(start /5));
+            }
+
+          },
           //限制上传图片大小
           limitImage(file,type){
             let reader = new FileReader();
@@ -331,8 +342,15 @@
 
             }
 
-            if(this.cardType === true){
-              this.form.cardDeadline = '9999-12-31'
+            // if(this.cardType === true){
+            //   this.form.cardDeadline = '9999-12-31'
+            // }
+            // if(this.form.cardDeadline = '9999-12-31'){
+            //   this.cardType = true;
+            //   this.form.cardDeadline = '';
+            // }
+            if(this.cardType === false&&this.form.cardDeadline === ''){
+              this.form.cardDeadline = '';
             }
             this.$refs[formName].validate((valid) => {
 
@@ -340,7 +358,7 @@
               if(valid&&!this.cardFaceImageWarn&&!this.cardBackImageWarn ){
                 this.form.cardDeadline = this.form.cardDeadline ===null?'':this.form.cardDeadline ;
                 this.$store.commit('addForm2',this.form);
-                this.$store.commit('addCardType2',this.cardType-0);
+                this.$store.commit('addCardType2',this.cardType===true?1:0);
                 this.$emit('stepObj',{ index : '2' ,component : 'enterprise2'})
 
               }else{

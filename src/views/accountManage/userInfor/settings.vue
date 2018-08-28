@@ -457,10 +457,12 @@
       // 获取第三方账号信息
       getThirdInfo() {
         getThirdAccount().then(res => {
-          this.user = res.data.data;
-            this.contactType[0].value = this.user.qq;
-            this.contactType[1].value = this.user.wechat;
-            this.contactType[2].value = this.user.email;
+            if( res.data.status === '000000000'){
+              this.user = res.data.data;
+              this.contactType[0].value = this.user.qq;
+              this.contactType[1].value = this.user.wechat;
+              this.contactType[2].value = this.user.email;
+            }
         })
       },
       //设置支付密码/QQ/微信/邮箱弹窗
@@ -665,7 +667,7 @@
         }, 1000);
         getCaptcha().then(
           res => {
-            if (res.data.status == '000000000') {
+            if (res.data.status === '000000000') {
               this.$message({
                 message: '短信验证码发送成功',
                 type: 'success',

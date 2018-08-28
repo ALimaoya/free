@@ -99,7 +99,7 @@
           this.show = '2' ;
           this.tabView = 'step3';
           this.statusTag.wallet = '0';
-        };
+        }
         this.getStatusType();
 
     },
@@ -107,13 +107,15 @@
         getStatusType(){
           getStatus().then(res=> {
             this.loading = false ;
-            this.statusTag = res.data.data;
+            if( res.data.status === '000000000'){
+              this.statusTag = res.data.data;
               if(this.statusTag.aptitudeStatus=== '9'&& this.statusTag.shopStatus === '9'&&this.statusTag.wallet === '1'){
                 this.close = '1';
               }else{
                 this.close = ' ';
 
               }
+            }
           })
         },
       changeTabs(index){

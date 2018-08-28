@@ -217,8 +217,8 @@
 
           getInfo().then( res =>{
             this.loading = false ;
-
-           if(res.data.data !== null){
+            if( res.data.status === '000000000'){
+              if(res.data.data !== null){
                 this.form = res.data.data ;
                 this.status = res.data.data.status ;
                 if(this.status === '2'|| this.status === '1'){
@@ -228,6 +228,7 @@
                 this.status = '0';
 
               }
+            }
           })
         },
         goDetail(){
@@ -369,7 +370,8 @@
             if(valid&&!this.businessImageWarn&&!this.authorizeImageWarn&&!this.cardFaceImageWarn&&!this.cardBackImageWarn){
 
               infoUpload(this.form).then( res => {
-                this.$message({
+                if( res.data.status === '000000000'){
+                  this.$message({
                     message : '您的资质信息已上传成功，通过审核后即可进行相关操作' ,
                     type : 'success',
                     center : true,
@@ -379,6 +381,7 @@
                     window.location.reload();
 
                   },1500)
+                }
               })
             }else{
 

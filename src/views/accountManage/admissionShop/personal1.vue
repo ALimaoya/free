@@ -21,7 +21,7 @@
             <el-date-picker type="date" size="mini" placeholder="截止日期" :picker-options="pickerOptions" :disabled="readOnly" value-format="yyyy-MM-dd"  v-model="form.cardDeadline" style="width: 100%;" :readonly="cardType"></el-date-picker>
           </el-col>
           <el-col class="line" :span="20">
-            <el-checkbox v-model="cardType"  :disabled="readOnly">长期</el-checkbox>
+            <el-checkbox v-model="cardType"  :disabled="readOnly" >长期</el-checkbox>
             <span class="tip" style="background: none;border: 0; width: 65%"><svg-icon icon-class="tips"/>身份证剩余有效期时长必须大于2个月</span>
           </el-col>
         </el-form-item>
@@ -176,23 +176,24 @@
         editorInfo : function(val){
           if(val === 1){
             this.form = this.$store.state.shopInfo.enterForm;
-
+            if(this.$store.state.shopInfo.cardType === 1){
+              this.cardType = true;
+              this.form.cardDeadline = '';
+            }else{
+              this.cardType = false
+            }
           }
 
         }
       },
-      // created(){
-      //   this.$nextTick( () => {
-      //     this.$store.commit('clearForm')
-      //   })
-      // },
-
         mounted() {
-              this.form = this.$store.state.shopInfo.enterForm;
+          this.backTop();
+          this.form = this.$store.state.shopInfo.enterForm;
               // console.log(this.form);
 
-              if(this.$store.state.shopInfo.cardType ===1){
-                this.cardType = true
+              if(this.$store.state.shopInfo.cardType === 1){
+                this.cardType = true;
+                this.form.cardDeadline = '';
               }else{
                 this.cardType = false
               }
@@ -202,7 +203,15 @@
           }
         },
         methods: {
+          backTop(){
+            const start = document.documentElement.scrollTop || document.body.scrollTop ;
+            let i = 0;
+            if(start > 0){
+              window.requestAnimationFrame(this.backTop);
+              window.scrollTo(0,start -(start /5));
+            }
 
+          },
           //限制上传图片大小
           limitImage(file,type){
             let reader = new FileReader();
@@ -298,6 +307,7 @@
 
 
           },
+
           goNext(formName){
             if(this.form.cardFaceImage === ''){
             this.frontImgWarn = true;
@@ -310,8 +320,13 @@
             if(this.form.cardSelfImage === ''){
               this.halfBodyImgWarn = true;
             }
-            if(this.cardType === true){
-              this.form.cardDeadline = '9999-12-31'
+
+            // if(this.form.cardDeadline = '9999-12-31'){
+            //   this.cardType = true;
+            //   this.form.cardDeadline = '';
+            // }
+            if(this.cardType === false&&this.form.cardDeadline === ''){
+              this.form.cardDeadline = '';
             }
             this.$refs[formName].validate((valid) => {
 
@@ -322,7 +337,7 @@
               this.$emit('stepObj',{ index : '2' ,component : 'personal2'});
 
               this.$store.commit('addForm',this.form);
-              this.$store.commit('addCardType',this.cardType-0)
+              this.$store.commit('addCardType',this.cardType===true?1:0);
 
               }else{
 

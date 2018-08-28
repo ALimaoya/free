@@ -105,10 +105,10 @@
 
             }
 
-          }, 1000)
+          }, 1000);
           getCaptcha().then(
             res => {
-              if (res.data.status == '000000000') {
+              if (res.data.status === '000000000') {
                 this.$message({
                   message: '短信验证码发送成功',
                   type: 'success',
@@ -127,7 +127,6 @@
         },
         //绑定
         submitForm(formName){
-
           // console.log(this.form);
           this.$refs[formName].validate((valid) => {
             if(valid){
@@ -139,7 +138,6 @@
         },
         //换绑
         changeForm(formName){
-
           // console.log(this.form);
           this.$refs[formName].validate((valid) => {
             if(valid){

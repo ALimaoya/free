@@ -145,19 +145,19 @@
             getInfo().then( res =>{
               // console.log(res);
               this.loading=false ;
-              if(res.data.data === null){
-                this.infoTip = true;
-                this.infoStatus = '0'
-              }else{
-                this.infoStatus = res.data.data.status;
-                if(this.infoStatus !== '2'){
+                if(res.data.data === null){
                   this.infoTip = true;
+                  this.infoStatus = '0'
                 }else{
-                  this.getShopInfo();
-                  this.infoTip = false;
+                  this.infoStatus = res.data.data.status;
+                  if(this.infoStatus !== '2'){
+                    this.infoTip = true;
+                  }else{
+                    this.getShopInfo();
+                    this.infoTip = false;
 
+                  }
                 }
-              }
             })
           },
         //获取信息
@@ -251,11 +251,10 @@
                if(type === '提交'){
                  //  提交表单
                  this.loading= true ;
-
                  shopInfo(this.form).then( res => {
                    this.loading= false ;
-
-                  this.$message({
+                   if( res.data.status === '000000000'){
+                     this.$message({
                        message : '您的店铺信息已提交，通过审核后即可添加商品' ,
                        type : 'success',
                        center : true,
@@ -265,6 +264,7 @@
                        window.location.reload();
 
                      },2000)
+                   }
                  })
                }else if( type === '修改'){
                  //  提交表单
@@ -272,7 +272,8 @@
 
                  changeShop(this.form).then( res => {
                    this.loading= false ;
-                   this.$message({
+                   if( res.data.status === '000000000'){
+                     this.$message({
                        message : '您的店铺信息已修改，通过审核后即可添加商品' ,
                        type : 'success',
                        center : true,
@@ -282,6 +283,7 @@
                        window.location.reload();
 
                      },2000)
+                   }
 
                  })
                }

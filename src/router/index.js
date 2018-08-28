@@ -297,6 +297,14 @@ export const constantRouterMap = [
               hidden : true ,
               meta: { title: '商户中心首页', icon: 'merchantCenter' },
 
+            },
+            {
+              path: 'news',
+              name: 'News',
+              component:() => import('@/views/merchantCenter/news'),
+              hidden : true ,
+              meta: { title: '消息中心', icon: 'news' },
+
             }
           ]
       },
@@ -355,6 +363,12 @@ export const constantRouterMap = [
             component: () => import('@/views/merchantCenter/goods/changeGoods'),
             meta: { title: '修改商品', icon: 'changeGoods' },
             hidden: true
+          },
+          {
+            path: 'brandManage',
+            name: 'BrandManage',
+            component: () => import('@/views/merchantCenter/goods/brandManage'),
+            meta: { title: '品牌管理', icon: 'brandManage' },
           },
         ]
       },
@@ -503,6 +517,38 @@ export const constantRouterMap = [
         ]
       },
       {
+        path: '/merchantCenter/marketing',
+        name: 'Marketing',
+        component: FreeManage,
+        meta: { title: '店铺营销', icon: 'marketing' },
+        children : [
+          {
+            path: 'activityApply',
+            name: 'ActivityApply',
+            component: () => import('@/views/merchantCenter/marketing/index'),
+            meta: { title: '活动报名', icon: 'activityApply' },
+
+          },
+          {
+            path: 'signUp',
+            name: 'SignUp',
+            component: () => import('@/views/merchantCenter/marketing/signUp'),
+            meta: { title: '立即报名', icon: 'signUp' },
+            hidden: true ,
+
+          },
+          {
+            path: 'history',
+            name: 'SignHistory',
+            component: () => import('@/views/merchantCenter/marketing/history'),
+            meta: { title: '报名记录', icon: 'history' },
+            hidden: true ,
+
+          }
+          ]
+      },
+      {
+
         path: '/merchantCenter/serviceMarket',
         name: 'ServiceMarket',
         component: FreeManage,
@@ -796,35 +842,6 @@ export const constantRouterMap = [
       }
     ]
   },
-  // { path: '/ruleCenter',
-  //   redirect : '/ruleCenter/index',
-  //   component : Layout,
-  //   // meta: { title: '特卖商城', icon: 'center' },
-  //   hidden: true,
-  //   children :[
-  //     {
-  //       path: '/ruleCenter/index',
-  //       name: 'RuleCenter',
-  //       component: () => import('@/views/ruleCenter/index'),
-  //
-  //     }
-  //   ]
-  // },
-  // { path: '/a',
-  //   // name: 'Test',
-  //   component : Layout,
-  //   redirect : '/a/index',
-  //   meta: { title: 'test', icon: 'center' },
-  //   hidden: true,
-  //   children :[
-  //     {
-  //       path: '/a/index',
-  //       name: 'Test',
-  //       component: () => import('@/views/merchantCenter/test'),
-  //
-  //     }
-  //   ]
-  // },
 
   // {
   //   path: '/invitation',
@@ -860,7 +877,7 @@ export const constantRouterMap = [
   // },
   { path: '/404', component: () => import('@/views/404'), hidden: true },
   { path: '*', redirect: '/404', hidden: true }
-]
+];
 
 export default new Router({
   // mode: 'history', //后端支持可开

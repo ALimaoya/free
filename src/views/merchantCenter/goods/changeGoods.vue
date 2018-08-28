@@ -111,7 +111,7 @@
 
 <script>
   import { uploadImage  } from "@/api/activity"
-  import { newGoogds,getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo} from "@/api/merchant"
+  import { getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo} from "@/api/merchant"
   import { getToken,getMobile } from '@/utils/auth'
   import { getStatus } from "@/api/enter"
   import { getQueryString,checkFloat } from "@/utils/validate"
@@ -189,11 +189,11 @@
               required : true ,trigger : 'blur' ,validator : validGoodsName
             }
           ],
-          brandId: [
-            {
-              required : true  ,trigger : 'change',validator: validBrand
-            }
-          ],
+          // brandId: [
+          //   {
+          //     required : true  ,trigger : 'change',validator: validBrand
+          //   }
+          // ],
           firstType: [
             {
               required : true ,trigger : 'change' ,message: '请选择一级分类'
@@ -302,20 +302,20 @@
 
             getGoodsDetail(id).then(res=>{
               this.loading = false ;
-
-                 this.form = {
+              if( res.data.status === '000000000'){
+                this.form = {
                   productName: res.data.data.productName ,
-                    brandId:res.data.data.brandId,
-                    firstType : res.data.data.cateGoryMap.categoryName1,
-                    secondType:res.data.data.cateGoryMap.categoryName2,
-                    class3Id:res.data.data.cateGoryMap.categoryName3,
-                    price:res.data.data.price,
-                    carriage:res.data.data.carriage,
-                    ybProductItemReqDto : res.data.data.productItems,
-                    // sizeList : [{ size: '', color : '', stock: ''}],
-                    imagesList : res.data.data.productImages,
-                    describes: res.data.data.describes,
-                    id: res.data.data.id
+                  brandId:res.data.data.brandId,
+                  firstType : res.data.data.cateGoryMap.categoryName1,
+                  secondType:res.data.data.cateGoryMap.categoryName2,
+                  class3Id:res.data.data.cateGoryMap.categoryName3,
+                  price:res.data.data.price,
+                  carriage:res.data.data.carriage,
+                  ybProductItemReqDto : res.data.data.productItems,
+                  // sizeList : [{ size: '', color : '', stock: ''}],
+                  imagesList : res.data.data.productImages,
+                  describes: res.data.data.describes,
+                  id: res.data.data.id
                 }  ;
                 if(this.form.imagesList.length < 5){
                   if(this.form.imagesList.length === 0){
@@ -327,13 +327,14 @@
                     }
                   }
                 }
-                  this.form.imagesList.map( i => {
-                    i.id = '';
-                  })
+                this.form.imagesList.map( i => {
+                  i.id = '';
+                });
                 this.word = this.form.describes ;
                 this.brandCnName = res.data.data.brandCnName ;
                 this.thirdName = res.data.data.cateGoryMap.categoryId3;
                 this.readOnly = true ;
+              }
             })
           }else{
             // this.title = '新增商品';
@@ -343,9 +344,11 @@
       getBrandList(){
 
         getBrand(this.brandName, this.currentPage ,this.pageSize).then(res => {
-          this.brandData = res.data.data ;
+          if( res.data.status === '000000000'){
+            this.brandData = res.data.data ;
             this.totalPages = res.data.totalPages ;
             this.totalElements = res.data.totalElements ;
+          }
         })
 
       },
@@ -353,7 +356,10 @@
       //  获取一级分类
       getFirstList(){
         firstList().then(res=> {
-          this.firstTypeList = res.data.data
+          if( res.data.status === '000000000'){
+            this.firstTypeList = res.data.data
+
+          }
         })
       },
       //  获取二级分类
@@ -362,8 +368,10 @@
         this.form.class3Id = '';
 
         secondList(type).then(res=> {
+          if( res.data.status === '000000000'){
+            this.secondTypeList = res.data.data
 
-          this.secondTypeList = res.data.data
+          }
         })
 
       },
@@ -372,7 +380,10 @@
         this.form.class3Id = '';
 
         thirdList(type).then(res=> {
-          this.thirdTypeList = res.data.data
+          if( res.data.status === '000000000'){
+            this.thirdTypeList = res.data.data
+
+          }
         })
 
       },
@@ -481,15 +492,14 @@
               ybProductItemReqDto : this.form.ybProductItemReqDto,
               imagesList : this.form.imagesList,
               describes: this.form.describes,
-            }
+            };
             // data = JSON.stringify(data);
             this.loading = true ;
 
-            changeGoods(data,this.user).then( res => {
+            changeGoods(data).then( res => {
               this.loading = false ;
-
+              if( res.data.status === '000000000'){
                 this.$message({
-
                   message : '您修改的商品信息已提交，请稍后确认商品状态',
                   center: true ,
                   type : 'success',
@@ -498,8 +508,8 @@
                 setTimeout(() => {
                   this.$router.push('/merchantCenter/goods/goodsList')
 
-
                 },2000)
+              }
             })
           }else{
 
@@ -509,24 +519,24 @@
 
       createEditor(){
 
-        var editor = new E('#wangeditor')        //创建富文本实例
+        var editor = new E('#wangeditor');        //创建富文本实例
 
 
         editor.customConfig.onchange = (html) => {
           this.form.describes = html ;
           // this.catchData(html)  //把这个html通过catchData的方法传入父组件
-        }
-        editor.customConfig.uploadImgServer = this.dataInterface.editorUpImgUrl
-        editor.customConfig.uploadFileName = 'sourcePic'
+        };
+        editor.customConfig.uploadImgServer = this.dataInterface.editorUpImgUrl;
+        editor.customConfig.uploadFileName = 'sourcePic';
         editor.customConfig.showLinkImg = false;
         editor.customConfig.uploadImgMaxLength = 10;
         editor.customConfig.uploadImgHeaders = {
           'ContentType': 'application/json',
           'yb-tryout-merchant-token':this.token    //头部token
-        }
+        };
         editor.customConfig.uploadImgParams = {
           token : 'abcdef12345'
-        }
+        };
         editor.customConfig.menus = [          //菜单配置
           'head',
           'list',  // 列表
@@ -545,7 +555,7 @@
           'video',  // 插入视频
           'undo',  // 撤销
           'redo'  // 重复
-        ]
+        ];
         editor.customConfig.uploadImgHooks = {
           before: function (xhr, editor, files) {
 
@@ -567,7 +577,7 @@
 
           customInsert: function (insertImg, result, editor) {
 
-            let url = Object.values(result.data.filePath)      //result.data就是服务器返回的图片名字和链接
+            let url = Object.values(result.data.filePath) ;     //result.data就是服务器返回的图片名字和链接
             // console.log(result.data.filePath,url)
             result.data.filePath.map( i => {
               // let url = Object.values(i)      //result.data就是服务器返回的图片名字和链接
@@ -578,10 +588,10 @@
 
             // result 必须是一个 JSON 格式字符串！！！否则报错
           }
-        }
+        };
         editor.customConfig.linkImgCallback = function (url) {
           // console.log(url) // url 即插入图片的地址
-        }
+        };
 
         editor.create()
         // editor.txt.html(this.getData)

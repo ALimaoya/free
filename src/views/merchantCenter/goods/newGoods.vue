@@ -100,10 +100,11 @@
         </el-form-item>
       </el-form>
 
-      <el-dialog class="tableBox" title="品牌速查" :visible.sync="dialogVisible" width="70%" >
+      <el-dialog class="tableBox" title="品牌速查" top="0" :visible.sync="dialogVisible" width="70%" >
         <div class="dialogTop">
-          <span>品牌名称：</span><el-input type="text" class="middleInput" v-model.trim="brandName" size="small" @keyup.enter.native="getBrandList()"></el-input>
+          <span>品牌名称：</span><el-input type="text" clearable class="middleInput" v-model.trim="brandName" size="small" @keyup.enter.native="getBrandList()"></el-input>
           <el-button type="primary" size="small" @click="getBrandList()">查询</el-button>
+          <span class="brandTips tips_warn" @click="goBrand">没有您的品牌？点击添加>></span>
         </div>
         <el-table :data="brandData" border stripe highlight-current-row fit >
           <el-table-column  width="32" >
@@ -160,7 +161,7 @@
 <script>
   // import wangeditor from '@/components/wangeditor'
   import { uploadImage  } from "@/api/activity"
-  import { getGoodsList, newGoogds,getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo, getTao,getJD} from "@/api/merchant"
+  import { getGoodsList, newGoogds,getGoodsDetail, getBrand ,firstList,secondList,thirdList, getShopInfo, getTao,getJD} from "@/api/merchant"
   import { getToken,getMobile } from '@/utils/auth'
   import { getBond } from "@/api/userCenter"
   import { checkFloat,validName } from "@/utils/validate"
@@ -245,11 +246,11 @@
                     required : true ,trigger : 'blur' ,validator : validGoodsName
                   }
                 ],
-                brandId: [
-                  {
-                    required : true  ,trigger : 'change',validator: validBrand
-                  }
-                ],
+                // brandId: [
+                //   {
+                //     required : false  ,trigger : 'change',validator: validBrand
+                //   }
+                // ],
                 firstType: [
                   {
                     required : true ,trigger : 'change' ,message: '请选择一级分类'
@@ -434,18 +435,19 @@
                   describes: res.data.data.describes,
                   id: ''
                 }  ;
+                if( res.data.status === '000000000'){
+                  if(res.data.data.productImages.length > 0){
+                    res.data.data.productImages.map( (i,index) => {
+                      this.form.imagesList[index] = { id : '', imgUrl: i.imgUrl }  ;
+                    })
+                  }
 
-                if(res.data.data.productImages.length > 0){
-                  res.data.data.productImages.map( (i,index) => {
-                    this.form.imagesList[index] = { id : '', imgUrl: i.imgUrl }  ;
-                  })
+                  this.word = this.form.describes ;
+                  this.brandCnName = res.data.data.brandCnName ;
+                  this.thirdName = res.data.data.cateGoryMap.categoryId3;
+                  // this.getSecondList(this.form.class1Id);
+                  // this.getThirdList(this.form.class2Id);
                 }
-
-                this.word = this.form.describes ;
-                this.brandCnName = res.data.data.brandCnName ;
-                this.thirdName = res.data.data.cateGoryMap.categoryId3;
-                // this.getSecondList(this.form.class1Id);
-                // this.getThirdList(this.form.class2Id);
               })
             }else{
               // this.title = '新增商品';
@@ -454,9 +456,11 @@
           getBrandList(){
 
             getBrand(this.brandName, this.currentPage ,this.pageSize).then(res => {
-              this.brandData = res.data.data ;
+              if( res.data.status === '000000000'){
+                this.brandData = res.data.data ;
                 this.totalPages = res.data.totalPages ;
                 this.totalElements = res.data.totalElements ;
+              }
             })
 
           },
@@ -473,13 +477,15 @@
           handleBrand(index,val,name) {
             this.brandName = name;
             this.radio = index ;
+            this.form.brandId = val ;
           },
           //确认选择的品牌
           confirmBrand(){
-            if(this.brandData[this.radio].id  !== undefined){
-              this.form.brandId = this.brandData[this.radio].id ;
-              this.brandCnName = this.brandData[this.radio].brandCnName ;
+            if(this.form.brandId  !== ''&&this.brandData[this.radio*1].id  !== undefined){
+              this.form.brandId = this.brandData[this.radio*1].id ;
+              this.brandCnName = this.brandData[this.radio*1].brandCnName ;
               this.dialogVisible = false;
+
             }else{
               this.$message({
                 message: '请选择品牌',
@@ -497,13 +503,15 @@
             this.clearType('1');
 
             firstList().then(res=> {
-              this.firstTypeList = res.data.data;
-              // if(this.form.class1Id!== ''){
-              //   this.getSecondList(this.form.class1Id);
-              //
-              // }
-              if(/^[0-9]+$/.test(this.form.firstType*1)&&this.form.firstType!== ''){
-                this.getSecondList(this.form.firstType)
+              if( res.data.status === '000000000'){
+                this.firstTypeList = res.data.data;
+                // if(this.form.class1Id!== ''){
+                //   this.getSecondList(this.form.class1Id);
+                //
+                // }
+                if(/^[0-9]+$/.test(this.form.firstType*1)&&this.form.firstType!== ''){
+                  this.getSecondList(this.form.firstType)
+                }
               }
             })
           },
@@ -511,14 +519,15 @@
           getSecondList(type){
             this.clearType('2');
             secondList(type).then(res=> {
-
-              this.secondTypeList = res.data.data;
-              // if(this.form.class2Id!== ''){
-              //   this.getThirdList(this.form.class2Id);
-              //
-              // }
-              if(/^[0-9]+$/.test(this.form.secondType*1)&&this.form.secondType!== ''){
-                this.getThirdList(this.form.secondType)
+              if( res.data.status === '000000000'){
+                this.secondTypeList = res.data.data;
+                // if(this.form.class2Id!== ''){
+                //   this.getThirdList(this.form.class2Id);
+                //
+                // }
+                if(/^[0-9]+$/.test(this.form.secondType*1)&&this.form.secondType!== ''){
+                  this.getThirdList(this.form.secondType)
+                }
               }
             })
 
@@ -527,7 +536,10 @@
           getThirdList(type){
             this.clearType('3');
             thirdList(type).then(res=> {
-              this.thirdTypeList = res.data.data
+              if( res.data.status === '000000000'){
+                this.thirdTypeList = res.data.data
+
+              }
             })
           },
           //重选清除原有分类
@@ -643,7 +655,7 @@
             }
                 // data = JSON.stringify(data);
                 // console.log(data,this.form);
-                newGoogds(data,this.user).then( res => {
+                newGoogds(data).then( res => {
                   if(res.data.status === '000000000'){
                     this.$message({
                       message : '您添加的商品信息已提交，请稍后确认商品状态',
@@ -946,6 +958,11 @@
           applyShop(){
             this.$router.push('/accountManage/admission/admissionShop/index')
           },
+          //跳转到品牌管理
+          goBrand(){
+            this.$router.push('/merchantCenter/goods/brandManage')
+
+          },
           handleSizeChange(val) {
             this.radio = '';
             this.pageSize = val ;
@@ -993,5 +1010,15 @@
         margin-left: 0.15rem;
       }
     }
+
+  }
+  .block2{
+    margin-top : 0.2rem ;
+  }
+  .brandTips{
+    text-decoration: underline;
+    margin-left : 0.2rem ;
+    font-size : 0.12rem ;
+    cursor : pointer;
   }
 </style>

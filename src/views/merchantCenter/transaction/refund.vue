@@ -139,16 +139,10 @@
             }
             callback();
           }
-        }
+        };
 
         return{
-          refund: {
-            orderId: '',
-            subOrderId:'',
-            status:'',
-            startDate:'',
-            endDate:''
-          },
+          refund: {},
           statusList : [
             {
               name : '全部状态',
@@ -226,10 +220,13 @@
         }
       },
       mounted(){
-         if(this.$route.query.type !== undefined){
-           this.refund.status = this.$route.query.type ;
-         }
-        this.getList();
+          this.refund = this.$store.state.searchBar.refundList.refund ;
+          this.currentPage = this.$store.state.searchBar.refundList.currentPage;
+          this.pageSize = this.$store.state.searchBar.refundList.pageSize;
+          if(this.$route.query.type !== undefined){
+             this.refund.status = this.$route.query.type ;
+          }
+          this.getList();
       },
       methods : {
         getList(){
@@ -241,13 +238,20 @@
           formData.append('EQ_status',this.refund.status);
           formData.append('GT_createTime',this.refund.startDate);
           formData.append('LT_createTime',this.refund.endDate);
-
+          let data = {
+            refund : { ...this.refund },
+            currentPage: this.currentPage ,
+            pageSize: this.pageSize
+          };
+          this.$store.commit('saveRefund',data);
           refusedList(formData).then( res => {
             // console.log('data',res)
             this.loading= false;
-            this.tableData = res.data.data ;
+            if( res.data.status === '000000000'){
+              this.tableData = res.data.data ;
               this.totalPages = res.data.totalPages ;
               this.totalElements = res.data.totalElements ;
+            }
           })
 
         },
@@ -260,9 +264,9 @@
         handleCheck(index,row){
           // console.log('row',row)
           this.dialogVisible = true ;
-          this.form.productName = row.productName
-          this.form.goodsNum = row.quality
-          this.form.refund = row.returnAmount
+          this.form.productName = row.productName;
+          this.form.goodsNum = row.quality;
+          this.form.refund = row.returnAmount;
           this.form.id = row.id
         },
         //  确认退款相关操作
@@ -278,14 +282,16 @@
 
               refusedAffirm(formData).then( res =>{
                 this.loading= false;
+                if( res.data.status === '000000000'){
                   this.$message({
-                  message : '操作成功' ,
-                  center : true ,
-                  type : 'success'
-                });
-                setTimeout(() => {
-                  this.getList();
-                },1500)
+                    message : '操作成功' ,
+                    center : true ,
+                    type : 'success'
+                  });
+                  setTimeout(() => {
+                    this.getList();
+                  },1500)
+                }
               })
             }else{
 

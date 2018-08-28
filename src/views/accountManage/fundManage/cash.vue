@@ -165,15 +165,20 @@
       getDepositMoney() {
         getDeposit().then(res => {
           // console.log(res);
-          this.deposit = res.data.data;
+          if( res.data.status === '000000000'){
+            this.deposit = res.data.data;
+
+          }
         })
       },
       getApilyAccount() {
         getThirdInfo('1').then(res => {
-          if (res.data.data.length > 0) {
+          if( res.data.status === '000000000'){
+            if (res.data.data.length > 0) {
               this.userInfo = true;
               this.apilyInfo = res.data.data[0];
             }
+          }
         })
       },
       //  确认提现
