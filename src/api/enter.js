@@ -70,6 +70,13 @@ export function getShareDetail(id){
     method : 'get'
   })
 }
+//获取品牌推荐商品详情
+export function getBrandRecommend(id){
+  return request({
+    url : '/center/video/getDetail/'+id ,
+    method : 'get'
+  })
+}
 //获取报名活动商品列表
 export function getSecondsList(data){
   return request({
@@ -100,6 +107,13 @@ export function editShareStatus(id){
     method : 'get'
   })
 }
+//修改品牌推荐活动状态
+export function editBrandRecommend(id){
+  return request({
+    url : '/center/video/update/'+id +'/3',
+    method : 'get'
+  })
+}
 //新增分享购活动
 export function addShare(data){
   return request({
@@ -109,6 +123,14 @@ export function addShare(data){
   })
 }
 
+//新增品牌推荐活动
+export function addBrandRecommend(data){
+  return request({
+    url : '/center/video/add/brandExtend',
+    method : 'post',
+    data
+  })
+}
 //获取秒杀活动报名记录
 export function getActivityHistory(data){
   return request({
@@ -121,6 +143,16 @@ export function getActivityHistory(data){
 export function getShareHistory(data){
   return request({
     url : 'center/shareBuyActivity/query/listInfo',
+    method : 'post',
+    data
+
+  })
+}
+
+//获取品牌推荐活动报名记录
+export function getBrandHistory(data){
+  return request({
+    url : '/center/video/query/listInfo',
     method : 'post',
     data
 

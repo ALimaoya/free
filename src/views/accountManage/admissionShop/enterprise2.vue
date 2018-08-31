@@ -21,6 +21,15 @@
           <div class="inputInfo showShop" ><span v-if="form.shopName !== ''">{{ form.shopName + lastName[brandInfo]}} </span></div>
           <span class="tip" style="margin-top: 0.2rem;"><svg-icon icon-class="tips"/>入驻成功后店铺的名称</span>
         </el-form-item>
+        <el-form-item labelWidth="160px" label="app店铺首页背景图：" prop="backGroundUrl">
+              <el-upload  class="upload" :auto-upload="autoUpload"  :action="appImgUrl" :multiple="false" v-model.trim="form.backGroundUrl"
+                          :headers="{'yb-tryout-merchant-token':token}"          :show-file-list="false"  :before-upload="appbeforeImgUpload">
+                <img v-if="form.backGroundUrl" :src="imageDomain + form.backGroundUrl" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+          <p class="require">请上传尺寸为750px×580px，500k以内的图片</p>   
+          <!-- <span class="imgWarn tips_warn" v-if="appImgWarn">请上传app店铺首页背景图</span> -->
+        </el-form-item>
         <p class="h_title otherInfo">入驻企业信息</p>
         <el-form-item  :labelWidth="labelWidth" label="是否是国内企业证件照：" prop="licenseCountryType">
           <el-radio label="1" v-model="form.licenseCountryType">是</el-radio>
@@ -344,6 +353,7 @@
             provinceList: [],
             autoUpload : true ,
             imgUrl : process.env.BASE_API+'/file/upload',
+            appImgUrl : process.env.BASE_API+'/file/upload',
             imageDomain : process.env.IMAGE_DOMAIN ,
             licenseWarn : false ,
             permitWarn: false ,
@@ -505,7 +515,46 @@
             }
 
           },
+          // 上传app店铺背景图图片
+          appbeforeImgUpload(file) {
+            let reader = new FileReader();
+            let ret = [];
+            let _this = this;
+            reader.onload = (e) => {
+              let image = new Image();
+              image.onload = function () {
+                const isHeight = this.height;
+                const isWidth = this.width;
+                if (isWidth > 300 || isHeight > 300) {
+                  _this.$message.error('图片尺寸过大，请重新选择后上传');
+                  return false;
 
+                } else {
+                  let formData = new FormData();
+                  formData.append('image', file);
+                  uploadImage(formData).then(res => {
+                    if (res.data.status === '000000000') {
+
+                        // _this.form.backGroundUrl = res.data.data.fileName;
+                        _this.$set(_this.form,'backGroundUrl',res.data.data.fileName)
+                        // console.log(_this.form.imgList)
+
+                    } else {
+                      // _this.appImgWarn = true;
+
+                    }
+                  }).catch(err => {
+                    // console.log(err) ;
+                    // _this.appImgWarn = true;
+
+                  })
+                }
+              };
+
+              image.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+          },
 
           //限制上传图片大小
           limitImage(file,type){
@@ -728,6 +777,7 @@
             let data = {
               merchantShopReqDto: {
                 shopName: this.form.shopName ,
+                backGroundUrl : this.form.backGroundUrl,
                 mainBusiness: this.form.mainBusiness ,
                 shopType: this.brandInfo,
                 thirdShopUrl: thirdShopUrl,

@@ -4,7 +4,9 @@ const signUp = {
       startDate : '' ,
       endDate : '' ,
       startTime: '',
-      endTime: ''
+      endTime: '',
+      startSevenDay:'',
+      endSevenDay:''
     },
 
   },

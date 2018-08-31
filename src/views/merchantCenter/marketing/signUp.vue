@@ -17,7 +17,9 @@
         <ul class="subContent">
           <li v-for="(item,index) in list" :key="index" @click="show = index ;" :class="{ active:show==index }">{{ item }}</li>
         </ul>
-        <div v-if="show== '0'" ><ul class="introduce"><li v-for="(item,index) in intro[type-1]" :key="index">{{ item }}</li></ul></div>
+        <div v-if="show== '0'" >
+          <ul class="introduce"><li v-for="(item,index) in intro[type-1]" :key="index">{{ item }}</li></ul>
+          </div>
         <div v-else-if="show =='1'">
           <p class="h_title"> 对店铺的要求</p>
           <table  border="1">
@@ -44,6 +46,7 @@
   import { getBond } from "@/api/userCenter"
   import seconds from "../../../assets/imgs/seconds.jpg"
   import share from "../../../assets/imgs/share.jpg"
+  import brand from "../../../assets/imgs/brand.png"
 
   export default {
     name: "sign-up",
@@ -68,6 +71,11 @@
             img: share,
             title: '首页—分享购频道活动报名',
 
+          },
+          {
+            img: brand,
+            title: '首页—品牌推荐频道活动报名',
+
           }
         ],
         progress: ['进行中'],
@@ -78,7 +86,9 @@
           ['丫贝APP端首页—0.9秒杀频道', '活动时间：长期招商', '资源位：首页0.9秒杀频道', '收费方式：免费', '活动要求：', '品类要求：无特殊要求',
             '图片要求：高清图、缩略图、图上不得有字，不得有标；图片清晰美观', '价格要求：在特价时间内做5-8折的限时活动；低至0.9元', '名额有限，先到先得，请尽早提报！'],
           ['丫贝APP端首页—推荐商品分享购大图资源位频道', '活动时间：长期招商', '资源位：首页推荐商品分享购大图资源位频道', '收费方式：免费', '活动要求：', '品类要求：无特殊要求',
-            '图片要求：高清图、缩略图、图上不得有字，不得有标；图片清晰美观', '价格要求：在特价时间内做5-8折的限时活动', '名额有限，先到先得，请尽早提报！']
+            '图片要求：高清图、缩略图、图上不得有字，不得有标；图片清晰美观', '价格要求：在特价时间内做5-8折的限时活动', '名额有限，先到先得，请尽早提报！'],
+          ['丫贝APP端首页-品牌推荐视频频道', '活动时间：长期招商', '资源位：首页品牌推荐视频', '收费方式：免费', '活动要求：', '品类要求：无特殊要求',
+            '图片要求：高清图、缩略图、图上不得有字，不得有标；图片清晰美观', '视频要求：必须宣传本店铺品牌的视频，禁止含有水印广告、黄赌毒等信息','价格要求：在特价时间内做5-8折的限时活动', '名额有限，先到先得，请尽早提报！']
         ],
         permitSign : false,
         hasBond: false ,

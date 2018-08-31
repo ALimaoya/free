@@ -80,6 +80,18 @@ const searchBar = {
       pageSize : 10,
       type : ''
     },
+    brandRecommendList : {
+      history: {
+        GTE_startDate: '',
+        LTE_endDate:'',
+        EQ_product: '',
+        EQ_status:'',
+
+      },
+      currentPage : 1,
+      pageSize : 10,
+      type : ''
+    },
     shop : {
       selectShop : {
         EQ_platformType : '',
@@ -223,6 +235,9 @@ const searchBar = {
     },
     saveShare: (state, obj) => {
       state.shareList = obj ;
+    },
+    savebrandRecommend:(state, obj)=>{
+      state.brandRecommendList = obj
     },
     saveselectShop : (state,obj) => {
       state.shop = obj ;

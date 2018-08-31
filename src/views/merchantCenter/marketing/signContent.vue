@@ -19,7 +19,7 @@
         <div class="addGoods" @click="dialogVisible = true;"><svg-icon icon-class="u212"></svg-icon></div>
       </div>
       <el-form :model="form" ref="form" :rules="formRule">
-        <el-form-item label="商品白底图：" :labelWidth="labelWidth" prop="image">
+        <el-form-item v-if="type !== '3'" label="商品白底图：" :labelWidth="labelWidth" prop="image">
           <el-upload class="upload" :auto-upload="autoUpload" :action="imgUrl" :multiple="false"
                      v-model.trim="form.image"
                      :headers="{'yb-tryout-merchant-token':token}" :show-file-list="false"
@@ -28,14 +28,31 @@
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             <span class="imgWarn tips_warn" v-if="goodsImgWarn">请上传商品白底图</span>
           </el-upload>
-          <p class="require tips_warn">必须为白底图，800*800像素，JPG、JPEG格式，大小不超过1M，图片不能有文字，在{{ typeLabel }}频道展示</p>
+          <p class="require tips_warn">必须为白底图，750*285像素，JPG、JPEG格式，大小不超过1M，图片不能有文字，在{{ typeLabel }}频道展示</p>
         </el-form-item>
-        <el-form-item label="商品活动价格：" :labelWidth="labelWidth" prop="price">
+          <el-form-item v-else label="商品视频" :labelWidth="labelWidth" prop="video">
+          <!-- <el-upload class="upload" :auto-upload="autoUpload" :action="videoUrl" :multiple="false"
+                     v-model.trim="form.video"
+                     :headers="{'yb-tryout-merchant-token':token}" :show-file-list="false"
+                     :before-upload="beforeVideoUpload"
+                      > -->
+          <el-upload class="avatar-uploader uploadimg" v-model.trim="form.vodeo" action="videoUrl" :show-file-list="false"  :before-upload="beforeVideoUpload" :on-change="successUpload">
+            <video class="mainVideo avatar" v-if="form.video" :src="VideoSrc"  controls></video>
+            <!-- <img v-if="form.video" :src="imageDomain + videoImg" class="avatar"> -->
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <span class="imgWarn tips_warn" v-if="goodsvideoideoWarn">请上传商品视频</span>
+          </el-upload>
+          <p class="require tips_warn">视频要求：必须宣传本店铺品牌的视频，禁止含有水印广告、黄赌毒等信息</p>
+        </el-form-item>
+        <el-form-item v-if="type === '3'" label="商品介绍：" :labelWidth="labelWidth" prop="introduce">
+          <el-input type="textarea" v-model="form.introduce" placeholder="请输入商品介绍"></el-input>
+        </el-form-item>
+        <el-form-item v-if="type !== '3'" label="商品活动价格：" :labelWidth="labelWidth" prop="price">
           <el-input size="mini" type="number" v-model.number="form.price"></el-input>
           <span class="note">在特价时间内做5-8折的限时活动；<span v-if="type==='1'">低至0.9元；</span>不得高于正常售价的8折</span>
           <span class="note">备注：报名成功——活动结束，不能修改商品信息，活动期间内，价格将会锁定，不能修改价格</span>
         </el-form-item>
-        <el-form-item label="商品活动库存数量：" :labelWidth="labelWidth" prop="eachStock">
+        <el-form-item v-if="type !== '3'" label="商品活动库存数量：" :labelWidth="labelWidth" prop="eachStock">
           <el-input  size="mini" type="number" v-model.number="form.eachStock"></el-input>
           <span class="note">报名库存数量不小于10件，且不大于当前商品库存总数量</span>
           <span class="note">备注：此活动库存数量仅为活动通过排期上线后可被买家购买的上限件数</span>
@@ -115,476 +132,606 @@
 </template>
 
 <script>
-  import { uploadImage } from "@/api/activity"
-  import userPhoto from '@/assets/404_images/fail.png'
-  import { getToken } from '@/utils/auth'
-  import {int, checkFloat} from '@/utils/validate'
-  import { getSecondsList, addSecKill , addShare} from "@/api/enter"
-  export default {
-    name: "sign-content",
-    data() {
-      const validPrice = (rule, value, callback) => {
-
-        if (value === '') {
-          callback(new Error('请填写商品'+ this.typeLabel +'活动价格'))
+import { uploadImage, uploadVideo, getVideo } from "@/api/activity";
+import userPhoto from "@/assets/404_images/fail.png";
+import { getToken } from "@/utils/auth";
+import { int, checkFloat } from "@/utils/validate";
+import {
+  getSecondsList,
+  addSecKill,
+  addShare,
+  addBrandRecommend
+} from "@/api/enter";
+export default {
+  name: "sign-content",
+  data() {
+    const validPrice = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请填写商品" + this.typeLabel + "活动价格"));
+      } else {
+        if (value < 0) {
+          callback(new Error("商品" + this.typeLabel + "活动价格不得小于0"));
+        }
+        if (!checkFloat(value)) {
+          callback(
+            new Error("商品" + this.typeLabel + "活动价格最多有两位小数")
+          );
+        }
+        if (value > this.shop.price * 0.8) {
+          callback(
+            new Error("商品" + this.typeLabel + "活动价格不得大于当前价格的80%")
+          );
+        }
+        callback();
+      }
+    };
+    const validNumber = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请填写商品" + this.typeLabel + "活动数量"));
+      } else {
+        if (!int(value)) {
+          callback(
+            new Error(
+              "商品" + this.typeLabel + "活动数量只能为大于等于10的整数"
+            )
+          );
         } else {
-          if(value< 0){
-            callback(new Error('商品'+ this.typeLabel +'活动价格不得小于0'))
-
+          if (value < 10) {
+            callback(new Error("商品" + this.typeLabel + "活动数量不小于10件"));
           }
-          if (!checkFloat(value)) {
-            callback(new Error('商品'+ this.typeLabel +'活动价格最多有两位小数'))
-          }
-          if(value > this.shop.price * 0.8){
-            callback(new Error('商品'+ this.typeLabel +'活动价格不得大于当前价格的80%'))
-
+          if (value > this.goodsStock) {
+            callback(
+              new Error(
+                "商品" + this.typeLabel + "活动数量不得大于当前库存总量"
+              )
+            );
           }
           callback();
         }
-      };
-      const validNumber = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请填写商品'+ this.typeLabel +'活动数量'))
-        } else {
-          if (!int(value)) {
-            callback(new Error('商品'+ this.typeLabel +'活动数量只能为大于等于10的整数'))
-          } else {
-            if (value < 10) {
-              callback(new Error('商品'+ this.typeLabel +'活动数量不小于10件'))
-            }
-            if(value > this.goodsStock){
-              callback(new Error('商品'+ this.typeLabel +'活动数量不得大于当前库存总量'))
+      }
+    };
+    return {
+      autoUpload: true,
+      imgUrl: process.env.BASE_API + "/file/upload",
+      videoUrl: process.env.BASE_API + "/file/video/upload",
+      VideoSrc: "",
+      videoFlag: false,
+      videoImg: "",
+      imageDomain: process.env.IMAGE_DOMAIN,
+      token: getToken(),
+      errorImg: 'this.src="' + userPhoto + '"',
+      failImg: userPhoto,
+      typeLabel: "",
+      labelWidth: "200px",
+      shop: {
+        mainImageUrl: "",
+        productName: "",
+        code: "",
+        price: ""
+      },
 
-            }
-            callback();
+      dialogVisible: false,
+      form: {
+        image: "",
+        price: "",
+        video: "",
+        introduce: "",
+        eachStock: ""
+      },
+      //  已阅读协议
+      agree: false,
+      formRule: {
+        image: [
+          {
+            required: true,
+            trigger: "blur",
+            message: "请上传商品白底图"
           }
-        }
-      };
-      return {
-        autoUpload: true,
-        imgUrl: process.env.BASE_API + '/file/upload',
-        imageDomain: process.env.IMAGE_DOMAIN,
-        token: getToken(),
-        errorImg: 'this.src="' + userPhoto + '"',
-        failImg: userPhoto,
-        typeLabel:'',
-        labelWidth : '200px' ,
-        shop: {
-          mainImageUrl: '',
-          productName: '',
-          code: '',
-          price: ''
-        },
+        ],
+        price: [
+          {
+            required: true,
+            trigger: "blur",
+            validator: validPrice
+          }
+        ],
+        video: [
+          {
+            required: true,
+            trigger: "blur",
+            message: "请上传商品视频"
+          }
+        ],
+        introduce: [
+          {
+            required: true,
+            trigger: "blur",
+            message: "请填写对商品的介绍"
+          }
+        ],
+        eachStock: [
+          {
+            required: true,
+            trigger: "blur",
+            validator: validNumber
+          }
+        ]
+      },
+      //  选择
+      search: {
+        shopName: "",
+        goodsCode: ""
+      },
+      totalElements: 0,
+      totalPages: 0,
+      currentPage: 1,
+      pageSize: 10,
+      type: "",
+      goodsImgWarn: false,
+      goodsvideoideoWarn: false,
+      readRule: false,
+      title: "",
+      tableData: [],
+      goodsId: "",
+      goodsStock: ""
+    };
+  },
+  mounted() {
+    this.type = this.$route.query.type;
+    if (this.type === "1") {
+      this.title = "选择秒杀活动报名商品";
+      this.typeLabel = "秒杀";
+    } else if (this.type === "2") {
+      this.title = "选择分享购活动报名商品";
+      this.typeLabel = "分享购";
+    } else if (this.type === "3") {
+      this.title = "选择品牌推荐活动报名商品";
+      this.typeLabel = "品牌推荐";
+    }
+    this.getGoods();
+  },
+  methods: {
+    getGoods() {
+      let formData = new FormData();
+      formData.append("EQ_code", this.search.goodsCode);
+      formData.append("LIKE_productName", this.search.shopName);
+      formData.append("currentPage", this.currentPage);
+      formData.append("pageSize", this.pageSize);
 
-        dialogVisible: false,
-        form: {
-          image: '',
-          price: '',
-          eachStock: ''
-        },
-        //  已阅读协议
-        agree: false,
-        formRule: {
-          image: [
-            {
-              required: true, trigger: 'blur', message: '请上传商品白底图'
-            }
-          ],
-          price: [
-            {
-              required: true, trigger: 'blur', validator: validPrice
-            }
-          ],
-          eachStock: [
-            {
-              required: true, trigger: 'blur', validator: validNumber
-            }
-          ],
-        },
-        //  选择
-        search: {
-          shopName: '',
-          goodsCode: ''
-        },
-        totalElements: 0,
-        totalPages: 0,
-        currentPage: 1,
-        pageSize: 10,
-        type: '',
-        goodsImgWarn: false ,
-        readRule: false ,
-        title : '',
-        tableData: [],
-        goodsId: '',
-        goodsStock : '',
+      getSecondsList(formData).then(res => {
+        if (res.data.status === "000000000") {
+          this.tableData = res.data.data;
+          this.totalPages = res.data.totalPages;
+          this.totalElements = res.data.totalElements;
+        }
+      });
+    },
+    //选择商品
+    selectShop(index, item) {
+      this.shop = item;
+      this.goodsId = item.id;
+      this.goodsStock = item.quantity;
+    },
+    //确认选择活动商品
+    chooseGoods() {
+      // this.goodsId
+      if (this.goodsId === "") {
+        this.$message({
+          message: "请选择活动商品",
+          type: "error",
+          center: true
+        });
+      } else {
+        this.dialogVisible = false;
       }
     },
-    mounted() {
-      this.type = this.$route.query.type;
-      if(this.type === '1'){
-        this.title = '选择秒杀活动报名商品';
-        this.typeLabel = '秒杀';
-      }else if( this.type === '2'){
-        this.title = '选择分享购活动报名商品';
-        this.typeLabel = '分享购';
-
-      }
-      this.getGoods();
+    cancel() {
+      this.dialogVisible = false;
+      this.goodsId = "";
+      this.search = {
+        shopName: "",
+        goodsCode: ""
+      };
+      this.currentPage = 1;
+      this.pageSize = 10;
     },
-    methods: {
-      getGoods(){
-        let formData = new FormData();
-        formData.append('EQ_code',this.search.goodsCode);
-        formData.append('LIKE_productName',this.search.shopName);
-        formData.append('currentPage',this.currentPage);
-        formData.append('pageSize',this.pageSize);
-
-        getSecondsList(formData).then( res => {
-          if( res.data.status === '000000000'){
-            this.tableData = res.data.data ;
-            this.totalPages = res.data.totalPages;
-            this.totalElements = res.data.totalElements;
-          }
-        })
-      },
-      //选择商品
-      selectShop(index,item) {
-        this.shop = item ;
-        this.goodsId = item.id ;
-        this.goodsStock = item.quantity ;
-      },
-      //确认选择活动商品
-      chooseGoods(){
-        // this.goodsId
-        if(this.goodsId === ''){
-          this.$message({
-            message : '请选择活动商品',
-            type : 'error',
-            center : true
-          })
-        }else{
-          this.dialogVisible = false ;
-
+    //提交表单
+    onSubmit(formName) {
+      if (this.type !== "3") {
+        if (this.form.image === "") {
+          this.goodsImgWarn = true;
+          return false;
         }
-
-      },
-      cancel(){
-        this.dialogVisible = false ;
-        this.goodsId = '';
-        this.search = {
-          shopName: '',
-          goodsCode: ''
-        };
-        this.currentPage = 1 ;
-        this.pageSize = 10 ;
-
-      },
-      //提交表单
-      onSubmit(formName) {
-        if(this.form.image === ''){
-          this.goodsImgWarn = true ;
-          return false ;
-
+      } else {
+        if (this.form.video === "") {
+          this.goodsvideoideoWarn = true;
+          return false;
         }
-        // console.log(this.goodsId);
-        if(this.goodsId === ''){
-          this.$message({
-            message : '请选择活动商品',
-            type : 'error',
-            center : true
-          });
-          return false ;
-        }
-        this.$refs[formName].validate((valid) => {
-          if (valid&&!this.goodsImgWarn&& this.goodsId !== '') {
+      }
+
+      // console.log(this.goodsId);
+      if (this.goodsId === "") {
+        this.$message({
+          message: "请选择活动商品",
+          type: "error",
+          center: true
+        });
+        return false;
+      }
+      //  0.9秒杀 和  分享购
+      if (this.type !== "3") {
+        this.$refs[formName].validate(valid => {
+          if (valid && !this.goodsImgWarn && this.goodsId !== "") {
             if (!this.agree) {
               this.$message({
-                message: '请先阅读并同意《丫贝网合作协议》',
-                type: 'error',
+                message: "请先阅读并同意《丫贝网合作协议》",
+                type: "error",
                 center: true
               });
-              return false ;
+              return false;
             } else {
-              let timeObj = this.$store.state.signUp.secondKill ;
+              let timeObj = this.$store.state.signUp.secondKill;
 
-              if(this.type === '1'){
-                let data= { ...this.form , productId : this.goodsId ,...timeObj,status : '' };
-                // console.log(data);
-                addSecKill(data).then( res => {
-                  if(res.data.status === '000000000'){
-                    this.$message({
-                      message : '您已成功报名秒杀活动，请稍后查看',
-                      type : 'success' ,
-                      center : true
-                    });
-                    this.$emit('getContent','success')
-                  }
-                })
-
-              }else if(this.type === '2'){
-                let shareData = {
-                  image : this.form.image ,
-                  price : this.form.price ,
-                  stock : this.form.eachStock ,
-                  startTime : timeObj.startDate + ' 00:00:00',
-                  endTime : timeObj.endDate + ' 23:59:59',
-                  productId : this.goodsId ,
-                  status : ''
+              if (this.type === "1") {
+                let data = {
+                  ...this.form,
+                  productId: this.goodsId,
+                  ...timeObj,
+                  status: ""
                 };
-                addShare(shareData).then( res => {
-                  if(res.data.status === '000000000'){
+                // console.log(data);
+                addSecKill(data).then(res => {
+                  if (res.data.status === "000000000") {
                     this.$message({
-                      message : '您已成功报名分享购活动，请稍后查看',
-                      type : 'success' ,
-                      center : true
+                      message: "您已成功报名秒杀活动，请稍后查看",
+                      type: "success",
+                      center: true
                     });
-                    this.$emit('getContent','success')
+                    this.$emit("getContent", "success");
                   }
-                })
+                });
+              } else if (this.type === "2") {
+                let shareData = {
+                  image: this.form.image,
+                  price: this.form.price,
+                  stock: this.form.eachStock,
+                  startTime: timeObj.startDate + " 00:00:00",
+                  endTime: timeObj.endDate + " 23:59:59",
+                  productId: this.goodsId,
+                  status: ""
+                };
+                addShare(shareData).then(res => {
+                  if (res.data.status === "000000000") {
+                    this.$message({
+                      message: "您已成功报名分享购活动，请稍后查看",
+                      type: "success",
+                      center: true
+                    });
+                    this.$emit("getContent", "success");
+                  }
+                });
               }
             }
           }
+        });
+      } else {
+        // 品牌推荐
+        this.$refs[formName].validate(valid => {
+          if (valid && !this.goodsvideoideoWarn && this.goodsId !== "") {
+            if (valid && this.goodsId !== "") {
+              if (!this.agree) {
+                this.$message({
+                  message: "请先阅读并同意《丫贝网合作协议》",
+                  type: "error",
+                  center: true
+                });
+                return false;
+              } else {
+                let timeObj = this.$store.state.signUp.secondKill;
+                let shareData = {
+                  videoId: this.form.video,
+                  videoDescribe: this.form.introduce,
+                  startTime: timeObj.startSevenDay + " 00:00:00",
+                  endTime: timeObj.endSevenDay + " 23:59:59",
+                  productId: this.goodsId
+                };
+                addBrandRecommend(shareData).then(res => {
+                  if (res.data.status === "000000000") {
+                    this.$message({
+                      message: "您已成功报名品牌推荐活动，请稍后查看",
+                      type: "success",
+                      center: true
+                    });
+                    this.$emit("getContent", "success");
+                  }
+                });
+              }
+            }
+          }
+        });
+      }
+    },
 
+    // 上传图片
+    beforeImgUpload(file) {
+      let reader = new FileReader();
+      let ret = [];
+      let _this = this;
+      const isImg = file.type === "image/jpeg" || file.type === "image/png";
+      const isLt1M = file.size / 1024 / 1024 < 1;
 
-        })
-      },
-
-      // 上传图片
-      beforeImgUpload(file) {
-        let reader = new FileReader();
-        let ret = [];
-        let _this = this;
-        const isImg = file.type === 'image/jpeg'|| file.type === 'image/png';
-        const isLt1M = file.size / 1024 / 1024 < 1;
-
-        reader.onload = (e) => {
-          let image = new Image();
-          image.onload = function () {
-            const isHeight = this.height;
-            const isWidth = this.width;
-            if (isWidth > 800 || isHeight > 800) {
-              _this.$message.error('图片尺寸过大，请重新选择后上传');
-              return false;
-
-            } else if(!isImg){
-              _this.$message.error('图片必须为jpg或者png格式，请重新选择后上传');
-              return false ;
-
-            }else if(!isLt1M){
-              _this.$message.error('图片大小不能超过1MB，请重新选择后上传');
-              return false ;
-            }else {
-              let formData = new FormData();
-              formData.append('image', file);
-              uploadImage(formData).then(res => {
-                if (res.data.status === '000000000') {
-
+      reader.onload = e => {
+        let image = new Image();
+        image.onload = function() {
+          const isHeight = this.height;
+          const isWidth = this.width;
+          if (isWidth > 750 || isHeight > 285) {
+            _this.$message.error("图片尺寸过大，请重新选择后上传");
+            return false;
+          } else if (!isImg) {
+            _this.$message.error("图片必须为jpg或者png格式，请重新选择后上传");
+            return false;
+          } else if (!isLt1M) {
+            _this.$message.error("图片大小不能超过1MB，请重新选择后上传");
+            return false;
+          } else {
+            let formData = new FormData();
+            formData.append("image", file);
+            uploadImage(formData)
+              .then(res => {
+                if (res.data.status === "000000000") {
                   _this.form.image = res.data.data.fileName;
                   _this.goodsImgWarn = false;
-
                 } else {
                   _this.goodsImgWarn = true;
-
                 }
-              }).catch(err => {
+              })
+              .catch(err => {
                 // console.log(err) ;
                 _this.goodsImgWarn = true;
-
-              })
-            }
-          };
-
-          image.src = e.target.result;
+              });
+          }
         };
-        reader.readAsDataURL(file);
-      },
 
-      handleSubSizeChange(val) {
-
-        this.pageSize = val;
-        this.getGoods();
-      },
-      handleSubCurrentChange(val) {
-
-        this.currentPage = val;
-        this.getGoods();
-      },
+        image.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    },
+    //上传视频
+    beforeVideoUpload(file) {
+      console.log("file", file);
+      let _this = this;
+      const isLt10M = file.size / 1024 / 1024 < 10;
+      if (
+        [
+          "video/mp4",
+          "video/ogg",
+          "video/flv",
+          "video/avi",
+          "video/wmv",
+          "video/rmvb"
+        ].indexOf(file.type) == -1
+      ) {
+        this.$message.error("请上传正确的视频格式");
+        return false;
+      }
+      if (!isLt10M) {
+        this.$message.error("上传视频大小不能超过10MB哦!");
+        return false;
+      } else {
+        let formData = new FormData();
+        formData.append("video", file);
+        uploadVideo(formData)
+          .then(res => {
+            console.log("视频id", res);
+            if (res.status === 200) {
+              _this.form.video = res.data.data.videoId;
+              _this.goodsvideoideoWarn = false;
+            } else {
+              _this.goodsvideoideoWarn = true;
+            }
+          })
+          .catch(err => {
+            // console.log(err) ;
+            _this.goodsvideoideoWarn = true;
+          });
+      }
+      // this.videoUrl = file.url;
+    },
+    successUpload(file, fileList) {
+      console.log('successUpload',file)
+      this.VideoSrc = file.url;
+    },
+    handleSubSizeChange(val) {
+      this.pageSize = val;
+      this.getGoods();
+    },
+    handleSubCurrentChange(val) {
+      this.currentPage = val;
+      this.getGoods();
     }
   }
+};
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-
-  .sign-content {
-    padding: 0.2rem;
+.sign-content {
+  padding: 0.2rem;
+  width: 100%;
+  box-sizing: border-box;
+  color: #333;
+  .main {
+    margin-top: 0.4rem;
     width: 100%;
+    padding: 0 0.8rem;
     box-sizing: border-box;
-    color : #333 ;
-    .main {
-      margin-top: 0.4rem;
-      width: 100%;
-      padding: 0 0.8rem;
-      box-sizing: border-box;
-      h2 {
-        font-size: 0.2rem;
-        line-height: 1rem;
+    h2 {
+      font-size: 0.2rem;
+      line-height: 1rem;
+    }
 
-      }
+    .el-form {
+      .el-form-item {
+        width: 90%;
+        margin-bottom: 0.5rem;
+        .el-upload {
+          width: 50%;
+          display: inline-block;
+          vertical-align: bottom;
+          // float : left;
 
-      .el-form {
-        .el-form-item {
-          width: 90%;
-          .upload {
-            width: 25%;
-            display: inline-block;
-            vertical-align: bottom;
-            // float : left;
-
-            img {
-              max-width: 100%;
-              max-height: 100%;
-            }
-            .imgWarn {
-              position: absolute;
-              top: 100%;
-              left: 0;
-              display: inline;
-              font-size: 0.12rem;
-            }
+          img {
+            max-width: 100%;
+            max-height: 100%;
           }
-          .el-input {
-            width: 30%;
+          .imgWarn {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            display: inline;
+            font-size: 0.12rem;
           }
-          .tips_warn,.note{
-            float : right ;
-            text-align: right;
-          }
-          .note{
-            font-size : 0.12rem ;
-            line-height : 0.3rem ;
-            display: inline-block;
-            color : #aaa ;
-            margin-left : 0.2rem;
-          }
-          /*.note:nth-child(3){*/
-            /*margin-top : 0.4rem ;*/
-          /*}*/
-
-          .require {
-            display: inline-block;
-            width: 70%;
+          .mainVideo {
+            width: 100%;
+            height: 100%;
+            display: block;
           }
         }
-      }
-    }
-    .search {
-      width: 100%;
-      padding-bottom:  0.2rem;
-      height: 50px;
-      // border-bottom : 1px solid #aaa ;
-      margin-bottom: 0.3rem;
-      .el-input {
-        width: 30%;
-        margin: 0 0.2rem 0.2rem 0;
-        float: left;
-      }
-      .el-button {
-        width: 65px;
-        margin-bottom: 0.2rem;
-        margin-left: 20px;
-        float: left;
-
-      }
-    }
-    .itemContent {
-      margin: 0.5rem 200px;
-      width: 80%;
-      display: flex;
-      flex-direction: row;
-      border: 1px solid #aaa ;
-      padding : 0.2rem ;
-      .img_wrap {
-        width: 1rem;
-        height: 1rem;
-        display: block;
-        margin : auto ;
-        img{
-          max-height: 100%;
-          max-width: 100%;
+        .el-input {
+          width: 30%;
         }
-      }
-      .content {
-        /*width: 200px;*/
-        flex :1 ;
-        margin-left: 0.3rem;
-        text-align: left;
-        .name, .encoding, .price {
-          font-size: 0.18rem;
+        .el-textarea {
+          width: 30%;
+        }
+        .tips_warn,
+        .note {
+          float: right;
+          text-align: right;
+        }
+        .note {
+          font-size: 0.12rem;
           line-height: 0.3rem;
+          display: inline-block;
+          color: #aaa;
+          margin-left: 0.2rem;
+        }
+        /*.note:nth-child(3){*/
+        /*margin-top : 0.4rem ;*/
+        /*}*/
+
+        .require {
+          display: inline-block;
+          width: 70%;
         }
       }
-      .addGoods{
-        width: 1rem;
-        height: 1rem;
-
-        .svg-icon{
-          width : 100% ;
-          height : 100% ;
-        }
-
-      }
-    }
-
-    .el-table{
-      border-radius: 0.05rem ;
-      border-color : #aaa ;
-      margin-bottom : 0.3rem ;
-      .itemContent{
-        margin : 0 auto !important;
-        border: 0 ;
-        padding : 0 ;
-        .content{
-          margin-bottom : 0!important;
-        }
-      }
-    }
-
-    .top {
-      line-height: 30px;
-      width: 70%;
-      background-color: #ccc;
-      padding-left: 30px;
-    }
-    .shopName {
-      width: 100%;
-
-
-    }
-    .block2 {
-      padding: 0 0.3rem;
-      width: 90%;
-      margin: 0 auto;
-      box-sizing: border-box;
-      .totalItems {
-        display: block;
-        height: 0.3rem;
-        color: #666;
-        text-align: right;
-        margin-top: 0.3rem;
-      }
-    }
-    .dialog-footer {
-      text-align: center;
-
-      .noteTips{
-        margin-bottom : 0.3rem ;
-        text-align: center;
-      }
-    }
-    .ruleImg{
-      width : 90% !important ;
-      margin: auto;
-      display: block;
     }
   }
+  .search {
+    width: 100%;
+    padding-bottom: 0.2rem;
+    height: 50px;
+    // border-bottom : 1px solid #aaa ;
+    margin-bottom: 0.3rem;
+    .el-input {
+      width: 30%;
+      margin: 0 0.2rem 0.2rem 0;
+      float: left;
+    }
+    .el-button {
+      width: 65px;
+      margin-bottom: 0.2rem;
+      margin-left: 20px;
+      float: left;
+    }
+  }
+  .itemContent {
+    margin: 0.5rem 200px;
+    width: 80%;
+    display: flex;
+    flex-direction: row;
+    border: 1px solid #aaa;
+    padding: 0.2rem;
+    .img_wrap {
+      width: 1rem;
+      height: 1rem;
+      display: block;
+      margin: auto;
+      img {
+        max-height: 100%;
+        max-width: 100%;
+      }
+    }
+    .content {
+      /*width: 200px;*/
+      flex: 1;
+      margin-left: 0.3rem;
+      text-align: left;
+      .name,
+      .encoding,
+      .price {
+        font-size: 0.18rem;
+        line-height: 0.3rem;
+      }
+    }
+    .addGoods {
+      width: 1rem;
+      height: 1rem;
+
+      .svg-icon {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+
+  .el-table {
+    border-radius: 0.05rem;
+    border-color: #aaa;
+    margin-bottom: 0.3rem;
+    .itemContent {
+      margin: 0 auto !important;
+      border: 0;
+      padding: 0;
+      .content {
+        margin-bottom: 0 !important;
+      }
+    }
+  }
+
+  .top {
+    line-height: 30px;
+    width: 70%;
+    background-color: #ccc;
+    padding-left: 30px;
+  }
+  .shopName {
+    width: 100%;
+  }
+  .block2 {
+    padding: 0 0.3rem;
+    width: 90%;
+    margin: 0 auto;
+    box-sizing: border-box;
+    .totalItems {
+      display: block;
+      height: 0.3rem;
+      color: #666;
+      text-align: right;
+      margin-top: 0.3rem;
+    }
+  }
+  .dialog-footer {
+    text-align: center;
+
+    .noteTips {
+      margin-bottom: 0.3rem;
+      text-align: center;
+    }
+  }
+  .ruleImg {
+    width: 90% !important ;
+    margin: auto;
+    display: block;
+  }
+}
 </style>

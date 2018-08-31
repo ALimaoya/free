@@ -40,6 +40,15 @@
         <el-form-item   labelWidth="160px"  label="店铺详情：" prop="describes">
           <el-input class="inputInfo" type="textarea" :rows="4" size="small" :maxlength="200" v-model.trim="form.describes" placeholder=""></el-input>
         </el-form-item>
+        <el-form-item labelWidth="160px" label="app店铺首页背景图：" prop="backGroundUrl">
+              <el-upload  class="upload" :auto-upload="autoUpload"  :action="appImgUrl" :multiple="false" v-model.trim="form.backGroundUrl"
+                          :headers="{'yb-tryout-merchant-token':token}"          :show-file-list="false"  :before-upload="appbeforeImgUpload">
+                <img v-if="form.backGroundUrl" :src="imageDomain + form.backGroundUrl" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+          <p class="require">请上传尺寸为750px×580px，500k以内的图片</p>   
+          <!-- <span class="imgWarn tips_warn" v-if="appImgWarn">请上传app店铺首页背景图</span> -->
+        </el-form-item>
         <el-form-item   labelWidth="160px"  label="入驻人邮箱：" prop="email">
           <el-input class="inputInfo telInput"  size="small" v-model.trim="form.email" placeholder="请输入入驻人邮箱"></el-input>
         </el-form-item>
@@ -116,6 +125,7 @@
                   }
                 ],
                 logoImage : '',
+                backGroundUrl:'',
                 describes: '',
                 email: '',
                 mobile:'' ,
@@ -140,9 +150,11 @@
               },
               autoUpload : true ,
               imgUrl : process.env.BASE_API+'/file/upload',
+              appImgUrl : process.env.BASE_API+'/file/upload',
               imageDomain : process.env.IMAGE_DOMAIN ,
               token : getToken() ,
               goodsImgWarn: false,
+              // appImgWarn: false,
               dialogVisible: false ,
               platformType: '',
               platformTypeName:'',
@@ -256,7 +268,7 @@
 
           },
 
-          // 上传图片
+          // 上传店铺logo图片
           beforeImgUpload(file) {
             let reader = new FileReader();
             let ret = [];
@@ -295,6 +307,45 @@
             };
             reader.readAsDataURL(file);
           },
+          // 上传app店铺背景图图片
+          appbeforeImgUpload(file) {
+            let reader = new FileReader();
+            let ret = [];
+            let _this = this;
+            reader.onload = (e) => {
+              let image = new Image();
+              image.onload = function () {
+                const isHeight = this.height;
+                const isWidth = this.width;
+                if (isWidth > 300 || isHeight > 300) {
+                  _this.$message.error('图片尺寸过大，请重新选择后上传');
+                  return false;
+
+                } else {
+                  let formData = new FormData();
+                  formData.append('image', file);
+                  uploadImage(formData).then(res => {
+                    if (res.data.status === '000000000') {
+
+                        _this.form.backGroundUrl = res.data.data.fileName;
+                        // console.log(_this.form.imgList)
+
+                    } else {
+                      // _this.appImgWarn = true;
+
+                    }
+                  }).catch(err => {
+                    // console.log(err) ;
+                    // _this.appImgWarn = true;
+
+                  })
+                }
+              };
+
+              image.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+          },
           //提交表单
           submitForm(formName){
             if(this.form.logoImage === ''){
@@ -303,6 +354,12 @@
               this.goodsImgWarn = false ;
 
             }
+            // if(this.form.backGroundUrl === ''){
+            //   this.appImgWarn = true ;
+            // }else{
+            //   this.appImgWarn = false ;
+
+            // }
             this.$refs[formName].validate((valid) => {
 
               if(valid&&!this.goodsImgWarn&&this.agree){

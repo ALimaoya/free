@@ -1,7 +1,7 @@
 <template>
     <div class="success">
       <div class="s_icon"><span><i></i></span></div>
-      <h1>恭喜您，已经成功报名<span v-if="type==='1'">0.9秒杀</span><span v-else="type==='2'">分享购</span>频道活动</h1>
+      <h1>恭喜您，已经成功报名<span v-if="type==='1'">0.9秒杀</span><span v-else-if="type==='2'">分享购</span><span v-else-if="type==='3'">品牌推荐</span>频道活动</h1>
       <p>请等待审核，审核结果可在报名记录中进行查看</p>
       <p>活动时间： {{time}}</p>
       <div class="btn_wrap">
@@ -33,6 +33,10 @@
                 this.time = this.$store.state.signUp.secondKill.startDate  + ' 00:00:00'+ ' —— '+
 
                   this.$store.state.signUp.secondKill.endDate + ' 23:59:59'
+              }else if(this.type === '3'){
+                this.time = this.$store.state.signUp.secondKill.startSevenDay  + ' 00:00:00'+ ' —— '+
+
+                  this.$store.state.signUp.secondKill.endSevenDay + ' 23:59:59'
               }
             },
           close(){

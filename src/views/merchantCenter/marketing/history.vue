@@ -24,14 +24,14 @@
         <el-table  :data="tableData"  border fit >
           <el-table-column prop="id" label="商品ID" width="75"></el-table-column>
           <el-table-column prop="productName" label="商品名称" ></el-table-column>
-          <el-table-column label="商品白底图" >
+          <el-table-column label="商品白底图" v-if="type !== '3'">
             <template slot-scope="scope">
               <img v-if="scope.row.image !== ''&&scope.row.image !== null" :src=" imageDomain + scope.row.image " alt="" @click="showImg(scope.row.image)"  :onerror="errorImg" />
               <img :src="failImg" v-else />
             </template>
           </el-table-column>
           <el-table-column prop="sourcePrice" label="原价（元）" ></el-table-column>
-          <el-table-column prop="price" label="活动价（元）" ></el-table-column>
+          <el-table-column v-if="type !=='3'" prop="price" label="活动价（元）" ></el-table-column>
           <el-table-column prop="totalStock" label="线上库存" ></el-table-column>
           <el-table-column label="审核状态">
             <template slot-scope="scope" v-if="scope.row.status !== undefined">
@@ -43,7 +43,10 @@
               <span v-if="type==='1'">
                 {{ scope.row.startDate + ' '+ scope.row.startTime}}
               </span>
-              <span v-else="type === '2'">
+              <span v-else-if="type === '2'">
+                {{ scope.row.startTime}}
+              </span>
+              <span v-if="type === '3'">
                 {{ scope.row.startTime}}
               </span>
             </template>
@@ -75,7 +78,7 @@
         <div class="box_content">
           <p class="time">活动时间：
             <span v-if="type ==='1'">{{ activityInfo.startDate + ' ' + activityInfo.startTime }} 场</span>
-            <span v-else="type === '2'">{{ activityInfo.startTime + '  ——  ' + activityInfo.endTime}}</span>
+            <span v-else-if="type === '2' || type === '3'">{{ activityInfo.startTime + '  ——  ' + activityInfo.endTime}}</span>
           </p>
           <div class="goods_wrap">
             <div class="goods">
@@ -85,21 +88,30 @@
               </dd>
                 <dt><span>{{ activityInfo.productName}}</span><span>商品编号：{{ activityInfo.productCode}}</span><span>￥{{ activityInfo.sourcePrice}}</span></dt></dl>
             </div>
-            <div class="goods">
+            <div class="goods" v-if="type !== '3'">
               <p class="title">白底图</p>
               <img  class="mainImg" v-if="activityInfo.image !== ''&& activityInfo.image!== null" :src="imageDomain + activityInfo.image" alt="" @click="showImg(activityInfo.image)" :onerror="errorImg">
               <img :src="failImg" v-else >
             </div>
+            <div class="goods" v-else-if="type === '3'">
+              <p class="title">商品视频</p>
+              <video class="mainVideo" v-if="activityInfo.videoInfoMap !== '' && activityInfo.videoId !== ''" :src="activityInfo.videoInfoMap.playUrl" :onerror="errorImg" controls></video>
+              <img :src="failImg" v-else />
+            </div>
           </div>
-          <div class="goodsInfo">
+          <div class="goodsInfo" v-if="type !== '3'">
             <div>
-              <span v-if="type==='1'">活动秒杀价格：</span><span v-else="type==='2'">分享购价格：</span><span>￥{{ activityInfo.price}}</span>
+              <span v-if="type==='1'">活动秒杀价格：</span><span v-else-if="type==='2'">分享购价格：</span><span>￥{{ activityInfo.price}}</span>
             </div>
             <div>
               <span>报名活动库存数量：<span v-if="type=== '1'">{{ activityInfo.eachStock }}</span>
-                <span v-else="type=== '2'">{{ activityInfo.stock }}</span>
+                <span v-else-if="type=== '2'">{{ activityInfo.stock }}</span>
                 件</span>
             </div>
+          </div>
+          <div class="goodsInfo" v-else-if="type === '3'">
+            <div><span>商品介绍:</span></div>
+            <div>{{activityInfo.videoDescribe}}</div>
           </div>
           <div v-if="isCancel" class="btn_wrap">
             <el-button type="primary" size="small"  @click="handleCancel">取消活动</el-button>
@@ -114,7 +126,7 @@
 
 <script>
   import userPhoto from '@/assets/404_images/fail.png'
-  import { getShopStatus,getActivityGoods,getShareDetail,getActivityHistory,getShareHistory,editSecStatus, editShareStatus } from "@/api/enter"
+  import { getShopStatus,getActivityGoods,getShareDetail,getBrandRecommend,getActivityHistory,getShareHistory,getBrandHistory,editSecStatus, editShareStatus, editBrandRecommend} from "@/api/enter"
   import { parseTime } from "@/utils"
 
   export default {
@@ -153,7 +165,7 @@
               refuseVisible: false,
               detailVisible: false,
               reason: '',
-              activityInfo: {},
+              activityInfo: {videoInfoMap:{}},
               isCancel: false,
               bigImg: '',
               imageDomain: process.env.IMAGE_DOMAIN,
@@ -178,6 +190,11 @@
             this.history = this.$store.state.searchBar.shareList.history ;
             this.currentPage = this.$store.state.searchBar.shareList.currentPage ;
             this.pageSize = this.$store.state.searchBar.shareList.pageSize ;
+          }else if(this.type === '3'){
+            this.typeLabel = '品牌推荐';
+            this.history = this.$store.state.searchBar.brandRecommendList.history ;
+            this.currentPage = this.$store.state.searchBar.brandRecommendList.currentPage ;
+            this.pageSize = this.$store.state.searchBar.brandRecommendList.pageSize ;
           }
           this.getList();
 
@@ -233,6 +250,20 @@
 
                 }
               })
+            }else if(this.type === '3'){
+              this.$store.commit('savebrandRecommend',data);
+              formData.append('GTE_startTime',this.history.GTE_startDate);
+              formData.append('LTE_endTime',this.history.LTE_endDate);
+              getBrandHistory(formData).then( res => {
+                console.log('获得列表',res)
+                this.loading = false ;
+                if( res.data.status === "000000000"){
+                  this.tableData = res.data.data ;
+                  this.totalPages = res.data.totalPages;
+                  this.totalElements = res.data.totalElements;
+
+                }    
+              })
             }
 
           },
@@ -276,6 +307,15 @@
 
                 }
               })
+            }else if(this.type === '3'){
+              getBrandRecommend(id).then( res => {
+                if (res.data.status === '000000000') {
+                  console.log('获得详情',res)
+                  this.activityInfo = res.data.data ;
+                  this.reason = res.data.data.reason ;
+
+                }
+              })
             }
 
           },
@@ -310,8 +350,21 @@
 
                 }
               })
+            }else if(this.type === '3'){
+              editBrandRecommend(this.cancelId).then( res =>{
+                if( res.data.status === '000000000'){
+                  this.$message({
+                    message : '该活动已成功取消，请稍后查看~',
+                    center : true ,
+                    type : 'success'
+                  });
+                  this.detailVisible = false;
+                  this.getList();
+
+                }
+              })
             }
-            //获取当前活动状态
+            
 
           },
           showImg(src) {
@@ -415,12 +468,13 @@
 
           }
         }
-        .mainImg{
-          width : 1rem ;
-          height : 1rem ;
+        .mainImg , .mainVideo{
+          width : 2rem ;
+          height : 2rem ;
           margin: 0.25rem auto ;
           display: block;
         }
+        
       }
       .goods:nth-child(1){
         flex : 1 ;

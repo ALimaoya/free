@@ -198,6 +198,19 @@ export function uploadImage(file){
   })
 }
 
+//上传视频
+export function uploadVideo(file){
+  return request({
+    url : "/file/video/upload" ,
+    method : 'post' ,
+    data : file ,
+    needFailResponse:true,
+    // headers : {
+    //   // 'Content-Type' : 'form-data'
+    // }
+  })
+}
+
 //获取京东平台下的商品详情
 export function getJDetail(url){
   return request({

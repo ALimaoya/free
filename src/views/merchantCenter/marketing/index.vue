@@ -21,6 +21,15 @@
 
           </div>
         </li>
+        <li>
+          <dl><dd><svg-icon icon-class="generalize"></svg-icon></dd><dt>品牌推荐</dt></dl>
+          <div class="activityType"><p>首页—品牌推荐视频专区资源位活动报名<span>{{ progress[0]}}</span></p><p>活动时间：长期招商</p></div>
+          <div class="btn_wrap">
+            <el-button class="sign_btn" type="danger" size="small"  @click="goSign('3')">立即报名</el-button>
+            <el-button  type="text" @click="goList('3')">报名记录</el-button>
+
+          </div>
+        </li>
       </ul>
     </div>
 </template>

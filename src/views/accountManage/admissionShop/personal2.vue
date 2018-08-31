@@ -32,6 +32,16 @@
           </span>
 
         </el-form-item>
+        <el-form-item labelWidth="160px" label="app店铺首页背景图：" prop="backGroundUrl">
+              <el-upload  class="upload" :auto-upload="autoUpload"  :action="appImgUrl" :multiple="false" v-model.trim="form.backGroundUrl"
+                          :headers="{'yb-tryout-merchant-token':token}"          :show-file-list="false"  :before-upload="appbeforeImgUpload">
+                <img v-if="form.backGroundUrl" :src="imageDomain + form.backGroundUrl" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+          <p class="require">请上传尺寸为750px×580px，500k以内的图片</p>   
+          <span class="imgWarn tips_warn" v-if="appImgWarn">请上传app店铺首页背景图</span>
+        </el-form-item>
+        
         <p class="h_title otherInfo">其他信息</p>
         <el-form-item style="width: 95%;margin-top:0.5rem;" v-if="form.thirdShopUrl !== undefined && form.thirdShopUrl[0] !== undefined "  :labelWidth="labelWidth" label="第三方店铺链接：" prop="thirdShopUrl">
           <el-select class="search" clearable v-model="form.thirdShopUrl[0].platformName" placeholder="请选择第三方平台" size="small" >
@@ -95,8 +105,9 @@
 </template>
 
 <script>
+  import { uploadImage  } from "@/api/activity"
   import { validateURL , validShopName} from '@/utils/validate'
-  import { getMobile } from '@/utils/auth'
+  import { getMobile, getToken } from '@/utils/auth'
   import { enterApply , haveShopName } from "@/api/enter"
   import { firstList } from "@/api/merchant"
 
@@ -146,8 +157,13 @@
 
           };
           return {
+            imageDomain : process.env.IMAGE_DOMAIN ,
+            appImgUrl : process.env.BASE_API+'/file/upload',
+            autoUpload : true ,
+            appImgWarn: false,
             labelWidth: '160px',
             mobile:getMobile(),
+            token : getToken() ,
             form: {},
             shopTypeList: [],
             formRule:{
@@ -273,7 +289,46 @@
             }
 
           },
+          // 上传app店铺背景图图片
+          appbeforeImgUpload(file) {
+            let reader = new FileReader();
+            let ret = [];
+            let _this = this;
+            reader.onload = (e) => {
+              let image = new Image();
+              image.onload = function () {
+                const isHeight = this.height;
+                const isWidth = this.width;
+                if (isWidth > 300 || isHeight > 300) {
+                  _this.$message.error('图片尺寸过大，请重新选择后上传');
+                  return false;
 
+                } else {
+                  let formData = new FormData();
+                  formData.append('image', file);
+                  uploadImage(formData).then(res => {
+                    if (res.data.status === '000000000') {
+
+                        // _this.form.backGroundUrl = res.data.data.fileName;
+                        _this.$set(_this.form,'backGroundUrl',res.data.data.fileName)
+                        // console.log(_this.form.imgList)
+
+                    } else {
+                      _this.appImgWarn = true;
+
+                    }
+                  }).catch(err => {
+                    // console.log(err) ;
+                    _this.appImgWarn = true;
+
+                  })
+                }
+              };
+
+              image.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+          },
 
           //返回上一步
           goBack(){
@@ -333,6 +388,7 @@
             let data = {
               merchantShopReqDto: {
                 shopName : this.form.shopName ,
+                backGroundUrl : this.form.backGroundUrl,
                 mainBusiness: this.form.mainBusiness ,
                 shopType: '3',
                 thirdShopUrl: thirdShopUrl,

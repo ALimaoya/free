@@ -5,8 +5,8 @@
       <Calendar v-on:choseDay="clickDay" :markDate='dayMark' :agoDayHide='limitStart' :futureDayHide="limitEnd"
                 :sundayStart="true"></Calendar>
     </div>
-    <div class="right" v-if="activity.date === ''">
-      <img src="../../../assets/imgs/u189.jpg" alt=""/>
+    <div class="right" v-if=" activity.date === '' && activity.sevenDay.start === ''">
+      <img  src="../../../assets/imgs/u189.jpg" alt=""/>
     </div>
     <div class="right" v-else="activity.date !== ''">
       <div v-if="type ==='1'">
@@ -15,10 +15,15 @@
           <el-radio :label="item.id" v-for="(item,index) in timeList" :key="index">{{ item.name }}</el-radio>
         </el-radio-group>
       </div>
-      <div v-else="type==='2'">
+      <div v-else-if="type==='2'">
         <h1>选择活动时间</h1>
         <p class="dateInfo">活动时间：{{ activity.date }} 00:00:00 —— {{ activity.date }} 23:59:59 </p>
         <p class="dateInfo">备注：分享购活动时间每次活动周期为一天</p>
+      </div>
+      <div v-else="type==='3'">
+        <h1>选择活动时间</h1>
+        <p class="dateInfo">活动时间：{{ activity.sevenDay.start }} 00:00:00 —— {{ activity.sevenDay.end }} 23:59:59 </p>
+        <p class="dateInfo">备注：分享购活动时间每次活动周期为期一周</p>
       </div>
 
       <div class="condition">
@@ -46,6 +51,10 @@
         activity: {
           date: '',
           time: '',
+          sevenDay:
+            {start : '',
+            end:''}
+          
         },
         timeList: [],
         // statusList: [
@@ -91,12 +100,21 @@
       getTime(){
         getTimeList().then(res => {
           if(res.data.status === '000000000'){
+            console.log('res',res)
             this.timeList = res.data.data ;
           }
         })
       },
       goShop() {
-        if(this.activity.date === ''){
+        if(this.type === '2' && this.activity.date === ''){
+          this.$message({
+            message : '请选择活动日期',
+            type: 'error',
+            center : true
+          });
+          return false ;
+        }
+        if(this.type === '3' && this.activity.sevenDay.start === ''){
           this.$message({
             message : '请选择活动日期',
             type: 'error',
@@ -113,13 +131,33 @@
           return false ;
 
         }
-
         if(this.activity.date !== ''&& (this.activity.time !== ''&&this.type === '1')|| this.type === '2'){
           let data = {
             startDate : this.activity.date ,
             endDate : this.activity.date ,
             startTime: '',
-            endTime: ''
+            endTime: '',
+            startSevenDay:'',
+            endSevenDay:''
+          };
+          this.timeList.map( i => {
+          console.log('i',i)
+            if(i.id === this.activity.time){
+              data.startTime = i.startTime ;
+              data.endTime = i.endTime ;
+            }
+          });
+          this.$store.commit('addSecondKill',data);
+          this.$emit('getContent', 'signContent')
+        }
+        if(this.type === '3' && this.activity.sevenDay.start !== ''){
+          let data  = {
+            startDate:'',
+            endDate:'',
+            startTime:'',
+            endTime:'',
+            startSevenDay:this.activity.sevenDay.start,
+            endSevenDay:this.activity.sevenDay.end
           };
           this.timeList.map( i => {
             if(i.id === this.activity.time){
@@ -129,13 +167,25 @@
           });
           this.$store.commit('addSecondKill',data);
           this.$emit('getContent', 'signContent')
-
         }
+        
       },
       clickDay(date){
+        let timedata = date;
         this.dayMark = [];
         this.dayMark.push(date);
-        this.activity.date = date.replace(/\/+/g,'-') ;
+        if(this.type !== '3'){
+          this.activity.date = timedata.replace(/\/+/g,'-') ;
+        }else{
+          this.activity.sevenDay.start = timedata.replace(/\/+/g,'-') ;
+          let str  = new Date(timedata);
+          str = str.getTime();
+          let end = new Date(str+6*1000*60*60*24);
+          let year = end.getFullYear();
+          let Month =end.getMonth()+1 < 10 ? '0'+(end.getMonth()+1) : end.getMonth()+1;
+          let date =end.getDate() ;
+          this.activity.sevenDay.end = year+'-'+Month+'-'+date;
+        }
 
       },
 
