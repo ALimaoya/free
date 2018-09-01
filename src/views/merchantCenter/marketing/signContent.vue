@@ -19,18 +19,29 @@
         <div class="addGoods" @click="dialogVisible = true;"><svg-icon icon-class="u212"></svg-icon></div>
       </div>
       <el-form :model="form" ref="form" :rules="formRule">
-        <el-form-item v-if="type !== '3'" label="商品白底图：" :labelWidth="labelWidth" prop="image">
+        <el-form-item v-if="type === '1'" label="商品白底图：" :labelWidth="labelWidth" prop="image">
           <el-upload class="upload" :auto-upload="autoUpload" :action="imgUrl" :multiple="false"
                      v-model.trim="form.image"
                      :headers="{'yb-tryout-merchant-token':token}" :show-file-list="false"
-                     :before-upload="beforeImgUpload">
+                     :before-upload="seckillBeforeImgUpload">
+            <img v-if="form.image" :src="imageDomain + form.image" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <span class="imgWarn tips_warn" v-if="goodsImgWarn">请上传商品白底图</span>
+          </el-upload>
+          <p class="require tips_warn">必须为白底图，800*800像素，JPG、JPEG格式，大小不超过1M，图片不能有文字，在{{ typeLabel }}频道展示</p>
+        </el-form-item>
+        <el-form-item v-else-if="type === '2'" label="商品白底图：" :labelWidth="labelWidth" prop="image">
+          <el-upload class="upload" :auto-upload="autoUpload" :action="imgUrl" :multiple="false"
+                     v-model.trim="form.image"
+                     :headers="{'yb-tryout-merchant-token':token}" :show-file-list="false"
+                     :before-upload="shareBeforeImgUpload">
             <img v-if="form.image" :src="imageDomain + form.image" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             <span class="imgWarn tips_warn" v-if="goodsImgWarn">请上传商品白底图</span>
           </el-upload>
           <p class="require tips_warn">必须为白底图，750*285像素，JPG、JPEG格式，大小不超过1M，图片不能有文字，在{{ typeLabel }}频道展示</p>
         </el-form-item>
-          <el-form-item v-else label="商品视频" :labelWidth="labelWidth" prop="video">
+        <el-form-item v-else label="商品视频" :labelWidth="labelWidth" prop="video">
           <!-- <el-upload class="upload" :auto-upload="autoUpload" :action="videoUrl" :multiple="false"
                      v-model.trim="form.video"
                      :headers="{'yb-tryout-merchant-token':token}" :show-file-list="false"
@@ -453,7 +464,51 @@ export default {
     },
 
     // 上传图片
-    beforeImgUpload(file) {
+    seckillBeforeImgUpload(file) {
+      let reader = new FileReader();
+      let ret = [];
+      let _this = this;
+      const isImg = file.type === "image/jpeg" || file.type === "image/png";
+      const isLt1M = file.size / 1024 / 1024 < 1;
+
+      reader.onload = e => {
+        let image = new Image();
+        image.onload = function() {
+          const isHeight = this.height;
+          const isWidth = this.width;
+          if (isWidth > 800 || isHeight > 800) {
+            _this.$message.error("图片尺寸过大，请重新选择后上传");
+            return false;
+          } else if (!isImg) {
+            _this.$message.error("图片必须为jpg或者png格式，请重新选择后上传");
+            return false;
+          } else if (!isLt1M) {
+            _this.$message.error("图片大小不能超过1MB，请重新选择后上传");
+            return false;
+          } else {
+            let formData = new FormData();
+            formData.append("image", file);
+            uploadImage(formData)
+              .then(res => {
+                if (res.data.status === "000000000") {
+                  _this.form.image = res.data.data.fileName;
+                  _this.goodsImgWarn = false;
+                } else {
+                  _this.goodsImgWarn = true;
+                }
+              })
+              .catch(err => {
+                // console.log(err) ;
+                _this.goodsImgWarn = true;
+              });
+          }
+        };
+
+        image.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    },
+    shareBeforeImgUpload(file) {
       let reader = new FileReader();
       let ret = [];
       let _this = this;

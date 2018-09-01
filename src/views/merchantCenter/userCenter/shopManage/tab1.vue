@@ -317,7 +317,7 @@
               image.onload = function () {
                 const isHeight = this.height;
                 const isWidth = this.width;
-                if (isWidth > 300 || isHeight > 300) {
+                if (isWidth > 750 || isHeight > 580) {
                   _this.$message.error('图片尺寸过大，请重新选择后上传');
                   return false;
 
