@@ -95,7 +95,8 @@
             </div>
             <div class="goods" v-else-if="type === '3'">
               <p class="title">商品视频</p>
-              <video class="mainVideo" v-if="activityInfo.videoInfoMap !== '' && activityInfo.videoId !== ''" :src="activityInfo.videoInfoMap.playUrl" :onerror="errorImg" controls></video>
+              <img  class="mainImg" v-if="activityInfo.videoInfoMap !== ''&& activityInfo.videoId!== null" :src="activityInfo.videoInfoMap.coverUrl" alt="" @click="showImg(activityInfo.videoInfoMap.playUrl)" :onerror="errorImg">
+              <!-- <video class="mainVideo" v-if="activityInfo.videoInfoMap !== '' && activityInfo.videoId !== ''" :src="activityInfo.videoInfoMap.coverUrl" :onerror="errorImg" controls></video> -->
               <img :src="failImg" v-else />
             </div>
           </div>
@@ -119,7 +120,8 @@
         </div>
       </el-dialog>
       <div class="mask" v-if="bigImg !== ''" @click="bigImg = '' ">
-        <img :src="imageDomain+ bigImg" alt="" />
+        <img v-if="type !== '3'" :src="imageDomain+ bigImg" alt="" />
+        <video v-else-if="type === '3'" :src="bigImg"  controls></video>
       </div>
     </div>
 </template>
@@ -165,7 +167,11 @@
               refuseVisible: false,
               detailVisible: false,
               reason: '',
-              activityInfo: {videoInfoMap:{}},
+              activityInfo: {
+                videoInfoMap:{
+                  coverUrl:'',
+                  playUrl:''
+              }},
               isCancel: false,
               bigImg: '',
               imageDomain: process.env.IMAGE_DOMAIN,
@@ -255,7 +261,7 @@
               formData.append('GTE_startTime',this.history.GTE_startDate);
               formData.append('LTE_endTime',this.history.LTE_endDate);
               getBrandHistory(formData).then( res => {
-                console.log('获得列表',res)
+                // console.log('获得列表',res)
                 this.loading = false ;
                 if( res.data.status === "000000000"){
                   this.tableData = res.data.data ;
@@ -310,7 +316,7 @@
             }else if(this.type === '3'){
               getBrandRecommend(id).then( res => {
                 if (res.data.status === '000000000') {
-                  console.log('获得详情',res)
+                  // console.log('获得详情',res)
                   this.activityInfo = res.data.data ;
                   this.reason = res.data.data.reason ;
 

@@ -40,7 +40,7 @@
         <el-form-item   labelWidth="160px"  label="店铺详情：" prop="describes">
           <el-input class="inputInfo" type="textarea" :rows="4" size="small" :maxlength="200" v-model.trim="form.describes" placeholder=""></el-input>
         </el-form-item>
-        <el-form-item labelWidth="160px" label="app店铺首页背景图：" prop="backGroundUrl">
+        <el-form-item labelWidth="165px" label="app店铺首页背景图：" prop="backGroundUrl">
               <el-upload  class="upload" :auto-upload="autoUpload"  :action="appImgUrl" :multiple="false" v-model.trim="form.backGroundUrl"
                           :headers="{'yb-tryout-merchant-token':token}"          :show-file-list="false"  :before-upload="appbeforeImgUpload">
                 <img v-if="form.backGroundUrl" :src="imageDomain + form.backGroundUrl" class="avatar">

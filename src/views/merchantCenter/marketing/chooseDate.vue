@@ -100,7 +100,7 @@
       getTime(){
         getTimeList().then(res => {
           if(res.data.status === '000000000'){
-            console.log('res',res)
+            // console.log('res',res)
             this.timeList = res.data.data ;
           }
         })
@@ -141,7 +141,7 @@
             endSevenDay:''
           };
           this.timeList.map( i => {
-          console.log('i',i)
+          // console.log('i',i)
             if(i.id === this.activity.time){
               data.startTime = i.startTime ;
               data.endTime = i.endTime ;

@@ -36,7 +36,7 @@
                      :headers="{'yb-tryout-merchant-token':token}" :show-file-list="false"
                      :before-upload="beforeVideoUpload"
                       > -->
-          <el-upload class="avatar-uploader uploadimg" v-model.trim="form.vodeo" action="videoUrl" :show-file-list="false"  :before-upload="beforeVideoUpload" :on-change="successUpload">
+          <el-upload class="avatar-uploader uploadimg" v-model.trim="form.vodeo" :action="videoUrl" :show-file-list="false"  :before-upload="beforeVideoUpload" :on-change="successUpload">
             <video class="mainVideo avatar" v-if="form.video" :src="VideoSrc"  controls></video>
             <!-- <img v-if="form.video" :src="imageDomain + videoImg" class="avatar"> -->
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -499,9 +499,9 @@ export default {
     },
     //上传视频
     beforeVideoUpload(file) {
-      console.log("file", file);
+      // console.log("file", file);
       let _this = this;
-      const isLt10M = file.size / 1024 / 1024 < 10;
+      const isLt10M = file.size / 1024 / 1024 < 5;
       if (
         [
           "video/mp4",
@@ -523,7 +523,7 @@ export default {
         formData.append("video", file);
         uploadVideo(formData)
           .then(res => {
-            console.log("视频id", res);
+            // console.log("视频id", res);
             if (res.status === 200) {
               _this.form.video = res.data.data.videoId;
               _this.goodsvideoideoWarn = false;
@@ -539,7 +539,7 @@ export default {
       // this.videoUrl = file.url;
     },
     successUpload(file, fileList) {
-      console.log('successUpload',file)
+      // console.log('successUpload',file)
       this.VideoSrc = file.url;
     },
     handleSubSizeChange(val) {
@@ -573,7 +573,7 @@ export default {
     .el-form {
       .el-form-item {
         width: 90%;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.3rem;
         .el-upload {
           width: 50%;
           display: inline-block;
@@ -586,7 +586,7 @@ export default {
           }
           .imgWarn {
             position: absolute;
-            top: 100%;
+            top: 80%;
             left: 0;
             display: inline;
             font-size: 0.12rem;
