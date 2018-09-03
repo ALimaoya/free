@@ -47,7 +47,8 @@
                      :headers="{'yb-tryout-merchant-token':token}" :show-file-list="false"
                      :before-upload="beforeVideoUpload"
                       > -->
-          <el-upload class="avatar-uploader uploadimg" v-model.trim="form.video" :action="videoUrl" :http-request="beforeVideoUpload"
+
+          <el-upload class="avatar-uploader uploadimg" v-model.trim="form.video" :action="videoUrl" :http-request="uploadSectionFile"
                      :headers="{'yb-tryout-merchant-token':token}" :on-change="successUpload"
                      :show-file-list="false"  >
             <video class="mainVideo avatar" v-if="form.video" :src="VideoSrc"  controls></video>
@@ -556,7 +557,7 @@ export default {
       reader.readAsDataURL(file.file);
     },
     //上传视频
-    beforeVideoUpload(file) {
+    uploadSectionFile(file) {
       // console.log("file", file);
       let _this = this;
       const isLt20M = file.file.size / 1024 / 1024 < 20;
