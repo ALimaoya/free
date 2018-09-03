@@ -3,7 +3,7 @@
     <div class="taskInfo">
       <div class="taskImg">
         <el-upload  class="upload"  :action="imgUrl" :multiple="false" v-model.trim="activity.showImageUrl"
-                    :on-success="handleGoodsSuccess"   :show-file-list="false"  :before-upload="beforeShowUpload"
+                    :on-success="handleGoodsSuccess"   :show-file-list="false"  :http-request="beforeShowUpload"
                     :headers="{ 'Content-Type': 'multipart/form-data','yb-tryout-merchant-token':token}">
           <img v-if="showImg"  :src="showImg" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -233,7 +233,7 @@
                 return false;
               }else{
                 let formData = new FormData();
-                formData.append('image',file);
+                formData.append('image',file.file);
                 uploadImage(formData).then( res => {
                   _this.showImg = res.data.data.filePath ;
                     _this.activity.showImageUrl = res.data.data.fileName ;
@@ -242,7 +242,7 @@
             };
             image.src = e.target.result ;
           };
-          reader.readAsDataURL(file);
+          reader.readAsDataURL(file.file);
 
 
 

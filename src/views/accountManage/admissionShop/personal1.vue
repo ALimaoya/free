@@ -27,7 +27,7 @@
         </el-form-item>
         <el-form-item class="uploadImg" :labelWidth="labelWidth" label="身份证件正面：" prop="cardFaceImage">
           <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.cardFaceImage"
-                      :headers="{'yb-tryout-merchant-token':token}"          :show-file-list="false"  :before-upload="beforeFront">
+                      :headers="{'yb-tryout-merchant-token':token}"          :show-file-list="false"  :http-request="beforeFront">
             <img v-if="form.cardFaceImage" :src="imageDomain + form.cardFaceImage" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             <span class="imgWarn tips_warn" v-if="frontImgWarn">请上传身份证正面照片</span>
@@ -36,7 +36,7 @@
         </el-form-item>
         <el-form-item class="uploadImg" :labelWidth="labelWidth" label="身份证件反面：" prop="cardBackImage">
           <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.cardBackImage"
-                      :headers="{'yb-tryout-merchant-token':token}"           :show-file-list="false"  :before-upload="beforeBack">
+                      :headers="{'yb-tryout-merchant-token':token}"           :show-file-list="false"  :http-request="beforeBack">
             <img v-if="form.cardBackImage" :src="imageDomain + form.cardBackImage" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             <span class="imgWarn tips_warn" v-if="backImgWarn">请上传身份证反面照片</span>
@@ -45,7 +45,7 @@
         </el-form-item>
         <el-form-item class="uploadImg" :labelWidth="labelWidth" label="手持身份证半身照：" prop="cardSelfImage">
           <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.cardSelfImage"
-                      :headers="{'yb-tryout-merchant-token':token}"        :show-file-list="false"  :before-upload="beforeHalfBody">
+                      :headers="{'yb-tryout-merchant-token':token}"        :show-file-list="false"  :http-request="beforeHalfBody">
             <img v-if="form.cardSelfImage" :src="imageDomain + form.cardSelfImage" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             <span class="imgWarn tips_warn" v-if="halfBodyImgWarn">请上传手持身份证半身照照片</span>
@@ -216,7 +216,7 @@
           limitImage(file,type){
             let reader = new FileReader();
             let _this = this;
-            const isImg = file.type === 'image/jpeg'|| file.type === 'image/png';
+            const isImg = file.file.type === 'image/jpeg'|| file.file.type === 'image/png';
             reader.onload = (e) => {
               let image = new Image();
               image.onload = function () {
@@ -235,7 +235,7 @@
 
                 }else{
                   let formData = new FormData();
-                  formData.append('image', file);
+                  formData.append('image', file.file);
 
                   uploadImage(formData).then(res => {
                     if (res.data.status === '000000000') {
@@ -274,7 +274,7 @@
               image.src = e.target.result;
 
             };
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(file.file);
             // console.log(this.limitImg,5)
 
 

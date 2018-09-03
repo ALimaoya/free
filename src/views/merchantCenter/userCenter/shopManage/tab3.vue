@@ -32,7 +32,7 @@
       </el-form-item>
       <el-form-item labelWidth="180px" label="店铺LOGO：" prop="logoImage">
         <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logoImage"
-                    :headers="{'yb-tryout-merchant-token':token}"      :show-file-list="false"  :before-upload="beforeImgUpload">
+                    :headers="{'yb-tryout-merchant-token':token}"      :show-file-list="false"  :http-request="beforeImgUpload">
           <img v-if="form.logoImage" :src="imageDomain + form.logoImage" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
@@ -44,7 +44,7 @@
       </el-form-item>
       <el-form-item labelWidth="180px" label="app店铺首页背景图：" prop="backGroundUrl">
         <el-upload  class="upload" :auto-upload="autoUpload"  :action="appimgUrl" :multiple="false" v-model.trim="form.backGroundUrl"
-                    :headers="{'yb-tryout-merchant-token':token}"      :show-file-list="false"  :before-upload="appbeforeImgUpload">
+                    :headers="{'yb-tryout-merchant-token':token}"      :show-file-list="false"  :http-request="appbeforeImgUpload">
           <img v-if="form.backGroundUrl" :src="imageDomain + form.backGroundUrl" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
@@ -330,7 +330,7 @@
 
             } else {
               let formData = new FormData();
-              formData.append('image', file);
+              formData.append('image', file.file);
               uploadImage(formData).then(res => {
                 if (res.data.status === '000000000') {
 
@@ -351,7 +351,7 @@
 
           image.src = e.target.result;
         };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(file.file);
       },
         // 上传app背景图图片
       appbeforeImgUpload(file) {
@@ -369,7 +369,7 @@
 
             } else {
               let formData = new FormData();
-              formData.append('image', file);
+              formData.append('image', file.file);
               uploadImage(formData).then(res => {
                 if (res.data.status === '000000000') {
 
@@ -390,7 +390,7 @@
 
           image.src = e.target.result;
         };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(file.file);
       },
       //提交表单
       submitForm(formName){

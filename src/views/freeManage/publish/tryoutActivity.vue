@@ -45,7 +45,7 @@
       </el-form-item>
       <el-form-item label="试用品展示图：" :labelWidth="labelWidth" prop="showImageUrl">
         <el-upload class="upload"  :auto-upload="autoUpload" :action="imgUrl" :show-file-list="false" v-model.trim="form.showImageUrl"
-          :on-success="handleShowSuccess" :before-upload="beforeShowUpload"
+          :on-success="handleShowSuccess" :http-request="beforeShowUpload"
           :headers="{ 'yb-tryout-merchant-token':token}">
           <!--:auto-upload="false" :http-request="beforeShowUpload"-->
 
@@ -74,7 +74,7 @@
       </el-form-item>
       <el-form-item label="宝贝主图：" :labelWidth="labelWidth">
         <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.mainImageUrl"
-          :on-success="handleGoodsSuccess"   :show-file-list="false"  :before-upload="beforeMainUpload"
+          :on-success="handleGoodsSuccess"   :show-file-list="false"  :http-request="beforeMainUpload"
           :headers="{ 'yb-tryout-merchant-token':token}">
           <img v-if="mainImg"  :src="mainImg" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -776,7 +776,7 @@
                 return false;
               }else{
                 let formData = new FormData();
-                formData.append('image',file);
+                formData.append('image',file.file);
                   uploadImage(formData).then( res => {
                     if(res.data.status === '000000000'){
                       _this.showImg = res.data.data.filePath ;
@@ -798,7 +798,7 @@
             };
             image.src = e.target.result ;
           };
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(file.file);
 
 
 
@@ -826,7 +826,7 @@
 
               }else{
                 let formData = new FormData();
-                formData.append('image',file);
+                formData.append('image',file.file);
                 uploadImage(formData).then( res => {
                   if(res.data.status === '000000000'){
                     _this.mainImg = res.data.data.filePath ;
@@ -846,7 +846,7 @@
 
             image.src = e.target.result ;
           };
-          reader.readAsDataURL(file);
+          reader.readAsDataURL(file.file);
           },
 
         //获取对应平台店铺列表
