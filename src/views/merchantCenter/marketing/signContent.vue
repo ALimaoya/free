@@ -47,7 +47,9 @@
                      :headers="{'yb-tryout-merchant-token':token}" :show-file-list="false"
                      :before-upload="beforeVideoUpload"
                       > -->
-          <el-upload class="avatar-uploader uploadimg" v-model.trim="form.vodeo" :action="videoUrl" :show-file-list="false"  :before-upload="beforeVideoUpload" :on-change="successUpload">
+          <el-upload class="avatar-uploader uploadimg" v-model.trim="form.video" :action="videoUrl" :http-request="uploadSectionFile"
+                     :headers="{'yb-tryout-merchant-token':token}" :on-change="successUpload"
+                     :show-file-list="false"  >
             <video class="mainVideo avatar" v-if="form.video" :src="VideoSrc"  controls></video>
             <!-- <img v-if="form.video" :src="imageDomain + videoImg" class="avatar"> -->
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -553,10 +555,10 @@ export default {
       reader.readAsDataURL(file);
     },
     //上传视频
-    beforeVideoUpload(file) {
+    uploadSectionFile(file) {
       // console.log("file", file);
       let _this = this;
-      const isLt20M = file.size / 1024 / 1024 < 20;
+      const isLt20M = file.file.size / 1024 / 1024 < 20;
       if (
         [
           "video/mp4",
@@ -565,7 +567,7 @@ export default {
           "video/avi",
           "video/wmv",
           "video/rmvb"
-        ].indexOf(file.type) == -1
+        ].indexOf(file.file.type) == -1
       ) {
         this.$message.error("请上传正确的视频格式");
         return false;
@@ -575,7 +577,7 @@ export default {
         return false;
       } else {
         let formData = new FormData();
-        formData.append("video", file);
+        formData.append("video", file.file);
         uploadVideo(formData)
           .then(res => {
             // console.log("视频id", res);
