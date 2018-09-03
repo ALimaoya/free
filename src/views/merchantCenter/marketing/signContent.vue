@@ -23,7 +23,7 @@
           <el-upload class="upload" :auto-upload="autoUpload" :action="imgUrl" :multiple="false"
                      v-model.trim="form.image"
                      :headers="{'yb-tryout-merchant-token':token}" :show-file-list="false"
-                     :before-upload="seckillBeforeImgUpload">
+                     :http-request="seckillBeforeImgUpload">
             <img v-if="form.image" :src="imageDomain + form.image" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             <span class="imgWarn tips_warn" v-if="goodsImgWarn">请上传商品白底图</span>
@@ -34,7 +34,7 @@
           <el-upload class="upload" :auto-upload="autoUpload" :action="imgUrl" :multiple="false"
                      v-model.trim="form.image"
                      :headers="{'yb-tryout-merchant-token':token}" :show-file-list="false"
-                     :before-upload="shareBeforeImgUpload">
+                     :http-request="shareBeforeImgUpload">
             <img v-if="form.image" :src="imageDomain + form.image" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             <span class="imgWarn tips_warn" v-if="goodsImgWarn">请上传商品白底图</span>
@@ -47,7 +47,7 @@
                      :headers="{'yb-tryout-merchant-token':token}" :show-file-list="false"
                      :before-upload="beforeVideoUpload"
                       > -->
-          <el-upload class="avatar-uploader uploadimg" v-model.trim="form.video" :action="videoUrl" :http-request="uploadSectionFile"
+          <el-upload class="avatar-uploader uploadimg" v-model.trim="form.video" :action="videoUrl" :http-request="beforeVideoUpload"
                      :headers="{'yb-tryout-merchant-token':token}" :on-change="successUpload"
                      :show-file-list="false"  >
             <video class="mainVideo avatar" v-if="form.video" :src="VideoSrc"  controls></video>
@@ -470,8 +470,8 @@ export default {
       let reader = new FileReader();
       let ret = [];
       let _this = this;
-      const isImg = file.type === "image/jpeg" || file.type === "image/png";
-      const isLt1M = file.size / 1024 / 1024 < 1;
+      const isImg = file.file.type === "image/jpeg" || file.file.type === "image/png";
+      const isLt1M = file.file.size / 1024 / 1024 < 1;
 
       reader.onload = e => {
         let image = new Image();
@@ -489,7 +489,7 @@ export default {
             return false;
           } else {
             let formData = new FormData();
-            formData.append("image", file);
+            formData.append("image", file.file);
             uploadImage(formData)
               .then(res => {
                 if (res.data.status === "000000000") {
@@ -508,14 +508,15 @@ export default {
 
         image.src = e.target.result;
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file.file);
     },
     shareBeforeImgUpload(file) {
       let reader = new FileReader();
       let ret = [];
       let _this = this;
-      const isImg = file.type === "image/jpeg" || file.type === "image/png";
-      const isLt1M = file.size / 1024 / 1024 < 1;
+
+      const isImg = file.file.type === "image/jpeg" || file.file.type === "image/png";
+      const isLt1M = file.file.size / 1024 / 1024 < 1;
 
       reader.onload = e => {
         let image = new Image();
@@ -533,7 +534,7 @@ export default {
             return false;
           } else {
             let formData = new FormData();
-            formData.append("image", file);
+            formData.append("image", file.file);
             uploadImage(formData)
               .then(res => {
                 if (res.data.status === "000000000") {
@@ -552,10 +553,10 @@ export default {
 
         image.src = e.target.result;
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file.file);
     },
     //上传视频
-    uploadSectionFile(file) {
+    beforeVideoUpload(file) {
       // console.log("file", file);
       let _this = this;
       const isLt20M = file.file.size / 1024 / 1024 < 20;
