@@ -53,9 +53,9 @@
             <video class="mainVideo avatar" v-if="form.video" :src="VideoSrc"  controls></video>
             <!-- <img v-if="form.video" :src="imageDomain + videoImg" class="avatar"> -->
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            <span class="imgWarn tips_warn" v-if="goodsvideoideoWarn">请上传商品视频</span>
+            <span class="imgWarn tips_warn" v-if="goodsvideoideoWarn">请上传5-30秒商品视频</span>
           </el-upload>
-          <p class="require tips_warn">视频要求：必须宣传本店铺品牌的视频，禁止含有水印广告、黄赌毒等信息</p>
+          <p class="require tips_warn">视频要求：必须宣传本店铺品牌的视频，禁止含有水印广告、黄赌毒等信息,时长为5-30秒</p>
         </el-form-item>
         <el-form-item v-if="type === '3'" label="商品介绍：" :labelWidth="labelWidth" prop="introduce">
           <el-input type="textarea" v-model="form.introduce" placeholder="请输入商品介绍"></el-input>
@@ -127,7 +127,7 @@
 
       </div>
       <div slot="footer" class="dialog-footer" >
-        <p class="tips_warn noteTips">活动单次报名已选择的宝贝，当前时段未报名任意特价打折活动</p>
+        <p v-if="type !== '3'" class="tips_warn noteTips">活动单次报名已选择的宝贝，当前时段未报名任意特价打折活动</p>
         <el-button type="primary" size="mini" @click="chooseGoods">确认选择</el-button>
         <el-button type="text" @click="cancel">取消</el-button>
       </div>
