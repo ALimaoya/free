@@ -556,7 +556,7 @@ export default {
     beforeVideoUpload(file) {
       // console.log("file", file);
       let _this = this;
-      const isLt10M = file.size / 1024 / 1024 < 5;
+      const isLt20M = file.size / 1024 / 1024 < 20;
       if (
         [
           "video/mp4",
@@ -570,8 +570,8 @@ export default {
         this.$message.error("请上传正确的视频格式");
         return false;
       }
-      if (!isLt10M) {
-        this.$message.error("上传视频大小不能超过10MB哦!");
+      if (!isLt20M) {
+        this.$message.error("上传视频大小不能超过20MB哦!");
         return false;
       } else {
         let formData = new FormData();
