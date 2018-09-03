@@ -23,7 +23,7 @@
         </el-form-item>
         <el-form-item labelWidth="160px" label="app店铺首页背景图：" prop="backGroundUrl">
               <el-upload  class="upload" :auto-upload="autoUpload"  :action="appImgUrl" :multiple="false" v-model.trim="form.backGroundUrl"
-                          :headers="{'yb-tryout-merchant-token':token}"          :show-file-list="false"  :before-upload="appbeforeImgUpload">
+                          :headers="{'yb-tryout-merchant-token':token}"          :show-file-list="false"  :http-request="appbeforeImgUpload">
                 <img v-if="form.backGroundUrl" :src="imageDomain + form.backGroundUrl" class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
@@ -60,7 +60,7 @@
         </el-form-item>
         <el-form-item class="uploadImg" :labelWidth="labelWidth" label="营业执照：" prop="businessImage">
           <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.businessImage"
-                      :headers="{'yb-tryout-merchant-token':token}"           :show-file-list="false"  :before-upload="beforeLicense">
+                      :headers="{'yb-tryout-merchant-token':token}"           :show-file-list="false"  :http-request="beforeLicense">
             <img v-if="form.businessImage" :src="imageDomain + form.businessImage" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             <span class="imgWarn tips_warn" v-if="licenseWarn">请上传营业执照</span>
@@ -78,7 +78,7 @@
         </el-form-item>
         <el-form-item class="uploadImg" :labelWidth="labelWidth" label="开户许可证：" prop="openLicenceImage">
           <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.openLicenceImage"
-                      :headers="{'yb-tryout-merchant-token':token}"           :show-file-list="false"  :before-upload="beforePermit">
+                      :headers="{'yb-tryout-merchant-token':token}"           :show-file-list="false"  :http-request="beforePermit">
             <img v-if="form.openLicenceImage" :src="imageDomain + form.openLicenceImage" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             <span class="imgWarn tips_warn" v-if="permitWarn">请上传开户许可证</span>
@@ -102,7 +102,7 @@
             <el-form-item class="uploadImg" :labelWidth="labelWidth" label="商标注册证明：" :prop="'merchantBrandinfoReqDtos.'+index+'.brandCertifyImage'">
               <div @click="chooseCer = index ;">
                 <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="item.brandCertifyImage"
-                            :headers="{'yb-tryout-merchant-token':token}"           :show-file-list="false"  :before-upload="beforeCertification" >
+                            :headers="{'yb-tryout-merchant-token':token}"           :show-file-list="false"  :http-request="beforeCertification" >
                   <img v-if="item.brandCertifyImage" :src="imageDomain + item.brandCertifyImage" class="avatar">
                   <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                   <span class="imgWarn tips_warn" v-if="certificationtWarn">请上传商标注册证明</span>
@@ -120,7 +120,7 @@
             <el-form-item v-if="item.brandRegistType === '2'" class="uploadImg" :labelWidth="labelWidth" label="品牌授权证明：" :prop="'merchantBrandinfoReqDtos.'+index+'.brandAuthImage'">
               <div @click="chooseBrand = index ;">
                 <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="item.brandAuthImage"
-                            :headers="{'yb-tryout-merchant-token':token}" :show-file-list="false"  :before-upload="beforeBrandAuth" >
+                            :headers="{'yb-tryout-merchant-token':token}" :show-file-list="false"  :http-request="beforeBrandAuth" >
                   <img v-if="item.brandAuthImage" :src="imageDomain + item.brandAuthImage" class="avatar">
                   <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                   <span class="imgWarn tips_warn" v-if="brandAuthWarn">请上传品牌授权证明</span>
@@ -531,7 +531,7 @@
 
                 } else {
                   let formData = new FormData();
-                  formData.append('image', file);
+                  formData.append('image', file.file);
                   uploadImage(formData).then(res => {
                     if (res.data.status === '000000000') {
 
@@ -553,14 +553,14 @@
 
               image.src = e.target.result;
             };
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(file.file);
           },
 
           //限制上传图片大小
           limitImage(file,type){
             let reader = new FileReader();
             let _this = this;
-            const isImg = file.type === 'image/jpeg'|| file.type === 'image/png';
+            const isImg = file.file.type === 'image/jpeg'|| file.file.type === 'image/png';
             reader.onload = (e) => {
               let image = new Image();
               image.onload = function () {
@@ -579,7 +579,7 @@
 
                 }else{
                   let formData = new FormData();
-                  formData.append('image', file);
+                  formData.append('image', file.file);
 
                   uploadImage(formData).then(res => {
                     if (res.data.status === '000000000') {
@@ -622,7 +622,7 @@
               image.src = e.target.result;
 
             };
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(file.file);
             // console.log(this.limitImg,5)
 
 

@@ -19,7 +19,7 @@
           <li>
             <span class="imeTitle">营业执照</span>
             <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.businessImage"
-                        :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeBusinessUpload">
+                        :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :http-request="beforeBusinessUpload">
               <img v-if="form.businessImage" :src="imageDomain + form.businessImage" class="avatar" >
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
@@ -28,7 +28,7 @@
           <li>
             <span class="imeTitle">授权证书</span>
             <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.authorizeImage"
-                        :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeAuthorizeUpload">
+                        :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :http-request="beforeAuthorizeUpload">
               <img v-if="form.authorizeImage" :src="imageDomain + form.authorizeImage" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
@@ -37,7 +37,7 @@
           <li>
             <span class="imeTitle">身份证正面</span>
             <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.cardFaceImage"
-                        :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeCardFaceImgUpload">
+                        :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :http-request="beforeCardFaceImgUpload">
               <img v-if="form.cardFaceImage" :src="imageDomain + form.cardFaceImage" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
@@ -46,7 +46,7 @@
           <li>
             <span class="imeTitle">身份证反面</span>
             <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.cardBackImage"
-                        :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeCardBackImgUpload">
+                        :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :http-request="beforeCardBackImgUpload">
               <img v-if="form.cardBackImage" :src="imageDomain + form.cardBackImage" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
@@ -246,7 +246,7 @@
         limitImage(file,type){
           let reader = new FileReader();
           let _this = this;
-          const isImg = file.type === 'image/jpeg'|| file.type === 'image/png';
+          const isImg = file.file.type === 'image/jpeg'|| file.file.type === 'image/png';
           reader.onload = (e) => {
             let image = new Image();
             image.onload = function () {
@@ -265,7 +265,7 @@
 
               }else{
                 let formData = new FormData();
-                formData.append('image', file);
+                formData.append('image', file.file);
 
                 uploadImage(formData).then(res => {
                   if (res.data.status === '000000000') {
@@ -306,7 +306,7 @@
             image.src = e.target.result;
 
           };
-          reader.readAsDataURL(file);
+          reader.readAsDataURL(file.file);
           // console.log(this.limitImg,5)
 
 

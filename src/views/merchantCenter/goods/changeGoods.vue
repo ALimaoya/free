@@ -74,7 +74,7 @@
         <ul class="imgList">
           <li v-for="(item,index) in form.imagesList" @change="getImg(index)">
             <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.imagesList[index].imgUrl"
-                        :headers="{'yb-tryout-merchant-token':token}"  :show-file-list="false"  :before-upload="beforeImgUpload">
+                        :headers="{'yb-tryout-merchant-token':token}"  :show-file-list="false"  :http-request="beforeImgUpload">
               <img v-if="form.imagesList[index].imgUrl" :src="imageDomain + form.imagesList[index].imgUrl" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
@@ -407,7 +407,7 @@
 
             } else {
               let formData = new FormData();
-              formData.append('image', file);
+              formData.append('image', file.file);
               uploadImage(formData).then(res => {
                 _this.$set(_this.form.imagesList[_this.imgIndex], 'imgUrl' ,  res.data.data.fileName);
               })
@@ -416,7 +416,7 @@
 
           image.src = e.target.result;
         };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(file.file);
       },
       //删除图片
       deleteImage(item){

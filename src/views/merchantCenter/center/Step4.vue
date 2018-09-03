@@ -23,7 +23,7 @@
       </el-form-item>
       <el-form-item class="imgWrap" prop="logoImage" v-if="!readOnly" label="店铺LOGO">
             <el-upload  class="upload" :auto-upload="autoUpload"  :action="imgUrl" :multiple="false" v-model.trim="form.logoImage"
-                        :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :before-upload="beforeImgUpload">
+                        :headers="{'yb-tryout-merchant-token':token}"         :show-file-list="false"  :http-request="beforeImgUpload">
               <img v-if="form.logoImage" :src="imageDomain + form.logoImage" class="avatar" >
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
@@ -177,7 +177,7 @@
 
               } else {
                 let formData = new FormData();
-                formData.append('image', file);
+                formData.append('image', file.file);
                 uploadImage(formData).then(res => {
                   if (res.data.status === '000000000') {
                       _this.form.logoImage = res.data.data.fileName ;
@@ -197,7 +197,7 @@
 
             image.src = e.target.result;
           };
-          reader.readAsDataURL(file);
+          reader.readAsDataURL(file.file);
         },
         submit(formName,type){
           // console.log(this.form,this.step4Status );
