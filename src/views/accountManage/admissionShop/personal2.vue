@@ -32,13 +32,13 @@
           </span>
 
         </el-form-item>
-        <el-form-item labelWidth="160px" label="app店铺首页背景图：" prop="backGroundUrl">
+        <el-form-item :labelWidth="labelWidth" label="app店铺首页背景图：" prop="backGroundUrl">
               <el-upload  class="upload" :auto-upload="autoUpload"  :action="appImgUrl" :multiple="false" v-model.trim="form.backGroundUrl"
                           :headers="{'yb-tryout-merchant-token':token}"          :show-file-list="false"  :http-request="appbeforeImgUpload">
                 <img v-if="form.backGroundUrl" :src="imageDomain + form.backGroundUrl" class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
-          <p class="require">请上传尺寸为750px×580px，500k以内的图片</p>   
+          <p class="require">请上传尺寸为750px×580px，500k以内的图片 <br>上传的店铺背景图不要有大面积白色或红色，以免影响店铺首页展示</p>   
           <span class="imgWarn tips_warn" v-if="appImgWarn">请上传app店铺首页背景图</span>
         </el-form-item>
         
@@ -161,7 +161,7 @@
             appImgUrl : process.env.BASE_API+'/file/upload',
             autoUpload : true ,
             appImgWarn: false,
-            labelWidth: '160px',
+            labelWidth: '200px',
             mobile:getMobile(),
             token : getToken() ,
             form: {},
