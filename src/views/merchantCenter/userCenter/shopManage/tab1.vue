@@ -46,7 +46,7 @@
                 <img v-if="form.backGroundUrl" :src="imageDomain + form.backGroundUrl" class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
-          <p class="require">请上传尺寸为750px×580px，500k以内的图片<br>上传的店铺背景图不要有大面积白色或红色，以免影响店铺首页展示</p>   
+          <p class="require">请上传尺寸为750px×1334px，500k以内的图片<br>上传的店铺背景图不要有大面积白色或红色，以免影响店铺首页展示</p>   
           <!-- <span class="imgWarn tips_warn" v-if="appImgWarn">请上传app店铺首页背景图</span> -->
         </el-form-item>
         <el-form-item   labelWidth="160px"  label="入驻人邮箱：" prop="email">
@@ -317,7 +317,7 @@
               image.onload = function () {
                 const isHeight = this.height;
                 const isWidth = this.width;
-                if (isWidth > 750 || isHeight > 580) {
+                if (isWidth > 750 || isHeight > 1334) {
                   _this.$message.error('图片尺寸过大，请重新选择后上传');
                   return false;
 
