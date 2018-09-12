@@ -657,9 +657,13 @@ export default {
         formData.append("video", file.file);
         uploadVideo(formData)
           .then(res => {
-            // console.log("视频id", res);
+            console.log("视频id", res);
             if (res.status === 200) {
-              _this.form.video = res.data.data.videoId;
+              if(res.data.status === "010001005"){
+                consoel.log('_this.form.video',_this.form.video)
+              }else{
+                _this.form.video = res.data.data.videoId;
+              }
             }
           })
           .catch(err => {
