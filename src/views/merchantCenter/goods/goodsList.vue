@@ -104,7 +104,7 @@
           <el-button size="mini" type="primary" v-if="scope.row.status === '0'|| scope.row.status === '2'|| scope.row.status === '1'&& scope.row.shelveStatus === '0'" @click="editor(scope.$index,scope.row.id)">修改</el-button>
           <el-button size="mini" type="warning" v-if="scope.row.status === '2'" @click="handleReason(scope.$index,scope.row.reason)">查看原因</el-button>
           <el-button size="mini" type="primary" @click="copyGoods(scope.$index,scope.row.id)">复制</el-button>
-
+          <el-button size="mini" type="primary" @click="particulars(scope.$index,scope.row.id)">详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -137,307 +137,295 @@
 </template>
 
 <script>
-  import { parseTime } from "@/utils"
-  import { getMobile } from "@/utils/auth"
-  import { getGoodsList,firstList,secondList,thirdList,changeStatus ,changeGoods} from "@/api/merchant"
-  import { getBond } from "@/api/userCenter"
-  import userPhoto from '@/assets/404_images/fail.png'
+import { parseTime } from "@/utils";
+import { getMobile } from "@/utils/auth";
+import {
+  getGoodsList,
+  firstList,
+  secondList,
+  thirdList,
+  changeStatus,
+  changeGoods,
+  shopParticulars
+} from "@/api/merchant";
+import { getBond } from "@/api/userCenter";
+import userPhoto from "@/assets/404_images/fail.png";
 
-  export default {
-      name: "goods-list",
-      data(){
-          return{
-            account : {},
-            firstTypeList : [],
-            secondTypeList : [],
-            thirdTypeList : [],
-            statusList : [
-              {
-                name : '全部审核状态',
-                value: ''
-              },
-              {
-                name : '待审核',
-                value : '0'
-              },
-              {
-                name : '已通过',
-                value : '1'
-              },
-              {
-                name : '未通过',
-                value : '2'
-              }
-            ],
-            thColor : true ,
-            tbColor : true,
-            tableData : [],
-            totalPages : 0,
-            totalElements : 0,
-            currentPage : 1,
-            pageSize : 10,
-            firstType: '',
-            secondType: '',
-            thirdType: '',
-            time: '',
-            refuseReason: '',
-            refuseDialog: false ,
-            user: getMobile(),
-            loading : true ,
-            limit: false,
-            errorImg:'this.src="' + userPhoto + '"',
-            failImg: userPhoto,
-            imageDomain : process.env.IMAGE_DOMAIN ,
-            mask : false ,
-            bigImg : '',
-            goodsStatus : [
-              {
-                name : '全部商品状态',
-                value : ''
-              },
-              {
-                name : '上架',
-                value : '1'
-              },
-              {
-                name : '未上架',
-                value : '0'
-              }
-            ]
-          }
-      },
-      mounted(){
-        this.time = parseTime(new Date());
-        this.account = this.$store.state.searchBar.goodsList.account;
-        this.currentPage = this.$store.state.searchBar.goodsList.currentPage;
-        this.pageSize = this.$store.state.searchBar.goodsList.pageSize;
-        this.thirdType = this.$store.state.searchBar.goodsList.thirdType;
-        this.secondType = this.$store.state.searchBar.goodsList.secondType;
-        this.getList();
-        this.getFirstList();
-        this.getBondInfo();
-
-      },
-
-      methods : {
-        //  获取商品列表
-        getList(){
-          let formData = new FormData();
-          if(this.firstType !== ''&&  this.secondType === ''){
-            this.$message({
-              message : '请选择二级分类或三级分类',
-              center: true ,
-              type : 'error',
-              duration: 1000
-            });
-            return false ;
-          }
-          formData.append('EQ_category.id',this.thirdType);
-          formData.append('EQ_category.parent.id',this.secondType);
-          formData.append('EQ_code',this.account.EQ_code);
-          formData.append('LIKE_productName',this.account.LIKE_productName);
-          formData.append('EQ_status',this.account.EQ_status);
-          formData.append('EQ_shelveStatus',this.account.EQ_shelveStatus);
-          formData.append('currentPage',this.currentPage);
-          formData.append('pageSize',this.pageSize);
-          let dataStorage = {
-              account : {
-                ...this.account,
-              },
-              currentPage :this.currentPage,
-              pageSize : this.pageSize,
-              thirdType:this.thirdType,
-              secondType: this.secondType
-          };
-          this.$store.commit('saveSearchGoods',dataStorage);
-          this.loading = true ;
-          getGoodsList(formData).then( res => {
-            this.loading = false ;
-            if( res.data.status === '000000000'){
-              this.tableData = res.data.data;
-              this.totalPages = res.data.totalPages ;
-              this.totalElements = res.data.totalElements ;
-
-            }
-          })
-
+export default {
+  name: "goods-list",
+  data() {
+    return {
+      account: {},
+      firstTypeList: [],
+      secondTypeList: [],
+      thirdTypeList: [],
+      statusList: [
+        {
+          name: "全部审核状态",
+          value: ""
         },
-        getBondInfo(){
-          getBond().then( res => {
-            // console.log(res.data);
-
-            if(res.data.status === '000000000'){
-
-              if(res.data.data.status === '3'){
-                this.limit = true ;
-
-              }else{
-                this.limit = false ;
-
-              }
-            }else{
-              if(res.data.data === null ){
-                this.limit = true ;
-
-              }
-              this.$message({
-                message: res.data.message,
-                center: true,
-                type: 'error'
-              });
-
-            }
-          })
+        {
+          name: "待审核",
+          value: "0"
         },
-
-        //  获取一级分类
-        getFirstList(){
-          firstList().then(res=> {
-            if( res.data.status === '000000000'){
-              this.firstTypeList = res.data.data
-            }
-          })
+        {
+          name: "已通过",
+          value: "1"
         },
-        //  获取二级分类
-        getSecondList(type){
-          secondList(type).then(res=> {
-            if( res.data.status === '000000000'){
-              this.secondTypeList = res.data.data
-
-            }
-          })
+        {
+          name: "未通过",
+          value: "2"
+        }
+      ],
+      thColor: true,
+      tbColor: true,
+      tableData: [],
+      totalPages: 0,
+      totalElements: 0,
+      currentPage: 1,
+      pageSize: 10,
+      firstType: "",
+      secondType: "",
+      thirdType: "",
+      time: "",
+      refuseReason: "",
+      refuseDialog: false,
+      particularsDialog: false,
+      user: getMobile(),
+      loading: true,
+      limit: false,
+      errorImg: 'this.src="' + userPhoto + '"',
+      failImg: userPhoto,
+      imageDomain: process.env.IMAGE_DOMAIN,
+      mask: false,
+      bigImg: "",
+      goodsStatus: [
+        {
+          name: "全部商品状态",
+          value: ""
         },
-        //获取三级分类
-        getThirdList(type){
-          thirdList(type).then(res=> {
-            if( res.data.status === '000000000'){
-              this.thirdTypeList = res.data.data
-
-            }
-          })
+        {
+          name: "上架",
+          value: "1"
         },
+        {
+          name: "未上架",
+          value: "0"
+        }
+      ],
+    };
+  },
+  mounted() {
+    this.time = parseTime(new Date());
+    this.account = this.$store.state.searchBar.goodsList.account;
+    this.currentPage = this.$store.state.searchBar.goodsList.currentPage;
+    this.pageSize = this.$store.state.searchBar.goodsList.pageSize;
+    this.thirdType = this.$store.state.searchBar.goodsList.thirdType;
+    this.secondType = this.$store.state.searchBar.goodsList.secondType;
+    this.getList();
+    this.getFirstList();
+    this.getBondInfo();
+  },
 
-        //重置搜索条件
-        reset(){
-          this.account = {
-            EQ_code: '',
-            LIKE_productName: '',
-            EQ_status: '',
-            EQ_shelveStatus: ''
-          };
-            this.firstType = '';
-            this.secondType = '';
-            this.thirdType = '';
-            this.currentPage = 1;
-            this.pageSize = 10;
-          this.getList();
-        },
-        //上/下架操作
-        handleShelves(index,order,type){
-          this.loading = true ;
-          changeStatus(order,type).then(res=> {
-            this.loading = false ;
-            if(res.data.status === '000000000'){
-              this.$message({
-                message : '操作成功',
-                type : 'success',
-                center : true ,
-                duration : 1000
-              });
-              this.getList();
-            }
-          })
-
-        },
-        //查看审核拒绝原因
-        handleReason(index,reason){
-          this.refuseReason = reason ;
-          this.refuseDialog = true ;
-        },
-        //修改商品
-        editor(index,order){
-          this.$router.push('/merchantCenter/goods/changeGoods?order='+order)
-
-        },
-        //新增商品
-        newGoods(){
-          if(this.tableData.length>=10 && this.limit === true){
-            this.$message({
-              message : '您还未缴纳保证金，成功缴纳保证金后即可发布更多商品，请前往缴纳保证金吧',
-              center : true ,
-              type : 'error'
-            })
-          }else{
-            this.$router.push('/merchantCenter/goods/newGoods')
-
-          }
-
-        },
-        copyGoods(index,id){
-          if(this.tableData.length>=10 && this.limit === true){
-            this.$message({
-              message : '您还未缴纳保证金，成功缴纳保证金后即可发布更多商品，请前往缴纳保证金吧',
-              center : true ,
-              type : 'error'
-            })
-          }else{
-            this.$router.push('/merchantCenter/goods/newGoods?order='+id);
-
-
-          }
-
-        },
-        handleSizeChange(val) {
-
-          this.pageSize = val ;
-          this.getList();
-        },
-
-        handleCurrentChange(val) {
-
-          this.currentPage = val ;
-          this.getList();
-        },
+  methods: {
+    //  获取商品列表
+    getList() {
+      let formData = new FormData();
+      if (this.firstType !== "" && this.secondType === "") {
+        this.$message({
+          message: "请选择二级分类或三级分类",
+          center: true,
+          type: "error",
+          duration: 1000
+        });
+        return false;
       }
+      formData.append("EQ_category.id", this.thirdType);
+      formData.append("EQ_category.parent.id", this.secondType);
+      formData.append("EQ_code", this.account.EQ_code);
+      formData.append("LIKE_productName", this.account.LIKE_productName);
+      formData.append("EQ_status", this.account.EQ_status);
+      formData.append("EQ_shelveStatus", this.account.EQ_shelveStatus);
+      formData.append("currentPage", this.currentPage);
+      formData.append("pageSize", this.pageSize);
+      let dataStorage = {
+        account: {
+          ...this.account
+        },
+        currentPage: this.currentPage,
+        pageSize: this.pageSize,
+        thirdType: this.thirdType,
+        secondType: this.secondType
+      };
+      this.$store.commit("saveSearchGoods", dataStorage);
+      this.loading = true;
+      getGoodsList(formData).then(res => {
+        // console.log("res", res);
+        this.loading = false;
+        if (res.data.status === "000000000") {
+          this.tableData = res.data.data;
+          this.totalPages = res.data.totalPages;
+          this.totalElements = res.data.totalElements;
+        }
+      });
+    },
+    getBondInfo() {
+      getBond().then(res => {
+        // console.log(res.data);
+
+        if (res.data.status === "000000000") {
+          if (res.data.data.status === "3") {
+            this.limit = true;
+          } else {
+            this.limit = false;
+          }
+        } else {
+          if (res.data.data === null) {
+            this.limit = true;
+          }
+          this.$message({
+            message: res.data.message,
+            center: true,
+            type: "error"
+          });
+        }
+      });
+    },
+
+    //  获取一级分类
+    getFirstList() {
+      firstList().then(res => {
+        if (res.data.status === "000000000") {
+          this.firstTypeList = res.data.data;
+        }
+      });
+    },
+    //  获取二级分类
+    getSecondList(type) {
+      secondList(type).then(res => {
+        if (res.data.status === "000000000") {
+          this.secondTypeList = res.data.data;
+        }
+      });
+    },
+    //获取三级分类
+    getThirdList(type) {
+      thirdList(type).then(res => {
+        if (res.data.status === "000000000") {
+          this.thirdTypeList = res.data.data;
+        }
+      });
+    },
+
+    //重置搜索条件
+    reset() {
+      this.account = {
+        EQ_code: "",
+        LIKE_productName: "",
+        EQ_status: "",
+        EQ_shelveStatus: ""
+      };
+      this.firstType = "";
+      this.secondType = "";
+      this.thirdType = "";
+      this.currentPage = 1;
+      this.pageSize = 10;
+      this.getList();
+    },
+    //上/下架操作
+    handleShelves(index, order, type) {
+      this.loading = true;
+      changeStatus(order, type).then(res => {
+        this.loading = false;
+        if (res.data.status === "000000000") {
+          this.$message({
+            message: "操作成功",
+            type: "success",
+            center: true,
+            duration: 1000
+          });
+          this.getList();
+        }
+      });
+    },
+    //查看审核拒绝原因
+    handleReason(index, reason) {
+      this.refuseReason = reason;
+      this.refuseDialog = true;
+    },
+    //查看商品详情
+    particulars(index, id) {
+      this.$router.push("/merchantCenter/goods/goodsParticulars?order=" + id);
+    },
+    //修改商品
+    editor(index, order) {
+      this.$router.push("/merchantCenter/goods/changeGoods?order=" + order);
+    },
+    //新增商品
+    newGoods() {
+      if (this.tableData.length >= 10 && this.limit === true) {
+        this.$message({
+          message:
+            "您还未缴纳保证金，成功缴纳保证金后即可发布更多商品，请前往缴纳保证金吧",
+          center: true,
+          type: "error"
+        });
+      } else {
+        this.$router.push("/merchantCenter/goods/newGoods");
+      }
+    },
+    copyGoods(index, id) {
+      if (this.tableData.length >= 10 && this.limit === true) {
+        this.$message({
+          message:
+            "您还未缴纳保证金，成功缴纳保证金后即可发布更多商品，请前往缴纳保证金吧",
+          center: true,
+          type: "error"
+        });
+      } else {
+        this.$router.push("/merchantCenter/goods/newGoods?order=" + id);
+      }
+    },
+    handleSizeChange(val) {
+      this.pageSize = val;
+      this.getList();
+    },
+
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.getList();
     }
+  }
+};
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  @import '../../../styles/activityTable';
-  @import '../../../styles/table';
+@import "../../../styles/activityTable";
+@import "../../../styles/table";
 
-  .search{
-    .el-input{
-      margin-left : 0!important;
-      width : 160px!important;
-    }
-    padding-bottom : 0!important;
-    height : 120px!important;
+.search {
+  .el-input {
+    margin-left: 0 !important;
+    width: 160px !important;
   }
-  .el-table{
-
-
-    .cell{
-      height : 0.5rem ;
-      .name_input{
-        white-space:pre-wrap!important ;
-      }
-
-      img{
-        width : 0.7rem ;
-        height: 0.7rem ;
-        margin : auto ;
-      }
-    }
-    .el-button{
-      margin : 0.1rem auto;
+  padding-bottom: 0 !important;
+  height: 120px !important;
+}
+.el-table {
+  .cell {
+    height: 0.5rem;
+    .name_input {
+      white-space: pre-wrap !important ;
     }
 
-
+    img {
+      width: 0.7rem;
+      height: 0.7rem;
+      margin: auto;
+    }
   }
-
-
-
-
-
+  .el-button {
+    margin: 0.1rem auto;
+  }
+}
 </style>

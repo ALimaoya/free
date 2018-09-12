@@ -84,6 +84,23 @@
           <!--<span class="imgWarn tips_warn" v-if="goodsImgWarn">请上传商品图片</span>-->
         </ul>
       </el-form-item>
+      <el-form-item label="品牌商品视频" labelWidth="130px" prop="video" >
+        <div class="hoveVideo">
+            <el-upload class="avatar-uploader uploadvideo upload " v-model.trim="form.video" :action="videoUrl" :http-request="uploadSectionFile"
+                    :headers="{'yb-tryout-merchant-token':token}" :on-change="successUpload"
+                    :show-file-list="false"  >
+            <video class="mainVideo avatar" v-if="form.video" :src="VideoSrc"  controls></video>
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+          <span  class="deleteVideo" @click="deleteVideo(form.video)"></span>
+        </div>
+        
+        <p class="require tips_warn">视频要求：必须宣传本店铺品牌的视频，禁止含有水印广告、黄赌毒等信息,时长为5-30秒</p>
+      </el-form-item>
+      <el-form-item label="视频介绍" labelWidth="130px" prop="introduce">
+        <el-input type="textarea" v-model="form.introduce" placeholder="请输入视频中商品介绍"></el-input>
+          <p class="require tips_warn">如果不填写默认为商品名称</p>
+      </el-form-item>
       <el-form-item   labelWidth="130px"  label="描述" prop="describes">
         <!--<wangeditor >-->
           <div id="wangeditor"   >
@@ -110,516 +127,571 @@
 </template>
 
 <script>
-  import { uploadImage  } from "@/api/activity"
-  import { getGoodsDetail, getBrand,changeGoods ,firstList,secondList,thirdList, getShopInfo} from "@/api/merchant"
-  import { getToken,getMobile } from '@/utils/auth'
-  import { getStatus } from "@/api/enter"
-  import { getQueryString,checkFloat } from "@/utils/validate"
-  import E from 'wangeditor'
-  import SvgIcon from "../../../components/SvgIcon/index";
+import { uploadImage, uploadVideo } from "@/api/activity";
+import {
+  getGoodsDetail,
+  getBrand,
+  changeGoods,
+  firstList,
+  secondList,
+  thirdList,
+  getShopInfo
+} from "@/api/merchant";
+import { getToken, getMobile } from "@/utils/auth";
+import { getStatus } from "@/api/enter";
+import { getQueryString, checkFloat } from "@/utils/validate";
+import E from "wangeditor";
+import SvgIcon from "../../../components/SvgIcon/index";
 
-  export default {
-
-    components: {SvgIcon},
-    name: "change-goods",
-    data() {
-
-      const validGoodsName = (rule,value,callback) => {
-        if(value === ''){
-          callback(new Error('请输入商品名称'))
-        }else{
-          if(value.length > 60 ){
-            callback(new Error('输入的商品名称不得超过60个字符'))
-          }
-          callback();
-        }
-
-      };
-      const validBrand = ( rule, value , callback ) => {
-        if(value === ''){
-          callback( new Error('请选择商品品牌'))
+export default {
+  components: { SvgIcon },
+  name: "change-goods",
+  data() {
+    const validGoodsName = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入商品名称"));
+      } else {
+        if (value.length > 60) {
+          callback(new Error("输入的商品名称不得超过60个字符"));
         }
         callback();
-      };
-      const validPrice = (rule,value,callback) => {
-        if(value === ''){
-          callback(new Error('请输入商品价格'))
-        }else{
-          if(value< 0 ){
-            callback(new Error('商品价格应大于0，请重新输入'))
-          }
-          if( !checkFloat(value)){
-            callback(new Error('商品价格最多可有两位小数，请重新输入'))
-
-          }
-          callback();
-
-        }
-      };
-      const validPost = (rule,value,callback) => {
-        if(value === ''){
-          callback(new Error('请输入运费'))
-        }else{
-          if(!(/^[0-9]{1,2}$/).test(value)){
-            callback(new Error('运费应不小于0且不超过2位数，请重新输入'))
-          }
-          callback();
-
-        }
-      };
-
-      return {
-        shopName:'',
-        form : {
-          productName:'',
-          brandId:'',
-          firstType : '',
-          secondType:'',
-          class3Id:'',
-          price:'',
-          carriage:'',
-          ybProductItemReqDto : [{ size: '', color : '', stock: ''}],
-          // sizeList : [{ size: '', color : '', stock: ''}],
-          imagesList : [{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''}],
-          describes: '',
-        },
-        formRule : {
-          productName : [
-            {
-              required : true ,trigger : 'blur' ,validator : validGoodsName
-            }
-          ],
-          // brandId: [
-          //   {
-          //     required : true  ,trigger : 'change',validator: validBrand
-          //   }
-          // ],
-          firstType: [
-            {
-              required : true ,trigger : 'change' ,message: '请选择一级分类'
-
-            }
-          ],
-          secondType:[
-            {
-              required : true ,trigger : 'change' ,message: '请选择二级分类'
-
-            }
-          ],
-          class3Id:[
-            {
-              required : true ,trigger : 'change' ,message: '请选择三级分类'
-            }
-          ],
-          price:[
-            {
-              required : true ,trigger : 'blur' ,validator : validPrice
-            }
-          ],
-          carriage : [
-            {
-              required : true ,trigger : 'blur' ,validator : validPost
-            }
-          ],
-
-
-        },
-        thirdName: '',
-        // title: '新增商品',
-        radio : '',
-        brandData: [],
-        brandName : '',
-        brandCnName: '',
-        firstTypeList : [],
-        secondTypeList : [],
-        thirdTypeList : [],
-        token : getToken() ,
-        user: getMobile(),
-        autoUpload : true ,
-        imgUrl : process.env.BASE_API+'/file/upload',
-        goodsImgWarn : false ,
-        imageDomain : process.env.IMAGE_DOMAIN ,
-        imgIndex : '',
-        dialogVisible: false,
-        // currentRow : null,
-        hasShop : false ,
-        readOnly : false ,
-        totalPages : 0,
-        totalElements : 0,
-        currentPage : 1,
-        pageSize : 10,
-        tips: '',
-        dataInterface: {
-          editorUpImgUrl: process.env.BASE_API+'/file/multi/upload' // 编辑器插入的图片上传地址
-        },
-        editor: '',  // 存放实例化的wangEditor对象，在多个方法中使用
-        word: '',
-        loading: true ,
-        lastName : ['旗舰店','专卖店','专营店',''],
-
       }
-    },
-    mounted(){
-      this.getFirstList();
+    };
+    const validBrand = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请选择商品品牌"));
+      }
+      callback();
+    };
+    const validPrice = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入商品价格"));
+      } else {
+        if (value < 0) {
+          callback(new Error("商品价格应大于0，请重新输入"));
+        }
+        if (!checkFloat(value)) {
+          callback(new Error("商品价格最多可有两位小数，请重新输入"));
+        }
+        callback();
+      }
+    };
+    const validPost = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入运费"));
+      } else {
+        if (!/^[0-9]{1,2}$/.test(value)) {
+          callback(new Error("运费应不小于0且不超过2位数，请重新输入"));
+        }
+        callback();
+      }
+    };
 
-      // window.tinymce.init({});
-      this.getShop();
-
-      this.createEditor();
-
-    },
-
-    methods: {
-      //判断是否已有店铺
-      getShop(){
-        getStatus().then(res=> {
-          if(res.data.status === '000000000'){
-            // this.hasShop = false ;
-            this.loading = false ;
-            this.isNewGoods();
-            if(res.data.data.belongType === '2'){
-              this.shopName = res.data.data.name + this.lastName[res.data.data.shopType-0];
-            }else{
-              this.shopName = res.data.data.name ;
-            }
-            return true ;
-
-          }else{
-            // this.tips = res.data.message;
-            // this.hasShop = true ;
-
-
-          }
-        })
+    return {
+      shopName: "",
+      form: {
+        productName: "",
+        brandId: "",
+        firstType: "",
+        secondType: "",
+        class3Id: "",
+        price: "",
+        carriage: "",
+        ybProductItemReqDto: [{ size: "", color: "", stock: "" }],
+        // sizeList : [{ size: '', color : '', stock: ''}],
+        imagesList: [
+          { id: "", imgUrl: "" },
+          { id: "", imgUrl: "" },
+          { id: "", imgUrl: "" },
+          { id: "", imgUrl: "" },
+          { id: "", imgUrl: "" }
+        ],
+        video: "",
+        introduce: "",
+        describes: ""
       },
-      isNewGoods(){
-        let id = this.$route.query.order ;
-        var _this =this;
-        if(!this.hasShop){
-          if(id !== undefined){
-            //获取已有商品信息
-            this.loading = true ;
+      formRule: {
+        productName: [
+          {
+            required: true,
+            trigger: "blur",
+            validator: validGoodsName
+          }
+        ],
+        // brandId: [
+        //   {
+        //     required : true  ,trigger : 'change',validator: validBrand
+        //   }
+        // ],
+        firstType: [
+          {
+            required: true,
+            trigger: "change",
+            message: "请选择一级分类"
+          }
+        ],
+        secondType: [
+          {
+            required: true,
+            trigger: "change",
+            message: "请选择二级分类"
+          }
+        ],
+        class3Id: [
+          {
+            required: true,
+            trigger: "change",
+            message: "请选择三级分类"
+          }
+        ],
+        price: [
+          {
+            required: true,
+            trigger: "blur",
+            validator: validPrice
+          }
+        ],
+        carriage: [
+          {
+            required: true,
+            trigger: "blur",
+            validator: validPost
+          }
+        ]
+      },
+      thirdName: "",
+      // title: '新增商品',
+      radio: "",
+      brandData: [],
+      brandName: "",
+      brandCnName: "",
+      firstTypeList: [],
+      secondTypeList: [],
+      thirdTypeList: [],
+      token: getToken(),
+      user: getMobile(),
+      autoUpload: true,
+      imgUrl: process.env.BASE_API + "/file/upload",
+      videoUrl: process.env.BASE_API + "/file/video/upload",
+      VideoSrc: "",
+      goodsImgWarn: false,
+      imageDomain: process.env.IMAGE_DOMAIN,
+      imgIndex: "",
+      dialogVisible: false,
+      // currentRow : null,
+      hasShop: false,
+      readOnly: false,
+      totalPages: 0,
+      totalElements: 0,
+      currentPage: 1,
+      pageSize: 10,
+      tips: "",
+      dataInterface: {
+        editorUpImgUrl: process.env.BASE_API + "/file/multi/upload" // 编辑器插入的图片上传地址
+      },
+      editor: "", // 存放实例化的wangEditor对象，在多个方法中使用
+      word: "",
+      loading: true,
+      lastName: ["旗舰店", "专卖店", "专营店", ""]
+    };
+  },
+  mounted() {
+    this.getFirstList();
 
-            getGoodsDetail(id).then(res=>{
-              this.loading = false ;
-              if( res.data.status === '000000000'){
-                this.form = {
-                  productName: res.data.data.productName ,
-                  brandId:res.data.data.brandId,
-                  firstType : res.data.data.cateGoryMap.categoryName1,
-                  secondType:res.data.data.cateGoryMap.categoryName2,
-                  class3Id:res.data.data.cateGoryMap.categoryName3,
-                  price:res.data.data.price,
-                  carriage:res.data.data.carriage,
-                  ybProductItemReqDto : res.data.data.productItems,
-                  // sizeList : [{ size: '', color : '', stock: ''}],
-                  imagesList : res.data.data.productImages,
-                  describes: res.data.data.describes,
-                  id: res.data.data.id
-                }  ;
-                if(this.form.imagesList.length < 5){
-                  if(this.form.imagesList.length === 0){
-                    this.form.imagesList =   [{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''},{ id: '', imgUrl:''}]
+    // window.tinymce.init({});
+    this.getShop();
 
-                  }else {
-                    for(let i = this.form.imagesList.length ; i< 5;i++){
-                      this.form.imagesList.push({ id: '', imgUrl:''});
-                    }
+    this.createEditor();
+  },
+
+  methods: {
+    //判断是否已有店铺
+    getShop() {
+      getStatus().then(res => {
+        if (res.data.status === "000000000") {
+          // this.hasShop = false ;
+          this.loading = false;
+          this.isNewGoods();
+          if (res.data.data.belongType === "2") {
+            this.shopName =
+              res.data.data.name + this.lastName[res.data.data.shopType - 0];
+          } else {
+            this.shopName = res.data.data.name;
+          }
+          return true;
+        } else {
+          // this.tips = res.data.message;
+          // this.hasShop = true ;
+        }
+      });
+    },
+    isNewGoods() {
+      let id = this.$route.query.order;
+      var _this = this;
+      if (!this.hasShop) {
+        if (id !== undefined) {
+          //获取已有商品信息
+          this.loading = true;
+
+          getGoodsDetail(id).then(res => {
+            this.loading = false;
+            if (res.data.status === "000000000") {
+              // console.log("getGoodsDetail", res);
+              this.form = {
+                productName: res.data.data.productName,
+                brandId: res.data.data.brandId,
+                firstType: res.data.data.cateGoryMap.categoryName1,
+                secondType: res.data.data.cateGoryMap.categoryName2,
+                class3Id: res.data.data.cateGoryMap.categoryName3,
+                price: res.data.data.price,
+                carriage: res.data.data.carriage,
+                ybProductItemReqDto: res.data.data.productItems,
+                // sizeList : [{ size: '', color : '', stock: ''}],
+                imagesList: res.data.data.productImages,
+                describes: res.data.data.describes,
+                id: res.data.data.id,
+                introduce: res.data.data.videoDescribe,
+                video: res.data.data.videoId
+              };
+              this.VideoSrc = res.data.data.playUrl;
+              if (this.form.imagesList.length < 5) {
+                if (this.form.imagesList.length === 0) {
+                  this.form.imagesList = [
+                    { id: "", imgUrl: "" },
+                    { id: "", imgUrl: "" },
+                    { id: "", imgUrl: "" },
+                    { id: "", imgUrl: "" },
+                    { id: "", imgUrl: "" }
+                  ];
+                } else {
+                  for (let i = this.form.imagesList.length; i < 5; i++) {
+                    this.form.imagesList.push({ id: "", imgUrl: "" });
                   }
                 }
-                this.form.imagesList.map( i => {
-                  i.id = '';
-                });
-                this.word = this.form.describes ;
-                this.brandCnName = res.data.data.brandCnName ;
-                this.thirdName = res.data.data.cateGoryMap.categoryId3;
-                this.readOnly = true ;
               }
-            })
-          }else{
-            // this.title = '新增商品';
-          }
-        }
-      },
-      getBrandList(){
-
-        getBrand(this.brandName, this.currentPage ,this.pageSize).then(res => {
-          if( res.data.status === '000000000'){
-            this.brandData = res.data.data ;
-            this.totalPages = res.data.totalPages ;
-            this.totalElements = res.data.totalElements ;
-          }
-        })
-
-      },
-
-      //  获取一级分类
-      getFirstList(){
-        firstList().then(res=> {
-          if( res.data.status === '000000000'){
-            this.firstTypeList = res.data.data
-
-          }
-        })
-      },
-      //  获取二级分类
-      getSecondList(type){
-        this.form.secondType = '';
-        this.form.class3Id = '';
-
-        secondList(type).then(res=> {
-          if( res.data.status === '000000000'){
-            this.secondTypeList = res.data.data
-
-          }
-        })
-
-      },
-      //获取三级分类
-      getThirdList(type){
-        this.form.class3Id = '';
-
-        thirdList(type).then(res=> {
-          if( res.data.status === '000000000'){
-            this.thirdTypeList = res.data.data
-
-          }
-        })
-
-      },
-
-      getImg(index){
-        this.imgIndex = index ;
-      },
-      // 上传图片
-      beforeImgUpload(file) {
-        let reader = new FileReader();
-        let ret = [];
-        let _this = this;
-        reader.onload = (e) => {
-          let image = new Image();
-          image.onload = function () {
-            const isHeight = this.height;
-            const isWidth = this.width;
-            if (isWidth > 800 || isHeight > 800) {
-              _this.$message.error('图片尺寸过大，请重新选择后上传');
-              return false;
-
-            } else {
-              let formData = new FormData();
-              formData.append('image', file.file);
-              uploadImage(formData).then(res => {
-                _this.$set(_this.form.imagesList[_this.imgIndex], 'imgUrl' ,  res.data.data.fileName);
-              })
+              this.form.imagesList.map(i => {
+                i.id = "";
+              });
+              this.word = this.form.describes;
+              this.brandCnName = res.data.data.brandCnName;
+              this.thirdName = res.data.data.cateGoryMap.categoryId3;
+              this.readOnly = true;
             }
-          };
-
-          image.src = e.target.result;
-        };
-        reader.readAsDataURL(file.file);
-      },
-      //删除图片
-      deleteImage(item){
-
-        if(this.form.imagesList.indexOf(item) !== -1){
-          let index = this.form.imagesList.indexOf(item) ;
-          this.$set(this.form.imagesList,index ,{ id : '', imgUrl: ''})
-          // this.form.imagesList[index] = { id : '', imgUrl: ''};
-        }
-
-      },
-      //删除商品规格
-      deleteSize(item) {
-        let index = this.form.ybProductItemReqDto.indexOf(item);
-        if (index !== -1 && this.form.ybProductItemReqDto.length > 1) {
-          this.form.ybProductItemReqDto.splice(index, 1)
-        }
-
-
-      },
-
-      //添加商品规格
-      addSize() {
-        let _this = this;
-        if (this.form.ybProductItemReqDto.length < 10) {
-          let index = this.form.ybProductItemReqDto.length ;
-          // _this.$nextTick(() =>{
-          // console.log(this.form.ybProductItemReqDto)
-            // Vue.set(this.form.ybProductItemReqDto,index,{
-            //     'size': '',
-            //     'color': '',
-            //     'stock': '',
-            // })
-          // })
-
-          this.form.ybProductItemReqDto.splice(index,1,{
-            'size': '',
-            'color': '',
-            'stock': '',
-
           });
-          // console.log(this.form.ybProductItemReqDto)
-
         } else {
-          this.$message({
-            message: '您添加的规格参数太多啦，不能再加啦~',
-            center: true,
-            type: 'error'
-          })
+          // this.title = '新增商品';
         }
-      },
+      }
+    },
+    getBrandList() {
+      getBrand(this.brandName, this.currentPage, this.pageSize).then(res => {
+        if (res.data.status === "000000000") {
+          this.brandData = res.data.data;
+          this.totalPages = res.data.totalPages;
+          this.totalElements = res.data.totalElements;
+        }
+      });
+    },
 
-      // catchData(value){
-      //   console.log(value);
-      //   value =this.form.describes      //在这里接受子组件传过来的参数，赋值给data里的参数
-      // },
+    //  获取一级分类
+    getFirstList() {
+      firstList().then(res => {
+        if (res.data.status === "000000000") {
+          this.firstTypeList = res.data.data;
+        }
+      });
+    },
+    //  获取二级分类
+    getSecondList(type) {
+      this.form.secondType = "";
+      this.form.class3Id = "";
 
+      secondList(type).then(res => {
+        if (res.data.status === "000000000") {
+          this.secondTypeList = res.data.data;
+        }
+      });
+    },
+    //获取三级分类
+    getThirdList(type) {
+      this.form.class3Id = "";
 
-      //  修改商品信息
-      changeForm(formName){
+      thirdList(type).then(res => {
+        if (res.data.status === "000000000") {
+          this.thirdTypeList = res.data.data;
+        }
+      });
+    },
 
-        // console.log(this.form);
-        this.$refs[formName].validate((valid) => {
-          if(valid){
-
-            let data = {
-              id: this.form.id ,
-              productName:this.form.productName,
-              brandId:this.form.brandId,
-              class3Id:this.thirdName,
-              price:this.form.price,
-              carriage:this.form.carriage,
-              ybProductItemReqDto : this.form.ybProductItemReqDto,
-              imagesList : this.form.imagesList,
-              describes: this.form.describes,
-            };
-            // data = JSON.stringify(data);
-            this.loading = true ;
-
-            changeGoods(data).then( res => {
-              this.loading = false ;
-              if( res.data.status === '000000000'){
-                this.$message({
-                  message : '您修改的商品信息已提交，请稍后确认商品状态',
-                  center: true ,
-                  type : 'success',
-                  duration: 1000
-                });
-                setTimeout(() => {
-                  this.$router.push('/merchantCenter/goods/goodsList')
-
-                },2000)
-              }
-            })
-          }else{
-
-          }
-        })
-      },
-
-      createEditor(){
-
-        var editor = new E('#wangeditor');        //创建富文本实例
-
-
-        editor.customConfig.onchange = (html) => {
-          this.form.describes = html ;
-          // this.catchData(html)  //把这个html通过catchData的方法传入父组件
-        };
-        editor.customConfig.uploadImgServer = this.dataInterface.editorUpImgUrl;
-        editor.customConfig.uploadFileName = 'sourcePic';
-        editor.customConfig.showLinkImg = false;
-        editor.customConfig.uploadImgMaxLength = 10;
-        editor.customConfig.uploadImgHeaders = {
-          'ContentType': 'application/json',
-          'yb-tryout-merchant-token':this.token    //头部token
-        };
-        editor.customConfig.uploadImgParams = {
-          token : 'abcdef12345'
-        };
-        editor.customConfig.menus = [          //菜单配置
-          'head',
-          'list',  // 列表
-          'justify',  // 对齐方式
-          'quote',  // 引用
-          'bold',
-          'fontSize',  // 字号
-          'italic',
-          'underline',
-          'strikeThrough',  // 删除线
-          'foreColor',  // 文字颜色
-          'backColor',  // 背景颜色
-          'link',  // 插入链接
-          'image',  // 插入图片
-          'table',  // 表格
-          'video',  // 插入视频
-          'undo',  // 撤销
-          'redo'  // 重复
-        ];
-        editor.customConfig.uploadImgHooks = {
-          before: function (xhr, editor, files) {
-
-          },
-          success: function (xhr, editor, result) {
-
-            this.imgUrl= Object.values(result.data.filePath).toString()
-          },
-          fail: function (xhr, editor, result) {
-
-
-          },
-          error: function (xhr, editor) {
-
-          },
-          timeout: function (xhr, editor) {
-
-          },
-
-          customInsert: function (insertImg, result, editor) {
-
-            let url = Object.values(result.data.filePath) ;     //result.data就是服务器返回的图片名字和链接
-            // console.log(result.data.filePath,url)
-            result.data.filePath.map( i => {
-              // let url = Object.values(i)      //result.data就是服务器返回的图片名字和链接
-              insertImg(i)
-
-            })
-            // }
-
-            // result 必须是一个 JSON 格式字符串！！！否则报错
+    getImg(index) {
+      this.imgIndex = index;
+    },
+    //上传视频
+    uploadSectionFile(file) {
+      // console.log("file", file);
+      let _this = this;
+      const isLt20M = file.file.size / 1024 / 1024 < 20;
+      if (
+        [
+          "video/mp4",
+          "video/ogg",
+          "video/flv",
+          "video/avi",
+          "video/wmv",
+          "video/rmvb"
+        ].indexOf(file.file.type) == -1
+      ) {
+        this.$message.error("请上传正确的视频格式");
+        return false;
+      }
+      if (!isLt20M) {
+        this.$message.error("上传视频大小不能超过20MB哦!");
+        return false;
+      } else {
+        let formData = new FormData();
+        formData.append("video", file.file);
+        uploadVideo(formData)
+          .then(res => {
+            // console.log("视频id", res);
+            if (res.status === 200) {
+              _this.form.video = res.data.data.videoId;
+            }
+          })
+          .catch(err => {
+            // console.log(err) ;
+            return false;
+          });
+      }
+      // this.videoUrl = file.url;
+    },
+    successUpload(file, fileList) {
+      // console.log("successUpload", file);
+      this.VideoSrc = file.url;
+    },
+    // 上传图片
+    beforeImgUpload(file) {
+      let reader = new FileReader();
+      let ret = [];
+      let _this = this;
+      reader.onload = e => {
+        let image = new Image();
+        image.onload = function() {
+          const isHeight = this.height;
+          const isWidth = this.width;
+          if (isWidth > 800 || isHeight > 800) {
+            _this.$message.error("图片尺寸过大，请重新选择后上传");
+            return false;
+          } else {
+            let formData = new FormData();
+            formData.append("image", file.file);
+            uploadImage(formData).then(res => {
+              _this.$set(
+                _this.form.imagesList[_this.imgIndex],
+                "imgUrl",
+                res.data.data.fileName
+              );
+            });
           }
         };
-        editor.customConfig.linkImgCallback = function (url) {
-          // console.log(url) // url 即插入图片的地址
-        };
 
-        editor.create()
-        // editor.txt.html(this.getData)
+        image.src = e.target.result;
+      };
+      reader.readAsDataURL(file.file);
+    },
+    //删除图片
+    deleteImage(item) {
+      if (this.form.imagesList.indexOf(item) !== -1) {
+        let index = this.form.imagesList.indexOf(item);
+        this.$set(this.form.imagesList, index, { id: "", imgUrl: "" });
+        // this.form.imagesList[index] = { id : '', imgUrl: ''};
+      }
+    },
+    //删除视频
+    deleteVideo(item) {
+      if (this.form.video !== "") {
+        this.$set(this.form, "video", "");
+      }
+    },
+    //删除商品规格
+    deleteSize(item) {
+      let index = this.form.ybProductItemReqDto.indexOf(item);
+      if (index !== -1 && this.form.ybProductItemReqDto.length > 1) {
+        this.form.ybProductItemReqDto.splice(index, 1);
+      }
+    },
 
-      },
+    //添加商品规格
+    addSize() {
+      let _this = this;
+      if (this.form.ybProductItemReqDto.length < 10) {
+        let index = this.form.ybProductItemReqDto.length;
+        // _this.$nextTick(() =>{
+        // console.log(this.form.ybProductItemReqDto)
+        // Vue.set(this.form.ybProductItemReqDto,index,{
+        //     'size': '',
+        //     'color': '',
+        //     'stock': '',
+        // })
+        // })
 
-      //  跳转到申请店铺
-      applyShop(){
-        this.$router.push('/merchantCenter/userCenter/openShop')
-      },
-      handleSizeChange(val) {
-        this.radio = '';
-        this.pageSize = val ;
-        this.getBrandList();
-      },
+        this.form.ybProductItemReqDto.splice(index, 1, {
+          size: "",
+          color: "",
+          stock: ""
+        });
+        // console.log(this.form.ybProductItemReqDto)
+      } else {
+        this.$message({
+          message: "您添加的规格参数太多啦，不能再加啦~",
+          center: true,
+          type: "error"
+        });
+      }
+    },
 
-      handleCurrentChange(val) {
-        this.radio = '';
-        this.currentPage = val ;
-        this.getBrandList();
-      },
+    // catchData(value){
+    //   console.log(value);
+    //   value =this.form.describes      //在这里接受子组件传过来的参数，赋值给data里的参数
+    // },
+
+    //  修改商品信息
+    changeForm(formName) {
+      // console.log(this.form);
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          if (this.form.introduce === "") {
+            this.form.introduce = this.form.introduce;
+          }
+          let data = {
+            id: this.form.id,
+            productName: this.form.productName,
+            brandId: this.form.brandId,
+            class3Id: this.thirdName,
+            price: this.form.price,
+            carriage: this.form.carriage,
+            ybProductItemReqDto: this.form.ybProductItemReqDto,
+            imagesList: this.form.imagesList,
+            describes: this.form.describes,
+            videoId: this.form.video,
+            videoDescribe: this.form.introduce
+          };
+          // data = JSON.stringify(data);
+          this.loading = true;
+          // console.log('data',data)
+          changeGoods(data).then(res => {
+            this.loading = false;
+            if (res.data.status === "000000000") {
+              this.$message({
+                message: "您修改的商品信息已提交，请稍后确认商品状态",
+                center: true,
+                type: "success",
+                duration: 1000
+              });
+              setTimeout(() => {
+                this.$router.push("/merchantCenter/goods/goodsList");
+              }, 2000);
+            }
+          });
+        } else {
+        }
+      });
+    },
+
+    createEditor() {
+      var editor = new E("#wangeditor"); //创建富文本实例
+
+      editor.customConfig.onchange = html => {
+        this.form.describes = html;
+        // this.catchData(html)  //把这个html通过catchData的方法传入父组件
+      };
+      editor.customConfig.uploadImgServer = this.dataInterface.editorUpImgUrl;
+      editor.customConfig.uploadFileName = "sourcePic";
+      editor.customConfig.showLinkImg = false;
+      editor.customConfig.uploadImgMaxLength = 10;
+      editor.customConfig.uploadImgHeaders = {
+        ContentType: "application/json",
+        "yb-tryout-merchant-token": this.token //头部token
+      };
+      editor.customConfig.uploadImgParams = {
+        token: "abcdef12345"
+      };
+      editor.customConfig.menus = [
+        //菜单配置
+        "head",
+        "list", // 列表
+        "justify", // 对齐方式
+        "quote", // 引用
+        "bold",
+        "fontSize", // 字号
+        "italic",
+        "underline",
+        "strikeThrough", // 删除线
+        "foreColor", // 文字颜色
+        "backColor", // 背景颜色
+        "link", // 插入链接
+        "image", // 插入图片
+        "table", // 表格
+        "video", // 插入视频
+        "undo", // 撤销
+        "redo" // 重复
+      ];
+      editor.customConfig.uploadImgHooks = {
+        before: function(xhr, editor, files) {},
+        success: function(xhr, editor, result) {
+          this.imgUrl = Object.values(result.data.filePath).toString();
+        },
+        fail: function(xhr, editor, result) {},
+        error: function(xhr, editor) {},
+        timeout: function(xhr, editor) {},
+
+        customInsert: function(insertImg, result, editor) {
+          let url = Object.values(result.data.filePath); //result.data就是服务器返回的图片名字和链接
+          // console.log(result.data.filePath,url)
+          result.data.filePath.map(i => {
+            // let url = Object.values(i)      //result.data就是服务器返回的图片名字和链接
+            insertImg(i);
+          });
+          // }
+
+          // result 必须是一个 JSON 格式字符串！！！否则报错
+        }
+      };
+      editor.customConfig.linkImgCallback = function(url) {
+        // console.log(url) // url 即插入图片的地址
+      };
+
+      editor.create();
+      // editor.txt.html(this.getData)
+    },
+
+    //  跳转到申请店铺
+    applyShop() {
+      this.$router.push("/merchantCenter/userCenter/openShop");
+    },
+    handleSizeChange(val) {
+      this.radio = "";
+      this.pageSize = val;
+      this.getBrandList();
+    },
+
+    handleCurrentChange(val) {
+      this.radio = "";
+      this.currentPage = val;
+      this.getBrandList();
     }
   }
+};
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  @import '../../../styles/new';
-  @import '../../../styles/goods';
-
-
+@import "../../../styles/new";
+@import "../../../styles/goods";
+.uploadvideo {
+  width: 1.5rem;
+  height: 1.5rem;
+  .mainVideo {
+    width: 100%;
+    height: 100%;
+  }
+}
 </style>

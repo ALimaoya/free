@@ -365,6 +365,13 @@ export const constantRouterMap = [
             hidden: true
           },
           {
+            path: 'goodsParticulars',
+            name: 'goodsParticulars',
+            component: () => import('@/views/merchantCenter/goods/goodsParticulars'),
+            meta: { title: '商品详情', icon: 'goodsParticulars' },
+            hidden: true
+          },
+          {
             path: 'brandManage',
             name: 'BrandManage',
             component: () => import('@/views/merchantCenter/goods/brandManage'),

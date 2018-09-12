@@ -1,0 +1,162 @@
+.goods .el-form {
+  width: 90% !important;
+}
+
+.goods .el-form .showBrand {
+  width: 100px;
+  display: inline-block;
+  margin-left: 0.2rem;
+}
+
+.goods .el-form .showBrand svg {
+  width: 0.3rem;
+  height: 0.3rem;
+}
+
+.goods .el-form .showBrand span {
+  margin-left: 0.1rem;
+  color: #aaa;
+  font-size: 0.14rem;
+  display: inline-block;
+  line-height: 41px;
+  height: 41px;
+}
+
+.goods .el-form .wrap {
+  width: 70%;
+  margin: 0.3rem auto;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+}
+
+.goods .el-form .wrap .tag {
+  width: 130px;
+  height: 40px;
+  line-height: 40px;
+  display: inline-block;
+  padding-right: 0.3rem;
+  text-align: right;
+  font-size: 0.14rem;
+  color: #606266;
+  position: absolute;
+  /*box-sizing: border-box;*/
+}
+
+.goods .el-form .wrap .tag:before {
+  content: '*';
+  color: #f56c6c;
+  margin-right: 4px;
+}
+
+.goods .el-form .wrap .size {
+  display: flex;
+  flex-direction: column;
+  /*justify-content: flex-start;*/
+  position: relative;
+}
+
+.goods .el-form .wrap .size .itemContent {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  margin-left: 130px !important;
+}
+
+.goods .el-form .wrap .size .itemContent .el-form-item {
+  width: 20%;
+  margin: 0 0.2rem 0 0 !important;
+}
+
+.goods .el-form .wrap .size .itemContent .el-form-item .el-input {
+  /*width : 85% ;*/
+}
+
+.goods .el-form .wrap .size .itemContent .el-form-item .el-button {
+  height: 30px;
+  margin: 2px 0 !important;
+}
+
+.goods .el-form .wrap .size .itemContent .el-form-item:nth-child(3) {
+  width: 60%;
+}
+
+.goods .el-form .wrap .size .itemContent .el-form-item:nth-child(3) .el-input {
+  width: 50%;
+  margin-right: 0.1rem;
+}
+
+.goods .el-form .imgList {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-bottom: 0.3rem;
+  position: relative;
+}
+
+.goods .el-form .imgList li {
+  width: 20%;
+  position: relative;
+}
+
+.goods .el-form .imgList li .el-upload img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.goods .el-form .imgList .imgWarn {
+  position: absolute;
+  top: 95% !important;
+  left: 0;
+  display: inline;
+  font-size: 0.12rem;
+}
+
+.goods .el-form .imgList .deleteImg {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  width: 0.25rem;
+  height: 0.25rem;
+  left: 1.25rem;
+  background: url("../../../assets/imgs/delete.png") no-repeat center rgba(255, 255, 255, 0.1);
+  background-size: contain;
+  z-index: 1000;
+}
+
+.goods .el-form .imgList li:hover .deleteImg {
+  display: inline-block;
+}
+
+.goods .el-form .deleteVideo {
+  display: none;
+  position: absolute;
+  bottom: .6rem;
+  width: 0.25rem;
+  height: 0.25rem;
+  left: 1.25rem;
+  background: url("../../../assets/imgs/delete.png") no-repeat center rgba(255, 255, 255, 0.1);
+  background-size: contain;
+  z-index: 1000;
+}
+
+.goods .el-form .hoveVideo:hover .deleteVideo {
+  display: inline-block;
+}
+
+.goods .dialogTop {
+  margin: 0 auto 0.3rem;
+  width: 90%;
+}
+
+.goods .dialogTop .el-button {
+  margin-left: 0.12rem;
+}
+
+.goods .shop_dialog p {
+  height: 10vh;
+  font-size: 0.3rem;
+  text-align: center;
+  line-height: 10vh;
+}

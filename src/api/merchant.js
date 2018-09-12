@@ -76,6 +76,13 @@ export function changeGoods(data){
     data
   })
 }
+//商品详情
+export function shopParticulars(id){
+  return request({
+    url: '/center/product/getInfo/'+id ,
+    method: 'get',
+  })
+}
 //获取店铺状态
 export function getShopInfo(){
   return request({
