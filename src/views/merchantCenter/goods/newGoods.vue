@@ -99,7 +99,7 @@
             </el-upload>
             <span  class="deleteVideo" @click="deleteVideo(form.video)"></span>
           </div>
-          
+
           <p class="require tips_warn">视频要求：必须宣传本店铺品牌的视频，禁止含有水印广告、黄赌毒等信息,时长为5-30秒</p>
         </el-form-item>
         <el-form-item label="视频介绍" labelWidth="130px" prop="introduce">
@@ -357,7 +357,8 @@ export default {
       thirdName: "",
       platformType: "",
       platformTitle: "",
-      lastName: ["旗舰店", "专卖店", "专营店", ""]
+      lastName: ["旗舰店", "专卖店", "专营店", ""],
+      playUrl:''
     };
   },
 
@@ -477,6 +478,8 @@ export default {
             video: res.data.data.videoId
           };
           this.VideoSrc = res.data.data.playUrl;
+          this.playUrl = res.data.data.playUrl;
+
           if (res.data.status === "000000000") {
             if (res.data.data.productImages.length > 0) {
               res.data.data.productImages.map((i, index) => {
@@ -647,23 +650,29 @@ export default {
         ].indexOf(file.file.type) == -1
       ) {
         this.$message.error("请上传正确的视频格式");
+        _this.VideoSrc = _this.playUrl;
         return false;
       }
       if (!isLt20M) {
         this.$message.error("上传视频大小不能超过20MB哦!");
+        _this.VideoSrc = _this.playUrl;
         return false;
       } else {
         let formData = new FormData();
         formData.append("video", file.file);
         uploadVideo(formData)
           .then(res => {
-            console.log("视频id", res);
-            if (res.status === 200) {
-              if(res.data.status === "010001005"){
-                consoel.log('_this.form.video',_this.form.video)
-              }else{
+            // console.log("视频id", res);
+            if (res.data.status === '000000000') {
+
                 _this.form.video = res.data.data.videoId;
-              }
+
+            }else if(res.data.status === "010001005"){
+
+                _this.VideoSrc = '';
+                _this.form.video = '';
+
+
             }
           })
           .catch(err => {
