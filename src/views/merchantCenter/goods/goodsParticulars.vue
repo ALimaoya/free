@@ -62,10 +62,10 @@
       <el-form-item label="品牌商品视频" labelWidth="130px" prop="video">
           <img v-if="form.coverUrl" :src="form.coverUrl" class="videoImg" @click="showImg(form.playUrl)">
         <el-upload v-else  class="avatar-uploader uploadvideo" v-model.trim="form.video" :action="videoUrl"
-                    :headers="{'yb-tryout-merchant-token':token}" 
+                    :headers="{'yb-tryout-merchant-token':token}"
                     :show-file-list="false"  >
-          <video class="mainVideo avatar" v-if="form.video" :src="VideoSrc"  controls></video>
-          
+          <!--<video class="mainVideo avatar" v-if="form.video" :src="VideoSrc"  controls></video>-->
+
           <i class="el-icon-plus avatar-uploader-icon"></i>
          </el-upload>
         <p class="require tips_warn">视频要求：必须宣传本店铺品牌的视频，禁止含有水印广告、黄赌毒等信息,时长为5-30秒</p>
