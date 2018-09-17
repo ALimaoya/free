@@ -36,7 +36,13 @@
           </tr>
           <tr class="tbColor">
             <td>
-              <el-button plain size="mini" disabled="disabled" v-if="form.deliverOrder.status!==null"
+              <el-button plain v-if="form.deliverOrder.status === '21'" size="mini" type="warning">已支付拼团中</el-button>
+              <el-button plain v-else-if="form.deliverOrder.status === '22'" size="mini" type="success">拼团成功待抽奖</el-button>
+              <el-button plain v-else-if="form.deliverOrder.status === '23'" size="mini" type="danger">未中奖退款中</el-button>
+              <el-button plain v-else-if="form.deliverOrder.status === '24'" size="mini" type="info">未中奖已退款</el-button>
+              <el-button plain v-else-if="form.deliverOrder.status === '25'" size="mini" type="danger">拼团失败退款中</el-button>
+              <el-button plain v-else-if="form.deliverOrder.status === '26'" size="mini" type="info">拼团失败已退款</el-button>
+              <el-button plain size="mini" disabled="disabled" v-else-if="form.deliverOrder.status!==null"
                          :type="statusList[form.deliverOrder.status*1].type">{{
                 statusList[form.deliverOrder.status*1].name }}
               </el-button>
@@ -110,6 +116,12 @@
             <td>{{item.quantity}}</td>
             <td>{{item.price}}</td>
             <td>
+              <!--<el-button plain v-if="item.productItem.status === '21'" size="mini" type="warning">已支付拼团中</el-button>-->
+              <!--<el-button plain v-else-if="item.productItem.status === '22'" size="mini" type="success">拼团成功待抽奖</el-button>-->
+              <!--<el-button plain v-else-if="item.productItem.status === '23'" size="mini" type="danger">未中奖退款中</el-button>-->
+              <!--<el-button plain v-else-if="item.productItem.status === '24'" size="mini" type="info">未中奖已退款</el-button>-->
+              <!--<el-button plain v-else-if="item.productItem.status === '25'" size="mini" type="danger">拼团失败退款中</el-button>-->
+              <!--<el-button plain v-else-if="item.productItem.status === '26'" size="mini" type="info">拼团失败已退款</el-button>-->
               <el-button plain size="mini" disabled="disabled" v-if="item.productItem.status!==null"
                          :type="statusList[item.productItem.status*1].type">{{
                 statusList[item.productItem.status*1].name }}

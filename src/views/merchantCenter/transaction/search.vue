@@ -80,16 +80,22 @@
       </el-table-column>
       <el-table-column  label="订单分类" width="95">
         <template slot-scope="scope">
-          <span v-if="scope.row.activityType!==''">{{ typeList[(scope.row.activityType*1+1)].name}}</span>
+          <span v-if="scope.row.activityType!==''&&scope.row.activityType!== null&&scope.row.activityType!==undefined">{{ typeList[scope.row.activityType*1+1].name}}</span>
           <span v-else>{{ typeList[1].name}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="totalNum" label="总数量" width="70"></el-table-column>
       <el-table-column prop="payAmount" label="总价（元）" width="70"></el-table-column>
       <el-table-column prop="createTime" label="交易时间" width="100"></el-table-column>
-      <el-table-column label="状态" width="100">
+      <el-table-column label="状态" width="140">
         <template slot-scope="scope">
-          <el-button plain v-if="scope.row.status === '9'" size="mini" :type="statusList[scope.row.status-1].type">{{ statusList[scope.row.status*1-1].name }}</el-button>
+          <el-button plain v-if="scope.row.status === '21'" size="mini" type="warning">已支付拼团中</el-button>
+          <el-button plain v-else-if="scope.row.status === '22'" size="mini" type="success">拼团成功待抽奖</el-button>
+          <el-button plain v-else-if="scope.row.status === '23'" size="mini" type="danger">未中奖退款中</el-button>
+          <el-button plain v-else-if="scope.row.status === '24'" size="mini" type="info">未中奖已退款</el-button>
+          <el-button plain v-else-if="scope.row.status === '25'" size="mini" type="danger">拼团失败退款中</el-button>
+          <el-button plain v-else-if="scope.row.status === '26'" size="mini" type="info">拼团失败已退款</el-button>
+          <el-button plain v-else-if="scope.row.status === '9'" size="mini" :type="statusList[scope.row.status*1-1].type">{{ statusList[scope.row.status*1-1].name }}</el-button>
           <el-button plain v-else-if="scope.row.status !== ''" size="mini" :type="statusList[scope.row.status*1].type">{{ statusList[scope.row.status*1].name }}</el-button>
           <el-button plain v-else size="mini" :type="statusList[0].type">{{ statusList[0].name }}</el-button>
         </template>
@@ -227,6 +233,10 @@
               {
                 value: '2',
                 name: '助力享免单'
+              },
+              {
+                value: '3',
+                name: '0.01拼团购'
               },
             ],
             statusList:[
