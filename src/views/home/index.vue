@@ -37,7 +37,7 @@
           </div>
           <div class="wechat">
             <img src="../../assets/imgs/index/weixin.png" />
-            <img src="../../assets/imgs/index/wechat.png"   class="code"/>
+            <img src="../../assets/imgs/index/wx_chat.jpg"   class="code"/>
           </div>
         </div>
       </div>
