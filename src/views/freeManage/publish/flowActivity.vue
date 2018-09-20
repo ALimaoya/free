@@ -76,7 +76,16 @@
           <el-button :disabled="read" type="primary" @click="addKey">添加一个APP关键词</el-button>
         </el-form-item>
         <div>
-          <p class="title">第四步：设置投放信息</p>
+          <p class="title">第四步：增值服务</p>
+          <el-form-item label="选择活动开始时间：" labelWidth="160px" >
+            <el-checkbox-group v-model.trim="form.addServiceTypes" @change="getParams(form.addServiceTypes)">
+              <el-checkbox v-for="(item,index) in serviceList" :label="item.id"  :key="index" :disabled="index === 0">{{ item.name}}
+                <el-input class="service_input" size="mini" v-if="index === 4" v-model.trim="form.serviceNum" @blur="checkInput(form.serviceNum)"></el-input><span v-if="index === 4">个（0.2元/个）</span>
+                <span v-if="form.addServiceTypes.indexOf('E') !== -1 && tips&&index ===4" class="tips_warn">至少选择浏览一个其它商品，且最多只能选择浏览其它三个商品哦~</span>
+              </el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+          <p class="title">第五步：设置投放信息</p>
           <el-form-item label="选择活动开始时间：" labelWidth="160px" prop="activityStartTime">
             <div class="block">
               <el-date-picker :disabled="read" v-model="form.activityStartTime"  format="yyyy-MM-dd" value-format="yyyy-MM-dd" size="small" :picker-options="pickerOptions"
@@ -125,14 +134,42 @@
                 <td>投放数量</td>
                 <td>合计</td>
               </tr>
-              <tr>
-                <td>{{ form.brokeragePrice }}元/单</td>
-                <!--<td v-else>{{ brokeragePrice }}</td>-->
-                <td v-if="tryoutAmount">{{ tryoutAmount }}单</td>
-                <td v-else></td>
-                <td>{{ (form.brokeragePrice * tryoutAmount).toFixed(2)}} 元</td>
+              <tr v-if="form.addServiceTypes.indexOf('A') !==-1">
+                <td>浏览0.3元/单</td>
+                <td>{{tryoutAmount }}</td>
+                <td>{{(0.3*tryoutAmount).toFixed(2)}}元</td>
+                <!--<td>{{ form.brokeragePrice }}元/单</td>-->
+                <!--&lt;!&ndash;<td v-else>{{ brokeragePrice }}</td>&ndash;&gt;-->
+                <!--<td v-if="tryoutAmount">{{ tryoutAmount }}单</td>-->
+                <!--<td v-else></td>-->
+                <!--<td>{{ (form.brokeragePrice * tryoutAmount).toFixed(2)}} 元</td>-->
                 <!--<td v-else>{{ brokeragePrice * tryoutAmount}}</td>-->
               </tr>
+              <tr v-if="form.addServiceTypes.indexOf('B') !==-1">
+                <td>收藏0.5元/单</td>
+                <td>{{tryoutAmount }}</td>
+                <td>{{(0.5*tryoutAmount).toFixed(2)}}元</td>
+              </tr>
+              <tr v-if="form.addServiceTypes.indexOf('C') !==-1">
+                <td>关注0.5元/单</td>
+                <td>{{tryoutAmount }}</td>
+                <td>{{(0.5*tryoutAmount).toFixed(2)}}元</td>
+              </tr>
+              <tr v-if="form.addServiceTypes.indexOf('D') !==-1">
+                <td>加购0.5元/单</td>
+                <td>{{tryoutAmount }}</td>
+                <td>{{(0.5*tryoutAmount).toFixed(2)}}元</td>
+              </tr>
+              <tr v-if="form.addServiceTypes.indexOf('E') !==-1">
+                <td>浏览其它宝贝0.3元*{{form.serviceNum}}/单</td>
+                <td>{{tryoutAmount }}</td>
+                <td>{{(0.3*form.serviceNum*tryoutAmount).toFixed(2)}}元</td>
+              </tr>
+              <!--<tr>-->
+                <!--<td>商品佣金</td>-->
+                <!--<td>{{tryoutAmount }}</td>-->
+                <!--<td>{{((0.3*form.serviceNum)*tryoutAmount).toFixed(2)}}元</td>-->
+              <!--</tr>-->
             </table>
           </el-form-item>
         </div>
@@ -161,23 +198,16 @@
 </template>
 
 <script>
-  import ElFormItem from "element-ui/packages/form/src/form-item";
-  import { validateURL ,getQueryString , checkFloat } from '@/utils/validate'
+  import { validateURL ,getQueryString , checkFloat,int } from '@/utils/validate'
   import { parseTime} from '@/utils'
   import { getToken } from '@/utils/auth'
-  import ElRadioGroup from "element-ui/packages/radio/src/radio-group";
-  import ElButtonGroup from "element-ui/packages/button/src/button-group";
   import { getCategory ,getShopList ,searchTypeList , uploadImage , publishActivity  , changeDetail , getJDetail,getCommission} from "@/api/activity"
   import { shopList } from "@/api/shop"
   import { getMember } from '@/api/userInfor'
   import $ from '../../../../static/js/jquery-3.3.1.min.js'
+
     export default {
       name: "flow-activity",
-      components: {
-        ElButtonGroup,
-        ElRadioGroup,
-        ElFormItem ,
-      },
       data(){
         const validLink = (rule,value,callback) => {
           if(value === ''){
@@ -234,9 +264,12 @@
               activityCalendar : [],
               productName : '',
               productDetail : '',
-              brokeragePrice :''
+              brokeragePrice :'',
+              addServiceTypes:['A'],
+              serviceNum: '1',
               // startTime : ''
             },
+            serviceType:['A'],
             platForm : [
               {
                 name : '淘宝',
@@ -309,6 +342,11 @@
                   required : true , validator : validMoney ,trigger : 'blur'
                 }
               ],
+              // serviceType:[
+              //   {
+              //     required: true ,trigger: 'change',message : '请选择增值服务'
+              //   }
+              // ]
 
             },
             choosePlat : '',
@@ -351,7 +389,29 @@
             autoUpload : true ,
             vipVisible : false ,
             loading : true ,
-
+            serviceList:[
+              {
+                id: 'A',
+                name:'浏览（0.3元/个）'
+              },
+              {
+                id:'B',
+                name:'收藏宝贝（0.5元/个）'
+              },
+              {
+                id:'C',
+                name:'关注店铺（0.5元/个）'
+              },
+              {
+                id:'D',
+                name:'加入购物车（0.5元/个）'
+              },
+              {
+                id:'E',
+                name:'浏览店内其他宝贝：'
+              }
+            ],
+            tips:false,
             // brokeragePrice : ''
           }
       },
@@ -380,6 +440,23 @@
         })
       },
       methods : {
+        getParams(arr){
+          if(arr.indexOf('E') !== -1){
+            if(this.form.serviceNum ===''){
+              this.$message({
+                message : '请选择需要浏览其它宝贝的个数',
+                type : 'error',
+                center : true
+              });
+              return false ;
+
+            }
+            // this.form.addServiceTypes = arr.join(',');
+
+          }else{
+            this.form.serviceNum = '0';
+          }
+        },
         //判断是新建活动还是已存在活动
         activityDetail(){
           this.editor = this.$route.query.editor;
@@ -454,6 +531,9 @@
             this.dayNum = this.goodsAmount.length ;
             // this.form['startTime'] = parseTime(new Date(this.form.activityStartTime.replace(/-/g,"/")).getTime() + 2*24*3600*1000) ;
             this.setRate(this.form.activityStartTime ,this.tryoutAmount,this.goodsAmount);
+            // this.serviceType =  this.form.addServiceTypes.split(',');
+
+
           }
           else{
             this.form.activityStartTime = '';
@@ -731,7 +811,6 @@
 
         //转化率日历
         setRate(value,total,dayItem ){
-
           let date ;
           this.weekItems = [] ;
           if(total !== undefined){
@@ -994,7 +1073,14 @@
             this.daysWarn = false ;
           }
         },
+        checkInput(value){
+          if(!/^[1-3]{1}$/.test(value )){
+            this.tips = true ;
 
+          }else{
+            this.tips = false ;
+          }
+        },
         //提交试用信息
         onSubmit(formName,index){
           // console.log(this.form.activityCalendar,this.form.activityStartTime);
@@ -1006,13 +1092,27 @@
             this.goodsImgWarn = false ;
 
           }
+
+          if(this.form.addServiceTypes.indexOf('E') !== -1){
+            this.checkInput(this.form.serviceNum);
+            // if(this.form.serviceNum === ''){
+            //   this.tips = true
+            // }else{
+            //   this.tips = false ;
+            // }
+            // this.form.serviceNum = this.ohterNum
+          }else{
+            this.form.serviceNum = '0';
+            this.tips = false ;
+
+          }
           this.hasWarn();
           // this.getGoodsDetail(this.form.platformType,this.form.productUrl);
           // console.log(this.form.activityCalendar)
 
           // if(this.form.productId&&this.form.productDetail&&this.form.productName){
           this.$refs[formName].validate((valid) => {
-            if (valid && !this.warn && !this.daysWarn && !this.changeNum  && !this.goodsImgWarn) {
+            if (valid && !this.warn && !this.daysWarn && !this.changeNum  && !this.goodsImgWarn&&!this.tips) {
               // this.form.productId = '' ;
               this.goPlatform(this.form.platformType,this.form.productUrl);
               this.submitDetail(index,this.form)
