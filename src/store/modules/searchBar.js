@@ -122,6 +122,8 @@ const searchBar = {
         LT_activityStartTime : '',
         shopId : '',
         EQ_activityType : '4',
+        LIKE_addServiceType : [],
+        LIKE_addServiceType2:''
       },
       currentPage : 1,
       pageSize : 10,
@@ -145,7 +147,9 @@ const searchBar = {
         EQ_activityShop : '',
         activityStartTime : '',
         activityEndTime : '',
-        EQ_activityType : '4'
+        EQ_activityType : '4',
+        LIKE_addServiceType : [],
+        LIKE_addServiceType2:''
       },
       currentPage : 1,
       pageSize : 10,
@@ -181,7 +185,9 @@ const searchBar = {
         EQ_activityShop : '',
         activityStartTime : '',
         activityEndTime : '',
-        EQ_activityType : '4'
+        EQ_activityType : '4',
+        LIKE_addServiceType : [],
+        LIKE_addServiceType2:''
       },
       currentPage : 1,
       pageSize : 10,

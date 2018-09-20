@@ -11,7 +11,8 @@
         <li><span>订单创建时间：</span><span v-if="detailInfo.receiveTime">{{ detailInfo.winTime }}</span><span v-else>暂无</span></li>
         <!--<li><span>订单价格：</span><span v-if="detailInfo.amount">{{ detailInfo.amount }} 元</span><span v-else>暂无</span></li>-->
         <li><span>订单状态：</span><span v-if="detailInfo.buyAmount">{{ detailInfo.buyAmount }} </span><span v-else>暂无</span></li>
-        <li class="faileReason" v-if="detailInfo.remarks"><span>订单失败原因：</span><span>{{ detailInfo.remarks }} </span></li>
+        <li><span>流量方式：</span><span v-if="detailInfo.addServiceType">{{ detailInfo.addServiceType }} </span><span v-else>暂无</span></li>
+        <li v-if="detailInfo.remarks"><span>订单失败原因：</span><span>{{ detailInfo.remarks }} </span></li>
         <li class="faileReason"><span>用户上传图片详情：</span><span v-if="detailInfo.orderImageList == 0" class="noImg">暂无图片</span></li>
         <li class="detailPic">
           <div v-if="detailInfo.orderImageList != 0">
@@ -43,7 +44,8 @@
           return  {
             detailInfo : {},
             platForm : ['','淘宝','天猫', '京东'],
-            imgType : ['商品收藏截图','店铺收藏截图','订单截图','评价截图','搜索截图'] ,
+            // imgType : ['商品收藏截图','店铺收藏截图','订单截图','评价截图','搜索截图'] ,
+            imgType : ['商品收藏截图','店铺收藏截图','订单截图','评价截图','浏览截图','关注店铺','加入购物车','浏览店内其他宝贝'],
             showImg : false ,
             bigImg : '' ,
             imageDomain : process.env.IMAGE_DOMAIN ,

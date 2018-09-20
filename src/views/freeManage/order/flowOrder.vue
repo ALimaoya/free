@@ -1,7 +1,7 @@
 <template>
   <div class="flowOrder tableBox"    v-loading="loading"  element-loading-text="拼命加载中">
     <h1>流量订单查询</h1>
-    <search-bar @searchobj="getData" :platform-type="true" :activity-shop="true" :activity-code="true" :flow-status="true" :flow="'flowOrder'"></search-bar>
+    <search-bar @searchobj="getData" :platform-type="true" :activity-shop="true" :activity-code="true" :flow-status="true" :flow="'flowOrder'" :flow-way="true"></search-bar>
     <!--<div class="note">备注：以上搜索条件可根据单一条件进行搜索，当单独试客淘宝号搜索不到有用信息时，可尝试输入淘宝订单编号，反之亦然</div>-->
     <el-table :data="tableData" border>
       <el-table-column label="序号" width="80" prop="orderId" ></el-table-column>
@@ -13,6 +13,7 @@
           {{ platformOptions[scope.row.platform].name }}
         </template>
       </el-table-column>
+      <el-table-column prop="addServiceType" label="流量方式"></el-table-column>
       <el-table-column prop="thirdAccount" label="试客第三方账号"></el-table-column>
       <el-table-column prop="receiveTime" label="订单创建时间" ></el-table-column>
       <el-table-column prop="searchImageUrl" label="搜索截图">
@@ -127,6 +128,39 @@
         //获取订单列表
         getList(){
           let formData = new FormData();
+          let flowWayArr = ['0','0','0','0','0'];
+            if(this.order.LIKE_addServiceType.indexOf('A') != -1 ){
+              flowWayArr[0]='A';
+            }
+            if(this.order.LIKE_addServiceType.indexOf('B') != -1 ){
+              flowWayArr[1]='B';
+            }
+            if(this.order.LIKE_addServiceType.indexOf('C') != -1 ){
+              flowWayArr[2]='C';
+            }
+            if(this.order.LIKE_addServiceType.indexOf('D') != -1 ){
+              flowWayArr[3]='D';
+            }
+            if(this.order.LIKE_addServiceType.indexOf('E') != -1 ){
+              if(this.order.LIKE_addServiceType2 === '' || this.order.LIKE_addServiceType2 === undefined || this.order.LIKE_addServiceType2 === null){
+                this.$message.error('请选择浏览店内其他宝贝个数');
+                return false
+              }else{
+                if(this.order.LIKE_addServiceType2 === 1){
+                  flowWayArr[4]='E-1'
+                }
+                if(this.order.LIKE_addServiceType2 === 2){
+                  flowWayArr[4]='E-2'
+                }
+                if(this.order.LIKE_addServiceType2 === 3){
+                  flowWayArr[4]='E-3'
+                }
+              }
+            }else{
+              this.$set(this.order,'LIKE_addServiceType2','')
+            }
+            // console.log('this.order',this.order)
+          formData.append('LIKE_tryoutActivity.addServiceType',flowWayArr);
           formData.append('EQ_tryoutActivity.platformType',this.order.platformType);
           let reg = /^[0-9]*$/;
           if( reg.test(this.order.activityCode)){
@@ -167,9 +201,10 @@
             currentPage :this.currentPage,
             pageSize : this.pageSize,
           };
+          // console.log('dataStorage',dataStorage)
           this.$store.commit('saveFlowOrder',dataStorage);
           getOrderList(formData).then( res=> {
-               // console.log(res)
+              //  console.log(res)
               this.loading = false ;
               if( res.data.status === '000000000'){
                 this.tableData = res.data.data ;
@@ -191,15 +226,18 @@
         },
         //根据搜索条件获取订单列表
         getData(res){
-          this.order ={
-            EQ_status: res.EQ_status===undefined?'':res.EQ_status,
-            platformType :  res.platformType===undefined?'':res.platformType ,
-            activityCode :  res.activityCode===undefined?'':res.activityCode,
-            EQ_activityShop :  res.EQ_activityShop===undefined?'':res.EQ_activityShop,
-            activityStartTime :  res.activityStartTime===undefined?'':res.activityStartTime ,
-            activityEndTime :  res.activityEndTime===undefined?'':res.activityEndTime,
-            EQ_activityType :  res.EQ_activityType===undefined?'':res.EQ_activityType
-          }  ;
+          // this.order ={
+            this.order.EQ_status= res.EQ_status===undefined?'':res.EQ_status,
+            this.order.platformType =  res.platformType===undefined?'':res.platformType ,
+            this.order.activityCode =  res.activityCode===undefined?'':res.activityCode,
+            this.order.EQ_activityShop =  res.EQ_activityShop===undefined?'':res.EQ_activityShop,
+            this.order.activityStartTime =  res.activityStartTime===undefined?'':res.activityStartTime ,
+            this.order.activityEndTime =  res.activityEndTime===undefined?'':res.activityEndTime,
+            this.order.EQ_activityType =  res.EQ_activityType===undefined?'':res.EQ_activityType,
+            this.order.LIKE_addServiceType = res.LIKE_addServiceType===undefined?[]:res.LIKE_addServiceType,
+            this.order.LIKE_addServiceType2 = res.LIKE_addServiceType2===undefined?'':res.LIKE_addServiceType2,
+          // }  ;
+
           // this.currentPage = 1 ;
 
           this.getList();

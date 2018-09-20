@@ -1,6 +1,6 @@
 <template>
   <div class="flow activityTable"  v-loading="loading"  element-loading-text="拼命加载中">
-    <search-bar @searchobj="getSearchData" :platform-type="true" :activity-shop="true" :task-status="true" :activity-code="true" :flow="'flowTask'" ></search-bar>
+    <search-bar @searchobj="getSearchData" :platform-type="true" :activity-shop="true" :task-status="true" :activity-code="true" :flow="'flowTask'" :flow-way="true"></search-bar>
     <el-table :data="tableData"  border fit>
       <el-table-column prop="activityId" label="序号"></el-table-column>
       <el-table-column prop="shopName" label="商铺名称" ></el-table-column>
@@ -10,6 +10,7 @@
           {{ platformOptions[scope.row.platform].name}}
         </template>
       </el-table-column>
+      <el-table-column prop="addServiceType" label="流量方式"></el-table-column>
       <el-table-column prop="mainImageUrl" label="活动图片" >
         <template slot-scope="scope">
           <img v-if="scope.row.mainImageUrl" class="showImg" @click="showImg(scope.row.mainImageUrl)" :src="imageDomain + scope.row.mainImageUrl" :onerror="errorImg"/>
@@ -219,6 +220,38 @@
       getData() {
         // console.log(form);
         let formData = new FormData();
+        let flowWayArr = ['0','0','0','0','0'];
+          if(this.activity.LIKE_addServiceType.indexOf('A') != -1 ){
+            flowWayArr[0]='A';
+          }
+          if(this.activity.LIKE_addServiceType.indexOf('B') != -1 ){
+            flowWayArr[1]='B';
+          }
+          if(this.activity.LIKE_addServiceType.indexOf('C') != -1 ){
+            flowWayArr[2]='C';
+          }
+          if(this.activity.LIKE_addServiceType.indexOf('D') != -1 ){
+            flowWayArr[3]='D';
+          }
+          if(this.activity.LIKE_addServiceType.indexOf('E') != -1 ){
+            if(this.activity.LIKE_addServiceType2 === '' || this.activity.LIKE_addServiceType2 === undefined || this.activity.LIKE_addServiceType2 === null){
+              this.$message.error('请选择浏览店内其他宝贝个数');
+              return false
+            }else{
+              if(this.activity.LIKE_addServiceType2 === 1){
+                flowWayArr[4]='E-1'
+              }
+              if(this.activity.LIKE_addServiceType2 === 2){
+                flowWayArr[4]='E-2'
+              }
+              if(this.activity.LIKE_addServiceType2 === 3){
+                flowWayArr[4]='E-3'
+              }
+            }
+          }else{
+            this.$set(this.activity,'LIKE_addServiceType2','')
+          }
+        formData.append('LIKE_addServiceType',flowWayArr);
         formData.append('EQ_platformType', this.activity.EQ_platformType);
         let reg = /^[0-9]*$/;
         if( reg.test(this.activity.EQ_activityCode)){
@@ -268,6 +301,8 @@
         this.activity.EQ_activityStatus = res.EQ_activityStatus===undefined?'':res.EQ_activityStatus ;
         this.activity.GT_activityEndTime = res.activityStartTime===undefined?'':res.activityStartTime ;
         this.activity.LT_activityStartTime = res.activityEndTime===undefined?'':res.activityEndTime ;
+        this.activity.LIKE_addServiceType = res.LIKE_addServiceType===undefined?[]:res.LIKE_addServiceType;
+        this.activity.LIKE_addServiceType2 = res.LIKE_addServiceType2===undefined?'':res.LIKE_addServiceType2;
         // this.currentPage = 1 ;
 
 
@@ -481,7 +516,7 @@
 
             },2000)
           }
-        })
+        })   
       },
       //查看大图
       showImg(url){
@@ -507,7 +542,8 @@
     }
     }
 </script>
-
+       
 <style scoped lang="scss">
-  @import 'src/styles/activityTable';
+  @import 'src/styles/activityTable.scss';
+  
 </style>

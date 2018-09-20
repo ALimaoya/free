@@ -1,0 +1,97 @@
+.activityTable h1 {
+  margin: 0;
+  padding: 0.2rem  0.4rem;
+  border-bottom: 1px solid #666;
+  font-size: 0.22rem;
+  line-height: 0.4rem;
+}
+
+.activityTable .search {
+  width: 100%;
+  padding: 0.3rem 0.5rem 0.2rem;
+  border-bottom: 1px solid #aaa;
+  margin-bottom: 0.3rem;
+}
+
+.activityTable .search .el-input {
+  width: 18%;
+  margin: 0 0.25rem 0.2rem;
+  float: left;
+}
+
+.activityTable .search .el-select {
+  width: 160px;
+  float: left;
+  margin-bottom: 0.2rem;
+  margin-right: 0.2rem;
+}
+
+.activityTable .search .block {
+  width: 85%;
+  float: left;
+  margin-bottom: 0.2rem;
+}
+
+.activityTable .search .block span {
+  width: 175px;
+  height: 100%;
+  line-height: 0.4rem;
+  display: block;
+  float: left;
+  text-align: right;
+  color: #333;
+  margin-right: 0.25rem;
+}
+
+.activityTable .search .block .el-date-editor, .activityTable .search .block .el-range-editor, .activityTable .search .block .el-input__inner, .activityTable .search .block .el-date-editor--daterange, .activityTable .search .block .is-active {
+  width: 21%;
+  margin: 0;
+  /*padding : 0 0.03rem;*/
+}
+
+.activityTable .search .block .demonstration2 {
+  width: 20px;
+}
+
+.activityTable .search .el-button {
+  width: 65px;
+  margin-bottom: 0.2rem;
+  margin-left: 20px;
+  float: left;
+}
+
+.activityTable .el-table {
+  width: 95%;
+  margin: 0 auto;
+  border-color: #aaa;
+  border-radius: 0.05rem;
+}
+
+.activityTable .el-table .check {
+  padding: 0;
+  margin: 0;
+}
+
+.activityTable .el-table .time {
+  font-size: 0.13rem;
+}
+
+.activityTable .el-table .showImg {
+  width: 0.6rem;
+  margin: 0 auto;
+  max-height: 100%;
+}
+
+.activityTable .block2 {
+  padding: 0.3rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.activityTable .block2 .totalItems {
+  display: block;
+  height: 0.3rem;
+  color: #666;
+  text-align: right;
+  margin-top: 0.3rem;
+}

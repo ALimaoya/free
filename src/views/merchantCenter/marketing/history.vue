@@ -403,7 +403,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  @import 'src/styles/activityTable';
+  @import 'src/styles/activityTable.scss';
   .search{
     height : 100px!important;
   .block{

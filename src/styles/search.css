@@ -1,0 +1,89 @@
+.search {
+  padding: 0.2rem 0.3rem;
+  box-sizing: border-box;
+  border-bottom: 1px solid #aaa;
+  /*.searchOrder{*/
+  /*width : 100px ;*/
+  /*height : 34px ;*/
+  /*border-radius : 0.2rem ;*/
+  /*font-size : 0.14rem ;*/
+  /*color : #fff;*/
+  /*background : #409EFF;*/
+  /*margin-left : 0.2rem ;*/
+  /*}*/
+}
+
+.search .searchOrder {
+  height: 34px;
+}
+
+.search .el-input {
+  width: 200px;
+  margin-left: 0.3rem;
+  font-size: 0.14rem;
+  color: #8f949a;
+}
+
+.search .el-select {
+  margin-left: 0.3rem;
+  width: 140px;
+  background: #eee;
+}
+
+.search .searchOrder {
+  width: 65px;
+  margin-bottom: 0.2rem;
+  margin-left: 20px;
+}
+
+.search .block {
+  width: 85%;
+  display: inline-block;
+  margin-top: 0.2rem;
+}
+
+.search .block span {
+  width: 170px;
+  height: 100%;
+  line-height: 0.4rem;
+  display: inline-block;
+  text-align: right;
+  color: #333;
+  margin-right: 20px;
+  /*&:nth-last-child(2){*/
+  /*width : 0.25rem ;*/
+  /*margin : 0 ;*/
+  /*text-align : center ;*/
+  /*}*/
+}
+
+.search .block .el-date-editor, .search .block .el-range-editor, .search .block .el-input__inner, .search .block .el-date-editor--daterange, .search .block .is-active {
+  width: 20%;
+  margin: 0;
+  /*padding : 0 0.03rem;*/
+}
+
+.search .block .demonstration2 {
+  width: 20px;
+  margin-right: 0;
+  text-align: center;
+}
+
+.search .block .el-checkbox-group {
+  display: inline-block;
+}
+
+.search .block .el-select {
+  margin-left: 0px;
+}
+
+.search .note {
+  padding-left: 0.3rem;
+  width: 100%;
+  border-bottom: 1px solid #aaa;
+  height: 0.4rem;
+  line-height: 0.4rem;
+  font-size: 0.14rem;
+  text-indent: 0.32rem;
+  color: #999;
+}

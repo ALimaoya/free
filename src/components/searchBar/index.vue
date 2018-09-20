@@ -64,7 +64,21 @@
         :value="item.value">
       </el-option>
     </el-select>
-
+    <div class="block" v-if="flowWay">
+      <span>流量方式：</span>
+      <el-checkbox-group v-model="order.LIKE_addServiceType" @change='get'>
+        <el-checkbox v-for="item in flowwayList" :label="item.id" :key="item.id">{{item.name}}</el-checkbox>
+      </el-checkbox-group>
+      <el-select v-model="order.LIKE_addServiceType2" size="small" >
+        <el-option
+          v-for="elseDotey in elseDoteys"
+          :key="elseDotey.id"
+          :label="elseDotey.val"
+          :value="elseDotey.val">
+        </el-option>
+      </el-select>
+      个
+    </div>
     <div class="block" v-if="flow||date">
       <span class="demonstration">选择日期：</span>
       <el-date-picker format="yyyy - MM - dd " value-format="yyyy-MM-dd" size="small"
@@ -93,6 +107,9 @@
         name: "index",
       data(){
           return {
+            flowwayList:[{id:'A',name:'浏览'},{id:'B',name:'收藏宝贝'},{id:'C',name:'关注店铺'},{id:'D',name:'加入购物车'},{id:'E',name:'浏览店内其他宝贝'}],
+            elseDoteys:[{id:1,val:1},{id:2,val:2},{id:3,val:3}],
+            elseDotey:'',
             order:{
               // EQ_status: '',
               // // thirdAccount: '',
@@ -320,7 +337,7 @@
             // totalElements : 0 ,
           }
       },
-      props : ['platformType','activityCode','activityType','thirdOrderCode','eq_status','activity','activityShop','activityStatus','taskStatus','flowStatus','flow','date'],
+      props : ['platformType','activityCode','activityType','thirdOrderCode','eq_status','activity','activityShop','activityStatus','taskStatus','flowStatus','flow','date','flowWay'],
       mounted(){
           if(this.activityMode === 'freeActivity'){
             this.order = this.$store.state.searchBar.approval.activity;
@@ -347,6 +364,9 @@
         this.getShop();
       },
       methods : {
+        get(val){
+          // console.log('val',val,this.wayname)
+        },
         //获取店铺列表
         getShop(){
           getShopList(this.order.platformType).then( res => {
@@ -359,8 +379,9 @@
             platformType : this.order.platformType,
             activityCode : this.order.activityCode ,
             thirdOrderCode : this.order.thirdOrderCode,
-            EQ_status : this.order.EQ_status
-
+            EQ_status : this.order.EQ_status,
+            LIKE_addServiceType : this.order.LIKE_addServiceType,
+            LIKE_addServiceType2 : this.order.LIKE_addServiceType2,
           // EQ_activityType : this.order.EQ_activityType
         };
 
