@@ -453,8 +453,6 @@
             }
             // this.form.addServiceTypes = arr.join(',');
 
-          }else{
-            this.form.serviceNum = '0';
           }
         },
         //判断是新建活动还是已存在活动
