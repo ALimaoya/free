@@ -75,11 +75,11 @@
     <!--修改对应活动关键词弹窗-->
     <el-dialog class="key_dialog" width="65%" center title="修改活动关键词" :visible.sync="keyBox" >
       <el-form :model="form" ref="form" :rules="formRule" label-position="left">
-        <el-form-item label="APP关键词：" labelWidth="130px">
+        <el-form-item label="APP关键词：" labelWidth="140px">
           <span >{{ choosePlat }}</span>
         </el-form-item>
         <el-form-item class="size" v-for="(keyItem,index) in form.keyword" :label="'APP端关键词'+(index+1)*1+'：'"
-                      :key="index" :prop="'keyword.'+ index + '.searchKeyword'" labelWidth="130px">
+                      :key="index" :prop="'keyword.'+ index + '.searchKeyword'" labelWidth="140px">
           <el-select class="searchType" @focus="getType(form.platformType)" v-model="keyItem.searchId" placeholder="搜索平台" size="small">
             <el-option
               v-for="(item ,index) in searchOptions"
@@ -97,7 +97,7 @@
           <el-input :maxlength="100" class="key" style="width : 200px;"  placeholder="如价格区间、销量区间等" size="small" v-model.trim="keyItem.searchCondition" ></el-input>
           <el-button slot size="small" @click="deleteKey(keyItem)">删除</el-button>
         </el-form-item>
-        <el-form-item labelWidth="120px" >
+        <el-form-item labelWidth="130px" >
           <el-button type="primary" @click="addKey">添加一个APP关键词</el-button>
         </el-form-item>
       </el-form>

@@ -43,6 +43,13 @@ export function getPayDetail(order){
   })
 }
 
+// 增值服务每一项的价格
+export function getEachPrice(){
+  return request({
+    url : '/activity/addServicePrice',
+    method : 'get'
+  })
+}
 //试用活动支付
 export function activityPay(data){
   return request({
