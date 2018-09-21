@@ -86,14 +86,14 @@
                 <el-checkbox label="D" :disabled="checkBrowse">加入购物车（{{eachPrice.D}}元/个）</el-checkbox>
                 <el-checkbox label="E" :disabled="checkBrowse">浏览店内其他宝贝
                   <el-input :disabled="checkBrowse" class="service_input" size="mini" v-model.trim="form.serviceNum" @blur="checkInput(form.serviceNum)"></el-input>
-                  <span v-if="form.addServiceTypes.indexOf('E') !== -1 && tips&&index ===4" class="tips_warn">至少选择浏览一个其它商品，且最多只能选择浏览其它三个商品哦~</span>
                 （{{eachPrice.E}}元/个）</el-checkbox>
+                <span v-if="form.addServiceTypes.indexOf('E') !== -1 && tips" class="tips_warn">至少选择浏览一个其它商品，且最多只能选择浏览其它三个商品哦~</span>
                 <!-- <el-checkbox v-for="(item,index) in serviceList"  :label="item.id"  :key="index" :disabled="index === 0">{{ item.name}}
                   <el-input class="service_input" size="mini" v-if="index === 4" v-model.trim="form.serviceNum" @blur="checkInput(form.serviceNum)"></el-input><span v-if="index === 4">个（0.2元/个）</span>
                   <span v-if="form.addServiceTypes.indexOf('E') !== -1 && tips&&index ===4" class="tips_warn">至少选择浏览一个其它商品，且最多只能选择浏览其它三个商品哦~</span>
                 </el-checkbox> -->
               </el-checkbox-group>
-              <p>浏览：必选；除此以外，其他选项选择任意两项及以上，总费用打8折（收藏商品，加购物车，关注店铺，浏览店内其他宝贝）</p>
+              <p class="tips_warn">注：浏览，必选；除此以外，其他选项选择任意两项及以上，总费用打8折（收藏商品，加购物车，关注店铺，浏览店内其他宝贝）</p>
             </el-form-item>
           </div>
           <p class="title" v-if="form.addServiceTypes !== null">第五步：设置投放信息</p>
@@ -492,6 +492,7 @@
             // this.form.addServiceTypes = arr.join(',');
 
           }
+          // 选中 大于3个 打八折
           if(this.form.addServiceTypes.length >= 3){
             this.eightDiscount = false
           }else{
