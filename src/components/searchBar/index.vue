@@ -66,10 +66,10 @@
     </el-select>
     <div class="block" v-if="flowWay">
       <span>流量方式：</span>
-      <el-checkbox-group v-model="order.LIKE_addServiceType" @change='get'>
+      <el-checkbox-group v-model="order.LIKE_addServiceType" @change='getFlowWay'>
         <el-checkbox v-for="item in flowwayList" :label="item.id" :key="item.id">{{item.name}}</el-checkbox>
       </el-checkbox-group>
-      <el-select v-model="order.LIKE_addServiceType2" size="small" >
+      <el-select v-model="order.LIKE_addServiceType2" size="small" :disabled="elseNumber">
         <el-option
           v-for="elseDotey in elseDoteys"
           :key="elseDotey.id"
@@ -330,7 +330,8 @@
             shopList : [],
             activityMode : this.activity ,
             searchDate : this.date ,
-            flowMode : this.flow
+            flowMode : this.flow,
+            elseNumber:true,
             // currentPage : 1 ,
             // pageSize : 10 ,
             // totalPages : '',
@@ -364,8 +365,10 @@
         this.getShop();
       },
       methods : {
-        get(val){
-          // console.log('val',val,this.wayname)
+        getFlowWay(val){
+          if(val.indexOf("E") !== -1){
+            this.elseNumber = false
+          }
         },
         //获取店铺列表
         getShop(){
