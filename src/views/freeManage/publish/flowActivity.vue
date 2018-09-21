@@ -194,7 +194,7 @@
                 <td>{{ form.brokeragePrice }}元/单</td>
                 <td v-if="tryoutAmount">{{ tryoutAmount }}单</td>
                 <td v-else></td>
-                <td>{{ (form.brokeragePrice * tryoutAmount).toFixed(2)}} 元</td>
+                <td style="color:red">{{ (form.brokeragePrice * tryoutAmount).toFixed(2)}} 元</td>
               </tr>
             </table>
           </el-form-item>
@@ -566,6 +566,10 @@
 
         //判断活动编辑状态
         editorStatus(num){
+          //  如果是新数据  要调用增值服务选择
+          if(this.form.addServiceTypes !== null){
+            this.getParams(this.form.addServiceTypes)
+          }
           if(this.editor !== undefined){
             //查看活动，该状态下活动内容均不能进行编辑
             if(this.editor === '2'){
