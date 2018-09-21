@@ -213,7 +213,7 @@
         this.getData();
         let now = new Date();
         this.time = parseTime(now);
-        console.log(this.activity)
+        // console.log(this.activity)
       },
     methods : {
       //请求数据
