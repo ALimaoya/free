@@ -213,7 +213,7 @@
         this.getData();
         let now = new Date();
         this.time = parseTime(now);
-        // console.log(this.activity)
+        console.log(this.activity)
       },
     methods : {
       //请求数据
@@ -298,6 +298,7 @@
         this.activity.EQ_platformType = res.platformType===undefined?'':res.platformType ;
         this.activity.EQ_activityCode = res.activityCode===undefined?'':res.activityCode ;
         // this.activity.EQ_activityType = res.EQ_activityType ;
+        this.activity.shopId = res.EQ_activityShop===undefined?'':res.EQ_activityShop ;
         this.activity.EQ_activityStatus = res.EQ_activityStatus===undefined?'':res.EQ_activityStatus ;
         this.activity.GT_activityEndTime = res.activityStartTime===undefined?'':res.activityStartTime ;
         this.activity.LT_activityStartTime = res.activityEndTime===undefined?'':res.activityEndTime ;

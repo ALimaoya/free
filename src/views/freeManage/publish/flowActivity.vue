@@ -76,25 +76,28 @@
           <el-button :disabled="read" type="primary" @click="addKey">添加一个APP关键词</el-button>
         </el-form-item>
         <div>
-          <p class="title">第四步：增值服务</p>
-          <el-form-item label="" labelWidth="160px" >
-            <el-checkbox-group v-model.trim="form.addServiceTypes" @change="getParams(form.addServiceTypes)">
-              <el-checkbox label="A" :disabled="true">浏览（{{eachPrice.A}}元/个）</el-checkbox>
-              <el-checkbox label="B" :disabled="checkBrowse">收藏宝贝（{{eachPrice.B}}元/个）</el-checkbox>
-              <el-checkbox label="C" :disabled="checkBrowse">关注店铺（{{eachPrice.C}}元/个）</el-checkbox>
-              <el-checkbox label="D" :disabled="checkBrowse">加入购物车（{{eachPrice.D}}元/个）</el-checkbox>
-              <el-checkbox label="E" :disabled="checkBrowse">浏览店内其他宝贝
-                <el-input :disabled="checkBrowse" class="service_input" size="mini" v-model.trim="form.serviceNum" @blur="checkInput(form.serviceNum)"></el-input>
-                <span v-if="form.addServiceTypes.indexOf('E') !== -1 && tips&&index ===4" class="tips_warn">至少选择浏览一个其它商品，且最多只能选择浏览其它三个商品哦~</span>
-              （{{eachPrice.E}}元/个）</el-checkbox>
-              <!-- <el-checkbox v-for="(item,index) in serviceList"  :label="item.id"  :key="index" :disabled="index === 0">{{ item.name}}
-                <el-input class="service_input" size="mini" v-if="index === 4" v-model.trim="form.serviceNum" @blur="checkInput(form.serviceNum)"></el-input><span v-if="index === 4">个（0.2元/个）</span>
-                <span v-if="form.addServiceTypes.indexOf('E') !== -1 && tips&&index ===4" class="tips_warn">至少选择浏览一个其它商品，且最多只能选择浏览其它三个商品哦~</span>
-              </el-checkbox> -->
-            </el-checkbox-group>
-            <p>浏览：必选；除此以外，其他选项选择任意两项及以上，总费用打8折（收藏商品，加购物车，关注店铺，流量店内其他宝贝）</p>
-          </el-form-item>
-          <p class="title">第五步：设置投放信息</p>
+          <div v-if="form.addServiceTypes !== null">
+            <p class="title">第四步：增值服务</p>
+            <el-form-item label="" labelWidth="160px" >
+              <el-checkbox-group v-model.trim="form.addServiceTypes" @change="getParams(form.addServiceTypes)">
+                <el-checkbox label="A" :disabled="true">浏览（{{eachPrice.A}}元/个）</el-checkbox>
+                <el-checkbox label="B" :disabled="checkBrowse">收藏宝贝（{{eachPrice.B}}元/个）</el-checkbox>
+                <el-checkbox label="C" :disabled="checkBrowse">关注店铺（{{eachPrice.C}}元/个）</el-checkbox>
+                <el-checkbox label="D" :disabled="checkBrowse">加入购物车（{{eachPrice.D}}元/个）</el-checkbox>
+                <el-checkbox label="E" :disabled="checkBrowse">浏览店内其他宝贝
+                  <el-input :disabled="checkBrowse" class="service_input" size="mini" v-model.trim="form.serviceNum" @blur="checkInput(form.serviceNum)"></el-input>
+                  <span v-if="form.addServiceTypes.indexOf('E') !== -1 && tips&&index ===4" class="tips_warn">至少选择浏览一个其它商品，且最多只能选择浏览其它三个商品哦~</span>
+                （{{eachPrice.E}}元/个）</el-checkbox>
+                <!-- <el-checkbox v-for="(item,index) in serviceList"  :label="item.id"  :key="index" :disabled="index === 0">{{ item.name}}
+                  <el-input class="service_input" size="mini" v-if="index === 4" v-model.trim="form.serviceNum" @blur="checkInput(form.serviceNum)"></el-input><span v-if="index === 4">个（0.2元/个）</span>
+                  <span v-if="form.addServiceTypes.indexOf('E') !== -1 && tips&&index ===4" class="tips_warn">至少选择浏览一个其它商品，且最多只能选择浏览其它三个商品哦~</span>
+                </el-checkbox> -->
+              </el-checkbox-group>
+              <p>浏览：必选；除此以外，其他选项选择任意两项及以上，总费用打8折（收藏商品，加购物车，关注店铺，浏览店内其他宝贝）</p>
+            </el-form-item>
+          </div>
+          <p class="title" v-if="form.addServiceTypes !== null">第五步：设置投放信息</p>
+          <p class="title" v-else>第四步：设置投放信息</p>
           <el-form-item label="选择活动开始时间：" labelWidth="160px" prop="activityStartTime">
             <div class="block">
               <el-date-picker :disabled="read" v-model="form.activityStartTime"  format="yyyy-MM-dd" value-format="yyyy-MM-dd" size="small" :picker-options="pickerOptions"
@@ -137,7 +140,7 @@
 
           <div class="situation">投放情况：</div>
           <el-form-item>
-            <table border="1" bordercolor="#dcdfe6" >
+            <table border="1" bordercolor="#dcdfe6" v-if="form.addServiceTypes !== null">
               <tr>
                 <td>基础佣金</td>
                 <td>投放数量</td>
@@ -146,8 +149,7 @@
               <tr v-if="form.addServiceTypes.indexOf('A') !==-1">
                 <td>浏览{{eachPrice.A}}元/单</td>
                 <td>{{tryoutAmount }}</td>
-                <td v-if="eightDiscount">{{(eachPrice.A*tryoutAmount).toFixed(2)}}元</td>
-                <td v-else>{{(eachPrice.A*tryoutAmount*0.8).toFixed(2)}}元</td>
+                <td>{{(eachPrice.A*tryoutAmount).toFixed(2)}}元</td>
                 <!--<td>{{ form.brokeragePrice }}元/单</td>-->
                 <!--&lt;!&ndash;<td v-else>{{ brokeragePrice }}</td>&ndash;&gt;-->
                 <!--<td v-if="tryoutAmount">{{ tryoutAmount }}单</td>-->
@@ -158,32 +160,41 @@
               <tr v-if="form.addServiceTypes.indexOf('B') !==-1">
                 <td>收藏{{eachPrice.B}}元/单</td>
                 <td>{{tryoutAmount }}</td>
-                <td v-if="eightDiscount">{{(eachPrice.B*tryoutAmount).toFixed(2)}}元</td>
-                <td v-else>{{(eachPrice.B*tryoutAmount*0.8).toFixed(2)}}元</td>
+                <td>{{(eachPrice.B*tryoutAmount).toFixed(2)}}元</td>
               </tr>
               <tr v-if="form.addServiceTypes.indexOf('C') !==-1">
                 <td>关注{{eachPrice.C}}元/单</td>
                 <td>{{tryoutAmount }}</td>
-                <td v-if="eightDiscount">{{(eachPrice.C*tryoutAmount).toFixed(2)}}元</td>
-                <td v-else>{{(eachPrice.C*tryoutAmount*0.8).toFixed(2)}}元</td>
+                <td>{{(eachPrice.C*tryoutAmount).toFixed(2)}}元</td>
               </tr>
               <tr v-if="form.addServiceTypes.indexOf('D') !==-1">
                 <td>加购{{eachPrice.D}}元/单</td>
                 <td>{{tryoutAmount }}</td>
-                <td v-if="eightDiscount">{{(eachPrice.D*tryoutAmount).toFixed(2)}}元</td>
-                <td v-else>{{(eachPrice.D*tryoutAmount*0.8).toFixed(2)}}元</td>
+                <td>{{(eachPrice.D*tryoutAmount).toFixed(2)}}元</td>
               </tr>
               <tr v-if="form.addServiceTypes.indexOf('E') !==-1">
                 <td>浏览其它宝贝{{eachPrice.E}}元*{{form.serviceNum}}/单</td>
                 <td>{{tryoutAmount }}</td>
-                <td v-if="eightDiscount">{{(eachPrice.E*tryoutAmount*form.serviceNum).toFixed(2)}}元</td>
-                <td v-else>{{(eachPrice.E*tryoutAmount*form.serviceNum*0.8).toFixed(2)}}元</td>
+                <td>{{(eachPrice.E*tryoutAmount*form.serviceNum).toFixed(2)}}元</td>
               </tr>
               <tr>
                 <td>应付</td>
                 <td> -- </td>
-                <td v-if="eightDiscount">{{((eachPrice.A+totalPrices)*tryoutAmount).toFixed(2)}}元</td>
-                <td v-else>{{((eachPrice.A+totalPrices)*tryoutAmount*0.8).toFixed(2)}}元</td>
+                <td v-if="eightDiscount" style="color:red">{{((eachPrice.A+totalPrices)*tryoutAmount).toFixed(2)}}元</td>
+                <td v-else style="color:red">{{((eachPrice.A+totalPrices)*tryoutAmount*0.8).toFixed(2)}}元</td>
+              </tr>
+            </table>
+            <table border="1" bordercolor="#dcdfe6" v-else>
+              <tr>
+                <td>基础佣金</td>
+                <td>投放数量</td>
+                <td>合计</td>
+              </tr>
+              <tr>
+                <td>{{ form.brokeragePrice }}元/单</td>
+                <td v-if="tryoutAmount">{{ tryoutAmount }}单</td>
+                <td v-else></td>
+                <td>{{ (form.brokeragePrice * tryoutAmount).toFixed(2)}} 元</td>
               </tr>
             </table>
           </el-form-item>
@@ -464,7 +475,6 @@
         appreciationPrice(){
           getEachPrice().then(res =>{
             this.eachPrice = res.data.data
-            console.log('getEachPrice',this.eachPrice)
           })
         },
         //  增值服务如果选择浏览店内其他宝贝要选择个数     
@@ -484,6 +494,8 @@
           }
           if(this.form.addServiceTypes.length >= 3){
             this.eightDiscount = false
+          }else{
+            this.eightDiscount = true
           }
           //  计算选中单个价格的 总价
           this.totalPrices = ''-0
