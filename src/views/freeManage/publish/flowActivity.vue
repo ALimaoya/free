@@ -927,22 +927,7 @@
               daysArr.push('');
             }
           }
-          // else{
-          //   // if(targetDay === 0){
-          //   //   for(let i = 0 ; i< 7; i++){
-          //   //     daysArr.push('');
-          //   //   }
-          //   // }
-          //   if(targetDay === 1){
-          //     // for(let i = 0 ; i< 6; i++){
-          //       daysArr.push('');
-          //     // }
-          //   }
-          //
-          // }
-          // daysArr.push(this.today);
-          // daysArr.push(afterday);
-          // console.log(restDay);
+
           if(restDay){
             let index = 0 ;
             for(let i = this.today;i< dayLong ;i++){
@@ -1136,12 +1121,18 @@
           }
         },
         checkInput(value){
-          if(!/^[1-3]{1}$/.test(value )){
+          if(value === ''){
+            this.form.serviceNum = ' ';
             this.tips = true ;
 
+          }else if(!/^[1-3]{1}$/.test(value )){
+            this.tips = true ;
+            this.form.serviceNum = '0';
           }else{
             this.tips = false ;
           }
+          this.getParams(this.form.addServiceTypes)
+
         },
         //提交试用信息
         onSubmit(formName,index){
