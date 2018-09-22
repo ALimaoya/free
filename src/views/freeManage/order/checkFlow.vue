@@ -71,22 +71,30 @@
 
     <el-dialog width="50%" :visible.sync="detailInfo" center top="10vh" title="流量订单审核" >
       <div class="checkPic">
-        <dl v-if="searchImg">
-          <dt>搜索截图</dt>
-          <dd >
-            <img  @click="getImg(searchImg)" v-if="searchImg!==''" :src=" imageDomain + searchImg"  :onerror="errorImg"/>
-            <img :src="failImg"  v-else>
-          </dd>
+        <dl v-if="imgList.length>0" v-for="(item ,index) in  imgList" :key="index" >
+        <dt>{{typeList[item.type-1]}}</dt>
+        <dd >
+        <img  @click="getImg(item.imageUrl)" v-if="item.imageUrl!==''" :src=" imageDomain + item.imageUrl"  :onerror="errorImg"/>
+        <img :src="failImg"  v-else>
+        </dd>
         </dl>
-        <dl v-else class="noViewPic">暂无搜索截图</dl>
-        <dl v-if="likeImg">
-          <dt>商品收藏截图</dt>
-          <dd >
-            <img @click="getImg(likeImg)" v-if="likeImg!==''" :src=" imageDomain + likeImg"  :onerror="errorImg"/>
-            <img :src="failImg"  v-else>
-          </dd>
-        </dl>
-        <dl v-else class="noViewPic">暂无商品收藏截图</dl>
+        <dl v-else class="noViewPic">暂无{{typeList[item.type-1]}}</dl>
+        <!--<dl v-if="searchImg">-->
+          <!--<dt>搜索截图</dt>-->
+          <!--<dd >-->
+            <!--<img  @click="getImg(searchImg)" v-if="searchImg!==''" :src=" imageDomain + searchImg"  :onerror="errorImg"/>-->
+            <!--<img :src="failImg"  v-else>-->
+          <!--</dd>-->
+        <!--</dl>-->
+        <!--<dl v-else class="noViewPic">暂无搜索截图</dl>-->
+        <!--<dl v-if="likeImg">-->
+          <!--<dt>商品收藏截图</dt>-->
+          <!--<dd >-->
+            <!--<img @click="getImg(likeImg)" v-if="likeImg!==''" :src=" imageDomain + likeImg"  :onerror="errorImg"/>-->
+            <!--<img :src="failImg"  v-else>-->
+          <!--</dd>-->
+        <!--</dl>-->
+        <!--<dl v-else class="noViewPic">暂无商品收藏截图</dl>-->
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="check('1')">审核成功</el-button>
@@ -160,8 +168,8 @@
         pageSize : 10 ,
         totalPages : 0,
         totalElements : 0 ,
-        searchImg : '' ,
-        likeImg : '',
+        // searchImg : '' ,
+        // likeImg : '',
         detailInfo : false ,
         showImg : false ,
         imageDomain : process.env.IMAGE_DOMAIN ,
@@ -175,6 +183,9 @@
         bigImg: '',
         errorImg:'this.src="' + userPhoto + '"',
         failImg: userPhoto,
+        imgList:[],
+        typeList: ['收藏宝贝截图', '收藏店铺截图', '订单截图', '评价截图', '搜索截图', '浏览宝贝截图', '加入购物车截图', '浏览店内其它宝贝截图'],
+
       }
     },
     mounted(){
@@ -302,16 +313,17 @@
           this.loading = false ;
           if( res.data.status === '000000000'){
             if(res.data.data.orderImageList.length){
-              res.data.data.orderImageList.forEach( i => {
-                if(i.type === '5'){
-                  this.searchImg = i.imageUrl ;
-
-                }
-                if(i.type === '1'){
-                  this.likeImg = i.imageUrl ;
-
-                }
-              } )
+              this.imgList = res.data.data.orderImageList ;
+              // res.data.data.orderImageList.forEach( i => {
+              //   // if(i.type === '5'){
+              //   //   this.searchImg = i.imageUrl ;
+              //   //
+              //   // }
+              //   // if(i.type === '1'){
+              //   //   this.likeImg = i.imageUrl ;
+              //   //
+              //   // }
+              // } )
             }
           }
         })
@@ -421,8 +433,14 @@
     }
 
     .el-dialog {
+      .checkPic{
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: space-around;
+      }
       dl {
-        width: 40%;
+        width: 30%;
         margin: 0 auto;
         text-align: center;
 
@@ -462,6 +480,7 @@
           padding: 0;
           text-align: center;
           line-height: 0.35rem;
+          font-size: 0.14rem ;
         }
       }
 
