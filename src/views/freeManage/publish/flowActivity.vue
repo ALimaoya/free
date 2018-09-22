@@ -477,7 +477,7 @@
             this.eachPrice = res.data.data
           })
         },
-        //  增值服务如果选择浏览店内其他宝贝要选择个数     
+        //  增值服务如果选择浏览店内其他宝贝要选择个数
         getParams(arr){
           if(arr.indexOf('E') !== -1){
             if(this.form.serviceNum ===''){
@@ -510,9 +510,9 @@
             this.totalPrices += this.eachPrice.D
           }
           if(arr.indexOf('E') !== -1){
-            this.totalPrices += this.eachPrice.E
+            this.totalPrices = (this.eachPrice.E*this.form.serviceNum)+this.totalPrices
           }
-          
+
         },
         //判断是新建活动还是已存在活动
         activityDetail(){
