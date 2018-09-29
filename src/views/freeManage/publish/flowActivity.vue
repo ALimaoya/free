@@ -969,7 +969,7 @@
             if(value > 1 ){
 
               this.goodsAmount[index] = --value ;
-            }else if(value == 1){
+            }else if(value === 1){
               this.goodsAmount = this.goodsAmount.slice(0,index);
               this.form.activityCalendar = this.form.activityCalendar.slice(0,index);
             }
@@ -1137,8 +1137,6 @@
         //提交试用信息
         onSubmit(formName,index){
           // console.log(this.form.activityCalendar,this.form.activityStartTime);
-
-
           if(this.form.mainImageUrl === ''){
             this.goodsImgWarn = true ;
           }else{

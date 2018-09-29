@@ -19,6 +19,11 @@
           <svg-icon icon-class="eyeopen" v-if="pwdType===''" /><svg-icon v-else="pwdType==='password'" icon-class="eyeclose" />
       </span>
       </el-input>
+      <div class="btn">
+        <el-button  type="text" @click="goSetting" v-if="!user.bindPayPassword">设置支付密码</el-button>
+        <el-button type="text" @click="goSetting" v-else>忘记密码？</el-button>
+      </div>
+
 
     </div>
     <div class="btn">
@@ -32,7 +37,7 @@
 
 <script>
   import {   activityPay , getPayDetail } from "@/api/activity"
-
+  import { getThirdAccount } from "@/api/userInfor"
   export default {
     name: "flow-pay" ,
     data(){
@@ -40,7 +45,8 @@
 
         activity :{},
         pwdType : 'password',
-        password : ''
+        password : '',
+        user:{}
       }
     },
 
@@ -49,6 +55,7 @@
       getPayDetail(order).then( res => {
         if( res.data.status === '000000000'){
           this.activity = res.data.data ;
+          this.getThirdInfo();
           if(res.data.data.payStatus === '1'){
             for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
               if (v.fullPath === this.$route.fullPath) {
@@ -118,6 +125,19 @@
       back(){
         this.$router.push({ path : '/freeManage/publish/flow_step1' ,query : { editor :'1' ,order : this.activity.activityId }})
 
+      },
+      // 获取第三方账号信息
+      getThirdInfo() {
+        getThirdAccount().then(res => {
+          if( res.data.status === '000000000'){
+            this.user = res.data.data;
+
+          }
+        })
+      },
+      //跳转到支付密码管理
+      goSetting(){
+        this.$router.push('/accountManage/accountInfo/settings')
       },
 
       //切换密码是否可见

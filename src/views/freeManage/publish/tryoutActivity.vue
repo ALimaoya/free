@@ -502,7 +502,6 @@
           token : getToken() ,
           imgUrl: process.env.BASE_API+'/file/upload',   // 上传图片的域名
           imageDomain : process.env.IMAGE_DOMAIN , //获取图片的外链域名
-          // imageDomain : '"http://yabei.oss-cn-beijing.aliyuncs.com/',
           showImg : '',
           mainImg : '',
           showImgWarn : false ,
@@ -1071,17 +1070,6 @@
           }
         },
 
-        // //获取对应活动日历传输数据字段
-        // getActivityCalendar(){
-        //
-        //     if(this.form.activityType === '1'){
-        //      this.calendarNumType =  'tryoutQuantity'
-        //     }
-        //     if(this.form.activityType === '3'){
-        //       this.calendarNumType = 'groupQuantity'
-        //     }
-        //
-        // },
         //转化率日历
         setRate(value,total,dayItem ){
 
