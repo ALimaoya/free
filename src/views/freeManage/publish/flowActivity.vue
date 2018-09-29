@@ -697,14 +697,30 @@
                 return false ;
               }
               this.form.productId = num ;
-              let params = {'item_num_id': num };
-              let _this = this ;
+              // let params = {'item_num_id': num };
+              let _this = this ,
+               params = {
+                jsv: '2.4.11',
+                timeout: '20000',
+                api: 'mtop.taobao.detail.getdesc',
+                v: '6.0',
+                // H5Request: true,
+                type: 'jsonp',
+                dataType: 'jsonp',
+                data: JSON.stringify({ "id": num,"type":"0" })
+              };
               $.ajax({
-                url: 'https://hws.m.taobao.com/cache/mtop.wdetail.getItemDescx/4.1/?type=jsonp&data=' + JSON.stringify(params),
+                url: 'http://h5api.m.taobao.com/h5/mtop.taobao.detail.getdesc/6.0/' ,
+                data:  params,
                 dataType: 'jsonp',
                 success: function (data) {
-                  if (data['ret'][0] === 'SUCCESS::接口调用成功') {
-                    _this.form.productDetail = JSON.stringify(data['data']['images']);
+                  if (data['ret'][0] === 'SUCCESS::调用成功') {
+                    let arr = [] ;
+                    data.data.wdescContent.pages.map(i => {
+                      i = i.split('//')[1].slice(0,-6);
+                      arr.push('https://'+i)
+                    });
+                    _this.form.productDetail = JSON.stringify(arr);
 
                   } else {
 
@@ -728,9 +744,8 @@
                 data : infoParams,
                 dataType: 'jsonp',
                 success: function (data) {
-                  if (data['ret'][0] == 'SUCCESS::调用成功') {
+                  if (data['ret'][0] === 'SUCCESS::调用成功') {
                     let _data = data.data;
-
                     _this.form.productName = _data.item.title ;
 
                   }else{
