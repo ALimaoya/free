@@ -920,7 +920,14 @@
           var that = this ;
 
           if( type === '3'){
-            getJDetail(url).then( res => {
+            let id = '';
+            if(url.indexOf('product') !== -1){
+              id = url.split('product/')[1];
+            }else{
+              id = url.split('com/')[1];
+            }
+            id = id.split('.')[0];
+            getJDetail(id).then( res => {
               if( res.data.status === '000000000'){
                 that.form.productName = res.data.data.productName ;
                 that.form.productDetail = res.data.data.productDetail ;
@@ -961,7 +968,7 @@
                 type: 'jsonp',
                 dataType: 'jsonp',
                 data: JSON.stringify({ "id": num,"type":"0" })
-              }
+              };
               let _this = this ;
               $.ajax({
                 url:'http://h5api.m.taobao.com/h5/mtop.taobao.detail.getdesc/6.0/',

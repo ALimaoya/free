@@ -219,12 +219,12 @@ export function uploadVideo(file){
 }
 
 //获取京东平台下的商品详情
-export function getJDetail(url){
+export function getJDetail(id){
   return request({
     url : '/thirdProduct/detail/jd',
     method : 'get',
     params : {
-      productUrl : url
+      productId : id
     },
     needFailResponse:true,
   })

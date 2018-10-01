@@ -242,7 +242,7 @@ export function exportList(data){
 //获取京东商品详情
 export function getJD(data){
   return request({
-    url: '/thirdProduct/detail/jdProduct?productUrl='+data,
+    url: '/thirdProduct/detail/jdProduct?productId='+data,
     method: 'get'
   })
 }

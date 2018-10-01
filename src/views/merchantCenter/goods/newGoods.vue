@@ -865,7 +865,7 @@ export default {
         });
       } else {
         if (this.platformType === "京东") {
-          if (url.indexOf("item.jd.com") !== -1) {
+          if (url.indexOf("item.jd.com") !== -1|| url.indexOf('item.m.jd.com/product') !== -1) {
             this.getJDLink(url);
           } else {
             this.$message({
@@ -883,7 +883,15 @@ export default {
     //请求京东商品信息
     getJDLink(url) {
       this.formInit();
-      getJD(url).then(res => {
+      let id = '';
+      if(url.indexOf('product') !== -1){
+        id = url.split('product/')[1];
+      }else{
+        id = url.split('com/')[1];
+      }
+      id = id.split('.')[0];
+
+      getJD(id).then(res => {
         if (res.data.status === "000000000") {
           this.taoLink = "";
           // console.log(res);

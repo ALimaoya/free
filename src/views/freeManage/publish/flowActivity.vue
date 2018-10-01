@@ -663,10 +663,17 @@
 
         } ,
         goPlatform(type,url){
-          var that = this ;
+          let that = this ;
 
           if( type === '3'){
-            getJDetail(url).then( res => {
+            let id = '';
+            if(url.indexOf('product') !== -1){
+              id = url.split('product/')[1];
+            }else{
+              id = url.split('com/')[1];
+            }
+            id = id.split('.')[0];
+            getJDetail(id).then( res => {
               if( res.data.status === '000000000'){
                 that.form.productName = res.data.data.productName ;
                 that.form.productDetail = res.data.data.productDetail ;
