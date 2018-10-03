@@ -1,5 +1,13 @@
 <template>
   <div class="search">
+    <el-select v-if="groupActivityType" size="small" clearable v-model="order.platformType" @change="flow&&getShop()" filterable placeholder="请选择试用平台">
+      <el-option
+        v-for="item in platformOptions"
+        :key="item.value"
+        :label="item.name"
+        :value="item.value">
+      </el-option>
+    </el-select>
     <el-select v-if="platformType" size="small" clearable v-model="order.platformType" @change="flow&&getShop()" filterable placeholder="请选择试用平台">
       <el-option
         v-for="item in platformOptions"
@@ -81,14 +89,14 @@
     </div>
     <div class="block" v-if="flow||date">
       <span class="demonstration">选择日期：</span>
-      <el-date-picker format="yyyy - MM - dd " value-format="yyyy-MM-dd" size="small"
+      <el-date-picker  value-format="yyyy-MM-dd" size="small"
                       v-model="order.GT_activityEndTime" clearable type="date"
                       placeholder="开始时间" >
       </el-date-picker>
       <span class="demonstration2">~</span>
       <el-date-picker size="small" v-model="order.LT_activityStartTime"  clearable
-                      type="date" format="yyyy - MM - dd " value-format="yyyy-MM-dd"
-                      placeholder="结束日期">
+                      type="date"  value-format="yyyy-MM-dd"
+                      placeholder="结束时间">
       </el-date-picker>
       <el-button  size="small" type="primary" round @click="getList()" class="searchOrder">搜索</el-button>
 
@@ -331,6 +339,7 @@
             activityMode : this.activity ,
             searchDate : this.date ,
             flowMode : this.flow,
+            groupMode : this.group,
             elseNumber:true,
             // currentPage : 1 ,
             // pageSize : 10 ,
@@ -338,7 +347,7 @@
             // totalElements : 0 ,
           }
       },
-      props : ['platformType','activityCode','activityType','thirdOrderCode','eq_status','activity','activityShop','activityStatus','taskStatus','flowStatus','flow','date','flowWay'],
+      props : ['groupActivityType','platformType','activityCode','activityType','thirdOrderCode','eq_status','activity','activityShop','activityStatus','taskStatus','flowStatus','flow','group','date','flowWay'],
       mounted(){
           if(this.activityMode === 'freeActivity'){
             this.order = this.$store.state.searchBar.approval.activity;
@@ -378,6 +387,59 @@
         },
         //  获取搜索条件内容
         getList(){
+          //  判断时间范围是否正确
+          console.log('this.order.LT_activityStartTime',this.order.LT_activityStartTime)
+          console.log('this.order.GT_activityEndTime',this.order.GT_activityEndTime)
+          if(this.order.LT_activityStartTime !== '' && this.order.LT_activityStartTime !== undefined){
+            if(this.order.GT_activityEndTime === '' || this.order.GT_activityEndTime === undefined){
+              this.$message({
+                message: "请选择结束时间",
+                type: "error",
+                center: true
+              });
+              this.order.LT_activityStartTime = '';
+              return false
+            }
+            if(this.order.GT_activityEndTime !== '' && this.order.GT_activityEndTime !== undefined){
+              let start = (this.order.LT_activityStartTime).replace(/-/g, "/");
+              let end = (this.order.GT_activityEndTime).replace(/-/g,"/");
+              if(new Date(end).getTime()-0 > new Date(start).getTime()-0){
+                this.$message({
+                message: "结束时间不能小于开始时间",
+                type: "error",
+                center: true
+              });
+              this.order.LT_activityStartTime = '';
+              this.order.GT_activityEndTime = '';
+              return false
+              }
+            }
+          }
+          if(this.order.GT_activityEndTime !== '' && this.order.GT_activityEndTime !== undefined){
+            if(this.order.LT_activityStartTime === '' || this.order.LT_activityStartTime === undefined){
+              this.$message({
+                message: "请选择开始时间",
+                type: "error",
+                center: true
+              });
+              this.order.GT_activityEndTime = '';
+              return false
+            }
+            if(this.order.LT_activityStartTime !== '' && this.order.LT_activityStartTime !== undefined){
+              let start = (this.order.LT_activityStartTime).replace(/-/g, "/");
+              let end = (this.order.GT_activityEndTime).replace(/-/g,"/");
+              if(new Date(end).getTime()-0 > new Date(start).getTime()-0){
+                this.$message({
+                message: "结束时间不能小于开始时间",
+                type: "error",
+                center: true
+              });
+              this.order.LT_activityStartTime = '';
+              this.order.GT_activityEndTime = '';
+              return false
+              }
+            }
+          }
           let searchobj = {
             platformType : this.order.platformType,
             activityCode : this.order.activityCode ,
@@ -423,6 +485,9 @@
               searchobj.EQ_status = '4'
 
             }
+          }
+          if(this.groupMode){
+            console.log('111')
           }
           this.$emit('searchobj',searchobj);
 

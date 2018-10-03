@@ -101,6 +101,21 @@ export const constantRouterMap = [
             meta: { title: '等待审核', icon: 'auditing' },
             hidden : true
           },
+          {
+            path : 'group_step1',
+            name : 'GroupRemind',
+            // hidden : true ,
+            component: () => import('@/views/freeManage/publish/groupRemind'),
+            meta: { title: '开团提醒',noCache: true },
+
+          },
+          {
+            path: 'group_step2/:id',
+            name: 'GroupPay',
+            component: () => import('@/views/freeManage/publish/groupPay'),
+            meta: { title: '开团提醒活动支付', icon: 'flowPay',noCache: true  },
+            hidden : true
+          },
         ]
       },
       {
@@ -121,7 +136,7 @@ export const constantRouterMap = [
             name: 'Flow',
             component: () => import('@/views/freeManage/activity/flow'),
             meta: { title: '流量模式', icon: 'flow' }
-          }
+          },
           // {
           //   path: 'flowDetail/:order',
           //   name: 'FlowDetail',
@@ -129,7 +144,12 @@ export const constantRouterMap = [
           //   hidden : true ,
           //   meta: { title: '流量活动任务详情', icon: 'flowDetail' }
           // }
-
+          {
+            path: 'group',
+            name: 'Group',
+            component: () => import('@/views/freeManage/activity/group'),
+            meta: { title: '开团提醒', icon: 'flow' }
+          },
 
         ]
       },
