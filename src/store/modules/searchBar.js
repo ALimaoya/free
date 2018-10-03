@@ -218,6 +218,21 @@ const searchBar = {
       },
       currentPage : 1,
       pageSize : 10,
+    },
+    group : {
+      activity : {
+        EQ_platformType : '',
+        EQ_activityCode : '',
+        EQ_activityStatus : '',
+        GT_activityEndTime : '',
+        LT_activityStartTime : '',
+        shopId : '',
+        EQ_activityType : '4',
+        LIKE_addServiceType : [],
+        LIKE_addServiceType2:''
+      },
+      currentPage : 1,
+      pageSize : 10,
     }
   },
   mutations : {
@@ -277,7 +292,10 @@ const searchBar = {
     },
     saveBrandList : (state,obj) => {
       state.brandList = obj ;
-    }
+    },
+    saveGroup : (state,obj) => {
+      state.group = obj ;
+    },
 
   }
 };

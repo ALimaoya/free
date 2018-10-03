@@ -112,6 +112,15 @@ export function getActivity(data) {
   })
 }
 
+//发布开团活动
+export function publishGroupActivity(data){
+  return request({
+    url: '/remindActivity/add',
+    method: 'post',
+    data : data
+  })
+}
+
 //查看活动详情
 export function getDetail(data) {
   return request({
