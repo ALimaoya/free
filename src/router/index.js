@@ -172,6 +172,12 @@ export const constantRouterMap = [
             meta: { title: '流量订单查询', icon: 'flowOrder' }
           },
           {
+            path: 'groupOrder',
+            name: 'GroupOrder',
+            component: () => import('@/views/freeManage/order/groupOrder'),
+            meta: { title: '开团提醒订单查询', icon: 'flowOrder' }
+          },
+          {
             path: 'bonus',
             name: 'Bonus',
             component: () => import('@/views/freeManage/order/checkbonus'),
@@ -208,6 +214,20 @@ export const constantRouterMap = [
             component: () => import('@/views/freeManage/order/flowDetail'),
             hidden: true ,
             meta: { title: '流量任务订单详情', icon: 'flowDetail'  }
+          },
+          {
+            path: 'groupDetail/:order',
+            name: 'GroupDetail',
+            component: () => import('@/views/freeManage/order/groupDetail'),
+            hidden: true ,
+            meta: { title: '开团提醒订单详情', icon: 'groupDetail'  }
+          },
+          {
+            path: 'groupAudit/:order',
+            name: 'GroupAudit',
+            component: () => import('@/views/freeManage/order/groupAudit'),
+            hidden: true ,
+            meta: { title: '开团提醒订单审核', icon: 'groupDetail'  }
           }
         ]
       },

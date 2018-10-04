@@ -128,6 +128,31 @@ const searchBar = {
       currentPage : 1,
       pageSize : 10,
     },
+    group : {
+      activity : {
+        groupActivityType : '',
+        EQ_activityCode : '',
+        EQ_activityStatus : '',
+        GT_activityEndTime : '',
+        LT_activityStartTime : '',
+        shopId : '',
+        EQ_activityType : '4',
+      },
+      currentPage : 1,
+      pageSize : 10,
+    },
+    groupOrder : {
+      order : {
+        groupActivityType : '' ,
+        activityCode : '',
+        EQ_activityShop : '',
+        activityStartTime : '',
+        activityEndTime : '',
+        EQ_activityType : '4',
+      },
+      currentPage : 1,
+      pageSize : 10,
+    },
     activityOrder : {
       order : {
         EQ_status: '',
@@ -218,21 +243,6 @@ const searchBar = {
       },
       currentPage : 1,
       pageSize : 10,
-    },
-    group : {
-      activity : {
-        EQ_platformType : '',
-        EQ_activityCode : '',
-        EQ_activityStatus : '',
-        GT_activityEndTime : '',
-        LT_activityStartTime : '',
-        shopId : '',
-        EQ_activityType : '4',
-        LIKE_addServiceType : [],
-        LIKE_addServiceType2:''
-      },
-      currentPage : 1,
-      pageSize : 10,
     }
   },
   mutations : {
@@ -296,7 +306,9 @@ const searchBar = {
     saveGroup : (state,obj) => {
       state.group = obj ;
     },
-
+    saveGroupOrder : (state,obj) => {
+      state.groupOrder = obj ;
+    },
   }
 };
 export default searchBar ;

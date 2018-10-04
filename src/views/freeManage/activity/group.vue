@@ -7,7 +7,7 @@
             <el-table-column prop="code" label="活动编号" ></el-table-column>
             <el-table-column prop="platform" label="活动类型" >
                 <template slot-scope="scope">
-                {{ platformOptions[scope.row.platform].name}}
+                {{ platformOptions[scope.row.activityType-4].name}}
                 </template>
             </el-table-column>
             <el-table-column prop="mainImageUrl" label="活动图片" >
@@ -23,12 +23,6 @@
             </el-table-column>
             <el-table-column label="总单量" width="85" prop="tryoutQuantity"></el-table-column>
             <!--<el-table-column label="待接取" width="85"></el-table-column>-->
-            <el-table-column prop="payStatus" label="支付状态">
-                <template slot-scope="scope">
-                <span v-if="scope.row.payStatus === '0'">未支付</span>
-                <span v-else>支付完成</span>
-                </template>
-            </el-table-column>
             <el-table-column prop="status" label="任务状态">
                 <template slot-scope="scope">
                 <span v-if="scope.row.status==='9'">结算成功</span>
@@ -57,13 +51,31 @@
                 </template>
             </el-table-column>
         </el-table>
+        <div class="block2">
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="currentPage"
+            :page-sizes="[10, 15, 20]"
+            :page-size="pageSize"
+            layout=" sizes, prev, pager, next, jumper"
+            :total="totalElements">
+          </el-pagination>
+          <span class="totalItems">共{{totalPages }}页，{{ totalElements }}条记录</span>
+        </div>
         <div v-if="mask" @click="close" class="mask">
             <img :src=" imageDomain + bigImg"  />
         </div>
     </div>
 </template>
 <script>
-import { getActivity, getDetail, applyPay, changeStatus ,cancelPay } from "@/api/activity";
+import {
+  getActivity,
+  getGroupDetail,
+  applyPay,
+  changeStatus,
+  cancelPay
+} from "@/api/activity";
 import SearchBar from "@/components/searchBar";
 import userPhoto from "@/assets/404_images/fail.png";
 import { parseTime } from "@/utils";
@@ -83,22 +95,28 @@ export default {
           name: "全部平台"
         },
         {
-          value: "1",
+          value: "5",
           name: "淘抢购"
         },
         {
-          value: "2",
+          value: "6",
           name: "聚划算"
         },
         {
-          value: "3",
+          value: "7",
           name: "京东秒杀"
         }
       ],
+      totalPages: 0,
+      totalElements: 0,
+      currentPage: 1,
+      pageSize: 10,
+      activityDetail: {},
       mask: false,
       imageDomain: process.env.IMAGE_DOMAIN, //获取图片的外链域名
       errorImg: 'this.src="' + userPhoto + '"',
       failImg: userPhoto,
+      bigImg: "",
       time: ""
     };
   },
@@ -109,13 +127,20 @@ export default {
     this.getData();
     let now = new Date();
     this.time = parseTime(now);
-    console.log('this.activity ',this.activity)
+    // console.log('this.activity ',this.activity)
   },
   methods: {
     //请求数据
     getData() {
       // console.log(form);
       let formData = new FormData();
+      // console.log('this.activity.groupActivityType',this.activity.groupActivityType)
+      if(this.activity.groupActivityType === '' || this.activity.groupActivityType === undefined || this.activity.groupActivityType === null){
+        formData.append("IN_activityType", "5,6,7");
+      }else{
+        formData.append("EQ_activityType", this.activity.groupActivityType);
+      }
+      // formData.append("EQ_platformType", this.activity.groupActivityType);
       let reg = /^[0-9]*$/;
       if (reg.test(this.activity.EQ_activityCode)) {
         formData.append("EQ_activityCode", this.activity.EQ_activityCode);
@@ -132,7 +157,7 @@ export default {
         end = this.activity.LT_activityStartTime;
       }
       formData.append("EQ_tryoutMerchantShop.shopId", this.activity.shopId);
-      formData.append("EQ_activityType", this.activity.EQ_activityType);
+      
       formData.append("GT_activityEndTime", start);
       formData.append("LT_activityStartTime", end);
       formData.append("currentPage", this.currentPage);
@@ -145,7 +170,7 @@ export default {
         currentPage: this.currentPage,
         pageSize: this.pageSize
       };
-      console.log('this.activity',this.activity)
+      // console.log('this.activity',this.activity)
       this.$store.commit("saveGroup", dataStorage);
       getActivity(formData).then(res => {
         this.loading = false;
@@ -156,28 +181,33 @@ export default {
     },
     //根据搜索条件获取订单列表
     getSearchData(res) {
-      console.log('res',res);
-      // this.activity.EQ_platformType =
-      //   res.platformType === undefined ? "" : res.platformType;
       this.activity.groupActivityType =
         res.groupActivityType === undefined ? "" : res.groupActivityType;
-      this.activity.EQ_activityStatus =
-        res.EQ_activityStatus === undefined ? "" : res.EQ_activityStatus;
-      this.activity.shopId =
-        res.EQ_activityShop === undefined ? "" : res.EQ_activityShop;
       this.activity.EQ_activityCode =
         res.activityCode === undefined ? "" : res.activityCode;
+      this.activity.shopId =
+        res.EQ_activityShop === undefined ? "" : res.EQ_activityShop;
+      this.activity.EQ_activityStatus =
+        res.EQ_activityStatus === undefined ? "" : res.EQ_activityStatus;
+      this.activity.GT_activityEndTime =
+        res.activityStartTime === undefined ? "" : res.activityStartTime;
+      this.activity.LT_activityStartTime =
+        res.activityEndTime === undefined ? "" : res.activityEndTime;
+      this.activity.LIKE_addServiceType =
+        res.LIKE_addServiceType === undefined ? [] : res.LIKE_addServiceType;
+      this.activity.LIKE_addServiceType2 =
+        res.LIKE_addServiceType2 === undefined ? "" : res.LIKE_addServiceType2;
       // this.currentPage = 1 ;
-      console.log(this.activity);
+      // console.log(this.activity);
       this.getData();
     },
     //获取活动详情数据
     detail(index, order) {
-      getDetail(order).then(res => {
+      getGroupDetail(order).then(res => {
         if (res.data.status === "000000000") {
           this.activityDetail = res.data.data;
           this.$router.push({
-            path: "/freeManage/publish/flow_step1",
+            path: "/freeManage/publish/group_step1",
             query: { editor: "2", order: order }
           });
         }
@@ -185,7 +215,7 @@ export default {
     },
     //去支付
     toPay(index, order) {
-      this.$router.push({ name: "FlowPay", params: { id: order } });
+      this.$router.push({ name: "GroupPay", params: { id: order } });
     },
 
     //申请结算
@@ -227,7 +257,7 @@ export default {
     //修改指定试用发布内容
     editor(index, order, payStatus) {
       this.$router.push({
-        path: "/freeManage/publish/flow_step1",
+        path: "/freeManage/publish/group_step1",
         query: { editor: "1", order: order, payStatus: payStatus }
       });
       // console.log(order) ;
@@ -253,10 +283,21 @@ export default {
         }
       });
     },
+    handleSizeChange(val) {
+      this.pageSize = val;
+      this.getData();
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.getData();
+    },
     //查看大图
     showImg(url) {
       this.mask = true;
       this.bigImg = url;
+    },
+    close() {
+      this.mask = false;
     }
   }
 };

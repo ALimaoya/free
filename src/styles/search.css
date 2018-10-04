@@ -43,7 +43,7 @@
 }
 
 .search .block span {
-  width: 170px;
+  width: 80px;
   height: 100%;
   line-height: 0.4rem;
   display: inline-block;
@@ -71,6 +71,7 @@
 
 .search .block .el-checkbox-group {
   display: inline-block;
+  font-size: 0.14rem;
 }
 
 .search .block .el-select {

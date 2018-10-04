@@ -1,6 +1,6 @@
 <template>
     <div class="flowPay pay">
-        <div class="stepImg"><img src="../../../assets/imgs/u258.png" /></div>
+        <div class="stepImg"><img src="../../../assets/imgs/u259.png" /></div>
         <p class="tips">您正在支付开团提醒活动款：<span class="money_color">{{ activity.activityTotalAmount }}</span>元</p>
         <div class="note">费用说明：</div>
         <table border="1" bordercolor="#d3d3dd">
@@ -58,7 +58,7 @@ export default {
             if (v.fullPath === this.$route.fullPath) {
               this.$store.state.tagsView.visitedViews.splice(i, 1);
               // this.$router.push('/freeManage/publish/step3');
-              this.$router.push({ name: "Auditing", params: "flow" });
+              this.$router.push({ name: "Auditing", params: "group" });
             }
           }
         }
@@ -97,7 +97,7 @@ export default {
                     // this.$router.push('/freeManage/publish/step3');
                     this.$router.push({
                       name: "Auditing",
-                      params: { type: "flow" }
+                      params: { type: "group" }
                     });
                   }
                 }

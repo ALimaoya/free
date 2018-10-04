@@ -121,6 +121,27 @@ export function publishGroupActivity(data){
   })
 }
 
+//开团活动详情
+export function getGroupDetail(data) {
+  return request({
+    url: `/remindActivity/detail/${data}`,
+    method: 'get',
+
+  })
+}
+
+//修改开团提醒活动
+export function changeGroupDetail(data){
+  return request({
+    url: '/remindActivity/update',
+    method: 'post',
+    data: data ,
+    // headers : {
+    //   'Content-Type' : 'multipart/form-data'
+    // }
+  })
+}
+
 //查看活动详情
 export function getDetail(data) {
   return request({

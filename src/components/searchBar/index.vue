@@ -1,8 +1,8 @@
 <template>
   <div class="search">
-    <el-select v-if="groupActivityType" size="small" clearable v-model="order.platformType" @change="flow&&getShop()" filterable placeholder="请选择试用平台">
+    <el-select v-if="groupActivityType" size="small" clearable v-model="order.groupActivityType" @change="group&&getShop()" filterable placeholder="请选择试用平台">
       <el-option
-        v-for="item in platformOptions"
+        v-for="item in groupActivityTypeList"
         :key="item.value"
         :label="item.name"
         :value="item.value">
@@ -129,6 +129,24 @@
               // EQ_activityType:'',
               // EQ_activityStatus : ''
             },
+            groupActivityTypeList : [
+              {
+                value: '',
+                name : '全部平台'
+              },
+              {
+                value: '5',
+                name : '淘抢购'
+              },
+              {
+                value : '6',
+                name : '聚划算'
+              },
+              {
+                value : '7',
+                name : '京东秒杀'
+              },
+            ],
             platformOptions : [
               {
                 value: '',
@@ -381,26 +399,28 @@
         },
         //获取店铺列表
         getShop(){
-          getShopList(this.order.platformType).then( res => {
+          let num = '';
+          if(this.order.platformType !== ''){
+            num = this.order.platformType
+          }
+          getShopList(num).then( res => {
              this.shopList = res.data.data ;
           })
         },
         //  获取搜索条件内容
         getList(){
           //  判断时间范围是否正确
-          console.log('this.order.LT_activityStartTime',this.order.LT_activityStartTime)
-          console.log('this.order.GT_activityEndTime',this.order.GT_activityEndTime)
-          if(this.order.LT_activityStartTime !== '' && this.order.LT_activityStartTime !== undefined){
-            if(this.order.GT_activityEndTime === '' || this.order.GT_activityEndTime === undefined){
+          if(this.order.LT_activityStartTime !== '' && this.order.LT_activityStartTime !== undefined && this.order.LT_activityStartTime !== null){
+            if(this.order.GT_activityEndTime === '' || this.order.GT_activityEndTime === undefined || this.order.GT_activityEndTime === null){
               this.$message({
-                message: "请选择结束时间",
+                message: "请选择开始时间",
                 type: "error",
                 center: true
               });
               this.order.LT_activityStartTime = '';
               return false
             }
-            if(this.order.GT_activityEndTime !== '' && this.order.GT_activityEndTime !== undefined){
+            if(this.order.GT_activityEndTime !== '' && this.order.GT_activityEndTime !== undefined && this.order.GT_activityEndTime !== null){
               let start = (this.order.LT_activityStartTime).replace(/-/g, "/");
               let end = (this.order.GT_activityEndTime).replace(/-/g,"/");
               if(new Date(end).getTime()-0 > new Date(start).getTime()-0){
@@ -415,17 +435,17 @@
               }
             }
           }
-          if(this.order.GT_activityEndTime !== '' && this.order.GT_activityEndTime !== undefined){
-            if(this.order.LT_activityStartTime === '' || this.order.LT_activityStartTime === undefined){
+          if(this.order.GT_activityEndTime !== '' && this.order.GT_activityEndTime !== undefined && this.order.GT_activityEndTime !== null){
+            if(this.order.LT_activityStartTime === '' || this.order.LT_activityStartTime === undefined || this.order.LT_activityStartTime === null){
               this.$message({
-                message: "请选择开始时间",
+                message: "请选择结束时间",
                 type: "error",
                 center: true
               });
               this.order.GT_activityEndTime = '';
               return false
             }
-            if(this.order.LT_activityStartTime !== '' && this.order.LT_activityStartTime !== undefined){
+            if(this.order.LT_activityStartTime !== '' && this.order.LT_activityStartTime !== undefined && this.order.LT_activityStartTime !== null){
               let start = (this.order.LT_activityStartTime).replace(/-/g, "/");
               let end = (this.order.GT_activityEndTime).replace(/-/g,"/");
               if(new Date(end).getTime()-0 > new Date(start).getTime()-0){
@@ -487,7 +507,10 @@
             }
           }
           if(this.groupMode){
-            console.log('111')
+            searchobj.groupActivityType = this.order.groupActivityType ;
+            searchobj.activityStartTime = this.order.GT_activityEndTime ;
+            searchobj.activityEndTime = this.order.LT_activityStartTime ;
+            searchobj.EQ_activityStatus = this.order.EQ_activityStatus ;
           }
           this.$emit('searchobj',searchobj);
 
