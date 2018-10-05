@@ -134,7 +134,6 @@ export default {
     getData() {
       // console.log(form);
       let formData = new FormData();
-      // console.log('this.activity.groupActivityType',this.activity.groupActivityType)
       if(this.activity.groupActivityType === '' || this.activity.groupActivityType === undefined || this.activity.groupActivityType === null){
         formData.append("IN_activityType", "5,6,7");
       }else{
@@ -181,6 +180,7 @@ export default {
     },
     //根据搜索条件获取订单列表
     getSearchData(res) {
+      // console.log('res',res);
       this.activity.groupActivityType =
         res.groupActivityType === undefined ? "" : res.groupActivityType;
       this.activity.EQ_activityCode =
@@ -193,10 +193,6 @@ export default {
         res.activityStartTime === undefined ? "" : res.activityStartTime;
       this.activity.LT_activityStartTime =
         res.activityEndTime === undefined ? "" : res.activityEndTime;
-      this.activity.LIKE_addServiceType =
-        res.LIKE_addServiceType === undefined ? [] : res.LIKE_addServiceType;
-      this.activity.LIKE_addServiceType2 =
-        res.LIKE_addServiceType2 === undefined ? "" : res.LIKE_addServiceType2;
       // this.currentPage = 1 ;
       // console.log(this.activity);
       this.getData();

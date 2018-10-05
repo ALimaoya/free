@@ -1,7 +1,7 @@
 <template>
   <div class="groupOrder tableBox"    v-loading="loading"  element-loading-text="拼命加载中">
     <h1>流量订单查询</h1>
-    <search-bar @searchobj="getData" :groupActivityType="true" :activity-shop="true" :task-status="true" :activity-code="true" :group="'groupActivity'" :date="true"></search-bar>
+    <search-bar @searchobj="getData" :groupActivityType="true" :activity-shop="true" :group-status="true" :activity-code="true" :group="'groupOrder'" :date="true"></search-bar>
     <!--<div class="note">备注：以上搜索条件可根据单一条件进行搜索，当单独试客淘宝号搜索不到有用信息时，可尝试输入淘宝订单编号，反之亦然</div>-->
     <el-table :data="tableData" border>
       <el-table-column label="序号" width="80" prop="orderId" ></el-table-column>
@@ -13,7 +13,6 @@
           {{ platformOptions[scope.row.platform].name }}
         </template>
       </el-table-column>
-      <el-table-column prop="addServiceType" label="流量方式"></el-table-column>
       <el-table-column prop="thirdAccount" label="试客第三方账号"></el-table-column>
       <el-table-column prop="receiveTime" label="订单创建时间" ></el-table-column>
       <el-table-column prop="searchImageUrl" label="开团提醒截图">
@@ -35,7 +34,7 @@
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button  type="text" @click="goDetail(scope.$index,scope.row.orderId)">查看详情</el-button>
-          <el-button  type="text" @click="goAudit(scope.$index,scope.row.orderId)">审核</el-button>
+          <!-- <el-button  type="text" @click="goAudit(scope.$index,scope.row.orderId)">审核</el-button> -->
           <!--<el-button  type="text"  @click="handleCheck(scope.$index,'2')">审核失败</el-button>-->
           <!--<el-button  type="text"  @click="refuseReason(scope.$index)">查看拒绝原因</el-button>-->
 
@@ -117,17 +116,17 @@ export default {
     this.currentPage = this.$store.state.searchBar.groupOrder.currentPage;
     this.pageSize = this.$store.state.searchBar.groupOrder.pageSize;
     this.getList();
+    // console.log('order',this.order)
   },
   methods: {
     //获取订单列表
     getList() {
       let formData = new FormData();
-      
-      // console.log('this.order',this.order)
-      formData.append(
-        "EQ_tryoutActivity.platformType",
-        this.order.groupActivityType
-      );
+      if(this.order.groupActivityType === '' || this.order.groupActivityType === undefined || this.order.groupActivityType === null){
+        formData.append("IN_activityType", "5,6,7");
+      }else{
+        formData.append("EQ_activityType", this.order.groupActivityType);
+      }
       let reg = /^[0-9]*$/;
       if (reg.test(this.order.activityCode)) {
         formData.append(
@@ -137,30 +136,26 @@ export default {
       } else {
         formData.append("EQ_tryoutActivity.activityCode", "");
       }
-      // if( reg.test(this.order.thirdOrderCode)){
-      //   formData.append('EQ_tryoutOrderWin.thirdOrderCode', this.order.thirdOrderCode);
-      // }else{
-      //   formData.append('EQ_tryoutOrderWin.thirdOrderCode', '');
-      // }
 
-      formData.append("EQ_activityType", this.order.EQ_activityType);
+      // formData.append("EQ_activityType", this.order.EQ_activityType);
       formData.append(
         "EQ_tryoutActivity.tryoutMerchantShop.shopId",
         this.order.EQ_activityShop
       );
+      // formData.append('EQ_status',this.order.EQ_status);
       if (this.order.activityStartTime === null) {
-        formData.append("GT_tryoutActivity.activityStartTime", "");
+        formData.append("activityStartTime", "");
       } else {
         formData.append(
-          "GT_tryoutActivity.activityStartTime",
+          "activityStartTime",
           this.order.activityStartTime
         );
       }
       if (this.order.activityEndTime === null) {
-        formData.append("LT_tryoutActivity.activityEndTime", "");
+        formData.append("activityEndTime", "");
       } else {
         formData.append(
-          "LT_tryoutActivity.activityEndTime",
+          "activityEndTime",
           this.order.activityEndTime
         );
       }

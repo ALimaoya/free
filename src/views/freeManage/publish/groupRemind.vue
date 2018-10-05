@@ -302,8 +302,7 @@ export default {
   },
   methods: {
     setReceiveData(val){
-      this.$set(this.form,'receiveData',val)
-      console.log(val)
+      this.$forceUpdate();
     },
     //判断是新建活动还是已存在活动
     activityDetail() {
@@ -317,9 +316,9 @@ export default {
         getGroupDetail(order).then(res => {
           this.loading = false;
           if (res.data.status === "000000000") {
-            console.log("res", res.data.data);
+            // console.log("res", res.data.data);
             let activityEndTime = res.data.data.activityEndTime;
-            this.form = res.data.data;
+            this.form = {... res.data.data};
             this.form.platformType = "4";
             this.form.receiveData = activityEndTime.split(" ")[0];
             this.form.receiveTime = activityEndTime.split(" ")[1];
@@ -426,7 +425,15 @@ export default {
           { value: "23:00:00" }
         ];
       }
-      getShopList(value).then(res => {
+      let num = "";
+      if(value === "5"){
+        num = "1"
+      }else if(value === "6"){
+        num = "2"
+      }else if(value === "7"){
+        num = "3"
+      }
+      getShopList(num).then(res => {
         if (res.data.status === "000000000") {
           this.shopOptions = res.data.data;
           if (this.shopOptions.length) {
@@ -757,6 +764,7 @@ export default {
           center: true
         });
       }
+      this.$forceUpdate();
     },
     //绑定店铺
     goNewShop() {

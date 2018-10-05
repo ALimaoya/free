@@ -149,6 +149,7 @@ const searchBar = {
         activityStartTime : '',
         activityEndTime : '',
         EQ_activityType : '4',
+        EQ_status: '',
       },
       currentPage : 1,
       pageSize : 10,

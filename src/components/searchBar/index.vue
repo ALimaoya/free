@@ -64,7 +64,7 @@
       </el-option>
     </el-select>
     <!--流量订单状态-->
-    <el-select v-if="flowStatus" size="small" clearable v-model="order.EQ_status" filterable placeholder="请选择订单状态">
+    <el-select v-if="flowStatus || groupStatus" size="small" clearable v-model="order.EQ_status" filterable placeholder="请选择订单状态">
       <el-option
         v-for="item in flowOptions"
         :key="item.value"
@@ -365,7 +365,7 @@
             // totalElements : 0 ,
           }
       },
-      props : ['groupActivityType','platformType','activityCode','activityType','thirdOrderCode','eq_status','activity','activityShop','activityStatus','taskStatus','flowStatus','flow','group','date','flowWay'],
+      props : ['groupActivityType','platformType','activityCode','activityType','thirdOrderCode','eq_status','activity','activityShop','activityStatus','taskStatus','flowStatus','groupStatus','flow','group','date','flowWay'],
       mounted(){
           if(this.activityMode === 'freeActivity'){
             this.order = this.$store.state.searchBar.approval.activity;
@@ -388,6 +388,11 @@
             this.order = this.$store.state.searchBar.checkFlow.order;
 
           }
+          if(this.groupMode === "groupActivity"){
+            this.order = this.$store.state.searchBar.group.activity;
+          }else if(this.groupMode === "groupOrder"){
+            this.order = this.$store.state.searchBar.groupOrder.order;
+          }
 
         this.getShop();
       },
@@ -402,6 +407,15 @@
           let num = '';
           if(this.order.platformType !== ''){
             num = this.order.platformType
+          }
+          if(this.order.groupActivityType !== ''){
+            if(this.order.groupActivityType === "5"){
+              num = "1"
+            }else if(this.order.groupActivityType === "6"){
+              num = "2"
+            }else if(this.order.groupActivityType === "7"){
+              num = "3"
+            }
           }
           getShopList(num).then( res => {
              this.shopList = res.data.data ;
@@ -507,6 +521,11 @@
             }
           }
           if(this.groupMode){
+            if(this.order.EQ_activityShop !== undefined){
+              searchobj.EQ_activityShop =this.order.EQ_activityShop ;
+            }else{
+              searchobj.EQ_activityShop = '' ;
+            }
             searchobj.groupActivityType = this.order.groupActivityType ;
             searchobj.activityStartTime = this.order.GT_activityEndTime ;
             searchobj.activityEndTime = this.order.LT_activityStartTime ;
