@@ -27,7 +27,6 @@
           <span v-else-if="scope.row.status==11">订单失败</span>
           <span v-else-if="scope.row.status==4">审核中</span>
           <span v-else-if="scope.row.status==3">已接单</span>
-
           <!--<span v-else>{{ options[scope.row.status].name}}</span>-->
         </template>
       </el-table-column>

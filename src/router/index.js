@@ -106,7 +106,7 @@ export const constantRouterMap = [
             name : 'GroupRemind',
             // hidden : true ,
             component: () => import('@/views/freeManage/publish/groupRemind'),
-            meta: { title: '开团提醒',noCache: true },
+            meta: { title: '发布开团提醒',noCache: true },
 
           },
           {

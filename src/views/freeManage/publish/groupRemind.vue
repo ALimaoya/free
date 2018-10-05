@@ -13,22 +13,22 @@
                 </el-radio-group>
             </el-form-item>
             <el-form-item>
-              <el-col :span="9">
+              <el-col :span="8">
                 <el-form-item  label="活动场次：" :labelWidth="labelWidth" prop="receiveData">
-                  <el-date-picker
+                  <el-date-picker class="date-picker"
                       v-model="form.receiveData"
                       type="date"
                       placeholder="请选择活动日期"
                       value-format="yyyy-MM-dd"
                       :picker-options="receiveEndData"
-                      :disabled="read"
+                      :disabled="read" size="small"
                       @change="setReceiveData(form.receiveData)">
                   </el-date-picker>
                 </el-form-item>
               </el-col>
-              <el-col :span="9">
+              <el-col :span="8">
                 <el-form-item prop="receiveTime">
-                  <el-select v-model="form.receiveTime" placeholder="请选择活动时间段" @change="selectReceiveTime()" :disabled="read">
+                  <el-select v-model="form.receiveTime" placeholder="请选择活动时间段" size="small" @change="selectReceiveTime()" :disabled="read">
                       <el-option
                       v-for="item in timeFragment"
                       :key="item.value"
@@ -71,14 +71,13 @@
             </el-form-item>
             <p class="title">第三步：设置投放信息</p>
             <el-form-item label="投放数量：" :labelWidth="labelWidth" prop="tryoutQuantity">
-                <el-input class="any" size="small" :maxlength="10" type="number" :readonly="readonly" v-model.number="form.tryoutQuantity" placeholder="请输入内容" ></el-input><span>个</span><span>&nbsp;&nbsp; 0.2元/个</span>
+                <el-input class="any" size="small" :maxlength="10" type="number" :readonly="readonly" v-model.number="form.tryoutQuantity" placeholder="请输入内容" ></el-input><span>个</span><span>&nbsp;&nbsp; {{fee}}元/个</span>
             </el-form-item>
-            <el-form-item class="activityFragment" label="任务开始时间：" :labelWidth="labelWidth" prop="activityStartTime" >
+            <el-form-item  size="small" label="任务开始时间：" :labelWidth="labelWidth" prop="activityStartTime" >
                 <el-date-picker
                     v-model="form.activityStartTime"
                     type="datetime"
                     placeholder="请选择活动日期"
-                    format="yyyy-MM-dd HH:mm:ss"
                     value-format="yyyy-MM-dd HH:mm:ss"
                     :disabled="read">
                 </el-date-picker>
@@ -93,10 +92,10 @@
                   <td>合计</td>
                 </tr>
                 <tr>
-                  <td>开团提醒0.2元/个</td>
+                  <td>开团提醒{{ fee }}元/个</td>
                   <td v-if="form.tryoutQuantity">{{ form.tryoutQuantity }}单</td>
                   <td v-else></td>
-                  <td style="color:red">{{ (form.tryoutQuantity * 0.2).toFixed(2)}} 元</td>
+                  <td style="color:red">{{ (form.tryoutQuantity * fee).toFixed(2)}} 元</td>
                 </tr>
               </table>
           </el-form-item>
@@ -131,7 +130,8 @@ import { shopList } from "@/api/shop";
 import {
   getShopList,
   publishGroupActivity,
-  searchTypeList
+  searchTypeList,
+  getServiceFee
 } from "@/api/activity";
 export default {
   data() {
@@ -209,7 +209,6 @@ export default {
         activityStartTime: "",
         productName: "",
         productDetail: "",
-        productId: "",
         activityTitle: "开团提醒",
         productId: ""
       },
@@ -275,7 +274,8 @@ export default {
       goodsImgWarn: false,
       editor: "",
       activityVisible: false,
-      vipVisible: false
+      vipVisible: false,
+      fee : '',
     };
   },
   mounted() {
@@ -306,6 +306,7 @@ export default {
     },
     //判断是新建活动还是已存在活动
     activityDetail() {
+
       this.editor = this.$route.query.editor;
       let order = this.$route.query.order;
       //存在的活动
@@ -334,6 +335,8 @@ export default {
       } else {
         this.resetSearch("5");
       }
+      this.getFee();
+
     },
     //已存在的活动相关操作
     activityStatus() {
@@ -363,6 +366,7 @@ export default {
           this.autoUpload = false;
           this.checkBrowse = true;
         }
+
         // this.form.tryoutQuantity = num;
         // this.totalNum = num;
         // this.dayNum = this.goodsAmount.length;
@@ -590,6 +594,14 @@ export default {
       }
       // console.log(this.form.productDetail,this.form.productName);
     },
+    //获取开团提醒服务费用
+    getFee(){
+      getServiceFee().then( res => {
+        if( res.data.status === '000000000'){
+          this.fee = res.data.data.remindService ;
+        }
+      })
+    },
     //上传商品主图
     handleGoodsSuccess(res, file) {
       // this.form.mainImageUrl = URL.createObjectURL(file.raw);
@@ -635,10 +647,7 @@ export default {
     //提交试用信息
     onSubmit(formName, index) {
       // console.log("formName", formName, "index", index);
-      if (
-        this.form.mainImageUrl === undefined ||
-        this.form.mainImageUrl === ""
-      ) {
+      if (this.form.mainImageUrl === undefined || this.form.mainImageUrl === "") {
         this.goodsImgWarn = true;
       } else {
         this.goodsImgWarn = false;
@@ -783,13 +792,14 @@ export default {
 </script>
 <style scoped lang="scss" rel="stylesheet/scss">
 @import "src/styles/tryout";
-.activityFragment {
-  display: inline-block;
-  width: 50%;
+.date-picker {
+  width:3rem!important;
+  margin-right : 0.2rem ;
 }
 .remark {
-  margin-left: 1.5rem;
+  margin-left: 140px;
   margin-bottom: 0.2rem;
+  color: #333;
 }
 </style>
 

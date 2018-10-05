@@ -314,6 +314,10 @@
                 name : '结算成功',
                 value : '9'
               },
+              {
+                name : '已取消',
+                value : '10'
+              },
 
             ] ,   //流量任务状态
             flowOptions :[

@@ -78,7 +78,6 @@ export function getCategory(){
 export function getShopList(data){
   return request({
     url : '/shop/select/list',
-    // url : '/select/'+data+'/list',
     method : 'get',
     needFailResponse:true,
     params : {
@@ -93,7 +92,6 @@ export function getShopList(data){
 //获取试用搜索类型列表
 export function searchTypeList(data){
   return request({
-    // url : '/GET/search/select/{platform}/list',
     url : `/search/select/${data}/list`  ,
     method : 'get'
   })
@@ -277,3 +275,10 @@ export function getCommission(){
   })
 }
 
+//获取开团活动服务费用
+export function getServiceFee(){
+  return request({
+    url : '/remindActivity/getRemindServicePrice',
+    method : 'get'
+  })
+}

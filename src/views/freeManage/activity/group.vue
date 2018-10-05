@@ -13,7 +13,7 @@
             <el-table-column prop="mainImageUrl" label="活动图片" >
                 <template slot-scope="scope">
                 <img v-if="scope.row.mainImageUrl" class="showImg" @click="showImg(scope.row.mainImageUrl)" :src="imageDomain + scope.row.mainImageUrl" :onerror="errorImg"/>
-                <img :src="failImg" v-else />
+                <img  class="showImg" :src="failImg" v-else  />
                 </template>
             </el-table-column>
             <el-table-column prop="date" label="任务时间" >
@@ -26,6 +26,7 @@
             <el-table-column prop="status" label="任务状态">
                 <template slot-scope="scope">
                 <span v-if="scope.row.status==='9'">结算成功</span>
+                <span v-else-if="scope.row.status==='10'">已取消</span>
                 <span v-else-if="scope.row.payStatus==='0'">待支付</span>
                 <span v-else-if="scope.row.status==='5'&& scope.row.startTime > time">待开始</span>
                 <span v-else-if="scope.row.status==='5'&& scope.row.startTime <= time&&time< scope.row.endTime&&scope.row.payStatus === '1'">进行中</span>
@@ -37,7 +38,7 @@
             <el-table-column  label="操作">
                 <template slot-scope="scope">
                 <el-button class="check" style="padding : 0 ;" type="text"  @click="detail(scope.$index,scope.row.activityId)">查看详情</el-button>
-                <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.payStatus==='0'" @click="editor(scope.$index,scope.row.activityId, scope.row.payStatus)">修改</el-button>
+                <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.payStatus==='0'|| (scope.row.status==='5'&& scope.row.startTime > time)" @click="editor(scope.$index,scope.row.activityId, scope.row.payStatus)">修改</el-button>
                 <!--<el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.status==='4'" @click="reason(scope.$index,scope.row.reason)">查看原因</el-button>-->
                 <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.status==='5'&& scope.row.endTime > time&& scope.row.payStatus==='1'" @click="handleShelves(scope.row.activityId,scope.row.status)">下架</el-button>
                 <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.status==='6'&& scope.row.endTime > time&&scope.row.payStatus === '1'" @click="handleShelves(scope.row.activityId,scope.row.status)">上架</el-button>
@@ -156,7 +157,7 @@ export default {
         end = this.activity.LT_activityStartTime;
       }
       formData.append("EQ_tryoutMerchantShop.shopId", this.activity.shopId);
-      
+
       formData.append("GT_activityEndTime", start);
       formData.append("LT_activityStartTime", end);
       formData.append("currentPage", this.currentPage);
@@ -209,6 +210,7 @@ export default {
         }
       });
     },
+
     //去支付
     toPay(index, order) {
       this.$router.push({ name: "GroupPay", params: { id: order } });
