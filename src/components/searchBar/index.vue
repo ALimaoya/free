@@ -529,7 +529,7 @@
             searchobj.groupActivityType = this.order.groupActivityType ;
             searchobj.activityStartTime = this.order.GT_activityEndTime ;
             searchobj.activityEndTime = this.order.LT_activityStartTime ;
-            searchobj.EQ_activityStatus = this.order.EQ_activityStatus ;
+            searchobj.EQ_status = this.order.EQ_status ;
           }
           this.$emit('searchobj',searchobj);
 
