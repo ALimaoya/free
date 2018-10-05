@@ -11,11 +11,18 @@
         <li><span>完成时间：</span><span v-if="detailInfo.receiveTime">{{ detailInfo.winTime }}</span><span v-else>暂无</span></li>
         <!--<li><span>订单价格：</span><span v-if="detailInfo.amount">{{ detailInfo.amount }} 元</span><span v-else>暂无</span></li>-->
         <li><span>试客第三方账号：</span><span v-if="detailInfo.buyAmount">{{ detailInfo.buyAmount }} </span><span v-else>暂无</span></li>
-        <li class="faileReason"><span>用户上传图片详情：</span><span v-if="detailInfo.orderImageList == 0" class="noImg">暂无图片</span></li>
+        <li class="faileReason"><span>用户上传图片详情：</span><span v-if="detailInfo.orderImageList == null && detailInfo.mainImageUrl == null" class="noImg">暂无图片</span></li>
         <li class="detailPic">
-          <div v-if="detailInfo.orderImageList != 0">
-            <dl v-for="item in detailInfo.orderImageList">
-              <dt>{{ imgType[item.type-1] }}</dt>
+          <div>
+            <dl v-if="detailInfo.mainImageUrl !== null" >
+              <dt>宝贝主图</dt>
+              <dd>
+                <img v-if="detailInfo.mainImageUrl !== null" @click="showImg(detailInfo.mainImageUrl)" :src="imageDomain + detailInfo.mainImageUrl"  :onerror="errorImg"/>
+                <img :src="failImg"  v-else>
+              </dd>
+            </dl>
+            <dl v-if="detailInfo.orderImageList !== null" v-for="(item,index) in detailInfo.orderImageList" :key="index">
+              <dt>开团提醒截图</dt>
               <dd>
                 <img v-if="item.imageUrl!==''" @click="getImg(item.imageUrl)" :src="imageDomain + item.imageUrl"  :onerror="errorImg"/>
                 <img :src="failImg"  v-else>
@@ -42,7 +49,7 @@
           return  {
             detailInfo : {},
             platForm : ['','淘抢购','聚划算', '京东秒杀'],
-            imgType : ['宝贝主图','开团提醒截图'] ,
+            // imgType : ['宝贝主图','开团提醒截图'] ,
             // imgType : ['商品收藏截图','店铺收藏截图','订单截图','评价截图','搜索截图','浏览截图','加入购物车','浏览店内其他宝贝'],
             showImg : false ,
             bigImg : '' ,

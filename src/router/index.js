@@ -222,13 +222,6 @@ export const constantRouterMap = [
             hidden: true ,
             meta: { title: '开团提醒订单详情', icon: 'groupDetail'  }
           },
-          {
-            path: 'groupAudit/:order',
-            name: 'GroupAudit',
-            component: () => import('@/views/freeManage/order/groupAudit'),
-            hidden: true ,
-            meta: { title: '开团提醒订单审核', icon: 'groupDetail'  }
-          }
         ]
       },
       {

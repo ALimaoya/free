@@ -132,7 +132,7 @@ const searchBar = {
       activity : {
         groupActivityType : '',
         EQ_activityCode : '',
-        EQ_activityStatus : '',
+        EQ_status : '',
         GT_activityEndTime : '',
         LT_activityStartTime : '',
         shopId : '',
@@ -148,7 +148,7 @@ const searchBar = {
         EQ_activityShop : '',
         activityStartTime : '',
         activityEndTime : '',
-        EQ_activityType : '4',
+        EQ_activityType : '',
         EQ_status: '',
       },
       currentPage : 1,
