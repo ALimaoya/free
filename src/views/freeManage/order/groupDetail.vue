@@ -17,7 +17,7 @@
             <dl v-if="detailInfo.mainImageUrl !== null" >
               <dt>宝贝主图</dt>
               <dd>
-                <img v-if="detailInfo.mainImageUrl !== null" @click="showImg(detailInfo.mainImageUrl)" :src="imageDomain + detailInfo.mainImageUrl"  :onerror="errorImg"/>
+                <img v-if="detailInfo.mainImageUrl !== null" @click="getImg(detailInfo.mainImageUrl)" :src="imageDomain + detailInfo.mainImageUrl"  :onerror="errorImg"/>
                 <img :src="failImg"  v-else>
               </dd>
             </dl>
