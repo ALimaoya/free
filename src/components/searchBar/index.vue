@@ -525,6 +525,9 @@
             }
           }
           if(this.groupMode){
+            if(this.groupMode === "groupActivity"){
+              searchobj.EQ_activityStatus = this.order.EQ_activityStatus ;
+            }
             if(this.order.EQ_activityShop !== undefined){
               searchobj.EQ_activityShop =this.order.EQ_activityShop ;
             }else{
