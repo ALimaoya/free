@@ -13,10 +13,10 @@
             <el-table-column prop="mainImageUrl" label="活动图片" >
                 <template slot-scope="scope">
                 <img v-if="scope.row.mainImageUrl" class="showImg" @click="showImg(scope.row.mainImageUrl)" :src="imageDomain + scope.row.mainImageUrl" :onerror="errorImg"/>
-                <img  class="showImg" :src="failImg" v-else  />
+                <img class="showImg" :src="failImg" v-else  />
                 </template>
             </el-table-column>
-            <el-table-column prop="date" label="任务时间" >
+            <el-table-column prop="date" label="任务时间" width="124">
                 <template slot-scope="scope">
                 <span class="time">{{ scope.row.startTime}}<br/> ~<br/>{{ scope.row.endTime}}</span>
                 </template>
@@ -157,7 +157,6 @@ export default {
         end = this.activity.LT_activityStartTime;
       }
       formData.append("EQ_tryoutMerchantShop.shopId", this.activity.shopId);
-
       formData.append("GT_activityEndTime", start);
       formData.append("LT_activityStartTime", end);
       formData.append("currentPage", this.currentPage);
