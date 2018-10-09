@@ -79,7 +79,8 @@
                     type="datetime"
                     placeholder="请选择活动日期"
                     value-format="yyyy-MM-dd HH:mm:ss"
-                    :disabled="read">
+                    :disabled="read"
+                    @change="getActivityStartTime(form.activityStartTime)">
                 </el-date-picker>
             </el-form-item>
             <p class="remark">备注：若到达活动场次开始时间，本任务还未完成，则会自动下架</p>
@@ -124,7 +125,12 @@
 <script>
 import { validateURL, getQueryString, checkFloat, int } from "@/utils/validate";
 import { getToken } from "@/utils/auth";
-import { uploadImage, getJDetail, getGroupDetail,changeGroupDetail } from "@/api/activity";
+import {
+  uploadImage,
+  getJDetail,
+  getGroupDetail,
+  changeGroupDetail
+} from "@/api/activity";
 import { getMember } from "@/api/userInfor";
 import { shopList } from "@/api/shop";
 import {
@@ -275,7 +281,7 @@ export default {
       editor: "",
       activityVisible: false,
       vipVisible: false,
-      fee : '',
+      fee: ""
     };
   },
   mounted() {
@@ -301,12 +307,27 @@ export default {
     });
   },
   methods: {
-    setReceiveData(val){
+    //  活动时间必须选择当前时间之后的
+    getActivityStartTime(val) {
+      if (val !== null && val !== "" && val !== undefined) {
+        let valTime = new Date(val.replace(/-/g, "/")).getTime();
+        let nowTime = new Date().getTime();
+        if (valTime < nowTime) {
+          this.$message({
+            message: "你选择的时间必须大于当前时间",
+            type: "error",
+            center: true
+          });
+          this.form.activityStartTime = "";
+          return false;
+        }
+      }
+    },
+    setReceiveData(val) {
       this.$forceUpdate();
     },
     //判断是新建活动还是已存在活动
     activityDetail() {
-
       this.editor = this.$route.query.editor;
       let order = this.$route.query.order;
       //存在的活动
@@ -319,7 +340,7 @@ export default {
           if (res.data.status === "000000000") {
             // console.log("res", res.data.data);
             let activityEndTime = res.data.data.activityEndTime;
-            this.form = {... res.data.data};
+            this.form = { ...res.data.data };
             this.form.platformType = "4";
             this.form.receiveData = activityEndTime.split(" ")[0];
             this.form.receiveTime = activityEndTime.split(" ")[1];
@@ -336,7 +357,6 @@ export default {
         this.resetSearch("5");
       }
       this.getFee();
-
     },
     //已存在的活动相关操作
     activityStatus() {
@@ -411,7 +431,7 @@ export default {
           { value: "20:00:00" },
           { value: "22:00:00" }
         ];
-      } else if(value === "5") {
+      } else if (value === "5") {
         this.timeFragment = [];
         this.timeFragment = [
           { value: "00:00:00" },
@@ -440,6 +460,7 @@ export default {
         num = "2"
       }else if(value === "7"){
         num = "3"
+
       }
       this.shopList(num);
     },
@@ -611,12 +632,12 @@ export default {
       // console.log(this.form.productDetail,this.form.productName);
     },
     //获取开团提醒服务费用
-    getFee(){
-      getServiceFee().then( res => {
-        if( res.data.status === '000000000'){
-          this.fee = res.data.data.remindService ;
+    getFee() {
+      getServiceFee().then(res => {
+        if (res.data.status === "000000000") {
+          this.fee = res.data.data.remindService;
         }
-      })
+      });
     },
     //上传商品主图
     handleGoodsSuccess(res, file) {
@@ -663,7 +684,10 @@ export default {
     //提交试用信息
     onSubmit(formName, index) {
       // console.log("formName", formName, "index", index);
-      if (this.form.mainImageUrl === undefined || this.form.mainImageUrl === "") {
+      if (
+        this.form.mainImageUrl === undefined ||
+        this.form.mainImageUrl === ""
+      ) {
         this.goodsImgWarn = true;
       } else {
         this.goodsImgWarn = false;
@@ -687,9 +711,10 @@ export default {
           }
           let taskTime = this.form.activityStartTime.replace(/-/g, "/");
           taskTime = new Date(taskTime).getTime();
-          if (taskTime - 0 > activityTime - 0) {
+          if (activityTime - taskTime < 0.5 * 60 * 60 * 1000) {
             this.$message({
-              message: "任务开始时间必须早于活动场次时间，请重新选择",
+
+              message: "任务开始时间必须早于活动场次时间半小时，请重新选择",
               type: "error",
               center: true
             });
@@ -809,8 +834,8 @@ export default {
 <style scoped lang="scss" rel="stylesheet/scss">
 @import "src/styles/tryout";
 .date-picker {
-  width:3rem!important;
-  margin-right : 0.2rem ;
+  width: 3rem !important;
+  margin-right: 0.2rem;
 }
 .remark {
   margin-left: 140px;

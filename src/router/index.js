@@ -176,6 +176,7 @@ export const constantRouterMap = [
             name: 'GroupOrder',
             component: () => import('@/views/freeManage/order/groupOrder'),
             meta: { title: '开团订单查询', icon: 'flowOrder' }
+
           },
           {
             path: 'bonus',
