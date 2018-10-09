@@ -278,7 +278,6 @@ export default {
         "EQ_tryoutActivity.tryoutMerchantShop.shopId",
         this.order.EQ_activityShop
       );
-      formData.append("EQ_status", this.order.EQ_status);
       if (this.order.activityStartTime === null) {
         formData.append("activityStartTime", "");
       } else {
@@ -289,6 +288,7 @@ export default {
       } else {
         formData.append("activityEndTime", this.order.activityEndTime);
       }
+      formData.append('EQ_status','4');
       formData.append("currentPage", this.currentPage);
       formData.append("pageSize", this.pageSize);
       this.loading = true;
