@@ -14,7 +14,7 @@
       </el-table-column>
       <el-table-column prop="addServiceType" label="流量方式"></el-table-column>
       <el-table-column prop="thirdAccount" label="试客第三方账号"></el-table-column>
-      <el-table-column prop="receiveTime" label="订单创建时间" ></el-table-column>
+      <el-table-column prop="createTime" label="订单创建时间" ></el-table-column>
       <el-table-column prop="searchImageUrl" label="搜索截图">
         <template slot-scope="scope">
           <img v-if="scope.row.searchImageUrl!==null" class="showPic" @click="showImg( scope.row.searchImageUrl )" :src=" imageDomain + scope.row.searchImageUrl " :onerror="errorImg"/>

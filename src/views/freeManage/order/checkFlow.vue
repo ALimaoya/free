@@ -28,7 +28,7 @@
       </el-table-column>
       <el-table-column prop="addServiceType" label="流量方式"></el-table-column>
       <el-table-column prop="thirdAccount" label="试客第三方账号"></el-table-column>
-      <el-table-column prop="receiveTime" label="订单创建时间" ></el-table-column>
+      <el-table-column prop="createTime" label="订单创建时间" ></el-table-column>
       <el-table-column prop="searchImageUrl" label="搜索截图">
         <template slot-scope="scope">
           <img class="showPic" v-if="scope.row.searchImageUrl!==''" @click="getImg( scope.row.searchImageUrl )" :src=" imageDomain + scope.row.searchImageUrl " :onerror="errorImg"/>
@@ -104,7 +104,7 @@
     </el-dialog>
     <el-dialog title="拒绝原因" :visible.sync="reasonBox" center top="20vh"  width="30%" >
       <span>备注：</span>
-      <el-input :rows="4" type="textarea" :maxlength="100" v-model.trim="reason" placeholder="审核拒绝时不能为空，可输入字符最大长度为100"></el-input>
+      <el-input :rows="4" type="textarea" :maxlength="40" v-model.trim="reason" placeholder="审核拒绝时不能为空，可输入字符最大长度为40"></el-input>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitReason">提 交</el-button>
         <el-button type="info" @click="cancel">取 消</el-button>

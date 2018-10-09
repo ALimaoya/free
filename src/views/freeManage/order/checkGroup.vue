@@ -1,7 +1,7 @@
 <template>
   <div class="groupOrder tableBox"    v-loading="loading"  element-loading-text="拼命加载中">
     <h1>流量订单查询</h1>
-    <search-bar @searchobj="getData" :groupActivityType="true" :activity-shop="true" :group-status="true" :activity-code="true" :group="'groupOrder'" :date="true"></search-bar>
+    <search-bar @searchobj="getData" :groupActivityType="true" :activity-shop="true"  :activity-code="true" :group="'groupOrder'" :date="true"></search-bar>
     <!--<div class="note">备注：以上搜索条件可根据单一条件进行搜索，当单独试客淘宝号搜索不到有用信息时，可尝试输入淘宝订单编号，反之亦然</div>-->
     <el-table :data="tableData" border>
       <el-table-column label="序号" width="80" prop="orderId" ></el-table-column>
@@ -33,7 +33,7 @@
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button  type="text" @click="goDetail(scope.$index,scope.row.orderId)">查看详情</el-button>
-          <!-- <el-button v-if="scope.row.status==4"  type="text" @click="goAudit(scope.$index,scope.row.orderId)">审核</el-button> -->
+          <el-button v-if="scope.row.status==4"  type="text" @click="goAudit(scope.$index,scope.row.orderId)">审核</el-button>
           <!--<el-button  type="text"  @click="handleCheck(scope.$index,'2')">审核失败</el-button>-->
           <!--<el-button  type="text"  @click="refuseReason(scope.$index)">查看拒绝原因</el-button>-->
 
@@ -57,10 +57,10 @@
         <ul class="detailInfor">
           <li><span>订单流水号：</span><span>{{ detail.activityCode }}</span></li>
           <li><span>活动编号：</span><span>{{ detail.orderCode}}</span></li>
-          <li><span>商铺名称：</span><span v-if="detail.platform">{{ detail.shopName }}</span><span v-else>暂无</span></li>
+          <li><span>商铺名称：</span><span v-if="detail.shopName">{{ detail.shopName }}</span><span v-else>暂无</span></li>
           <li><span>活动类型：</span><span v-if="detail.platform">{{ platForm[detail.platform] }}</span><span v-else>暂无</span></li>
           <!--<li><span>第三方单号：</span><span v-if="detailInfo.thirdOrderCode">{{ detailInfo.thirdOrderCode }}</span><span v-else>暂无</span></li>-->
-          <li><span>完成时间：</span><span v-if="detail.receiveTime">{{ detail.winTime }}</span><span v-else>暂无</span></li>
+          <li><span>完成时间：</span><span v-if="detail.winTime">{{ detail.winTime }}</span><span v-else>暂无</span></li>
           <!--<li><span>订单价格：</span><span v-if="detailInfo.amount">{{ detailInfo.amount }} 元</span><span v-else>暂无</span></li>-->
           <li><span>试客第三方账号：</span><span v-if="detail.buyAmount">{{ detail.buyAmount }} </span><span v-else>暂无</span></li>
           <li class="faileReason"><span>用户上传图片详情：</span><span v-if="detail.orderImageList == 0 && detail.mainImageUrl == null" class="noImg">暂无图片</span></li>
@@ -93,7 +93,7 @@
     </el-dialog>
     <el-dialog title="拒绝原因" :visible.sync="reasonBox" center top="20vh"  width="30%" >
       <span>备注：</span>
-      <el-input :rows="4" type="textarea" :maxlength="40" v-model.trim="reason" placeholder="审核拒绝时不能为空，可输入字符最大长度为100"></el-input>
+      <el-input :rows="4" type="textarea" :maxlength="40" v-model.trim="reason" placeholder="审核拒绝时不能为空，可输入字符最大长度为40"></el-input>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitReason">提 交</el-button>
         <el-button type="info" @click="cancel">取 消</el-button>
@@ -163,9 +163,9 @@ export default {
     };
   },
   mounted() {
-    this.order = this.$store.state.searchBar.groupOrder.order;
-    this.currentPage = this.$store.state.searchBar.groupOrder.currentPage;
-    this.pageSize = this.$store.state.searchBar.groupOrder.pageSize;
+    this.order = this.$store.state.searchBar.checkGroup.order;
+    this.currentPage = this.$store.state.searchBar.checkGroup.currentPage;
+    this.pageSize = this.$store.state.searchBar.checkGroup.pageSize;
     this.getList();
   },
   methods: {
@@ -300,7 +300,7 @@ export default {
         pageSize: this.pageSize
       };
       // console.log('dataStorage',dataStorage)
-      this.$store.commit("saveGroupOrder", dataStorage);
+      this.$store.commit("saveCheckGroup", dataStorage);
       getOrderList(formData).then(res => {
         //  console.log(res)
         this.loading = false;
@@ -314,24 +314,24 @@ export default {
     //根据搜索条件获取订单列表
     getData(res) {
       // this.order ={
-      (this.order.groupActivityType =
-        res.groupActivityType === undefined ? "" : res.groupActivityType),
-        (this.order.activityCode =
-          res.activityCode === undefined ? "" : res.activityCode),
-        (this.order.EQ_activityShop =
-          res.EQ_activityShop === undefined ? "" : res.EQ_activityShop),
-        (this.order.activityStartTime =
-          res.activityStartTime === undefined ? "" : res.activityStartTime),
-        (this.order.activityEndTime =
-          res.activityEndTime === undefined ? "" : res.activityEndTime),
-        (this.order.EQ_activityType =
-          res.EQ_activityType === undefined ? "" : res.EQ_activityType),
-        (this.order.LIKE_addServiceType =
-          res.LIKE_addServiceType === undefined ? [] : res.LIKE_addServiceType),
-        (this.order.LIKE_addServiceType2 =
+      this.order.groupActivityType =
+        res.groupActivityType === undefined ? "" : res.groupActivityType,
+        this.order.activityCode =
+          res.activityCode === undefined ? "" : res.activityCode,
+        this.order.EQ_activityShop =
+          res.EQ_activityShop === undefined ? "" : res.EQ_activityShop,
+        this.order.activityStartTime =
+          res.activityStartTime === undefined ? "" : res.activityStartTime,
+        this.order.activityEndTime =
+          res.activityEndTime === undefined ? "" : res.activityEndTime,
+        this.order.EQ_activityType =
+          res.EQ_activityType === undefined ? "" : res.EQ_activityType,
+        this.order.LIKE_addServiceType =
+          res.LIKE_addServiceType === undefined ? [] : res.LIKE_addServiceType,
+        this.order.LIKE_addServiceType2 =
           res.LIKE_addServiceType2 === undefined
             ? ""
-            : res.LIKE_addServiceType2),
+            : res.LIKE_addServiceType2
         // }  ;
 
         // this.currentPage = 1 ;

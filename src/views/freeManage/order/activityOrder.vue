@@ -57,6 +57,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="thirdAccount" label="试客第三方账号"></el-table-column>
+          <el-table-column prop="createTime" label="订单创建时间" ></el-table-column>
           <el-table-column prop="thirdOrderCode" label="第三方订单编号"></el-table-column>
           <el-table-column prop="status" label="状态">
             <template slot-scope="scope">
