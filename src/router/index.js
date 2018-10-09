@@ -223,6 +223,12 @@ export const constantRouterMap = [
             hidden: true ,
             meta: { title: '开团提醒订单详情', icon: 'groupDetail'  }
           },
+          {
+            path: 'checkGroup',
+            name: 'CheckGroup',
+            component: () => import('@/views/freeManage/order/checkGroup'),
+            meta: { title: '开团提醒审核', icon: 'checkGroup' }
+          },
         ]
       },
       {

@@ -71,7 +71,7 @@
     </el-dialog>
     <el-dialog title="拒绝原因" :visible.sync="reasonBox" center top="20vh"  width="30%"  >
       <span>备注：</span>
-      <el-input :rows="4" type="textarea" :maxlength="100" v-model.trim="reason" placeholder="审核拒绝时不能为空，可输入字符最大长度为100"></el-input>
+      <el-input :rows="4" type="textarea" :maxlength="40" v-model.trim="reason" placeholder="审核拒绝时不能为空，可输入字符最大长度为40"></el-input>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitReason">提 交</el-button>
         <el-button type="info" @click="cancel">取 消</el-button>

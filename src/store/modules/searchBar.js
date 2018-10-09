@@ -155,6 +155,19 @@ const searchBar = {
       currentPage : 1,
       pageSize : 10,
     },
+    checkGroup : {
+      order : {
+        groupActivityType : '' ,
+        activityCode : '',
+        EQ_activityShop : '',
+        activityStartTime : '',
+        activityEndTime : '',
+        EQ_activityType : '',
+        EQ_status: '',
+      },
+      currentPage : 1,
+      pageSize : 10,
+    },
     activityOrder : {
       order : {
         EQ_status: '',
@@ -310,6 +323,9 @@ const searchBar = {
     },
     saveGroupOrder : (state,obj) => {
       state.groupOrder = obj ;
+    },
+    saveCheckGroup : (state,obj) => {
+      state.checkGroup = obj ;
     },
   }
 };
