@@ -35,7 +35,7 @@
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button  type="text" @click="goDetail(scope.$index,scope.row.orderId)">查看详情</el-button>
-          <el-button v-if="scope.row.status==4"  type="text" @click="goAudit(scope.$index,scope.row.orderId)">审核</el-button>
+          <el-button v-if="scope.row.status==4"  type="text" @click="goAudit(scope.$index,scope.row)">审核</el-button>
           <!--<el-button  type="text"  @click="handleCheck(scope.$index,'2')">审核失败</el-button>-->
           <!--<el-button  type="text"  @click="refuseReason(scope.$index)">查看拒绝原因</el-button>-->
 
@@ -161,7 +161,8 @@ export default {
       detail: {},
       platForm: ["", "淘抢购", "聚划算", "京东秒杀"],
       reasonBox: false,
-      reason: ""
+      reason: "",
+      activityType:''
     };
   },
   mounted() {
@@ -173,16 +174,17 @@ export default {
   methods: {
     // 评价审核详情
     goAudit(index, order) {
-      this.orderId = order;
+      this.orderId = order.orderId;
       this.detailInfo = true;
       this.viewImg = "";
       this.loading = true;
+      this.activityType = order.activityType;
 
-      orderDetail(order).then(res => {
+      orderDetail(order.orderId).then(res => {
         this.loading = false;
         if (res.data.status === "000000000") {
           this.detail = res.data.data;
-          console.log(this.detail);
+          // console.log(this.detail);
         }
       });
     },
@@ -206,7 +208,7 @@ export default {
         orderId: this.orderId,
         status: this.status,
         reason: this.refuseReason,
-        activityType: this.order.EQ_activityType
+        activityType: this.activityType
       }).then(res => {
         this.loading = false;
         if (res.data.status === "000000000") {
@@ -326,7 +328,7 @@ export default {
           res.activityStartTime === undefined ? "" : res.activityStartTime,
         this.order.activityEndTime =
           res.activityEndTime === undefined ? "" : res.activityEndTime,
-        this.order.EQ_activityType =
+        this.order.activityType =
           res.EQ_activityType === undefined ? "" : res.EQ_activityType,
         this.order.LIKE_addServiceType =
           res.LIKE_addServiceType === undefined ? [] : res.LIKE_addServiceType,
@@ -337,7 +339,6 @@ export default {
         // }  ;
 
         // this.currentPage = 1 ;
-
         this.getList();
     },
     //查看订单详情
