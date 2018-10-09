@@ -488,6 +488,7 @@ export default {
         }
       })
     },
+
     //获取商品详情
     getGoodsDetail(type, url) {
       this.form.productId = "";
@@ -527,8 +528,49 @@ export default {
           }
         });
       } else {
+        if (type === "5") {
+          let platform = '';
+          this.shopOptions.map( i => {
+            if(i.id === this.form.shopId){
+              platform = i.platFormType ;
+            }
+          });
+
+          if ( url.indexOf("u_channel=qianggou") === -1 || url.indexOf('item.taobao.com') !== -1 && platform !== '1' || url.indexOf('detail.tmall.com') !== -1 && platform !== '2'  ) {
+            this.$message({
+              message: "请重新输入对应平台的商品链接",
+              center: true,
+              type: "error"
+            });
+            this.form.productUrl = "";
+            this.form.productId = "";
+
+            return false;
+          }
+        } else {
+          if (type === "6") {
+            if (url.indexOf('tracelog=jubuybigpic')=== -1 && url.indexOf('detail.ju.taobao.com') === -1) {
+              this.$message({
+                message: "请重新输入对应平台的商品链接",
+                center: true,
+                type: "error"
+              });
+              this.form.productUrl = "";
+              this.form.productId = "";
+
+              return false;
+            }
+          }
+        }
         if (url.indexOf("?") !== -1) {
-          const num = getQueryString(url, "id");
+          let num = '';
+          if(url.indexOf('detail.ju.taobao.com') !==-1){
+            num = getQueryString(url, "item_id");
+
+          }else{
+             num = getQueryString(url, "id");
+
+          }
           if (num === undefined) {
             this.$message({
               message: "您输入的商品链接有误，请重新输入",
@@ -601,33 +643,7 @@ export default {
           this.form.productUrl = "";
           this.form.productId = "";
         }
-        if (type === "5") {
-          if ( url.indexOf("u_channel=qianggou") === -1) {
-            this.$message({
-              message: "请重新输入对应平台的商品链接",
-              center: true,
-              type: "error"
-            });
-            this.form.productUrl = "";
-            this.form.productId = "";
 
-            return false;
-          }
-        } else {
-          if (type === "6") {
-            if (url.indexOf('tracelog=jubuybigpic')=== -1) {
-              this.$message({
-                message: "请重新输入对应平台的商品链接",
-                center: true,
-                type: "error"
-              });
-              this.form.productUrl = "";
-              this.form.productId = "";
-
-              return false;
-            }
-          }
-        }
       }
       // console.log(this.form.productDetail,this.form.productName);
     },
@@ -713,7 +729,6 @@ export default {
           taskTime = new Date(taskTime).getTime();
           if (activityTime - taskTime < 0.5 * 60 * 60 * 1000) {
             this.$message({
-
               message: "任务开始时间必须早于活动场次时间半小时，请重新选择",
               type: "error",
               center: true
