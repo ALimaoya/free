@@ -52,53 +52,6 @@
       </el-pagination>
       <span class="totalItems">共{{ totalPages }}页，{{totalElements}}条记录</span>
     </div>
-    <el-dialog width="50%" :visible.sync="detailInfo" center top="10vh" title="开团提醒订单审核" >
-      <div class="contentList">
-        <ul class="detailInfor">
-          <li><span>订单流水号：</span><span>{{ detail.activityCode }}</span></li>
-          <li><span>活动编号：</span><span>{{ detail.orderCode}}</span></li>
-          <li><span>商铺名称：</span><span v-if="detail.platform">{{ detail.shopName }}</span><span v-else>暂无</span></li>
-          <li><span>活动类型：</span><span v-if="detail.platform">{{ platForm[detail.platform] }}</span><span v-else>暂无</span></li>
-          <!--<li><span>第三方单号：</span><span v-if="detailInfo.thirdOrderCode">{{ detailInfo.thirdOrderCode }}</span><span v-else>暂无</span></li>-->
-          <li><span>完成时间：</span><span v-if="detail.receiveTime">{{ detail.winTime }}</span><span v-else>暂无</span></li>
-          <!--<li><span>订单价格：</span><span v-if="detailInfo.amount">{{ detailInfo.amount }} 元</span><span v-else>暂无</span></li>-->
-          <li><span>试客第三方账号：</span><span v-if="detail.buyAmount">{{ detail.buyAmount }} </span><span v-else>暂无</span></li>
-          <li class="faileReason"><span>用户上传图片详情：</span><span v-if="detail.orderImageList == 0 && detail.mainImageUrl == null" class="noImg">暂无图片</span></li>
-          <li class="detailPic">
-            <div >
-              <dl v-if="detail.mainImageUrl !== null" >
-                <dt>宝贝主图</dt>
-                <dd>
-                  <img v-if="detail.mainImageUrl !== null" @click="showImg(detail.mainImageUrl)" :src="imageDomain + detail.mainImageUrl"  :onerror="errorImg"/>
-                  <img :src="failImg"  v-else>
-                </dd>
-              </dl>
-              <dl v-if="detail.orderImageList != 0" v-for="(item,index) in detail.orderImageList" :key="index">
-                <dt>开团提醒截图</dt>
-                <dd>
-                  <img v-if="item.imageUrl!==''" @click="showImg(item.imageUrl)" :src="imageDomain + item.imageUrl"  :onerror="errorImg"/>
-                  <img :src="failImg"  v-else>
-                </dd>
-              </dl>
-            </div>
-
-          </li>
-        </ul>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="check('1')">审核成功</el-button>
-        <el-button type="error" @click="check('2')">审核拒绝</el-button>
-        <el-button type="info" @click="detailInfo = false; searchImg = '';likeImg = ''">取 消</el-button>
-      </div>
-    </el-dialog>
-    <el-dialog title="拒绝原因" :visible.sync="reasonBox" center top="20vh"  width="30%" >
-      <span>备注：</span>
-      <el-input :rows="4" type="textarea" :maxlength="40" v-model.trim="reason" placeholder="审核拒绝时不能为空，可输入字符最大长度为100"></el-input>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitReason">提 交</el-button>
-        <el-button type="info" @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
     <div v-if="mask" @click="close" class="mask">
       <img :src=" imageDomain + bigImg" alt="" />
     </div>
@@ -155,11 +108,8 @@ export default {
       loading: true,
       errorImg: 'this.src="' + userPhoto + '"',
       failImg: userPhoto,
-      detailInfo: false,
       detail: {},
       platForm: ["", "淘抢购", "聚划算", "京东秒杀"],
-      reasonBox: false,
-      reason: ""
     };
   },
   mounted() {
@@ -169,86 +119,6 @@ export default {
     this.getList();
   },
   methods: {
-    // 评价审核详情
-    goAudit(index, order) {
-      this.orderId = order;
-      this.detailInfo = true;
-      this.viewImg = "";
-      this.loading = true;
-
-      orderDetail(order).then(res => {
-        this.loading = false;
-        if (res.data.status === "000000000") {
-          this.detail = res.data.data;
-          console.log(this.detail);
-        }
-      });
-    },
-
-    //审核操作
-    check(type) {
-      if (type === "1") {
-        this.status = "99";
-        this.handelRefuse();
-      } else {
-        this.status = "11";
-        this.reasonBox = true;
-      }
-      // console.log(this.orderId ,  this.status , this.refuseReason);
-    },
-
-    handelRefuse() {
-      this.loading = true;
-
-      checkOrder({
-        orderId: this.orderId,
-        status: this.status,
-        reason: this.refuseReason,
-        activityType: this.order.EQ_activityType
-      }).then(res => {
-        this.loading = false;
-        if (res.data.status === "000000000") {
-          this.$message({
-            message: "审核提交成功，请稍后确认",
-            center: true,
-            type: "success"
-          });
-          // return false
-          setTimeout(() => {
-            window.location.reload();
-          }, 3000);
-        }
-      });
-      this.detailInfo = false;
-      this.viewImg = "";
-    },
-
-    //提交拒绝原因
-    submitReason() {
-      this.refuseReason = this.reason;
-      // console.log(this.orderId ,  this.status , this.refuseReason ,2);
-
-      if (this.refuseReason === "") {
-        this.$message({
-          message: "请填写拒绝原因",
-          type: "error",
-          center: "true"
-        });
-        return false;
-      } else {
-        if (this.refuseReason.length > 100) {
-          this.$message({
-            message: "拒绝原因不得超过100个字符",
-            type: "error",
-            center: "true"
-          });
-        } else {
-          this.handelRefuse();
-          this.reasonBox = false;
-          // this.reason = '' ;
-        }
-      }
-    },
 
     //获取订单列表
     getList() {
@@ -341,17 +211,6 @@ export default {
     //查看订单详情
     goDetail(index, order) {
       this.$router.push("/freeManage/order/groupDetail/" + order);
-    },
-    //  去审核
-    // goAudit(index,order){
-    //     // this.$router.push("/freeManage/order/groupAudit/" + order);
-    //     console.log(order)
-
-    // },
-    //关闭窗口
-    cancel() {
-      this.reasonBox = false;
-      this.reason = "";
     },
     //查看宝贝大图
     showImg(url) {
