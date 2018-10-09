@@ -42,7 +42,7 @@
             <p class="remark">备注：试客会根据此活动场次自行前往查找设置开团提醒</p>
             <p class="title">第二步：选择目标推广宝贝</p>
             <el-form-item label="选择店铺：" :labelWidth="labelWidth" prop="shopId">
-                <el-select :disabled="readShop" v-model="form.shopId"  placeholder="请选择店铺" size="small" >
+                <el-select :disabled="readShop" v-model="form.shopId"  placeholder="请选择店铺" size="small" @change="form.productUrl = ''">
                     <el-option  v-for="(item,index) in shopOptions" :key="index" :label="item.name" :value="item.id"></el-option>
                 </el-select>
                 <span v-if="form.shopId==='没有可选店铺'" class="tips" style="color : #f56c6c">该平台下未绑定店铺或绑定店铺未审核通过，请在店铺绑定并审核通过后再进行活动发布</span>
@@ -496,7 +496,6 @@ export default {
     },
     goPlatform(type, url) {
       let that = this;
-
       if (type === "7") {
         let id = "";
         if (url.indexOf('item.m.jd.com') !==-1 || url.indexOf('item.jd.com') !==-1) {
@@ -536,8 +535,8 @@ export default {
             }
           });
 
-          if ( url.indexOf("u_channel=qianggou") === -1 &&
-            ( url.indexOf('item.taobao.com') !== -1 && platform !== '1' || url.indexOf('detail.tmall.com') !== -1 && platform !== '2') ) {
+          if ( url.indexOf("u_channel=qianggou") === -1 ||
+             url.indexOf('item.taobao.com') !== -1 && platform !== '1' ||  url.indexOf('detail.tmall.com') !== -1 && platform !== '2')  {
             this.$message({
               message: "请重新输入对应平台的商品链接",
               center: true,

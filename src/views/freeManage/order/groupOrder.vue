@@ -17,7 +17,9 @@
       <el-table-column prop="createTime" label="订单创建时间" ></el-table-column>
       <el-table-column prop="orderImageList" label="开团提醒截图">
         <template slot-scope="scope">
-          <img v-if="scope.row.orderImageList!==null" class="showPic" @click="showImg( scope.row.orderImageList[0].imageUrl )" :src=" imageDomain + scope.row.orderImageList[0].imageUrl " :onerror="errorImg"/>
+          <img v-if="scope.row.orderImageList.length>0 && scope.row.orderImageList[0].imageUrl!==null" class="showPic"
+               @click="showImg( scope.row.orderImageList[0].imageUrl )"
+               :src=" imageDomain + scope.row.orderImageList[0].imageUrl " :onerror="errorImg"/>
           <img :src="failImg"  v-else class="showPic">
         </template>
       </el-table-column>
