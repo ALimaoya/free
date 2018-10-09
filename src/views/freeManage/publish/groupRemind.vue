@@ -536,7 +536,8 @@ export default {
             }
           });
 
-          if ( url.indexOf("u_channel=qianggou") === -1 || url.indexOf('item.taobao.com') !== -1 && platform !== '1' || url.indexOf('detail.tmall.com') !== -1 && platform !== '2'  ) {
+          if ( url.indexOf("u_channel=qianggou") === -1 &&
+            ( url.indexOf('item.taobao.com') !== -1 && platform !== '1' || url.indexOf('detail.tmall.com') !== -1 && platform !== '2') ) {
             this.$message({
               message: "请重新输入对应平台的商品链接",
               center: true,
