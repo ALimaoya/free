@@ -1,6 +1,6 @@
 <template>
   <div class="groupOrder tableBox"    v-loading="loading"  element-loading-text="拼命加载中">
-    <h1>流量订单查询</h1>
+    <h1>开团提醒订单查询</h1>
     <search-bar @searchobj="getData" :groupActivityType="true" :activity-shop="true" :group-status="true" :activity-code="true" :group="'groupOrder'" :date="true"></search-bar>
     <!--<div class="note">备注：以上搜索条件可根据单一条件进行搜索，当单独试客淘宝号搜索不到有用信息时，可尝试输入淘宝订单编号，反之亦然</div>-->
     <el-table :data="tableData" border>

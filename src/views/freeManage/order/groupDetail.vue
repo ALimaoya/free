@@ -8,7 +8,7 @@
         <li><span>商铺名称：</span><span v-if="detailInfo.shopName">{{ detailInfo.shopName }}</span><span v-else>暂无</span></li>
         <li><span>活动类型：</span><span v-if="detailInfo.platform">{{ platForm[detailInfo.platform] }}</span><span v-else>暂无</span></li>
         <!--<li><span>第三方单号：</span><span v-if="detailInfo.thirdOrderCode">{{ detailInfo.thirdOrderCode }}</span><span v-else>暂无</span></li>-->
-        <li><span>完成时间：</span><span v-if="detailInfo.winTime">{{ detailInfo.winTime }}</span><span v-else>暂无</span></li>
+        <li><span>完成时间：</span><span v-if="detailInfo.receiveTime">{{ detailInfo.receiveTime }}</span><span v-else>暂无</span></li>
         <!--<li><span>订单价格：</span><span v-if="detailInfo.amount">{{ detailInfo.amount }} 元</span><span v-else>暂无</span></li>-->
         <li><span>试客第三方账号：</span><span v-if="detailInfo.thirdAccount">{{ detailInfo.thirdAccount }} </span><span v-else>暂无</span></li>
         <li v-if="detailInfo.remarks"><span>订单失败原因：</span><span>{{ detailInfo.remarks }} </span></li>
