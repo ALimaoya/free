@@ -244,6 +244,7 @@
         }else{
           formData.append('EQ_tryoutOrderWin.thirdOrderCode', '');
         }
+        formData.append('EQ_tryoutActivity.tryoutMerchantShop.shopId',this.order.EQ_activityShop);
         formData.append('EQ_activityType',this.order.EQ_activityType);
         formData.append('currentPage', this.currentPage);
         formData.append('EQ_status','4');

@@ -45,7 +45,6 @@
         :value="item.value">
       </el-option>
     </el-select>
-    <el-button v-if="activity&&!date" size="small" type="primary" round  @click="getList()" class="searchOrder" >查询</el-button>
     <el-select v-if="activityShop" clearable size="small"  v-model="order.EQ_activityShop"  filterable placeholder="请选择店铺">
       <el-option
         v-for="item in shopList"
@@ -89,19 +88,20 @@
     </div>
     <div class="block" v-if="flow||date">
       <span class="demonstration">选择日期：</span>
-      <el-date-picker  value-format="yyyy-MM-dd" size="small"
-                      v-model="order.GT_activityEndTime" clearable type="date"
+      <el-date-picker  value-format="yyyy-MM-dd hh:mm:ss" size="small"
+                      v-model="order.GT_activityEndTime" clearable type="datetime"
                       placeholder="开始时间" >
       </el-date-picker>
       <span class="demonstration2">~</span>
       <el-date-picker size="small" v-model="order.LT_activityStartTime"  clearable
-                      type="date"  value-format="yyyy-MM-dd"
+                      type="datetime"  value-format="yyyy-MM-dd hh:mm:ss"
                       placeholder="结束时间">
       </el-date-picker>
-      <el-button  size="small" type="primary" round @click="getList()" class="searchOrder">搜索</el-button>
+      <!--<el-button v-if="activity&&!date" size="small" type="primary" round  @click="getList()" class="searchOrder" >查询</el-button>-->
 
     </div>
     <!--<div class="note" v-if="!flow">备注：以上搜索条件可根据单一条件进行搜索，当单独试客淘宝号搜索不到有用信息时，可尝试输入淘宝订单编号，反之亦然</div>-->
+    <el-button  size="small" type="primary" round @click="getList()" class="searchOrder">搜索</el-button>
 
   </div>
 
@@ -429,15 +429,15 @@
         getList(){
           //  判断时间范围是否正确
           if(this.order.LT_activityStartTime !== '' && this.order.LT_activityStartTime !== undefined && this.order.LT_activityStartTime !== null){
-            if(this.order.GT_activityEndTime === '' || this.order.GT_activityEndTime === undefined || this.order.GT_activityEndTime === null){
-              this.$message({
-                message: "请选择开始时间",
-                type: "error",
-                center: true
-              });
-              this.order.LT_activityStartTime = '';
-              return false
-            }
+            // if(this.order.GT_activityEndTime === '' || this.order.GT_activityEndTime === undefined || this.order.GT_activityEndTime === null){
+            //   this.$message({
+            //     message: "请选择开始时间",
+            //     type: "error",
+            //     center: true
+            //   });
+            //   this.order.LT_activityStartTime = '';
+            //   return false
+            // }
             if(this.order.GT_activityEndTime !== '' && this.order.GT_activityEndTime !== undefined && this.order.GT_activityEndTime !== null){
               let start = (this.order.LT_activityStartTime).replace(/-/g, "/");
               let end = (this.order.GT_activityEndTime).replace(/-/g,"/");
@@ -454,15 +454,15 @@
             }
           }
           if(this.order.GT_activityEndTime !== '' && this.order.GT_activityEndTime !== undefined && this.order.GT_activityEndTime !== null){
-            if(this.order.LT_activityStartTime === '' || this.order.LT_activityStartTime === undefined || this.order.LT_activityStartTime === null){
-              this.$message({
-                message: "请选择结束时间",
-                type: "error",
-                center: true
-              });
-              this.order.GT_activityEndTime = '';
-              return false
-            }
+            // if(this.order.LT_activityStartTime === '' || this.order.LT_activityStartTime === undefined || this.order.LT_activityStartTime === null){
+            //   this.$message({
+            //     message: "请选择结束时间",
+            //     type: "error",
+            //     center: true
+            //   });
+            //   this.order.GT_activityEndTime = '';
+            //   return false
+            // }
             if(this.order.LT_activityStartTime !== '' && this.order.LT_activityStartTime !== undefined && this.order.LT_activityStartTime !== null){
               let start = (this.order.LT_activityStartTime).replace(/-/g, "/");
               let end = (this.order.GT_activityEndTime).replace(/-/g,"/");

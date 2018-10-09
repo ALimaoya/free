@@ -7,7 +7,7 @@
       <ul class="detailInfor">
         <li><span>试客活动编号：</span><span>{{ detailInfo.activityCode }}</span></li>
         <li><span>试客订单编号：</span><span>{{ detailInfo.orderCode}}</span></li>
-        <li><span>商铺名称：</span><span v-if="detailInfo.platform">{{ detailInfo.shopName }}</span><span v-else>暂无</span></li>
+        <li><span>商铺名称：</span><span v-if="detailInfo.shopName">{{ detailInfo.shopName }}</span><span v-else>暂无</span></li>
         <li><span>平台类型：</span><span v-if="detailInfo.platform">{{ platForm[detailInfo.platform] }}</span><span v-else>暂无</span></li>
         <li><span>第三方单号：</span><span v-if="detailInfo.thirdOrderCode">{{ detailInfo.thirdOrderCode }}</span><span v-else>暂无</span></li>
         <li><span>中奖时间：</span><span v-if="detailInfo.winTime">{{ detailInfo.winTime }}</span><span v-else>暂无</span></li>

@@ -586,7 +586,7 @@
                     type: 'success'
                   });
                   this.dialogVisible = false ;
-
+                  this.close(formName);
                   setTimeout(() => {
                     this.getList();
                   },2000)

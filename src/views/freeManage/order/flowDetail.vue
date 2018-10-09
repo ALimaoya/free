@@ -5,12 +5,12 @@
       <ul class="detailInfor">
         <li><span>任务编号：</span><span>{{ detailInfo.activityCode }}</span></li>
         <li><span>订单编号：</span><span>{{ detailInfo.orderCode}}</span></li>
-        <li><span>商铺名称：</span><span v-if="detailInfo.platform">{{ detailInfo.shopName }}</span><span v-else>暂无</span></li>
+        <li><span>商铺名称：</span><span v-if="detailInfo.shopName">{{ detailInfo.shopName }}</span><span v-else>暂无</span></li>
         <li><span>平台类型：</span><span v-if="detailInfo.platform">{{ platForm[detailInfo.platform] }}</span><span v-else>暂无</span></li>
         <!--<li><span>第三方单号：</span><span v-if="detailInfo.thirdOrderCode">{{ detailInfo.thirdOrderCode }}</span><span v-else>暂无</span></li>-->
-        <li><span>订单创建时间：</span><span v-if="detailInfo.receiveTime">{{ detailInfo.winTime }}</span><span v-else>暂无</span></li>
+        <li><span>订单创建时间：</span><span v-if="detailInfo.winTime">{{ detailInfo.winTime }}</span><span v-else>暂无</span></li>
         <!--<li><span>订单价格：</span><span v-if="detailInfo.amount">{{ detailInfo.amount }} 元</span><span v-else>暂无</span></li>-->
-        <li><span>订单状态：</span><span v-if="detailInfo.buyAmount">{{ detailInfo.buyAmount }} </span><span v-else>暂无</span></li>
+        <li><span>订单状态：</span><span v-if="detailInfo.status">{{ detailInfo.status }} </span><span v-else>暂无</span></li>
         <li><span>流量方式：</span><span v-if="detailInfo.addServiceType">{{ detailInfo.addServiceType }} </span><span v-else>暂无</span></li>
         <li v-if="detailInfo.remarks"><span>订单失败原因：</span><span>{{ detailInfo.remarks }} </span></li>
         <li class="faileReason"><span>用户上传图片详情：</span><span v-if="detailInfo.orderImageList == 0" class="noImg">暂无图片</span></li>

@@ -430,16 +430,23 @@ export default {
         ];
       }
       let num = "";
+      this.shopOptions = [];
+
       if(value === "5"){
-        num = "1"
+        num = "1";
+        this.shopList('2');
+
       }else if(value === "6"){
         num = "2"
       }else if(value === "7"){
         num = "3"
       }
+      this.shopList(num);
+    },
+    shopList(num){
       getShopList(num).then(res => {
         if (res.data.status === "000000000") {
-          this.shopOptions = res.data.data;
+          this.shopOptions = this.shopOptions.concat(res.data.data);
           if (this.shopOptions.length) {
             if (this.editor !== "2") {
               this.readShop = false;
@@ -458,7 +465,7 @@ export default {
             this.form.shopId = "没有可选店铺";
           }
         }
-      });
+      })
     },
     //获取商品详情
     getGoodsDetail(type, url) {
@@ -470,12 +477,21 @@ export default {
 
       if (type === "7") {
         let id = "";
-        if (url.indexOf("product") !== -1) {
-          id = url.split("product/")[1];
+        if (url.indexOf('item.m.jd.com') !==-1 || url.indexOf('item.jd.com') !==-1) {
+          if (url.indexOf("product") !== -1) {
+            id = url.split("product/")[1];
+          } else {
+            id = url.split("com/")[1];
+          }
+          id = id.split(".")[0];
         } else {
-          id = url.split("com/")[1];
+          this.$message({
+            message: "您输入的商品链接有误，请重新输入",
+            center: "true",
+            type: "error"
+          })
         }
-        id = id.split(".")[0];
+
         getJDetail(id).then(res => {
           if (res.data.status === "000000000") {
             that.form.productName = res.data.data.productName;
@@ -565,7 +581,7 @@ export default {
           this.form.productId = "";
         }
         if (type === "5") {
-          if (url.indexOf("item.taobao.com") === -1) {
+          if ( url.indexOf("u_channel=qianggou") === -1) {
             this.$message({
               message: "请重新输入对应平台的商品链接",
               center: true,
@@ -578,7 +594,7 @@ export default {
           }
         } else {
           if (type === "6") {
-            if (url.indexOf("detail.tmall.com") === -1) {
+            if (url.indexOf('tracelog=jubuybigpic')=== -1) {
               this.$message({
                 message: "请重新输入对应平台的商品链接",
                 center: true,
@@ -673,7 +689,7 @@ export default {
           taskTime = new Date(taskTime).getTime();
           if (taskTime - 0 > activityTime - 0) {
             this.$message({
-              message: "任务开始时间不能早于活动场次时间，请重新选择",
+              message: "任务开始时间必须早于活动场次时间，请重新选择",
               type: "error",
               center: true
             });

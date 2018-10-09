@@ -218,7 +218,7 @@
       }
       .show-pwd{
         width : 0.3rem ;
-        height : 28rem ;
+        height : 0.28rem ;
         line-height :28px;
         /*text-align : right ;*/
         /*position : absolute ;*/

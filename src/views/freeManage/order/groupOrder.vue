@@ -5,7 +5,7 @@
     <!--<div class="note">备注：以上搜索条件可根据单一条件进行搜索，当单独试客淘宝号搜索不到有用信息时，可尝试输入淘宝订单编号，反之亦然</div>-->
     <el-table :data="tableData" border>
       <el-table-column label="序号" width="80" prop="orderId" ></el-table-column>
-      <el-table-column prop="activityCode" label="订单流水号" ></el-table-column>
+      <el-table-column prop="orderCode" label="订单流水号" ></el-table-column>
       <el-table-column prop="shopName" label="店铺名称" ></el-table-column>
       <el-table-column prop="activityCode" label="活动编号" ></el-table-column>
       <el-table-column prop="platform" label="活动类型">
@@ -57,10 +57,10 @@
         <ul class="detailInfor">
           <li><span>订单流水号：</span><span>{{ detail.activityCode }}</span></li>
           <li><span>活动编号：</span><span>{{ detail.orderCode}}</span></li>
-          <li><span>商铺名称：</span><span v-if="detail.platform">{{ detail.shopName }}</span><span v-else>暂无</span></li>
+          <li><span>商铺名称：</span><span v-if="detail.shopName">{{ detail.shopName }}</span><span v-else>暂无</span></li>
           <li><span>活动类型：</span><span v-if="detail.platform">{{ platForm[detail.platform] }}</span><span v-else>暂无</span></li>
           <!--<li><span>第三方单号：</span><span v-if="detailInfo.thirdOrderCode">{{ detailInfo.thirdOrderCode }}</span><span v-else>暂无</span></li>-->
-          <li><span>完成时间：</span><span v-if="detail.receiveTime">{{ detail.winTime }}</span><span v-else>暂无</span></li>
+          <li><span>完成时间：</span><span v-if="detail.winTime">{{ detail.winTime }}</span><span v-else>暂无</span></li>
           <!--<li><span>订单价格：</span><span v-if="detailInfo.amount">{{ detailInfo.amount }} 元</span><span v-else>暂无</span></li>-->
           <li><span>试客第三方账号：</span><span v-if="detail.buyAmount">{{ detail.buyAmount }} </span><span v-else>暂无</span></li>
           <li class="faileReason"><span>用户上传图片详情：</span><span v-if="detail.orderImageList == 0 && detail.mainImageUrl == null" class="noImg">暂无图片</span></li>
@@ -314,24 +314,24 @@ export default {
     //根据搜索条件获取订单列表
     getData(res) {
       // this.order ={
-      (this.order.groupActivityType =
-        res.groupActivityType === undefined ? "" : res.groupActivityType),
-        (this.order.activityCode =
-          res.activityCode === undefined ? "" : res.activityCode),
-        (this.order.EQ_activityShop =
-          res.EQ_activityShop === undefined ? "" : res.EQ_activityShop),
-        (this.order.activityStartTime =
-          res.activityStartTime === undefined ? "" : res.activityStartTime),
-        (this.order.activityEndTime =
-          res.activityEndTime === undefined ? "" : res.activityEndTime),
-        (this.order.EQ_activityType =
-          res.EQ_activityType === undefined ? "" : res.EQ_activityType),
-        (this.order.LIKE_addServiceType =
-          res.LIKE_addServiceType === undefined ? [] : res.LIKE_addServiceType),
-        (this.order.LIKE_addServiceType2 =
+      this.order.groupActivityType =
+        res.groupActivityType === undefined ? "" : res.groupActivityType,
+        this.order.activityCode =
+          res.activityCode === undefined ? "" : res.activityCode,
+        this.order.EQ_activityShop =
+          res.EQ_activityShop === undefined ? "" : res.EQ_activityShop,
+        this.order.activityStartTime =
+          res.activityStartTime === undefined ? "" : res.activityStartTime,
+        this.order.activityEndTime =
+          res.activityEndTime === undefined ? "" : res.activityEndTime,
+        this.order.EQ_activityType =
+          res.EQ_activityType === undefined ? "" : res.EQ_activityType,
+        this.order.LIKE_addServiceType =
+          res.LIKE_addServiceType === undefined ? [] : res.LIKE_addServiceType,
+        this.order.LIKE_addServiceType2 =
           res.LIKE_addServiceType2 === undefined
             ? ""
-            : res.LIKE_addServiceType2),
+            : res.LIKE_addServiceType2
         // }  ;
 
         // this.currentPage = 1 ;

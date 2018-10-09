@@ -1,6 +1,6 @@
 <template>
   <div class="auditing">
-    <div class="title" >活动提交成功，等待<span v-if="this.type === 'flow'">活动开始</span><span v-else-if="this.type === 'group'">到达设定的任务开始时间</span><span v-else>审批通过</span>即可上线</div>
+    <div class="title" >活动提交成功，等待<span v-if="this.type === 'flow'|| this.type === 'group'">活动开始</span><span v-if="this.type === 'group'">到达设定的任务开始时间</span><span v-else="this.type === 'tryout'">审批通过</span>即可上线</div>
     <!--<img src="" alt="" />-->
     <div class="btn"><el-button type="primary" @click="goCenter">返回商家中心首页</el-button></div>
   </div>

@@ -38,7 +38,7 @@
             <el-table-column  label="操作">
                 <template slot-scope="scope">
                 <el-button class="check" style="padding : 0 ;" type="text"  @click="detail(scope.$index,scope.row.activityId)">查看详情</el-button>
-                <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.payStatus==='0'|| (scope.row.status==='5'&& scope.row.startTime > time)" @click="editor(scope.$index,scope.row.activityId, scope.row.payStatus)">修改</el-button>
+                <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.payStatus==='0'&&scope.row.status!=='10'|| (scope.row.status==='5'&& scope.row.startTime > time)" @click="editor(scope.$index,scope.row.activityId, scope.row.payStatus)">修改</el-button>
                 <!--<el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.status==='4'" @click="reason(scope.$index,scope.row.reason)">查看原因</el-button>-->
                 <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.status==='5'&& scope.row.endTime > time&& scope.row.payStatus==='1'" @click="handleShelves(scope.row.activityId,scope.row.status)">下架</el-button>
                 <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.status==='6'&& scope.row.endTime > time&&scope.row.payStatus === '1'" @click="handleShelves(scope.row.activityId,scope.row.status)">上架</el-button>
@@ -47,7 +47,7 @@
                 <!--<el-button class="check" style="padding : 0 ;" type="text" @click="publish(scope.$index,scope.row.activityId)">克隆活动</el-button>-->
                 <!--<el-button class="check" style="padding : 0 ;" type="text" @click="handleCancel(scope.$index,scope.row.activityId)">删除任务</el-button>-->
                 <!--<el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.status ==='2' || scope.row.status==='4'" @click="handleCancel(scope.$index,scope.row.activityId)">取消发布</el-button>-->
-                <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.payStatus==='0'" @click="toPay(scope.$index,scope.row.activityId)">去支付</el-button>
+                <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.payStatus==='0'&&scope.row.status!=='10'" @click="toPay(scope.$index,scope.row.activityId)">去支付</el-button>
                 <!-- <el-button class="check" style="padding : 0 ;" type="text" @click="changeKeys(scope.$index,scope.row.activityId)">修改关键词</el-button> -->
                 </template>
             </el-table-column>
