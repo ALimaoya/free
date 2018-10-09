@@ -184,7 +184,7 @@ export default {
         this.loading = false;
         if (res.data.status === "000000000") {
           this.detail = res.data.data;
-          // console.log(this.detail);
+
         }
       });
     },
