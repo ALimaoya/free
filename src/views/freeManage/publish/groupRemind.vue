@@ -409,6 +409,8 @@ export default {
       if (change === "change") {
         this.form.shopId = "";
         this.form.productUrl = "";
+        this.form.receiveTime = "";
+        this.form.receiveData = "";
       }
       if (value === "6") {
         this.timeFragment = [];
@@ -842,5 +844,5 @@ export default {
   margin-bottom: 0.2rem;
   color: #333;
 }
-</style>
 
+</style>
