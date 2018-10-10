@@ -42,7 +42,7 @@
             <p class="remark">备注：试客会根据此活动场次自行前往查找设置开团提醒</p>
             <p class="title">第二步：选择目标推广宝贝</p>
             <el-form-item label="选择店铺：" :labelWidth="labelWidth" prop="shopId">
-                <el-select :disabled="readShop" v-model="form.shopId"  placeholder="请选择店铺" size="small" >
+                <el-select :disabled="readShop" v-model="form.shopId"  placeholder="请选择店铺" size="small" @change="form.productUrl = ''">
                     <el-option  v-for="(item,index) in shopOptions" :key="index" :label="item.name" :value="item.id"></el-option>
                 </el-select>
                 <span v-if="form.shopId==='没有可选店铺'" class="tips" style="color : #f56c6c">该平台下未绑定店铺或绑定店铺未审核通过，请在店铺绑定并审核通过后再进行活动发布</span>
@@ -491,6 +491,7 @@ export default {
         }
       })
     },
+
     //获取商品详情
     getGoodsDetail(type, url) {
       this.form.productId = "";
@@ -498,7 +499,6 @@ export default {
     },
     goPlatform(type, url) {
       let that = this;
-
       if (type === "7") {
         let id = "";
         if (url.indexOf('item.m.jd.com') !==-1 || url.indexOf('item.jd.com') !==-1) {
@@ -530,8 +530,50 @@ export default {
           }
         });
       } else {
+        if (type === "5") {
+          let platform = '';
+          this.shopOptions.map( i => {
+            if(i.id === this.form.shopId){
+              platform = i.platFormType ;
+            }
+          });
+
+          if ( url.indexOf("u_channel=qianggou") === -1 ||
+             url.indexOf('item.taobao.com') !== -1 && platform !== '1' ||  url.indexOf('detail.tmall.com') !== -1 && platform !== '2')  {
+            this.$message({
+              message: "请重新输入对应平台的商品链接",
+              center: true,
+              type: "error"
+            });
+            this.form.productUrl = "";
+            this.form.productId = "";
+
+            return false;
+          }
+        } else {
+          if (type === "6") {
+            if (url.indexOf('tracelog=jubuybigpic')=== -1 && url.indexOf('detail.ju.taobao.com') === -1) {
+              this.$message({
+                message: "请重新输入对应平台的商品链接",
+                center: true,
+                type: "error"
+              });
+              this.form.productUrl = "";
+              this.form.productId = "";
+
+              return false;
+            }
+          }
+        }
         if (url.indexOf("?") !== -1) {
-          const num = getQueryString(url, "id");
+          let num = '';
+          if(url.indexOf('detail.ju.taobao.com') !==-1){
+            num = getQueryString(url, "item_id");
+
+          }else{
+             num = getQueryString(url, "id");
+
+          }
           if (num === undefined) {
             this.$message({
               message: "您输入的商品链接有误，请重新输入",
@@ -604,33 +646,7 @@ export default {
           this.form.productUrl = "";
           this.form.productId = "";
         }
-        if (type === "5") {
-          if ( url.indexOf("u_channel=qianggou") === -1) {
-            this.$message({
-              message: "请重新输入对应平台的商品链接",
-              center: true,
-              type: "error"
-            });
-            this.form.productUrl = "";
-            this.form.productId = "";
 
-            return false;
-          }
-        } else {
-          if (type === "6") {
-            if (url.indexOf('tracelog=jubuybigpic')=== -1) {
-              this.$message({
-                message: "请重新输入对应平台的商品链接",
-                center: true,
-                type: "error"
-              });
-              this.form.productUrl = "";
-              this.form.productId = "";
-
-              return false;
-            }
-          }
-        }
       }
       // console.log(this.form.productDetail,this.form.productName);
     },
@@ -716,7 +732,6 @@ export default {
           taskTime = new Date(taskTime).getTime();
           if (activityTime - taskTime < 0.5 * 60 * 60 * 1000) {
             this.$message({
-
               message: "任务开始时间必须早于活动场次时间半小时，请重新选择",
               type: "error",
               center: true

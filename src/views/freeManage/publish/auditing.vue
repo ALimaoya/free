@@ -14,6 +14,15 @@
           type : ''
         }
       },
+      beforeRouteLeave (to,from,next){
+        for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
+          if (v.fullPath === this.$route.fullPath) {
+            this.$store.state.tagsView.visitedViews.splice(i, 1);
+            // this.$router.push('/freeManage/publish/step3');
+            next()
+          }
+        }
+      },
       mounted(){
         if(this.$route.params.type !== ''){
           this.type = this.$route.params.type ;

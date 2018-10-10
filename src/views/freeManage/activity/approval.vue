@@ -108,7 +108,7 @@
           <el-button class="check" style="padding : 0 ;" type="text" @click="publish(scope.$index,scope.row.activityId)">克隆活动</el-button>
           <el-button class="check" style="padding : 0 ;" type="text" v-if="(scope.row.status ==='2' || scope.row.status==='4')||scope.row.payStatus === '0'&&scope.row.status !== '10'" @click="handleCancel(scope.$index,scope.row.activityId)">取消发布</el-button>
           <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.payStatus==='0'&&scope.row.status!=='10'" @click="toPay(scope.$index,scope.row.activityId)">去支付</el-button>
-          <el-button class="check" style="padding : 0 ;" type="text" @click="changeKeys(scope.$index,scope.row.activityId)">修改关键词</el-button>
+          <el-button class="check" style="padding : 0 ;" type="text" v-if="scope.row.status !=='10'" @click="changeKeys(scope.$index,scope.row.activityId)">修改关键词</el-button>
 
         </template>
       </el-table-column>

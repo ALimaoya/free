@@ -118,17 +118,7 @@
             flowwayList:[{id:'A',name:'浏览'},{id:'B',name:'收藏宝贝'},{id:'C',name:'关注店铺'},{id:'D',name:'加入购物车'},{id:'E',name:'浏览店内其他宝贝'}],
             elseDoteys:[{id:1,val:1},{id:2,val:2},{id:3,val:3}],
             elseDotey:'',
-            order:{
-              // EQ_status: '',
-              // // thirdAccount: '',
-              // platformType : '' ,
-              // activityCode : '',
-              // thirdOrderCode: '',
-              // GT_activityEndTime : '',
-              // LT_activityStartTime : '',
-              // EQ_activityType:'',
-              // EQ_activityStatus : ''
-            },
+            order:{},
             groupActivityTypeList : [
               {
                 value: '',

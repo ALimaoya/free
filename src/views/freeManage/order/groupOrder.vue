@@ -17,7 +17,9 @@
       <el-table-column prop="createTime" label="订单创建时间" ></el-table-column>
       <el-table-column prop="orderImageList" label="开团提醒截图">
         <template slot-scope="scope">
-          <img v-if="scope.row.orderImageList!==null && scope.row.orderImageList.length!== 0" class="showPic" @click="showImg( scope.row.orderImageList[0].imageUrl )" :src=" imageDomain + scope.row.orderImageList[0].imageUrl " :onerror="errorImg"/>
+          <img v-if="scope.row.orderImageList.length>0 && scope.row.orderImageList[0].imageUrl!==null" class="showPic"
+               @click="showImg( scope.row.orderImageList[0].imageUrl )"
+               :src=" imageDomain + scope.row.orderImageList[0].imageUrl " :onerror="errorImg"/>
           <img :src="failImg"  v-else class="showPic">
         </template>
       </el-table-column>
@@ -33,9 +35,7 @@
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button  type="text" @click="goDetail(scope.$index,scope.row.orderId)">查看详情</el-button>
-          <!-- <el-button v-if="scope.row.status==4"  type="text" @click="goAudit(scope.$index,scope.row.orderId)">审核</el-button> -->
-          <!--<el-button  type="text"  @click="handleCheck(scope.$index,'2')">审核失败</el-button>-->
-          <!--<el-button  type="text"  @click="refuseReason(scope.$index)">查看拒绝原因</el-button>-->
+
 
         </template>
       </el-table-column>
@@ -119,7 +119,6 @@ export default {
     this.getList();
   },
   methods: {
-
     //获取订单列表
     getList() {
       // console.log('order',this.order)
@@ -184,27 +183,22 @@ export default {
     //根据搜索条件获取订单列表
     getData(res) {
       // this.order ={
-      (this.order.groupActivityType =
-        res.groupActivityType === undefined ? "" : res.groupActivityType),
-        (this.order.activityCode =
-          res.activityCode === undefined ? "" : res.activityCode),
-        (this.order.EQ_activityShop =
-          res.EQ_activityShop === undefined ? "" : res.EQ_activityShop),
-        (this.order.activityStartTime =
-          res.activityStartTime === undefined ? "" : res.activityStartTime),
-        (this.order.activityEndTime =
-          res.activityEndTime === undefined ? "" : res.activityEndTime),
-        (this.order.EQ_activityType =
-          res.EQ_activityType === undefined ? "" : res.EQ_activityType),
-        (this.order.LIKE_addServiceType =
-          res.LIKE_addServiceType === undefined ? [] : res.LIKE_addServiceType),
-        (this.order.LIKE_addServiceType2 =
-          res.LIKE_addServiceType2 === undefined
-            ? ""
-            : res.LIKE_addServiceType2),
-        // }  ;
-
-        // this.currentPage = 1 ;
+        this.order.groupActivityType =
+         res.groupActivityType === undefined ? "" : res.groupActivityType;
+        this.order.activityCode =
+          res.activityCode === undefined ? "" : res.activityCode;
+        this.order.EQ_activityShop =
+          res.EQ_activityShop === undefined ? "" : res.EQ_activityShop;
+        this.order.activityStartTime =
+          res.activityStartTime === undefined ? "" : res.activityStartTime;
+        this.order.activityEndTime =
+          res.activityEndTime === undefined ? "" : res.activityEndTime;
+        this.order.EQ_activityType =
+          res.EQ_activityType === undefined ? "" : res.EQ_activityType;
+        this.order.LIKE_addServiceType =
+          res.LIKE_addServiceType === undefined ? [] : res.LIKE_addServiceType;
+        this.order.LIKE_addServiceType2 =
+          res.LIKE_addServiceType2 === undefined ? "" : res.LIKE_addServiceType2;
 
         this.getList();
     },
