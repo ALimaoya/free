@@ -459,7 +459,9 @@ export default {
         this.shopList('2');
 
       }else if(value === "6"){
-        num = "2"
+        num = "2";
+        this.shopList('1');
+
       }else if(value === "7"){
         num = "3"
 
@@ -529,14 +531,13 @@ export default {
           }
         });
       } else {
+        let platform = '';
+        this.shopOptions.map( i => {
+          if(i.id === this.form.shopId){
+            platform = i.platFormType ;
+          }
+        });
         if (type === "5") {
-          let platform = '';
-          this.shopOptions.map( i => {
-            if(i.id === this.form.shopId){
-              platform = i.platFormType ;
-            }
-          });
-
           if ( url.indexOf("u_channel=qianggou") === -1 ||
              url.indexOf('item.taobao.com') !== -1 && platform !== '1' ||  url.indexOf('detail.tmall.com') !== -1 && platform !== '2')  {
             this.$message({
@@ -551,7 +552,8 @@ export default {
           }
         } else {
           if (type === "6") {
-            if (url.indexOf('tracelog=jubuybigpic')=== -1 && url.indexOf('detail.ju.taobao.com') === -1) {
+            if ((url.indexOf('tracelog=jubuybigpic')=== -1 || url.indexOf('item.taobao.com') !== -1 && platform !== '1'
+                ||  url.indexOf('detail.tmall') !== -1 && platform !== '2') && url.indexOf('detail.ju.taobao.com') === -1 ) {
               this.$message({
                 message: "请重新输入对应平台的商品链接",
                 center: true,
