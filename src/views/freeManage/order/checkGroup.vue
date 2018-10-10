@@ -64,7 +64,7 @@
           <!--<li><span>第三方单号：</span><span v-if="detailInfo.thirdOrderCode">{{ detailInfo.thirdOrderCode }}</span><span v-else>暂无</span></li>-->
           <li><span>完成时间：</span><span v-if="detail.winTime">{{ detail.winTime }}</span><span v-else>暂无</span></li>
           <!--<li><span>订单价格：</span><span v-if="detailInfo.amount">{{ detailInfo.amount }} 元</span><span v-else>暂无</span></li>-->
-          <li><span>试客第三方账号：</span><span v-if="detail.buyAmount">{{ detail.buyAmount }} </span><span v-else>暂无</span></li>
+          <li><span>试客第三方账号：</span><span v-if="detail.thirdAccount">{{ detail.thirdAccount }} </span><span v-else>暂无</span></li>
           <li class="faileReason"><span>用户上传图片详情：</span><span v-if="detail.orderImageList == 0 && detail.mainImageUrl == null" class="noImg">暂无图片</span></li>
           <li class="detailPic">
             <div >
