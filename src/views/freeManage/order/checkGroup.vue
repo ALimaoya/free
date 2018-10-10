@@ -17,7 +17,7 @@
       <el-table-column prop="createTime" label="订单创建时间" ></el-table-column>
       <el-table-column prop="orderImageList" label="开团提醒截图">
         <template slot-scope="scope">
-          <img v-if="scope.row.orderImageList!==null" class="showPic" @click="showImg( scope.row.orderImageList[0].imageUrl )" :src=" imageDomain + scope.row.orderImageList[0].imageUrl " :onerror="errorImg"/>
+          <img v-if="scope.row.orderImageList!==null && scope.row.orderImageList.length!== 0" class="showPic" @click="showImg( scope.row.orderImageList[0].imageUrl )" :src=" imageDomain + scope.row.orderImageList[0].imageUrl " :onerror="errorImg"/>
           <img :src="failImg"  v-else class="showPic">
         </template>
       </el-table-column>
@@ -55,8 +55,8 @@
     <el-dialog width="50%" :visible.sync="detailInfo" center top="10vh" title="开团提醒订单审核" >
       <div class="contentList">
         <ul class="detailInfor">
-          <li><span>订单流水号：</span><span>{{ detail.activityCode }}</span></li>
-          <li><span>活动编号：</span><span>{{ detail.orderCode}}</span></li>
+          <li><span>订单流水号：</span><span>{{ detail.orderCode}}</span></li>
+          <li><span>活动编号：</span><span>{{ detail.activityCode}}</span></li>
           <li><span>商铺名称：</span><span v-if="detail.shopName">{{ detail.shopName }}</span><span v-else>暂无</span></li>
           <li><span>活动类型：</span><span v-if="detail.platform">{{ platForm[detail.platform] }}</span><span v-else>暂无</span></li>
           <!--<li><span>第三方单号：</span><span v-if="detailInfo.thirdOrderCode">{{ detailInfo.thirdOrderCode }}</span><span v-else>暂无</span></li>-->
