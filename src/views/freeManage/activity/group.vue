@@ -128,12 +128,13 @@ export default {
     this.getData();
     let now = new Date();
     this.time = parseTime(now);
-    // console.log('this.activity ',this.activity)
+    // console.log('this.activity ',this.time)
   },
   methods: {
     //请求数据
     getData() {
       // console.log(form);
+      this.time = parseTime(new Date())
       let formData = new FormData();
       if(this.activity.groupActivityType === '' || this.activity.groupActivityType === undefined || this.activity.groupActivityType === null){
         formData.append("IN_activityType", "5,6,7");
