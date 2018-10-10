@@ -57,8 +57,8 @@
     <el-dialog width="50%" :visible.sync="detailInfo" center top="10vh" title="开团提醒订单审核" >
       <div class="contentList">
         <ul class="detailInfor">
-          <li><span>订单流水号：</span><span>{{ detail.activityCode }}</span></li>
-          <li><span>活动编号：</span><span>{{ detail.orderCode}}</span></li>
+          <li><span>订单流水号：</span><span>{{ detail.orderCode}}</span></li>
+          <li><span>活动编号：</span><span>{{ detail.activityCode}}</span></li>
           <li><span>商铺名称：</span><span v-if="detail.shopName">{{ detail.shopName }}</span><span v-else>暂无</span></li>
           <li><span>活动类型：</span><span v-if="detail.platform">{{ platForm[detail.platform] }}</span><span v-else>暂无</span></li>
           <!--<li><span>第三方单号：</span><span v-if="detailInfo.thirdOrderCode">{{ detailInfo.thirdOrderCode }}</span><span v-else>暂无</span></li>-->

@@ -80,6 +80,7 @@
                     placeholder="请选择活动日期"
                     value-format="yyyy-MM-dd HH:mm:ss"
                     :disabled="read"
+                    :picker-options="receiveEndData"
                     @change="getActivityStartTime(form.activityStartTime)">
                 </el-date-picker>
             </el-form-item>
@@ -312,9 +313,9 @@ export default {
       if (val !== null && val !== "" && val !== undefined) {
         let valTime = new Date(val.replace(/-/g, "/")).getTime();
         let nowTime = new Date().getTime();
-        if (valTime < nowTime) {
+        if (valTime < nowTime-2*60*1000) {
           this.$message({
-            message: "你选择的时间必须大于当前时间",
+            message: "你选择的时间必须晚于当前时间",
             type: "error",
             center: true
           });
