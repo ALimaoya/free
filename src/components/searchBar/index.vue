@@ -25,7 +25,8 @@
       </el-option>
     </el-select>
 
-    <el-input v-if="activityCode" size="small" :maxlength="20" v-model.trim="order.activityCode" placeholder="请输入活动编号"></el-input>
+    <el-input v-if="activityCode" size="small" :maxlength="20" v-model.trim="order.activityCode" clearable placeholder="请输入活动编号"></el-input>
+    <el-input v-if="orderCode" size="small" :maxlength="20" v-model.trim="order.orderCode" clearable placeholder="请输入订单编号"></el-input>
     <el-input v-if="thirdOrderCode" size="small" :maxlength="20" v-model.trim="order.thirdOrderCode" placeholder="请输入第三方订单编号"></el-input>
     <!--试用活动任务状态-->
     <el-select v-if="activityStatus" size="small" clearable v-model="order.EQ_activityStatus" filterable placeholder="请选择活动状态">
@@ -353,13 +354,15 @@
             flowMode : this.flow,
             groupMode : this.group,
             elseNumber:true,
+            isActivity: this.activityCode,
+            isOrder : this.orderCode
             // currentPage : 1 ,
             // pageSize : 10 ,
             // totalPages : '',
             // totalElements : 0 ,
           }
       },
-      props : ['groupActivityType','platformType','activityCode','activityType','thirdOrderCode','eq_status','activity','activityShop','activityStatus','taskStatus','flowStatus','groupStatus','flow','group','date','flowWay'],
+      props : ['groupActivityType','platformType','activityCode','orderCode','activityType','thirdOrderCode','eq_status','activity','activityShop','activityStatus','taskStatus','flowStatus','groupStatus','flow','group','date','flowWay'],
       mounted(){
           if(this.activityMode === 'freeActivity'){
             this.order = this.$store.state.searchBar.approval.activity;
@@ -470,13 +473,18 @@
           }
           let searchobj = {
             platformType : this.order.platformType,
-            activityCode : this.order.activityCode ,
             thirdOrderCode : this.order.thirdOrderCode,
             EQ_status : this.order.EQ_status,
             LIKE_addServiceType : this.order.LIKE_addServiceType,
             LIKE_addServiceType2 : this.order.LIKE_addServiceType2,
           // EQ_activityType : this.order.EQ_activityType
         };
+          if (this.isActivity) {
+            searchobj.activityCode = this.order.activityCode ;
+          }
+          if (this.isOrder) {
+            searchobj.orderCode = this.order.orderCode ;
+          }
 
           if(this.activityMode){
             searchobj.EQ_activityType = this.order.EQ_activityType ;

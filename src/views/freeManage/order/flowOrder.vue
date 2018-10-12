@@ -1,10 +1,11 @@
 <template>
   <div class="flowOrder tableBox"    v-loading="loading"  element-loading-text="拼命加载中">
     <h1>流量订单查询</h1>
-    <search-bar @searchobj="getData" :platform-type="true" :activity-shop="true" :activity-code="true" :flow-status="true" :flow="'flowOrder'" :flow-way="true"></search-bar>
+    <search-bar @searchobj="getData" :platform-type="true" :activity-shop="true" :activity-code="true"
+                :order-code="true" :flow-status="true" :flow="'flowOrder'" :flow-way="true"></search-bar>
     <el-table :data="tableData" border>
       <el-table-column label="序号" width="80" prop="orderId" ></el-table-column>
-      <el-table-column prop="orderCode" label="订单流水号" ></el-table-column>
+      <el-table-column prop="orderCode" label="订单编号" ></el-table-column>
       <el-table-column prop="shopName" label="店铺名称" ></el-table-column>
       <el-table-column prop="activityCode" label="活动编号" ></el-table-column>
       <el-table-column prop="platform" label="平台类型">
@@ -167,6 +168,11 @@
           }else{
             formData.append('EQ_tryoutActivity.activityCode', '');
           }
+          if (reg.test(this.order.orderCode)) {
+            formData.append("EQ_code", this.order.orderCode);
+          } else {
+            formData.append("EQ_code", "");
+          }
           // if( reg.test(this.order.thirdOrderCode)){
           //   formData.append('EQ_tryoutOrderWin.thirdOrderCode', this.order.thirdOrderCode);
           // }else{
@@ -226,15 +232,16 @@
         //根据搜索条件获取订单列表
         getData(res){
           // this.order ={
-            this.order.EQ_status= res.EQ_status===undefined?'':res.EQ_status,
-            this.order.platformType =  res.platformType===undefined?'':res.platformType ,
-            this.order.activityCode =  res.activityCode===undefined?'':res.activityCode,
-            this.order.EQ_activityShop =  res.EQ_activityShop===undefined?'':res.EQ_activityShop,
-            this.order.activityStartTime =  res.activityStartTime===undefined?'':res.activityStartTime ,
-            this.order.activityEndTime =  res.activityEndTime===undefined?'':res.activityEndTime,
-            this.order.EQ_activityType =  res.EQ_activityType===undefined?'':res.EQ_activityType,
-            this.order.LIKE_addServiceType = res.LIKE_addServiceType===undefined?[]:res.LIKE_addServiceType,
-            this.order.LIKE_addServiceType2 = res.LIKE_addServiceType2===undefined?'':res.LIKE_addServiceType2,
+            this.order.EQ_status= res.EQ_status===undefined?'':res.EQ_status;
+            this.order.platformType =  res.platformType===undefined?'':res.platformType ;
+            this.order.activityCode =  res.activityCode===undefined?'':res.activityCode;
+            this.order.orderCode = res.orderCode===undefined?'':res.orderCode;
+            this.order.EQ_activityShop =  res.EQ_activityShop===undefined?'':res.EQ_activityShop;
+            this.order.activityStartTime =  res.activityStartTime===undefined?'':res.activityStartTime ;
+            this.order.activityEndTime =  res.activityEndTime===undefined?'':res.activityEndTime;
+            this.order.EQ_activityType =  res.EQ_activityType===undefined?'':res.EQ_activityType;
+            this.order.LIKE_addServiceType = res.LIKE_addServiceType===undefined?[]:res.LIKE_addServiceType;
+            this.order.LIKE_addServiceType2 = res.LIKE_addServiceType2===undefined?'':res.LIKE_addServiceType2;
           // }  ;
 
           // this.currentPage = 1 ;

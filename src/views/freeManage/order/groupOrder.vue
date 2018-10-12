@@ -1,11 +1,12 @@
 <template>
   <div class="groupOrder tableBox"    v-loading="loading"  element-loading-text="拼命加载中">
     <h1>开团提醒订单查询</h1>
-    <search-bar @searchobj="getData" :groupActivityType="true" :activity-shop="true" :group-status="true" :activity-code="true" :group="'groupOrder'" :date="true"></search-bar>
+    <search-bar @searchobj="getData" :groupActivityType="true" :activity-shop="true" :group-status="true"
+                :activity-code="true" :order-code="true" :group="'groupOrder'" :date="true"></search-bar>
     <!--<div class="note">备注：以上搜索条件可根据单一条件进行搜索，当单独试客淘宝号搜索不到有用信息时，可尝试输入淘宝订单编号，反之亦然</div>-->
     <el-table :data="tableData" border>
       <el-table-column label="序号" width="80" prop="orderId" ></el-table-column>
-      <el-table-column prop="orderCode" label="订单流水号" ></el-table-column>
+      <el-table-column prop="orderCode" label="订单编号" ></el-table-column>
       <el-table-column prop="shopName" label="店铺名称" ></el-table-column>
       <el-table-column prop="activityCode" label="活动编号" ></el-table-column>
       <el-table-column prop="platform" label="活动类型">
@@ -134,12 +135,14 @@ export default {
       }
       let reg = /^[0-9]*$/;
       if (reg.test(this.order.activityCode)) {
-        formData.append(
-          "EQ_tryoutActivity.activityCode",
-          this.order.activityCode
-        );
+        formData.append("EQ_tryoutActivity.activityCode", this.order.activityCode);
       } else {
         formData.append("EQ_tryoutActivity.activityCode", "");
+      }
+      if (reg.test(this.order.orderCode)) {
+        formData.append("EQ_code", this.order.orderCode);
+      } else {
+        formData.append("EQ_code", "");
       }
 
       // formData.append("EQ_activityType", this.order.EQ_activityType);
@@ -187,6 +190,7 @@ export default {
          res.groupActivityType === undefined ? "" : res.groupActivityType;
         this.order.activityCode =
           res.activityCode === undefined ? "" : res.activityCode;
+        this.order.orderCode = res.orderCode===undefined?'':res.orderCode;
         this.order.EQ_activityShop =
           res.EQ_activityShop === undefined ? "" : res.EQ_activityShop;
         this.order.activityStartTime =

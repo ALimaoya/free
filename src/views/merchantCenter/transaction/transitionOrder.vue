@@ -134,11 +134,16 @@
       <el-form-item labelWidth="130px" label="金额：">
         <table class="tableC">
           <tr class="thColor">
-            <th>订单金额（元）</th>
+            <th>订单总价（元）</th>
+            <th>优惠信息</th>
+            <th>支付金额（元）</th>
             <th>下单时间</th>
           </tr>
           <tr class="tbColor">
             <td>{{form.price}}</td>
+            <td v-if="form.deliverOrder.parValue !== null">优惠券：{{form.deliverOrder.parValue}}元</td>
+            <td v-else>—</td>
+            <td>{{form.deliverOrder.payAmount}}</td>
             <td>{{form.deliverOrder.createTime}}</td>
           </tr>
         </table>

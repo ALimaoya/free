@@ -591,7 +591,29 @@ export const constantRouterMap = [
             meta: { title: '报名记录', icon: 'history' },
             hidden: true ,
 
-          }
+          },
+          {
+            path: 'coupons',
+            name: 'Coupons',
+            component: () => import('@/views/merchantCenter/marketing/coupons/index'),
+            meta: { title: '优惠券', icon: 'coupons' },
+          },
+          {
+            path: 'shopCoupon',
+            name: 'ShopCoupon',
+            component: () => import('@/views/merchantCenter/marketing/coupons/shopCoupon'),
+            meta: { title: '创建店铺优惠券', icon: 'coupons' },
+            hidden: true ,
+
+          },
+          {
+            path: 'goodsCoupon',
+            name: 'GoodsCoupon',
+            component: () => import('@/views/merchantCenter/marketing/coupons/goodsCoupon'),
+            meta: { title: '创建商品优惠券', icon: 'coupons' },
+            hidden: true ,
+
+          },
           ]
       },
       {

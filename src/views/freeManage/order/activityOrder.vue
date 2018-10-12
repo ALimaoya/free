@@ -1,37 +1,8 @@
 <template>
   <div class="activityOrder tableBox"  v-loading="loading"  element-loading-text="拼命加载中">
     <h1>试用订单查询</h1>
-    <search-bar @searchobj="getData" :platform-type="true" :activity-type="true" :third-order-code="true" :activity-code="true" :eq_status="true" :activity="'freeActivityOrder'"></search-bar>
-
-    <!--<div class="search">-->
-        <!--<el-select size="small" clearable v-model="order.platformType" filterable placeholder="请选择试用平台">-->
-          <!--<el-option-->
-            <!--v-for="item in platformOptions"-->
-            <!--:key="item.value"-->
-            <!--:label="item.name"-->
-            <!--:value="item.value">-->
-          <!--</el-option>-->
-        <!--</el-select>-->
-        <!--<el-select size="small" clearable v-model="order.platformType" filterable placeholder="请选择试用类型">-->
-          <!--<el-option-->
-            <!--v-for="item in activityType"-->
-            <!--:key="item.value"-->
-            <!--:label="item.name"-->
-            <!--:value="item.value">-->
-          <!--</el-option>-->
-        <!--</el-select>-->
-        <!--<el-input size="small" :maxlength="20" v-model.trim="order.activityCode" placeholder="请输入试客试用活动编号"></el-input>-->
-        <!--<el-input size="small" :maxlength="20" v-model.trim="order.thirdOrderCode" placeholder="请输入第三方订单编号"></el-input>-->
-        <!--<el-select clearable size="small"  v-model="order.EQ_status" filterable placeholder="请选择订单状态">-->
-          <!--<el-option-->
-            <!--v-for="item in options"-->
-            <!--:key="item.value"-->
-            <!--:label="item.name"-->
-            <!--:value="item.value">-->
-          <!--</el-option>-->
-        <!--</el-select>-->
-        <!--<el-button size="small"  @click="getList()" class="searchOrder" style="padding: 0 0.05rem;">查询</el-button>-->
-      <!--</div>-->
+    <search-bar @searchobj="getData" :platform-type="true" :activity-type="true" :third-order-code="true"
+                :activity-code="true" :order-code="true" :eq_status="true" :activity="'freeActivityOrder'"></search-bar>
       <div class="note">备注：以上搜索条件可根据单一条件进行搜索，当单独试客淘宝号搜索不到有用信息时，可尝试输入淘宝订单编号，反之亦然</div>
       <el-table :data="tableData" border>
         <el-table-column prop="activityType" label="试客任务类型" width="100">
@@ -224,6 +195,11 @@
           }else{
             formData.append('EQ_tryoutActivity.activityCode', '');
           }
+          if (reg.test(this.order.orderCode)) {
+            formData.append("EQ_code", this.order.orderCode);
+          } else {
+            formData.append("EQ_code", "");
+          }
           if( reg.test(this.order.thirdOrderCode)){
             formData.append('EQ_tryoutOrderWin.thirdOrderCode', this.order.thirdOrderCode);
           }else{
@@ -266,6 +242,7 @@
           EQ_activityType:res.EQ_activityType===undefined?'':res.EQ_activityType,
           platformType : res.platformType===undefined?'':res.platformType ,
           activityCode : res.activityCode===undefined?'':res.activityCode,
+          orderCode : res.orderCode===undefined?'':res.orderCode,
           thirdOrderCode: res.thirdOrderCode===undefined?'':res.thirdOrderCode,
         }  ;
         // console.log(this.order);

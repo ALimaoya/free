@@ -1,7 +1,8 @@
 <template>
   <div class="checkbonus tableBox"  v-loading="loading"  element-loading-text="拼命加载中">
     <h1>评价审核</h1>
-    <search-bar @searchobj="getData" :platform-type="true" :activity-type="true" :third-order-code="true" :activity-code="true" :activity="'view'"></search-bar>
+    <search-bar @searchobj="getData" :platform-type="true" :activity-type="true" :third-order-code="true"
+                :activity-code="true" :order-code="true" :activity="'view'"></search-bar>
 
     <!--<div class="search">-->
       <!--<el-select size="small" clearable v-model="order.platformType" filterable placeholder="请选择试用平台">-->
@@ -158,6 +159,11 @@
         }else{
           formData.append('EQ_tryoutActivity.activityCode', '');
         }
+        if (reg.test(this.order.orderCode)) {
+          formData.append("EQ_code", this.order.orderCode);
+        } else {
+          formData.append("EQ_code", "");
+        }
         if( reg.test(this.order.thirdOrderCode)){
           formData.append('EQ_tryoutOrderWin.thirdOrderCode', this.order.thirdOrderCode);
         }else{
@@ -198,6 +204,7 @@
           EQ_activityType:res.EQ_activityType === undefined?'':res.EQ_activityType,
           platformType : res.platformType === undefined?'':res.platformType ,
           activityCode : res.activityCode === undefined?'':res.activityCode,
+          orderCode : res.orderCode===undefined?'':res.orderCode,
           thirdOrderCode: res.thirdOrderCode === undefined?'':res.thirdOrderCode,
 
         }  ;
