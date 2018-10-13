@@ -82,6 +82,7 @@
         font-weight : bold ;
         text-align: center;
         line-height : 0.5rem ;
+        cursor: pointer;
       }
     }
   }

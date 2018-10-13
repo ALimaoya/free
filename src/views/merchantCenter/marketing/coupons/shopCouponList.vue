@@ -89,7 +89,6 @@ export default {
       mask: false,
       bigImg: "",
       loading: false
-      // EQ_type:'1'
     };
   },
   mounted() {
@@ -101,13 +100,18 @@ export default {
       formData.append("EQ_type", '1');
       formData.append("EQ_activityType", this.listStatus);
       couponList(formData).then(res => {
-        consoel.log(res);
       });
       // this.tableData =
     },
-    getData() {},
-    handleStop() {},
-    handelEditor() {},
+    getData() {
+
+    },
+    handleStop() {
+
+    },
+    handelEditor() {
+
+    },
     handleSizeChange(val) {
       this.pageSize = val;
       this.getList();

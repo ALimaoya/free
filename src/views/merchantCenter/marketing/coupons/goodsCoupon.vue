@@ -1,29 +1,37 @@
 <template>
-    <div class="goods-coupon new ">
+    <div class="goods-coupon new">
         <h1>商品优惠券信息</h1>
         <el-form :model="form" ref="form" :rules="formRule" label-position="right">
-            <el-form-item  labelWidth="130px" label="推广渠道：" >
-                <el-radio-group v-model="form.trench" size="small" @change="getTrench">
-                    <el-radio  v-for="(item,index) in trenchList" :key="index" :label="item.id" border>{{item.name}}</el-radio>
+            <el-form-item  labelWidth="130px" label="推广渠道：" prop="channel">
+                <el-radio-group v-model="form.channel" size="small" >
+                    <el-radio  v-for="(item,index) in trenchList" :key="index" :label="item.id">{{item.name}}</el-radio>
                 </el-radio-group>
-                <p >用户可以通过公开渠道主动领取优惠券，如店铺首页、商品详情页等</p>
+                <p class="tips">用户可以通过公开渠道主动领取优惠券，如店铺首页、商品详情页等</p>
             </el-form-item>
-            <el-form-item   labelWidth="130px"  label="优惠券名称：" prop="discountsName">
-                <el-input class="inputInfo" :maxlength="15" size="small" v-model.trim="form.discountsName" placeholder="请输入15个字以内的优惠卷名称"></el-input>
+            <el-form-item   labelWidth="130px"  label="优惠券名称：" prop="name">
+                <el-input class="inputInfo" :maxlength="15" size="small" v-model.trim="form.name" placeholder="请输入15个字以内的优惠券名称"></el-input>
             </el-form-item>
-            <el-form-item  labelWidth="130px"  label="使用有效期：" prop="receiveEndData">
+            <el-form-item  labelWidth="130px"  label="使用有效期：" >
+              <el-col :span="12">
+                <el-form-item class="date-label" prop="activityStartTime">
                 <el-date-picker  value-format="yyyy-MM-dd 00:00:00" size="small"
-                      v-model="form.activityStartTime" clearable type="date" placeholder="开始时间" 
-                      :picker-options="forbidData" >
+                      v-model="form.activityStartTime" clearable type="date" placeholder="开始时间"
+                      :picker-options="forbidData" @change="getActivityEndTime">
                 </el-date-picker>
-                <span class="demonstration2">至</span>
-                <el-date-picker size="small" v-model="form.receiveEndData"  clearable
-                                type="date"  value-format="yyyy-MM-dd 23:59:59" placeholder="结束时间" 
-                                :picker-options="forbidData"  @change="getActivityEndTime(form.receiveEndData)">
+                </el-form-item>
+              </el-col>
+              <el-col class="line" :span="2">至</el-col>
+              <el-col :span="12">
+                <el-form-item prop="activityEndTime"  class="date-label">
+                <el-date-picker size="small" v-model="form.activityEndTime"  clearable
+                                type="date"  value-format="yyyy-MM-dd 23:59:59" placeholder="结束时间"
+                                :picker-options="forbidData"  @change="getActivityEndTime">
                 </el-date-picker>
-                <p>活动持续{{activityDay}}天</p>
+                </el-form-item>
+              </el-col>
+                <p v-if="activityDay!== ''">活动持续{{activityDay}}天</p>
             </el-form-item>
-            <el-form-item   labelWidth="130px"  label="可用商品：" prop="mayCommodity">
+            <el-form-item   labelWidth="130px"  label="可用商品：" prop="productIds">
                 <el-button v-if="goodsList.length === 0" @click="showDialogVisible">+添加商品</el-button>
                 <div v-else-if="goodsList.length < 4">
                   <ul class="shopList">
@@ -44,8 +52,8 @@
                   </ul>
                 </div>
             </el-form-item>
-            <el-form-item  labelWidth="130px" label="面额：" prop="denomination">
-              <el-select  size="small" clearable v-model="form.denomination"  filterable placeholder="请选择">
+            <el-form-item  labelWidth="130px" label="面额：" prop="parValue">
+              <el-select  size="small" clearable v-model="form.parValue"  filterable placeholder="请选择">
                 <el-option
                   v-for="item in denominationList"
                   :key="item.id"
@@ -54,14 +62,14 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item   labelWidth="130px"  label="使用条件：" prop="useCondition">
-                <span>满 </span><el-input style="width:50%" type="number" :maxlength="10" size="small" v-model.trim="form.useCondition" placeholder="请输入正整数"></el-input><span> 元可用</span>
+            <el-form-item   labelWidth="130px"  label="使用条件：" prop="needAmount">
+                <span>满 </span><el-input style="width:50%" type="number" :maxlength="10" size="small" v-model.trim="form.needAmount" placeholder="请输入正整数"></el-input><span> 元可用</span>
             </el-form-item>
-            <el-form-item   labelWidth="130px"  label="发行张数：" prop="ticketNum">
-                <el-input style="width:50%" type="number" :maxlength="6" size="small" v-model.trim="form.ticketNum" placeholder="请输入发行张数"></el-input>
+            <el-form-item   labelWidth="130px"  label="发行张数：" prop="totalQuantity">
+                <el-input style="width:50%" type="number" :maxlength="6" size="small" v-model.trim="form.totalQuantity" placeholder="请输入发行张数"></el-input>
             </el-form-item>
-            <el-form-item  labelWidth="130px" label="每人限额：" prop="quota">
-              <el-select  size="small" clearable v-model="form.quota"  filterable placeholder="请选择">
+            <el-form-item  labelWidth="130px" label="每人限额：" prop="limitQuantity">
+              <el-select  size="small" clearable v-model="form.limitQuantity"  filterable placeholder="请选择">
                 <el-option
                   v-for="item in quotaList"
                   :key="item.id"
@@ -125,45 +133,6 @@
               width="100">
             </el-table-column>
           </el-table>
-          <!-- <el-table :data="tableData"  border>
-            <el-table-column prop="activityId"  width="35">
-              <template slot-scope="scope">
-                <el-checkbox-group v-model="goodsList">
-                  <el-checkbox :label='scope.row'></el-checkbox>
-                </el-checkbox-group>
-              </template>
-            </el-table-column>
-            <el-table-column label="商品名称" >
-              <template slot-scope="scope">
-                <div class="itemContent">
-                  <div class="img_wrap" v-if="scope.row.mainImageUrl !== ''|| scope.row.mainImageUrl !== undefined">
-                    <img v-if="scope.row.mainImageUrl !== ''|| scope.row.mainImageUrl !== undefined" :src="imageDomain + scope.row.mainImageUrl"
-                        :onerror="errorImg">
-                    <img :src="failImg" v-else>
-                  </div>
-                  <div class="content">
-                    <div class="name">{{scope.row.productName}}</div>
-                  </div>
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="code"
-              label="商品编码："
-              width="140">
-            </el-table-column>
-            <el-table-column
-              prop="price"
-              label="商品库存："
-              width="120">
-            </el-table-column>
-            <el-table-column
-              prop="price"
-              label="商品价格："
-              width="100">
-            </el-table-column>
-          </el-table> -->
-
           <div class="block2">
             <el-pagination
               @size-change="handleSubSizeChange"
@@ -186,12 +155,19 @@
     </div>
 </template>
 <script>
-import { int } from "@/utils/validate";
+import { int, validateName} from "@/utils/validate";
 import { getSecondsList } from "@/api/enter";
 import userPhoto from "@/assets/404_images/fail.png";
 export default {
   data() {
-    const validUseCondition = (rule, value, callback) => {
+    const validName = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请填写优惠券名称'))
+      }else if (!validateName(value)){
+        callback(new Error('优惠券名称只允许输入中文、英文大小写、数组、下划线字符，请重新输入'))
+      }
+    };
+    const validNeedAmount = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请填写优惠券使用条件"));
       } else {
@@ -233,48 +209,57 @@ export default {
     return {
       imageDomain: process.env.IMAGE_DOMAIN,
       errorImg: 'this.src="' + userPhoto + '"',
+      failImg: userPhoto,
       //处理当前时间之前的不能选择
       forbidData: this.endDate(),
       loading: false,
       form: {
-        trench: "1",
-        discountsName: "",
+        channel: "1",
+        name: "",
         activityStartTime: "",
-        mayCommodity: [],
-        denomination: "",
-        useCondition: "",
-        ticketNum: "",
-        quota: ""
+        activityEndTime: "",
+        productIds: [],
+        parValue: "",
+        needAmount: "",
+        totalQuantity: "",
+        limitQuantity: ""
       },
       formRule: {
-        discountsName: [
-          { required: true, message: "请填写优惠券名称", trigger: "change" }
+        name: [
+          { required: true, message: "请填写优惠券名称", validator: validName }
         ],
-        receiveEndData: [
+        activityStartTime: [
           {
-            required: true,
-            message: "请选择使用有效期的开始时间和结束时间",
+            required: true ,
+            message: "请选择使用有效期的开始时间",
             trigger: "change"
           }
         ],
-        denomination: [
+        activityEndTime: [
+          {
+            required: true,
+            message: "请选择使用有效期的结束时间",
+            trigger: "change"
+          }
+        ],
+        parValue: [
           { required: true, message: "请选择没人使用限额", trigger: "change" }
         ],
-        useCondition: [
+        needAmount: [
           {
             required: true,
-            validator: validUseCondition,
+            validator: validNeedAmount,
             trigger: "change"
           }
         ],
-        ticketNum: [
+        totalQuantity: [
           {
             required: true,
             validator: validTicketNum,
             trigger: "change"
           }
         ],
-        quota: [
+        limitQuantity: [
           {
             required: true,
             message: "请选择没人使用限额张数",
@@ -289,7 +274,7 @@ export default {
           }
         ]
       },
-      activityDay: "0",
+      activityDay: "",
       trenchList: [{ name: "公开", id: "1" }],
       denominationList: [
         { name: "2元", id: "2" },
@@ -328,6 +313,7 @@ export default {
       pageSize: 10,
       tableData: [],
       goodsList: [],
+
       // multipleSelection:[]
     };
   },
@@ -346,9 +332,9 @@ export default {
         });
       } else {
         for(let i=0; i<this.goodsList.length; i++){
-          this.form.mayCommodity.push(this.goodsList[i].id)
+          this.form.productIds.push(this.goodsList[i].id)
         }
-        console.log('this.form.mayCommodity',this.form.mayCommodity)
+        console.log('this.form.productIds',this.form.productIds)
         this.dialogVisible = false;
       }
     },
@@ -382,15 +368,15 @@ export default {
         }
       });
     },
-    // 切换方式
-    getTrench() {
-      this.resetForm("form");
-    },
+    // // 切换方式
+    // getTrench() {
+    //   this.resetForm("form");
+    // },
     //提交表格
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          if (this.form.denomination > this.form.useCondition) {
+          if (this.form.parValue > this.form.needAmount) {
             this.$message({
               message: "使用条件必须大于优惠券面额",
               type: "error",
@@ -402,9 +388,10 @@ export default {
       });
     },
     resetForm(formName) {
-      this.form.receiveEndData = "";
-      this.form.activityStartTime = "";
+      // this.form.receiveEndData = "";
+      // this.form.activityStartTime = "";
       this.$refs[formName].resetFields();
+      this.activityDay = '';
     },
     // 计算活动有多少天
     getActivityEndTime() {
@@ -454,6 +441,20 @@ export default {
 </script>
 <style scoped lang="scss" rel="stylesheet/scss">
 @import "../../../../styles/new";
+.el-form{
+  .tips{
+    font-size: 0.14rem ;
+    color: #999;
+    line-height: 0.4rem;
+  }
+  .date-label{
+    margin: 0 !important;
+    width: 100%!important;
+    .el-date-editor{
+      width: 100%;
+    }
+  }
+}
 .demonstration2 {
   width: 20px;
   margin-right: 0;

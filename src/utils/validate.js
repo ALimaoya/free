@@ -2,8 +2,6 @@
  * Created by jiachenpan on 16/11/18.
  */
 
-
-
 /* 合法url*/
 export function validateURL(textval) {
   const urlregex = /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/ ;
@@ -113,7 +111,6 @@ export function getQueryString(url,name) {
 
 /*验证数字、字母及汉字，符号只能为@ 及小数点*/
 export function checkInput(value){
-  // const reg = /^[\u4E00-\u9FA5A-Za-z0-9]+$/ ;
   const reg = new RegExp("[`~!@#$^*()=|{}':;',\\[\\].<>/?~！@#￥……*（）——|{}【】‘；：”“'。，、？]");
 
   return reg.test(value)
@@ -141,4 +138,9 @@ export function validPercent(value){
   return reg.test(value)
 }
 
+/*验证名称*/
+export function validateName(value){
+  const reg = /^[0-9a-zA-Z\u4e00-\u9fa5_]+$/;
+  return reg.test(value)
+}
 

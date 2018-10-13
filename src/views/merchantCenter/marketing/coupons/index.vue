@@ -61,7 +61,6 @@
                   this.tabView = 'GoodsCouponList'
 
                 }
-                console.log('1111',this.tabView)
             },
             coupons(res) {
                 this.tabView = res;
