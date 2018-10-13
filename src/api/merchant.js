@@ -365,4 +365,20 @@ export function test(){
   })
 }
 
+//  新增优惠券活动
+export function addCoupon(data){
+  return request({
+    url: '/couponActivity/add',
+    method: 'post',
+    data
+  })
+}
 
+// 优惠券活动列表查询
+export function couponList(data){
+  return request({
+    url: '/couponActivity/findInfoList',
+    method: 'post',
+    data
+  })
+}

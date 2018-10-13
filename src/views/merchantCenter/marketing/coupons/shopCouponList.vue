@@ -52,83 +52,85 @@
 </template>
 
 <script>
-  import userPhoto from '@/assets/404_images/fail.png'
+import userPhoto from "@/assets/404_images/fail.png";
+import { couponList } from "@/api/merchant";
 
-  export default {
-    name: "shop-coupon-list",
-    data() {
-      return {
-        statusList: [
-          {
-            name: '全部',
-            value: ''
-          },
-          {
-            name: '领取中',
-            value: '1'
-          },
-          {
-            name: '已领完',
-            value: '2'
-          },
-          {
-            name: '已结束',
-            value: '3'
-          }
-        ],
-        listStatus: '',
-        tableData: [],
-        imageDomain: process.env.IMAGE_DOMAIN,
-        errorImg: 'this.src="' + userPhoto + '"',
-        failImg: userPhoto,
-        pageSize: 10,
-        currentPage: 1,
-        totalPages: 0,
-        totalElements: 0,
-        mask : false ,
-        bigImg : '',
-        loading : true ,
-      }
+export default {
+  name: "shop-coupon-list",
+  data() {
+    return {
+      statusList: [
+        {
+          name: "全部",
+          value: ""
+        },
+        {
+          name: "领取中",
+          value: "1"
+        },
+        {
+          name: "已领完",
+          value: "2"
+        },
+        {
+          name: "已结束",
+          value: "3"
+        }
+      ],
+      listStatus: "",
+      tableData: [],
+      imageDomain: process.env.IMAGE_DOMAIN,
+      errorImg: 'this.src="' + userPhoto + '"',
+      failImg: userPhoto,
+      pageSize: 10,
+      currentPage: 1,
+      totalPages: 0,
+      totalElements: 0,
+      mask: false,
+      bigImg: "",
+      loading: false
+      // EQ_type:'1'
+    };
+  },
+  mounted() {
+    this.getList();
+  },
+  methods: {
+    getList() {
+      let formData = new FormData();
+      formData.append("EQ_type", '1');
+      formData.append("EQ_activityType", this.listStatus);
+      couponList(formData).then(res => {
+        consoel.log(res);
+      });
+      // this.tableData =
     },
-    mounted() {
+    getData() {},
+    handleStop() {},
+    handelEditor() {},
+    handleSizeChange(val) {
+      this.pageSize = val;
       this.getList();
     },
-    methods: {
-      getList() {
-        // this.tableData =
-      },
-      getData(){
-
-      },
-      handleStop(){
-
-      },
-      handelEditor(){
-
-      },
-      handleSizeChange(val) {
-        this.pageSize = val ;
-        this.getList();
-      },
-      handleCurrentChange(val) {
-        this.currentPage = val ;
-        this.getList();
-      }
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.getList();
     }
   }
+};
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  @import "src/styles/table.scss" ;
+@import "src/styles/table.scss";
 
-  .search{
-  margin-bottom: 0.2rem ;
-    .el-select{
-      margin-right: 0.4rem;
-    }
+.search {
+  margin-bottom: 0.2rem;
+  .el-select {
+    margin-right: 0.4rem;
   }
-  .el-table{
-    width: 100%!important;
-    margin: 0;
-  }
+}
+.el-table {
+  width: 100% !important;
+  margin: 0;
+}
 </style>

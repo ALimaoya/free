@@ -65,7 +65,8 @@
 
 <script>
   import userPhoto from '@/assets/404_images/fail.png'
-
+  import { couponList } from "@/api/merchant";
+  
   export default {
     name: "goods-coupon-list",
     data() {
@@ -108,6 +109,12 @@
     },
     methods: {
       getList() {
+        let formData = new FormData();
+        formData.append("EQ_type", '2');
+        formData.append("EQ_activityType", this.listStatus);
+        couponList(formData).then(res => {
+          consoel.log(res);
+        });
         // this.tableData =
       },
       getMore(){
