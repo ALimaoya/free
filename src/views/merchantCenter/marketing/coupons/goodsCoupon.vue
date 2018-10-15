@@ -12,7 +12,7 @@
                 <el-input class="inputInfo" :maxlength="15" size="small" v-model.trim="form.name" placeholder="请输入15个字以内的优惠券名称"></el-input>
             </el-form-item>
             <el-form-item  labelWidth="130px"  label="使用有效期：" >
-              <el-col :span="12">
+              <el-col :span="10">
                 <el-form-item class="date-label" prop="activityStartTime">
                 <el-date-picker  value-format="yyyy-MM-dd 00:00:00" size="small"
                       v-model="form.activityStartTime" clearable type="date" placeholder="开始时间"
@@ -21,7 +21,7 @@
                 </el-form-item>
               </el-col>
               <el-col class="line" :span="2">至</el-col>
-              <el-col :span="12">
+              <el-col :span="10">
                 <el-form-item prop="activityEndTime"  class="date-label">
                 <el-date-picker size="small" v-model="form.activityEndTime"  clearable
                                 type="date"  value-format="yyyy-MM-dd 23:59:59" placeholder="结束时间"
@@ -29,14 +29,15 @@
                 </el-date-picker>
                 </el-form-item>
               </el-col>
-                <p v-if="activityDay!== ''">活动持续{{activityDay}}天</p>
             </el-form-item>
+          <el-form-item labelWidth="130px" prop="useDays">
+            <p v-if="form.useDays!== ''">活动持续{{form.useDays}}天</p>
+          </el-form-item>
             <el-form-item   labelWidth="130px"  label="可用商品：" prop="productIds">
-                <el-button v-if="goodsList.length === 0" @click="showDialogVisible">+添加商品</el-button>
-                <div v-else-if="goodsList.length < 4">
+                <el-button v-if="showList.length === 0" size="small" @click="showDialogVisible">+添加商品</el-button>
+                <div v-else>
                   <ul class="shopList">
-                    <li v-for="(item,index) in goodsList" :key="index">
-                      <div class="itemShop">
+                    <li v-for="(item,index) in showList" :key="index" class="itemShop">
                           <div class="img_wrap" v-if="item.mainImageUrl !== ''|| item.mainImageUrl !== undefined">
                             <img v-if="item.mainImageUrl !== ''|| item.mainImageUrl !== undefined" :src="imageDomain + item.mainImageUrl"
                                 :onerror="errorImg">
@@ -46,11 +47,11 @@
                             <div class="name">{{item.productName}}</div>
                             <div class="encoding">商品编码：{{item.code}}</div>
                           </div>
-                        </div>
                     </li>
-                    <span class="goodsCompile" @click="showDialogVisible">编辑</span>
+                    <el-button type="text" class="goodsCompile" @click="showDialogVisible">编辑</el-button>
                   </ul>
                 </div>
+              <span class="tips_warn" v-if="noProduct">请选择优惠券可用商品</span>
             </el-form-item>
             <el-form-item  labelWidth="130px" label="面额：" prop="parValue">
               <el-select  size="small" clearable v-model="form.parValue"  filterable placeholder="请选择">
@@ -63,10 +64,10 @@
               </el-select>
             </el-form-item>
             <el-form-item   labelWidth="130px"  label="使用条件：" prop="needAmount">
-                <span>满 </span><el-input style="width:50%" type="number" :maxlength="10" size="small" v-model.trim="form.needAmount" placeholder="请输入正整数"></el-input><span> 元可用</span>
+                <span>满 </span><el-input style="width:30%" type="number" :maxlength="10" size="small" v-model.trim="form.needAmount" placeholder="请输入正整数"></el-input><span> 元可用</span>
             </el-form-item>
             <el-form-item   labelWidth="130px"  label="发行张数：" prop="totalQuantity">
-                <el-input style="width:50%" type="number" :maxlength="6" size="small" v-model.trim="form.totalQuantity" placeholder="请输入发行张数"></el-input>
+                <el-input style="width:30%" type="number" :maxlength="6" size="small" v-model.trim="form.totalQuantity" placeholder="请输入发行张数"></el-input><span> 张</span>
             </el-form-item>
             <el-form-item  labelWidth="130px" label="每人限额：" prop="limitQuantity">
               <el-select  size="small" clearable v-model="form.limitQuantity"  filterable placeholder="请选择">
@@ -78,7 +79,7 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item>
+            <el-form-item labelWidth="130px" >
               <el-button class="inputInfo button" type="primary" size="small" @click="submitForm('form')">创建</el-button>
               <el-button class="inputInfo button"  size="small" @click="resetForm('form')">取消</el-button>
             </el-form-item>
@@ -158,7 +159,9 @@
 import { int, validateName} from "@/utils/validate";
 import { getSecondsList } from "@/api/enter";
 import userPhoto from "@/assets/404_images/fail.png";
+import ElFormItem from "element-ui/packages/form/src/form-item";
 export default {
+  components: {ElFormItem},
   data() {
     const validName = (rule, value, callback) => {
       if (value === '') {
@@ -190,22 +193,7 @@ export default {
         callback();
       }
     };
-    const validValidDeadline = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请填写优惠券有效期"));
-      } else {
-        if (!int(value)) {
-          callback(new Error("只能填写正整数"));
-        }
-        if (value > 100) {
-          callback(new Error("优惠券有效期最多为100天"));
-        }
-        if (value < 8) {
-          callback(new Error("优惠券有效期最少为7天"));
-        }
-        callback();
-      }
-    };
+
     return {
       imageDomain: process.env.IMAGE_DOMAIN,
       errorImg: 'this.src="' + userPhoto + '"',
@@ -222,11 +210,12 @@ export default {
         parValue: "",
         needAmount: "",
         totalQuantity: "",
-        limitQuantity: ""
+        limitQuantity: "",
+        useDays: "",
       },
       formRule: {
         name: [
-          { required: true, message: "请填写优惠券名称", validator: validName }
+          { required: true, trigger: "blur", validator: validName }
         ],
         activityStartTime: [
           {
@@ -243,7 +232,7 @@ export default {
           }
         ],
         parValue: [
-          { required: true, message: "请选择没人使用限额", trigger: "change" }
+          { required: true, message: "请选择优惠券面额", trigger: "change" }
         ],
         needAmount: [
           {
@@ -262,19 +251,19 @@ export default {
         limitQuantity: [
           {
             required: true,
-            message: "请选择没人使用限额张数",
+            message: "请选择每人限额张数",
             trigger: "change"
           }
         ],
-        validDeadline: [
-          {
-            required: true,
-            validator: validValidDeadline,
-            trigger: "change"
-          }
-        ]
+        // useDays: [
+        //   {
+        //     required: true ,
+        //     trigger: 'change',
+        //     validator: validValidDeadline
+        //   }
+        // ]
+
       },
-      activityDay: "",
       trenchList: [{ name: "公开", id: "1" }],
       denominationList: [
         { name: "2元", id: "2" },
@@ -313,7 +302,8 @@ export default {
       pageSize: 10,
       tableData: [],
       goodsList: [],
-
+      showList: [],
+      noProduct: false,
       // multipleSelection:[]
     };
   },
@@ -331,16 +321,22 @@ export default {
           center: true
         });
       } else {
-        for(let i=0; i<this.goodsList.length; i++){
+        for(let i=0; i<this.goodsList.length-1; i++){
           this.form.productIds.push(this.goodsList[i].id)
         }
-        console.log('this.form.productIds',this.form.productIds)
+        if(this.goodsList.length>3){
+          this.showList = this.goodsList.slice(0,3);
+        }else{
+          this.showList = this.goodsList ;
+        }
+        console.log(this.goodsList)
         this.dialogVisible = false;
       }
     },
     cancel() {
       this.dialogVisible = false;
       this.goodsList = [];
+      this.showList = [];
       this.search = {
         shopName: "",
         goodsCode: ""
@@ -374,51 +370,68 @@ export default {
     // },
     //提交表格
     submitForm(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          if (this.form.parValue > this.form.needAmount) {
-            this.$message({
-              message: "使用条件必须大于优惠券面额",
-              type: "error",
-              center: true
-            });
-            return false;
+      if (this.form.goodsList.length === 0) {
+        this.noProduct = true ;
+        return false ;
+      } else {
+        this.$refs[formName].validate(valid => {
+          if (valid) {
+            if (this.form.parValue > this.form.needAmount) {
+              this.$message({
+                message: "使用条件必须大于优惠券面额",
+                type: "error",
+                center: true
+              });
+              return false;
+            }
           }
-        }
-      });
+        });
+      }
+
     },
     resetForm(formName) {
       // this.form.receiveEndData = "";
       // this.form.activityStartTime = "";
       this.$refs[formName].resetFields();
-      this.activityDay = '';
+      // this.useDays = '';
     },
     // 计算活动有多少天
     getActivityEndTime() {
-      if (this.form.activityStartTime === "") {
-        this.$message({
-          message: "请先选择活动开始时间",
-          type: "error",
-          center: true
-        });
-        this.form.receiveEndData = "";
-        return false;
-      }
-      if (this.form.receiveEndData < this.form.activityStartTime) {
+
+      if(this.form.activityEndTime !== '' && this.form.activityEndTime !== undefined &&
+        this.form.activityStartTime !== '' && this.form.activityStartTime !== undefined ){
+
+      if (this.form.activityEndTime < this.form.activityStartTime) {
         this.$message({
           message: "结束时间必须晚于开始时间",
           type: "error",
           center: true
         });
-        this.form.receiveEndData = "";
+        this.form.activityEndTime = "";
         this.form.activityStartTime = "";
         return false;
       }
       let start = new Date(
         this.form.activityStartTime.replace(/-/g, "/")
       ).getTime();
-      let end = new Date(this.form.receiveEndData.replace(/-/g, "/")).getTime();
-      this.activityDay = Math.ceil((end - start) / 24 / 60 / 60 / 1000);
+      let end = new Date(this.form.activityEndTime.replace(/-/g, "/")).getTime();
+      this.form.useDays = Math.ceil((end - start) / 24 / 60 / 60 / 1000);
+
+      if (this.form.useDays < 7 || this.form.useDays > 100) {
+        this.$message({
+          message : '优惠券有效期限制在7~100天内',
+          center: true,
+          type: 'error',
+          duration: 2000
+        });
+        this.form.activityEndTime = "";
+        this.form.useDays = "";
+
+      }
+      } else {
+        return false ;
+
+      }
     },
     //  只能选择当天之后的
     endDate() {
@@ -427,6 +440,7 @@ export default {
           return time.getTime() < Date.now() - 24 * 60 * 60 * 1000;
         }
       };
+
     },
     handleSubSizeChange(val) {
       this.pageSize = val;
@@ -442,9 +456,12 @@ export default {
 <style scoped lang="scss" rel="stylesheet/scss">
 @import "../../../../styles/new";
 .el-form{
+  color: #606266;
+  font-size: 0.14rem ;
+
   .tips{
-    font-size: 0.14rem ;
     color: #999;
+    font-size: 0.14rem ;
     line-height: 0.4rem;
   }
   .date-label{
@@ -453,6 +470,13 @@ export default {
     .el-date-editor{
       width: 100%;
     }
+
+  }
+  .line{
+    text-align: center;
+  }
+  .el-button:nth-child(1){
+    margin-left: 0!important;
   }
 }
 .demonstration2 {
@@ -507,8 +531,8 @@ export default {
 }
 .itemShop,
 .itemContent {
-  margin: 0.5rem 200px;
-  width: 80%;
+  margin: 0.5rem 0;
+  /*width: 80%;*/
   display: flex;
   flex-direction: row;
   border: 1px solid #aaa;
@@ -525,12 +549,18 @@ export default {
   }
   .content {
     /*width: 200px;*/
+    display: flex;
+    flex-direction: column;
     flex: 1;
     margin-left: 0.3rem;
+    margin-bottom: 0 !important;
+    justify-content: center;
+    align-items: center;
     text-align: left;
     .name,
     .encoding,
     .price {
+      width: 100%;
       font-size: 0.18rem;
       line-height: 0.3rem;
     }
@@ -546,12 +576,11 @@ export default {
   }
 }
 .shopList {
-  // width: 80%;
   display: inline-block;
   .itemShop {
-    width: 80%;
-    margin: 0;
-    padding: 10px;
+    /*width: 80%;*/
+    margin: 0 0 0.2rem;
+    /*padding: 10px;*/
   }
   .goodsCompile {
     vertical-align: top;
