@@ -382,3 +382,11 @@ export function couponList(data){
     data
   })
 }
+
+//获取优惠券的使用数据信息
+export function getUseCoupon(activityId){
+  return request({
+    url: '/couponActivity/getCouponAllInfo/'+activityId,
+    method: 'get',
+  })
+}

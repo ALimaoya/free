@@ -12,32 +12,56 @@
             <el-form-item   labelWidth="130px"  label="优惠券名称：" prop="name">
                 <el-input class="inputInfo" :maxlength="15" size="small" v-model.trim="form.name" placeholder="请输入15个字以内的优惠卷名称"></el-input>
             </el-form-item>
-            <el-form-item v-if="form.channel === '1'"   labelWidth="130px"  label="使用有效期：" prop="useEndTime">
-                <el-date-picker  value-format="yyyy-MM-dd 00:00:00" size="small"
-                      v-model="form.useStartTime" clearable type="date" placeholder="开始时间" 
-                      :picker-options="forbidData" >
-                </el-date-picker>
-                <span class="demonstration2">至</span>
-                <el-date-picker size="small" v-model="form.useEndTime"  clearable
-                                type="date"  value-format="yyyy-MM-dd 23:59:59" placeholder="结束时间" 
-                                :picker-options="forbidData"  @change="getActivityEndTime(form.useEndTime)">
-                </el-date-picker>
+            <el-form-item v-if="form.channel === '1'"   labelWidth="130px"  label="使用有效期：" >
+              <el-col :span="8">
+                <el-form-item prop="useStartTime" style="margin: 0;">
+                  <el-date-picker  value-format="yyyy-MM-dd 00:00:00" size="small"
+                        v-model="form.useStartTime" clearable type="date" placeholder="开始时间" 
+                        :picker-options="forbidData" @change="getActivityDay">
+                  </el-date-picker>
+                </el-form-item>
+              </el-col>
+              <el-col :span="1" style="text-align:center">
+                <span> 至 </span>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item prop="useEndTime" style="margin: 0;">
+                  <el-date-picker size="small" v-model="form.useEndTime"  clearable
+                                  type="date"  value-format="yyyy-MM-dd 23:59:59" placeholder="结束时间" 
+                                  :picker-options="forbidData"  @change="getActivityDay">
+                  </el-date-picker>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
                 <p>活动持续{{activityDay}}天</p>
+              </el-col>
             </el-form-item>
-            <el-form-item v-if="form.channel === '2'"   labelWidth="130px"  label="活动时间：" prop="receiveEndData">
-                <el-date-picker  value-format="yyyy-MM-dd 00:00:00" size="small"
-                      v-model="form.activityStartTime" clearable type="date" placeholder="开始时间" 
-                      :picker-options="forbidData" >
-                </el-date-picker>
-                <span class="demonstration2">至</span>
-                <el-date-picker size="small" v-model="form.receiveEndData"  clearable
-                                type="date"  value-format="yyyy-MM-dd 23:59:59" placeholder="结束时间" 
-                                :picker-options="forbidData"  @change="getActivityEndTime(form.receiveEndData)">
-                </el-date-picker>
+            <el-form-item v-if="form.channel === '2'"   labelWidth="130px"  label="活动时间：" >
+              <el-col :span="8">
+                <el-form-item prop="activityStartTime" style="margin: 0;">
+                  <el-date-picker  value-format="yyyy-MM-dd 00:00:00" size="small"
+                        v-model="form.activityStartTime" clearable type="date" placeholder="开始时间" 
+                        :picker-options="forbidData" @change="getActivityDay">
+                  </el-date-picker>
+                </el-form-item>
+              </el-col>
+              <el-col :span="1" style="text-align:center">
+                <span> 至 </span>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item prop="activityEndTime" style="margin: 0;">
+                  <el-date-picker size="small" v-model="form.activityEndTime"  clearable
+                                  type="date"  value-format="yyyy-MM-dd 23:59:59" placeholder="结束时间" 
+                                  :picker-options="forbidData"  @change="getActivityDay">
+                  </el-date-picker>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
                 <p>活动持续时间:{{activityDay}}天，活动期间，用户领取优惠券后，自动收藏店铺</p>
+              </el-col>
             </el-form-item>
-            <el-form-item v-if="form.channel === '2'"  labelWidth="130px"  label="有效期限：" prop="validDeadline">
-                <span>领取后 </span><el-input style="width:50%" type="number" :maxlength="6" size="small" v-model.trim="form.validDeadline" placeholder="请输入优惠券有限期"></el-input><span> 天内有效</span>
+            <el-form-item v-if="form.channel === '2'"  labelWidth="130px"  label="有效期限：" prop="useDays">
+                <span>领取后 </span><el-input style="width:50%" type="number" :maxlength="6" size="small" v-model.trim="form.useDays" placeholder="请输入优惠券 有限期"></el-input><span> 天内有效</span>
             </el-form-item>
             <el-form-item  labelWidth="130px" label="面额：" prop="parValue">
               <el-select  size="small" clearable v-model="form.parValue"  filterable placeholder="请选择">
@@ -55,7 +79,7 @@
             <el-form-item   labelWidth="130px"  label="发行张数：" prop="totalQuantity">
                 <el-input style="width:50%" type="number" :maxlength="6" size="small" v-model.trim="form.totalQuantity" placeholder="请输入发行张数"></el-input>
             </el-form-item>
-            <el-form-item  labelWidth="130px" label="每人限额：" prop="limitQuantity">
+            <el-form-item v-if="form.channel === '1'"  labelWidth="130px" label="每人限额：" prop="limitQuantity">
               <el-select  size="small" clearable v-model="form.limitQuantity"  filterable placeholder="请选择">
                 <el-option
                   v-for="item in limitQuantityList"
@@ -73,10 +97,61 @@
     </div>
 </template>
 <script>
+import { parseTime } from "@/utils";
 import { addCoupon } from "@/api/merchant";
-import { int } from "@/utils/validate";
+import { int ,checkInput} from "@/utils/validate";
 export default {
   data() {
+    const validName = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请填写优惠券名称"));
+      } else {
+        if (checkInput(value)) {
+          callback(new Error("名称只允许中文、英文大小写，数字，下划线"));
+        }
+        callback();
+      }
+    };
+    const validUseStartTime = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请选择活动开始时间"));
+      } else {
+        if (this.form.useEndTime !== "") {
+          this.$refs.form.validateField("useEndTime");
+        }
+        callback();
+      }
+    };
+    const validUseEndTime = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请选择活动结束时间"));
+      } else {
+        if (this.form.useStartTime > this.form.useEndTime) {
+          callback(new Error("活动开始时间要早于活动结束时间"));
+        }
+        callback();
+      }
+    };
+    const validActivityStartTime = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请选择活动开始时间"));
+      } else {
+        if (this.form.activityEndTime !== "") {
+          this.$refs.form.validateField("activityEndTime");
+        }
+        callback();
+      }
+    };
+    const validActivityEndTime = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请选择活动结束时间"));
+      } else {
+        if (this.form.activityStartTime > this.form.activityEndTime) {
+          callback(new Error("活动开始时间要早于活动结束时间"));
+        }
+        callback();
+      }
+    };
     const validNeedAmount = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请填写优惠券使用条件"));
@@ -100,7 +175,7 @@ export default {
         callback();
       }
     };
-    const validValidDeadline = (rule, value, callback) => {
+    const validUseDays = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请填写优惠券有效期"));
       } else {
@@ -121,23 +196,28 @@ export default {
       forbidData: this.endDate(),
       loading: false,
       form: {
-        type:'1',
+        type: "1",
         channel: "1",
         name: "",
         useStartTime: "",
-        useEndTime:"",
+        useEndTime: "",
         parValue: "",
         needAmount: "",
         totalQuantity: "",
         limitQuantity: "",
-        // validDeadline:""
+        activityStartTime: "",
+        activityEndTime: "",
+        useDays: ""
       },
       formRule: {
         name: [
-          { required: true, message: "请填写优惠券名称", trigger: "change" }
+          { required: true, validator: validName, trigger: "change" }
+        ],
+        useStartTime: [
+          { required: true, validator: validUseStartTime, trigger: "change" }
         ],
         useEndTime: [
-          { required: true, message: "请选择使用有效期的开始时间和结束时间", trigger: "change" }
+          { required: true, validator: validUseEndTime, trigger: "change" }
         ],
         parValue: [
           { required: true, message: "请选择没人使用限额", trigger: "change" }
@@ -163,19 +243,26 @@ export default {
             trigger: "change"
           }
         ],
-        validDeadline: [
+        useDays: [
           {
             required: true,
-            validator: validValidDeadline,
+            validator: validUseDays,
             trigger: "change"
           }
         ],
+        activityStartTime: [
+          {
+            required: true,
+            validator: validActivityStartTime,
+            trigger: "change"
+          }
+        ],
+        activityEndTime: [
+          { required: true, validator: validActivityEndTime, trigger: "change" }
+        ]
       },
       activityDay: "0",
-      channelList:[
-        { name: "公开", id: "1" },
-        { name: "店铺收藏", id: "2" },
-      ],
+      channelList: [{ name: "公开", id: "1" }, { name: "店铺收藏", id: "2" }],
       parValueList: [
         { name: "2元", id: "2" },
         { name: "3元", id: "3" },
@@ -204,60 +291,69 @@ export default {
     };
   },
   methods: {
-    getChannel(){
-      this.resetForm('form')
+    getChannel() {
+      this.resetForm("form");
     },
     //提交表格
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          if(this.form.parValue > this.form.needAmount){
+          if (this.form.parValue - 0 > this.form.needAmount - 0) {
             this.$message({
               message: "使用条件必须大于优惠券面额",
               type: "error",
               center: true
             });
-            return false
+            return false;
           }
-          addCoupon(this.form).then(res =>{
-            console.log('111')
-          })
-          
-
+          if(this.form.activityStartTime === '' && this.form.activityEndTime === ''){
+            this.form.activityStartTime = parseTime(new Date())
+            this.form.activityEndTime = this.form.useEndTime
+          }
+          if(this.form.channel === '2'){
+            this.form.limitQuantity = "1"
+          }
+          let formData = Object.assign({}, this.form);
+          addCoupon(formData).then(res => {
+            if(res.status === "000000000"){
+              this.$message({
+                message: "新增店铺优惠券成功",
+                type: "success",
+                center: true
+                });
+              this.$router.push('/merchantCenter/marketing/coupons/index')
+              // console.log('111')
+            }
+          });
         }
       });
     },
     resetForm(formName) {
-      this.form.useEndTime = "";
-      this.form.useStartTime = "";
+      this.activityDay = "0";
       this.$refs[formName].resetFields();
     },
     // 计算活动有多少天
-    getActivityEndTime() {
-      if (this.form.useStartTime === "") {
-        this.$message({
-          message: "请先选择活动开始时间",
-          type: "error",
-          center: true
-        });
-        this.form.useEndTime = "";
-        return false;
+    getActivityDay() {
+      this.activityDay = "0";
+      if (this.form.useStartTime !== "" && this.form.useEndTime !== "") {
+        let start = new Date(
+          this.form.useStartTime.replace(/-/g, "/")
+        ).getTime();
+        let end = new Date(this.form.useEndTime.replace(/-/g, "/")).getTime();
+        this.activityDay = Math.ceil((end - start) / 24 / 60 / 60 / 1000);
       }
-      if (this.form.useEndTime < this.form.useStartTime) {
-        this.$message({
-          message: "结束时间必须晚于开始时间",
-          type: "error",
-          center: true
-        });
-        this.form.useEndTime = "";
-        this.form.useStartTime = "";
-        return false;
+      if (
+        this.form.activityEndTime !== "" &&
+        this.form.activityStartTime !== ""
+      ) {
+        let start = new Date(
+          this.form.activityStartTime.replace(/-/g, "/")
+        ).getTime();
+        let end = new Date(
+          this.form.activityEndTime.replace(/-/g, "/")
+        ).getTime();
+        this.activityDay = Math.ceil((end - start) / 24 / 60 / 60 / 1000);
       }
-      let start = new Date(
-        this.form.useStartTime.replace(/-/g, "/")
-      ).getTime();
-      let end = new Date(this.form.useEndTime.replace(/-/g, "/")).getTime();
-      this.activityDay = Math.ceil((end - start) / 24 / 60 / 60 / 1000);
     },
     //  只能选择当天之后的
     endDate() {
@@ -272,9 +368,4 @@ export default {
 </script>
 <style scoped lang="scss" rel="stylesheet/scss">
 @import "../../../../styles/new";
-.demonstration2 {
-  width: 20px;
-  margin-right: 0;
-  text-align: center;
-}
 </style>
