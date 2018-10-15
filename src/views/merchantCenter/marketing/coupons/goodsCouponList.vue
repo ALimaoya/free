@@ -12,40 +12,54 @@
       <el-button type="primary" round size="mini" @click="getList">搜索</el-button>
     </div>
     <el-table :data="tableData" border>
-      <el-table-column prop="name" label="优惠券名称" ></el-table-column>
-      <el-table-column prop="price" label="面额" ></el-table-column>
-      <el-table-column prop="goods" label="可用商品" >
+      <el-table-column prop="name" label="优惠券名称" width="120"></el-table-column>
+      <el-table-column prop="parValue" label="面额" width="100"></el-table-column>
+      <el-table-column prop="productResDto" label="可用商品" >
         <template slot-scope="scope">
           <div class="goodsWrap">
-            <img src="" />
+            <img v-if="scope.row.productResDto.mainImageUrl !== ''|| scope.row.productResDto.mainImageUrl !== undefined" :src="imageDomain + scope.row.productResDto.mainImageUrl"
+                                :onerror="errorImg">
+            <img :src="failImg" v-else>
             <div class="goodsContent">
-              <div class="goodsTitle">{{}}</div>
-              <div class="goodsCode">商品编号：{{  }}</div>
-              <el-button type="text" @click="getMore">查看更多</el-button>
+              <div class="goodsTitle">{{scope.row.productResDto.productName}}</div>
+              <div class="goodsCode">商品编号：{{scope.row.productResDto.code}}</div>
+              <el-button v-if="scope.row.productNum > 1" type="text" @click="getMore(scope.row.activityId)">查看更多</el-button>
             </div>
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="methods" label="推广渠道"></el-table-column>
-      <el-table-column prop="activityTime" label="活动时间" width="100"></el-table-column>
-      <el-table-column prop="givenMount" label="发行量" width="100"></el-table-column>
-      <el-table-column prop="getMount" label="领取量" width="100"></el-table-column>
-      <el-table-column prop="useMount" label="使用量" width="100"></el-table-column>
-      <el-table-column prop="status" label="状态" width="100">
+      <el-table-column prop="channel" label="推广渠道" width="120">
         <template slot-scope="scope">
-
+          <span v-if="scope.row.channel === '1'">商品公开券</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" >
+      <el-table-column label="活动时间" >
         <template slot-scope="scope">
-          <el-button type="text" @click="getData">数据</el-button>
-          <el-button type="text" @click="handleStop">结束</el-button>
-          <el-button type="text" @click="handelEditor">修改</el-button>
+          <span>{{scope.row.activityStartTime}}</span>~<span>{{scope.row.activityEndTime}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="totalQuantity" label="发行量" width="100"></el-table-column>
+      <el-table-column prop="limitQuantity" label="领取量" width="100"></el-table-column>
+      <el-table-column prop="useDays" label="使用量" width="100"></el-table-column>
+      <el-table-column prop="status" label="状态" width="100">
+        <template slot-scope="scope">
+          <span v-if="scope.row.status === '1' && scope.row.totalQuantity-0 > scope.row.limitQuantity-0">领取中</span>
+          <span v-if="scope.row.status === '1' && scope.row.totalQuantity === scope.row.limitQuantity">已领完</span>
+          <span v-if="scope.row.status === '0'">已结束</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="160">
+        <template slot-scope="scope">
+          <el-button type="text" @click="getData(scope.row.activityId)">数据</el-button>
+          <el-button v-if="scope.row.status === '0'" type="text" @click="overCoupon(scope.row.activityId,'2')">删除</el-button>
+          <el-button v-if="scope.row.status === '0'" type="text" @click="seeCouponData(scope.row.activityId)">查看</el-button>
+          <el-button v-if="scope.row.status === '1'" type="text" @click="overCoupon(scope.row.activityId,scope.row.status)">结束</el-button>
+          <el-button v-if="scope.row.status === '1'" type="text" @click="amendCoupon(scope.row.activityId)">修改</el-button>
         </template>
       </el-table-column>
 
     </el-table>
-    <div class="block2" v-if="tableData.length>0">
+    <div class="block2">
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -60,17 +74,187 @@
     <div v-if="mask" @click="close" class="mask">
       <img :src=" imageDomain + bigImg"  />
     </div>
+    <el-dialog
+      title="优惠券信息"
+      :visible.sync="showCouponData"
+      width="60%"
+      center>
+      <div class="CouponTop">
+        <div class="topLeft">
+          <p><span>￥</span><span>{{useCoupon.parValue}}</span></p>
+          <p>店铺优惠券</p>
+        </div>
+        <div class="topright">
+          <p>{{useCoupon.name}}</p>
+          <p><span>发行{{useCoupon.totalQuantity}}张</span>|<span>限领{{useCoupon.limitQuantity}}张/人</span>|<span>推广渠道：<span v-if="useCoupon.channel === '1'">店铺公开券</span><span v-if="useCoupon.channel === '2'">店铺收藏券</span></span></p>
+          <p><span>{{useCoupon.activityStartTime}}</span> ~ <span>{{useCoupon.activityEndTime}}</span> 期间内有效</p>
+        </div>
+      </div>
+      <ul class="CouponCenter">
+        <li>
+          <p>累计领取数</p>
+          <p v-if="useCoupon.totallyGet !== null ">{{useCoupon.totallyGet}}</p>
+          <p v-else>{{0}}</p>
+        </li>
+        <li>
+          <p>累计使用数</p>
+          <p v-if="useCoupon.totallyUsed !== null">{{useCoupon.totallyUsed}}</p>
+          <p v-else>0</p>
+        </li>
+        <li>
+          <p>累计使用率</p>
+          <p v-if="useCoupon.totallyGet !== null && useCoupon.totallyGet !== 0">{{(useCoupon.totallyUsed-0)/(useCoupon.totallyGet-0).toFixed(2)}}%</p>
+          <p v-else>0</p>
+        </li>
+        <li>
+          <p>客单价(元)</p>
+          <p v-if="useCoupon.totallyPayNum !== null && useCoupon.totallyPayNum !== 0">{{(useCoupon.totallyPayMoney-0)/(useCoupon.totallyGet-0).toFixed(2)}}</p>
+          <p v-else>0</p>
+        </li>
+        <li>
+          <p>累计支付订单数</p>
+          <p v-if="useCoupon.totallyPayNum !== null">{{useCoupon.totallyPayNum}}</p>
+          <p v-else>0</p>
+        </li>
+        <li>
+          <p>累计支付金额(元)</p>
+          <p v-if="useCoupon.totallyPayMoney !== null">{{useCoupon.totallyPayMoney}}</p>
+          <p v-else>0</p>
+        </li>
+      </ul>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="showCouponData = false">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      :title="title"
+      :visible.sync="addCouponData"
+      width="60%"
+      center>
+      <el-form :model="form" ref="tableData" label-position="right">
+        <el-form-item   labelWidth="130px"  label="优惠券名称：" prop="name">
+          <el-input class="inputInfo" size="small" v-model.trim="form.name" :disabled="true" style="width:50%"></el-input>
+          <span>注：该名称仅商家可见</span>
+        </el-form-item>
+        <el-form-item  labelWidth="130px" label="面额：" prop="parValue">
+          <el-select  size="small" clearable v-model="form.parValue"  :disabled="true">
+            <el-option
+              v-for="item in parValueList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item   labelWidth="130px"  label="使用条件：" prop="needAmount">
+          <span>满 </span><el-input style="width:50%" type="number" :maxlength="10" size="small" v-model.trim="form.needAmount" :disabled="true"></el-input><span> 元可用</span>
+        </el-form-item>
+        <el-form-item  labelWidth="130px"  label="发行活动时间：" >
+          <el-col :span="8">
+            <el-form-item prop="activityStartTime" style="margin: 0;">
+              <el-date-picker  value-format="yyyy-MM-dd HH:mm:ss" size="small"
+                    v-model="form.activityStartTime" clearable type="datetime" :disabled="true" >
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="1" style="text-align:center">
+            <span> 至 </span>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item prop="activityEndTime" style="margin: 0;">
+              <el-date-picker size="small" v-model="form.activityEndTime"  clearable
+                              type="datetime"  value-format="yyyy-MM-dd HH:mm:ss" :disabled="true" >
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-form-item>
+        <el-form-item   labelWidth="130px"  label="发行张数：" prop="totalQuantity">
+          <el-input style="width:50%" type="number" :maxlength="6" size="small" v-model.trim="form.totalQuantity"  :disabled="isOver"></el-input>
+        </el-form-item>
+        <el-form-item labelWidth="130px" label="每人限额：" prop="limitQuantity">
+          <el-select  size="small" clearable v-model="form.limitQuantity"  filterable :disabled="true">
+            <el-option
+              v-for="item in limitQuantityList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item   labelWidth="130px"  label="可用商品：" prop="totalQuantity">
+          
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer" v-if="!isOver">
+        <el-button type="primary" @click="yesAddCouponData">发 布</el-button>
+        <el-button  @click="addCouponData = false">取消</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="查看已选择优惠券" :visible.sync="checkVisible" width="70%" center :show-close="false">
+      <el-table
+        :data="goodsList"
+        tooltip-effect="dark"
+        style="width: 100%"
+        border>
+        <el-table-column
+          label="商品名称">
+          <template slot-scope="scope">
+            <div class="itemContent">
+              <div class="img_wrap" v-if="scope.row.mainImageUrl !== ''|| scope.row.mainImageUrl !== undefined">
+                <img v-if="scope.row.mainImageUrl !== ''|| scope.row.mainImageUrl !== undefined" :src="imageDomain + scope.row.mainImageUrl"
+                      :onerror="errorImg">
+                <img :src="failImg" v-else>
+              </div>
+              <div class="content">
+                <div class="name">{{scope.row.productName}}</div>
+              </div>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="code"
+          label="商品编码："
+          width="140">
+        </el-table-column>
+        <el-table-column
+          prop="price"
+          label="商品库存："
+          width="120">
+        </el-table-column>
+        <el-table-column
+          prop="price"
+          label="商品价格："
+          width="100">
+        </el-table-column>
+      </el-table>
+      <div class="block2">
+        <el-pagination
+          @size-change="handleSubSizeChange"
+          @current-change="handleSubCurrentChange"
+          :current-page.sync="subCurrentPage"
+          :page-sizes="[10]"
+          :page-size="subPageSize"
+          :pager-count="5"
+          layout=" sizes, prev, pager, next, jumper"
+          :total="subTotalElements">
+        </el-pagination>
+        <span class="totalItems">共{{ subTotalPages }}页，{{ subTotalElements }}条记录</span>
+      </div>
+      <div slot="footer" class="dialog-footer" >
+        <el-button type="text" @click="checkVisible = false">关闭</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
   import userPhoto from '@/assets/404_images/fail.png'
-  import { couponList } from "@/api/merchant";
-  
+  import { couponList,getUseCoupon,getOverCoupon ,seeCoupon,updateContent,couponGoodsList} from "@/api/merchant";
   export default {
     name: "goods-coupon-list",
     data() {
       return {
+        title:"",
         statusList: [
           {
             name: '全部',
@@ -101,42 +285,166 @@
         totalElements: 0,
         mask : false ,
         bigImg : '',
-        loading : true ,
+        loading : false ,
+        showCouponData: false,
+        useCoupon:{},
+        addCouponData: false,
+        form:{},
+       parValueList: [
+        { name: "2元", id: "2" },
+        { name: "3元", id: "3" },
+        { name: "4元", id: "4" },
+        { name: "5元", id: "5" },
+        { name: "6元", id: "6" },
+        { name: "7元", id: "7" },
+        { name: "8元", id: "8" },
+        { name: "9元", id: "9" },
+        { name: "10元", id: "10" },
+        { name: "15元", id: "15" },
+        { name: "20元", id: "20" },
+        { name: "30元", id: "30" },
+        { name: "40元", id: "40" },
+        { name: "50元", id: "50" },
+        { name: "100元", id: "100" },
+        { name: "200元", id: "200" },
+        { name: "300元", id: "300" },
+        { name: "999元", id: "999" }
+      ],
+      limitQuantityList: [
+        { name: "1张", id: "1" },
+        { name: "2张", id: "2" },
+        { name: "3张", id: "3" }
+      ],
+      isOver:false,
+      goodsList:[],
+      checkVisible:false,
+      subTotalElements: 0,
+      subTotalPages: 0,
+      subCurrentPage: 1,
+      subPageSize: 10,
       }
     },
     mounted() {
       this.getList();
     },
     methods: {
+      getMore(id){
+        this.checkVisible = true;
+        let formData = new FormData();
+        formData.append('EQ_ybCouponActivity.activityId',id)
+        couponGoodsList(formData).then(res =>{
+          if(res.data.status === "000000000"){
+            this.goodsList = res.data.data;
+            this.subTotalPages = res.data.totalPages;
+            this.subTotalElements = res.data.totalElements
+          }
+          // console.log('res',res)
+        })
+      },
+      // 增加优惠券数量
+    amendCoupon(id,num){
+      seeCoupon(id).then(res =>{
+        if(res.data.status === "000000000"){
+          this.title = "增加优惠券";
+          this.isOver = false;
+          this.addCouponData = true;
+          this.form =res.data.data;
+          this.totalQuantity = res.data.data.totalQuantity;
+        }
+      })
+      // updateContent(id,200).then(res =>{
+      //   // if(res.data.status === "")
+      // })
+    },
+    yesAddCouponData(){
+      if(this.totalQuantity > this.form.totalQuantity && this.totalQuantity === this.form.totalQuantity){
+        this.$message({
+          message: "优惠券数必须大于原始优惠券数",
+          type: "error",
+          center: true
+        });
+      }else{
+        updateContent(this.form.activityId,this.form.totalQuantity).then(res =>{
+          if(res.data.status === "000000000"){
+            this.$message({
+              message: "优惠券增加成功",
+              type: "success",
+              center: true
+            });
+            this.addCouponData = false;
+            this.getList();
+          }
+        })
+      }
+    },
+       // 查看优惠券信息
+    seeCouponData(id){
+      seeCoupon(id).then(res =>{
+        if(res.data.status === "000000000"){
+          this.title = "查看优惠券";
+          this.isOver = true;
+          this.addCouponData = true;
+          this.form =res.data.data;
+        }
+      })
+    },
+    // 修改优惠券状态
+    overCoupon(id,status){
+      if(status === "1"){
+         status = "0"
+      }else if(status === "2") {
+        status = "2"
+      }
+      getOverCoupon(id,status).then(res =>{
+        if(res.data.status === "000000000"){
+          this.getList();
+        }
+        
+      })
+    },
       getList() {
         let formData = new FormData();
         formData.append("EQ_type", '2');
         formData.append("EQ_activityType", this.listStatus);
+        formData.append("EQ_productCode", this.goodsCode);
+        formData.append('currentPage',this.currentPage);
+        formData.append('pageSize',this.pageSize);
         couponList(formData).then(res => {
-          consoel.log(res);
+          if(res.data.status === "000000000"){
+          this.tableData = res.data.data
+          this.totalPages = res.data.totalPages;
+          this.totalElements = res.data.totalElements
+        }
         });
         // this.tableData =
       },
-      getMore(){
+      
+      getData(val) {
+      this.showCouponData = true;
+      getUseCoupon(val).then( res =>{
+        if(res.data.status === "000000000"){
+          this.useCoupon = res.data.data
+          console.log('res',this.useCoupon)
+        }
 
-      },
-      getData(){
-
-      },
-      handleStop(){
-
-      },
-      handelEditor(){
-
-      },
+      })
+    },
       handleSizeChange(val) {
         this.pageSize = val ;
         this.getList();
       },
       handleCurrentChange(val) {
+        console.log('val',val)
         this.currentPage = val ;
         this.getList();
-      }
+      },
+      handleSubSizeChange(val) {
+      this.subPageSize = val;
+
+    },
+    handleSubCurrentChange(val) {
+      this.subCurrentPage = val;
+    }
     }
   }
 </script>
@@ -175,4 +483,116 @@
       }
     }
   }
+  .CouponTop {
+  width: 90%;
+  background-color: #f2f1f1;
+  margin: 0.1rem auto;
+  padding: 0.1rem;
+  .topLeft {
+    width: 22%;
+    margin-right: 1%;
+    display: inline-block;
+    padding-left: 0.5rem;
+    p:nth-child(1) {
+      font-size: 0.4rem;
+      color: red;
+    }
+    p:nth-child(2) {
+      font-size: 0.15rem;
+      color: red;
+    }
+    p {
+      display: block;
+    }
+  }
+  .topright {
+    display: inline-block;
+    width: 75%;
+    p {
+      margin-bottom: 0;
+      display: block;
+    }
+  }
+}
+.CouponCenter {
+  width: 90%;
+  background-color: #f2f1f1;
+  margin: 0.1rem auto;
+  padding: 0.1rem;
+  li {
+    display: inline-block;
+    width: 33%;
+    p:nth-child(1) {
+      line-height: 0.5rem;
+    }
+    p:nth-child(2) {
+      // line-height: 0.5rem;
+      font-size: 0.4rem;
+    }
+    p {
+      display: block !important;
+      margin-bottom: 0 !important;
+      // padding-left: 1rem;
+      text-align: center;
+    }
+  }
+}
+.el-table {
+  border-radius: 0.05rem;
+  border-color: #aaa;
+  margin-bottom: 0.3rem;
+  .itemContent {
+    margin: 0 auto !important;
+    border: 0;
+    padding: 0;
+    .content {
+      margin-bottom: 0 !important;
+    }
+  }
+}
+.itemContent {
+  margin: 0.5rem 0;
+  /*width: 80%;*/
+  display: flex;
+  flex-direction: row;
+  border: 1px solid #aaa;
+  padding: 0.2rem;
+  .img_wrap {
+    width: 1rem;
+    height: 1rem;
+    display: block;
+    margin: auto;
+    img {
+      max-height: 100%;
+      max-width: 100%;
+    }
+  }
+  .content {
+    /*width: 200px;*/
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin-left: 0.3rem;
+    margin-bottom: 0 !important;
+    justify-content: center;
+    align-items: center;
+    text-align: left;
+    .name,
+    .encoding,
+    .price {
+      width: 100%;
+      font-size: 0.18rem;
+      line-height: 0.3rem;
+    }
+  }
+  .addGoods {
+    width: 1rem;
+    height: 1rem;
+
+    .svg-icon {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
 </style>

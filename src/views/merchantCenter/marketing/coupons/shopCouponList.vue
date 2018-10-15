@@ -12,19 +12,19 @@
     </div>
     <el-table :data="tableData" border>
       <el-table-column prop="name" label="优惠券名称" ></el-table-column>
-      <el-table-column prop="parValue" label="面额" ></el-table-column>
-      <el-table-column prop="needAmount" label="门槛" >
+      <el-table-column prop="parValue" label="面额" width="100"></el-table-column>
+      <el-table-column prop="needAmount" label="门槛" width="130">
         <template slot-scope="scope">
           <span>满{{scope.row.needAmount}}元可用</span>
         </template>
       </el-table-column>
-      <el-table-column prop="channel" label="推广渠道">
+      <el-table-column prop="channel" label="推广渠道" width="120">
         <template slot-scope="scope">
           <span v-if="scope.row.channel === '1'">店铺公开券</span>
           <span v-if="scope.row.channel === '2'">店铺收藏券</span>
         </template>
       </el-table-column>
-      <el-table-column label="活动时间" width="100">
+      <el-table-column label="活动时间">
         <template slot-scope="scope">
         <span>{{scope.row.activityStartTime}}</span>~<span>{{scope.row.activityEndTime}}</span>
         </template>
@@ -39,13 +39,13 @@
           <span v-if="scope.row.status === '0'">已结束</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" >
+      <el-table-column label="操作" width="160">
         <template slot-scope="scope">
           <el-button type="text" @click="getData(scope.row.activityId)">数据</el-button>
-          <el-button v-if="scope.row.status === '0'" type="text" @click="handleStop">删除</el-button>
-          <el-button v-if="scope.row.status === '0'" type="text" @click="handleStop">查看</el-button>
-          <el-button v-if="scope.row.status === '1'" type="text" @click="handleStop">结束</el-button>
-          <el-button v-if="scope.row.status === '1'" type="text" @click="handelEditor">修改</el-button>
+          <el-button v-if="scope.row.status === '0'" type="text" @click="overCoupon(scope.row.activityId,'2')">删除</el-button>
+          <el-button v-if="scope.row.status === '0'" type="text" @click="seeCouponData(scope.row.activityId)">查看</el-button>
+          <el-button v-if="scope.row.status === '1'" type="text" @click="overCoupon(scope.row.activityId,scope.row.status)">结束</el-button>
+          <el-button v-if="scope.row.status === '1'" type="text" @click="amendCoupon(scope.row.activityId)">修改</el-button>
         </template>
       </el-table-column>
 
@@ -95,7 +95,7 @@
         </li>
         <li>
           <p>累计使用率</p>
-          <p v-if="useCoupon.totallyGet !== null && useCoupon.totallyGet !== 0">{{(useCoupon.totallyUsed-0)/(useCoupon.totallyGet-0).toFixed(2)}}%</p>
+          <p v-if="useCoupon.totallyGet !== null && useCoupon.totallyGet !== 0">{{useCoupon.totallyUsed/(useCoupon.totallyGet-0).toFixed(2)}}%</p>
           <p v-else>0</p>
         </li>
         <li>
@@ -119,11 +119,11 @@
       </span>
     </el-dialog>
     <el-dialog
-      title="增发优惠券"
+      :title="title"
       :visible.sync="addCouponData"
       width="60%"
       center>
-      <el-form :model="form" ref="tableData" :rules="formRule" label-position="right">
+      <el-form :model="form" ref="tableData" label-position="right">
         <el-form-item   labelWidth="130px"  label="优惠券名称：" prop="name">
           <el-input class="inputInfo" size="small" v-model.trim="form.name" :disabled="true" style="width:50%"></el-input>
           <span>注：该名称仅商家可见</span>
@@ -144,8 +144,8 @@
         <el-form-item  labelWidth="130px"  label="发行活动时间：" >
           <el-col :span="8">
             <el-form-item prop="activityStartTime" style="margin: 0;">
-              <el-date-picker  value-format="yyyy-MM-dd 00:00:00" size="small"
-                    v-model="form.activityStartTime" clearable type="date" :disabled="true" >
+              <el-date-picker  value-format="yyyy-MM-dd HH:mm:ss" size="small"
+                    v-model="form.activityStartTime" clearable type="datetime" :disabled="true" >
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -155,13 +155,13 @@
           <el-col :span="8">
             <el-form-item prop="activityEndTime" style="margin: 0;">
               <el-date-picker size="small" v-model="form.activityEndTime"  clearable
-                              type="date"  value-format="yyyy-MM-dd 23:59:59" :disabled="true" >
+                              type="datetime"  value-format="yyyy-MM-dd HH:mm:ss" :disabled="true" >
               </el-date-picker>
             </el-form-item>
           </el-col>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="发行张数：" prop="totalQuantity">
-          <el-input style="width:50%" type="number" :maxlength="6" size="small" v-model.trim="form.totalQuantity" placeholder="请输入发行张数"></el-input>
+          <el-input style="width:50%" type="number" :maxlength="6" size="small" v-model.trim="form.totalQuantity"  :disabled="isOver"></el-input>
         </el-form-item>
         <el-form-item labelWidth="130px" label="每人限额：" prop="limitQuantity">
           <el-select  size="small" clearable v-model="form.limitQuantity"  filterable :disabled="true">
@@ -174,8 +174,8 @@
           </el-select>
         </el-form-item>
       </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="addCouponData = false">发 布</el-button>
+      <span slot="footer" class="dialog-footer" v-if="!isOver">
+        <el-button type="primary" @click="yesAddCouponData">发 布</el-button>
         <el-button  @click="addCouponData = false">取消</el-button>
       </span>
     </el-dialog>
@@ -184,12 +184,15 @@
 
 <script>
 import userPhoto from "@/assets/404_images/fail.png";
-import { couponList,getUseCoupon } from "@/api/merchant";
+import { couponList,getUseCoupon,getOverCoupon ,seeCoupon,updateContent} from "@/api/merchant";
 
 export default {
   name: "shop-coupon-list",
   data() {
     return {
+      title:"",
+      isOver:false,
+      totalQuantity:'',
       statusList: [
         {
           name: "全部",
@@ -223,37 +226,22 @@ export default {
       showCouponData: false,
       useCoupon:{},
       addCouponData: false,
-      formRule: {
-        name: [
-          { required: true, message: "请选择没人使用限额", trigger: "change" }
-        ],
-        parValue: [
-          { required: true, message: "请选择没人使用限额", trigger: "change" }
-        ],
-        limitQuantity: [
-          {
-            required: true,
-            message: "请选择没人使用限额张数",
-            trigger: "change"
-          }
-        ]
-      },
       form: {
-        name: "哈哈出行",
-        price: "10",
-        conditions: "满20可用",
-        methods: "店铺收藏券",
-        activityTime: "2018-2019",
-        givenMount: "100",
-        getMount: "20",
-        useMount: "20",
-        status: "领取中",
-        parValue:"6",
-        needAmount:"8",
-        activityStartTime:"2018-01-01 00:00:00",
-        activityEndTime:"2018-01-02 23:59:59",
-        totalQuantity:"10",
-        limitQuantity:"1"
+        // name: "哈哈出行",
+        // price: "10",
+        // conditions: "满20可用",
+        // methods: "店铺收藏券",
+        // activityTime: "2018-2019",
+        // givenMount: "100",
+        // getMount: "20",
+        // useMount: "20",
+        // status: "领取中",
+        // parValue:"6",
+        // needAmount:"8",
+        // activityStartTime:"2018-01-01 00:00:00",
+        // activityEndTime:"2018-01-02 23:59:59",
+        // totalQuantity:"10",
+        // limitQuantity:"1"
       },
       parValueList: [
         { name: "2元", id: "2" },
@@ -286,10 +274,74 @@ export default {
     this.getList();
   },
   methods: {
+    // 增加优惠券数量
+    amendCoupon(id,num){
+      seeCoupon(id).then(res =>{
+        if(res.data.status === "000000000"){
+          this.title = "增加优惠券";
+          this.isOver = false;
+          this.addCouponData = true;
+          this.form =res.data.data;
+          this.totalQuantity = res.data.data.totalQuantity;
+        }
+      })
+      // updateContent(id,200).then(res =>{
+      //   // if(res.data.status === "")
+      // })
+    },
+    yesAddCouponData(){
+      if(this.totalQuantity > this.form.totalQuantity && this.totalQuantity === this.form.totalQuantity){
+        this.$message({
+          message: "优惠券数必须大于原始优惠券数",
+          type: "error",
+          center: true
+        });
+      }else{
+        updateContent(this.form.activityId,this.form.totalQuantity).then(res =>{
+          if(res.data.status === "000000000"){
+            this.$message({
+              message: "优惠券增加成功",
+              type: "success",
+              center: true
+            });
+            this.addCouponData = false;
+            this.getList();
+          }
+        })
+      }
+      console.log(this.form)
+    },
+    // 查看优惠券信息
+    seeCouponData(id){
+      seeCoupon(id).then(res =>{
+        if(res.data.status === "000000000"){
+          this.title = "查看优惠券";
+          this.isOver = true;
+          this.addCouponData = true;
+          this.form =res.data.data
+        }
+      })
+    },
+    // 修改优惠券状态
+    overCoupon(id,status){
+      if(status === "1"){
+         status = "0"
+      }else if(status === "2") {
+        status = "2"
+      }
+      getOverCoupon(id,status).then(res =>{
+        if(res.data.status === "000000000"){
+          this.getList();
+        }
+        
+      })
+    },
     getList() {
       let formData = new FormData();
       formData.append("EQ_type", "1");
       formData.append("EQ_activityType", this.listStatus);
+      formData.append('currentPage',this.currentPage);
+      formData.append('pageSize',this.pageSize);
       couponList(formData).then(res => {
 
         if(res.data.status === "000000000"){
@@ -299,15 +351,13 @@ export default {
         }
       });
     },
-    getData() {
-
-    },
     handleStop() {
 
     },
     handelEditor() {
 
     },
+    //  查看数据
     getData(val) {
       this.showCouponData = true;
       getUseCoupon(val).then( res =>{
@@ -357,6 +407,7 @@ export default {
     margin-right: 1%;
     display: inline-block;
     padding-left: 0.5rem;
+    text-align: center;
     p:nth-child(1) {
       font-size: 0.4rem;
       color: red;

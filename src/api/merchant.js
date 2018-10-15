@@ -390,3 +390,36 @@ export function getUseCoupon(activityId){
     method: 'get',
   })
 }
+
+//修改优惠券的使用状态
+export function getOverCoupon(activityId,status){
+  return request({
+    url: '/couponActivity/updateStatus/'+activityId+'/'+status,
+    method: 'get',
+  })
+}
+
+//修改优惠券的使用状态
+export function seeCoupon(activityId){
+  return request({
+    url: '/couponActivity/getCouponActivityInfo/'+activityId,
+    method: 'get',
+  })
+}
+
+//更新活动优惠券的数量
+export function updateContent(activityId,totalQuantity){
+  return request({
+    url: '/couponActivity/updateContent/'+activityId+'/'+totalQuantity,
+    method: 'get',
+  })
+}
+
+// 获取指定优惠券活动的商品列表
+export function couponGoodsList(data){
+  return request({
+    url: '/couponActivity/findProductList',
+    method: 'post',
+    data
+  })
+}
