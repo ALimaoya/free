@@ -42,7 +42,13 @@
             }
         },
         mounted() {
-          this.getList(0);
+          let type = this.$route.query.type;
+          if (typeof (type) !== undefined) {
+            this.getList(type*1);
+          } else {
+            this.getList(0);
+
+          }
         },
         methods: {
             newCoupons(type){

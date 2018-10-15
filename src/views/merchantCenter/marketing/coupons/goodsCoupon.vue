@@ -48,7 +48,9 @@
                             <div class="encoding">商品编码：{{item.code}}</div>
                           </div>
                     </li>
-                    <el-button type="text" class="goodsCompile" @click="showDialogVisible">编辑</el-button>
+                    <el-button type="text" class="goodsCompile" @click="editorProduct">编辑</el-button>
+                    <el-button type="text" class="goodsCompile" @click="checkProduct" v-if="this.goodsList.length>3">查看更多</el-button>
+
                   </ul>
                 </div>
               <span class="tips_warn" v-if="noProduct">请选择优惠券可用商品</span>
@@ -97,10 +99,10 @@
             :data="tableData"
             tooltip-effect="dark"
             style="width: 100%"
-            border
+            border :row-key="getRowKeys"
             @selection-change="handleSelectionChange">
             <el-table-column
-              type="selection"
+              type="selection" :reserve-selection="true"
               width="55">
             </el-table-column>
             <el-table-column
@@ -136,10 +138,10 @@
           </el-table>
           <div class="block2">
             <el-pagination
-              @size-change="handleSubSizeChange"
-              @current-change="handleSubCurrentChange"
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
               :current-page.sync="currentPage"
-              :page-sizes="[10, 15, 20]"
+              :page-sizes="[10]"
               :page-size="pageSize"
               :pager-count="5"
               layout=" sizes, prev, pager, next, jumper"
@@ -153,11 +155,66 @@
             <el-button type="text" @click="cancel">取消</el-button>
           </div>
         </el-dialog>
+      <el-dialog title="查看已选择优惠券" :visible.sync="checkVisible" width="70%" center :show-close="false">
+        <el-table
+          :data="goodsList.slice((subCurrentPage-1)*subPageSize,subCurrentPage*subPageSize)"
+          tooltip-effect="dark"
+          style="width: 100%"
+          border>
+          <el-table-column
+            label="商品名称">
+            <template slot-scope="scope">
+              <div class="itemContent">
+                <div class="img_wrap" v-if="scope.row.mainImageUrl !== ''|| scope.row.mainImageUrl !== undefined">
+                  <img v-if="scope.row.mainImageUrl !== ''|| scope.row.mainImageUrl !== undefined" :src="imageDomain + scope.row.mainImageUrl"
+                       :onerror="errorImg">
+                  <img :src="failImg" v-else>
+                </div>
+                <div class="content">
+                  <div class="name">{{scope.row.productName}}</div>
+                </div>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="code"
+            label="商品编码："
+            width="140">
+          </el-table-column>
+          <el-table-column
+            prop="price"
+            label="商品库存："
+            width="120">
+          </el-table-column>
+          <el-table-column
+            prop="price"
+            label="商品价格："
+            width="100">
+          </el-table-column>
+        </el-table>
+        <div class="block2">
+          <el-pagination
+            @size-change="handleSubSizeChange"
+            @current-change="handleSubCurrentChange"
+            :current-page.sync="subCurrentPage"
+            :page-sizes="[10]"
+            :page-size="subPageSize"
+            :pager-count="5"
+            layout=" sizes, prev, pager, next, jumper"
+            :total="subTotalElements">
+          </el-pagination>
+          <span class="totalItems">共{{ subTotalPages }}页，{{ subTotalElements }}条记录</span>
+        </div>
+        <div slot="footer" class="dialog-footer" >
+          <el-button type="text" @click="checkVisible = false">关闭</el-button>
+        </div>
+      </el-dialog>
     </div>
 </template>
 <script>
 import { int, validateName} from "@/utils/validate";
 import { getSecondsList } from "@/api/enter";
+import { addCoupon } from "@/api/merchant";
 import userPhoto from "@/assets/404_images/fail.png";
 import ElFormItem from "element-ui/packages/form/src/form-item";
 export default {
@@ -169,6 +226,8 @@ export default {
       }else if (!validateName(value)){
         callback(new Error('优惠券名称只允许输入中文、英文大小写、数组、下划线字符，请重新输入'))
       }
+      callback();
+
     };
     const validNeedAmount = (rule, value, callback) => {
       if (value === "") {
@@ -255,13 +314,6 @@ export default {
             trigger: "change"
           }
         ],
-        // useDays: [
-        //   {
-        //     required: true ,
-        //     trigger: 'change',
-        //     validator: validValidDeadline
-        //   }
-        // ]
 
       },
       trenchList: [{ name: "公开", id: "1" }],
@@ -292,6 +344,7 @@ export default {
       ],
       title: "",
       dialogVisible: false,
+      checkVisible: false ,
       search: {
         shopName: "",
         goodsCode: ""
@@ -300,18 +353,60 @@ export default {
       totalPages: 0,
       currentPage: 1,
       pageSize: 10,
+      subTotalElements: 0,
+      subTotalPages: 0,
+      subCurrentPage: 1,
+      subPageSize: 10,
       tableData: [],
       goodsList: [],
       showList: [],
       noProduct: false,
+      checkList: false,
+      getRowKeys(row) {
+        return row.id;
+      },
       // multipleSelection:[]
     };
   },
   methods: {
-    handleSelectionChange(val) {
-        this.goodsList = val;
-        console.log('this.goodsList',this.goodsList)
-      },
+    getGoods() {
+      let formData = new FormData();
+      formData.append("EQ_code", this.search.goodsCode);
+      formData.append("LIKE_productName", this.search.shopName);
+      formData.append("currentPage", this.currentPage);
+      formData.append("pageSize", this.pageSize);
+
+      getSecondsList(formData).then(res => {
+        if (res.data.status === "000000000") {
+          this.tableData = res.data.data;
+          this.totalPages = res.data.totalPages;
+          this.totalElements = res.data.totalElements;
+        }
+      });
+    },
+    handleSelectionChange(rows) {
+      this.goodsList = [];
+      if (rows) {
+        rows.forEach(row => {
+          if (row) {
+            this.goodsList.push(row);
+          }
+        });
+      }
+    },
+
+    showDialogVisible() {
+      this.title = "选择优惠券商品";
+      this.dialogVisible = true;
+      this.getGoods();
+    },
+    editorProduct(){
+      this.title = "编辑优惠券商品";
+      this.dialogVisible = true;
+      // this.handleSelect(this.goodsList)
+
+    },
+
     //确认选择活动商品
     chooseGoods() {
       if (this.goodsList.length === 0) {
@@ -329,14 +424,16 @@ export default {
         }else{
           this.showList = this.goodsList ;
         }
-        console.log(this.goodsList)
         this.dialogVisible = false;
       }
     },
     cancel() {
       this.dialogVisible = false;
-      this.goodsList = [];
-      this.showList = [];
+      if(this.title === "选择优惠券商品"){
+        this.goodsList = [];
+        this.showList = [];
+      }
+
       this.search = {
         shopName: "",
         goodsCode: ""
@@ -344,56 +441,68 @@ export default {
       this.currentPage = 1;
       this.pageSize = 10;
     },
-    showDialogVisible() {
-      this.title = "选择优惠券商品";
-      this.dialogVisible = true;
-      this.getGoods();
-    },
-    getGoods() {
-      let formData = new FormData();
-      formData.append("EQ_code", this.search.goodsCode);
-      formData.append("LIKE_productName", this.search.shopName);
-      formData.append("currentPage", this.currentPage);
-      formData.append("pageSize", this.pageSize);
+    checkProduct(){
+      this.subTotalElements = this.goodsList.length ;
+      if(this.subTotalElements>10){
+        this.subTotalPages = Math.ceil(this.subTotalElements/10);
+      }else{
+        this.subTotalPages = 1 ;
+      }
 
-      getSecondsList(formData).then(res => {
-        if (res.data.status === "000000000") {
-          this.tableData = res.data.data;
-          this.totalPages = res.data.totalPages;
-          this.totalElements = res.data.totalElements;
-        }
-      });
+        this.checkVisible = true;
+
     },
-    // // 切换方式
-    // getTrench() {
-    //   this.resetForm("form");
-    // },
+
     //提交表格
     submitForm(formName) {
-      if (this.form.goodsList.length === 0) {
-        this.noProduct = true ;
-        return false ;
-      } else {
         this.$refs[formName].validate(valid => {
           if (valid) {
-            if (this.form.parValue > this.form.needAmount) {
+
+            if (this.goodsList.length === 0) {
+              this.noProduct = true ;
+              return false ;
+            }
+            if (parseInt(this.form.parValue) > this.form.needAmount) {
+
               this.$message({
-                message: "使用条件必须大于优惠券面额",
+                message: "使用条件面额必须大于优惠券面额",
                 type: "error",
                 center: true
               });
               return false;
             }
+            else {
+
+              let data = this.form ;
+              data.type = '2';
+              addCoupon(data).then( res => {
+                if ( res.data.status === '000000000') {
+                  this.$message({
+                    message: '商品优惠券创建成功，请前往优惠券列表查看',
+                    type: 'success',
+                    center: true,
+                    duration: 2000
+                  });
+                  for (const [i, v] of this.$store.state.tagsView.visitedViews.entries()) {
+                    if (v.fullPath === this.$route.fullPath) {
+                      this.$store.state.tagsView.visitedViews.splice(i, 1);
+                      this.$router.push('/merchantCenter/marketing/coupons?type=1')
+
+                    }
+                  }
+                }
+              })
+
+            }
+
           }
         });
-      }
+
 
     },
     resetForm(formName) {
-      // this.form.receiveEndData = "";
-      // this.form.activityStartTime = "";
+
       this.$refs[formName].resetFields();
-      // this.useDays = '';
     },
     // 计算活动有多少天
     getActivityEndTime() {
@@ -442,13 +551,20 @@ export default {
       };
 
     },
-    handleSubSizeChange(val) {
+    handleSizeChange(val) {
       this.pageSize = val;
       this.getGoods();
     },
-    handleSubCurrentChange(val) {
+    handleCurrentChange(val) {
       this.currentPage = val;
       this.getGoods();
+    },
+    handleSubSizeChange(val) {
+      this.subPageSize = val;
+
+    },
+    handleSubCurrentChange(val) {
+      this.subCurrentPage = val;
     }
   }
 };
