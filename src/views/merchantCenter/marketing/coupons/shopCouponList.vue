@@ -30,8 +30,18 @@
         </template>
       </el-table-column>
       <el-table-column prop="totalQuantity" label="发行量" width="100"></el-table-column>
-      <el-table-column prop="totallyGet" label="领取量" width="100"></el-table-column>
-      <el-table-column prop="totallyUsed" label="使用量" width="100"></el-table-column>
+      <el-table-column prop="totallyGet" label="领取量" width="100">
+        <template slot-scope="scope">
+          <span v-if="scope.row.totallyGet !== null">{{scope.row.totallyGet}}</span>
+          <span v-else>{{0}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="totallyUsed" label="使用量" width="100">
+        <template slot-scope="scope">
+          <span v-if="scope.row.totallyUsed !== null">{{scope.row.totallyUsed}}</span>
+          <span v-else>{{0}}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="status" label="状态" width="100">
         <template slot-scope="scope">
           <span v-if="scope.row.status === '1' && scope.row.totalQuantity-0 > scope.row.totallyGet-0">领取中</span>
@@ -95,13 +105,12 @@
         </li>
         <li>
           <p>累计使用率</p>
-          <p v-if="useCoupon.totallyGet !== null && useCoupon.totallyGet !== 0">{{useCoupon.totallyUsed/(useCoupon.totallyGet-0).toFixed(2)}}%</p>
-          <p v-else>0</p>
+          <p>{{useRage}}%</p>
         </li>
         <li>
           <p>客单价(元)</p>
-          <p v-if="useCoupon.totallyPayNum !== null && useCoupon.totallyPayNum !== 0">{{(useCoupon.totallyPayMoney-0)/(useCoupon.totallyGet-0).toFixed(2)}}</p>
-          <p v-else>0</p>
+          <!-- <p v-if="useCoupon.totallyPayNum !== null && useCoupon.totallyPayNum !== 0">{{(useCoupon.totallyPayMoney-0)/(useCoupon.totallyGet-0).toFixed(2)}}</p> -->
+          <p>{{usePrice}}</p>
         </li>
         <li>
           <p>累计支付订单数</p>
@@ -184,15 +193,21 @@
 
 <script>
 import userPhoto from "@/assets/404_images/fail.png";
-import { couponList,getUseCoupon,getOverCoupon ,seeCoupon,updateContent} from "@/api/merchant";
+import {
+  couponList,
+  getUseCoupon,
+  getOverCoupon,
+  seeCoupon,
+  updateContent
+} from "@/api/merchant";
 
 export default {
   name: "shop-coupon-list",
   data() {
     return {
-      title:"",
-      isOver:false,
-      totalQuantity:'',
+      title: "",
+      isOver: false,
+      totalQuantity: "",
       statusList: [
         {
           name: "全部",
@@ -224,25 +239,11 @@ export default {
       bigImg: "",
       loading: false,
       showCouponData: false,
-      useCoupon:{},
+      useCoupon: {},
+      useRage:"",
+      usePrice:"",
       addCouponData: false,
-      form: {
-        // name: "哈哈出行",
-        // price: "10",
-        // conditions: "满20可用",
-        // methods: "店铺收藏券",
-        // activityTime: "2018-2019",
-        // givenMount: "100",
-        // getMount: "20",
-        // useMount: "20",
-        // status: "领取中",
-        // parValue:"6",
-        // needAmount:"8",
-        // activityStartTime:"2018-01-01 00:00:00",
-        // activityEndTime:"2018-01-02 23:59:59",
-        // totalQuantity:"10",
-        // limitQuantity:"1"
-      },
+      form: {},
       parValueList: [
         { name: "2元", id: "2" },
         { name: "3元", id: "3" },
@@ -275,98 +276,117 @@ export default {
   },
   methods: {
     // 增加优惠券数量
-    amendCoupon(id,num){
-      seeCoupon(id).then(res =>{
-        if(res.data.status === "000000000"){
+    amendCoupon(id, num) {
+      seeCoupon(id).then(res => {
+        if (res.data.status === "000000000") {
           this.title = "增加优惠券";
           this.isOver = false;
           this.addCouponData = true;
-          this.form =res.data.data;
+          this.form = res.data.data;
           this.totalQuantity = res.data.data.totalQuantity;
         }
-      })
-      // updateContent(id,200).then(res =>{
-      //   // if(res.data.status === "")
-      // })
+      });
     },
-    yesAddCouponData(){
-      if(this.totalQuantity > this.form.totalQuantity && this.totalQuantity === this.form.totalQuantity){
+    yesAddCouponData() {
+      if (this.totalQuantity > this.form.totalQuantity || this.totalQuantity === this.form.totalQuantity) {
         this.$message({
-          message: "优惠券数必须大于原始优惠券数",
+          message: "新增优惠券数必须大于原始优惠券数",
           type: "error",
           center: true
         });
-      }else{
-        updateContent(this.form.activityId,this.form.totalQuantity).then(res =>{
-          if(res.data.status === "000000000"){
-            this.$message({
-              message: "优惠券增加成功",
-              type: "success",
-              center: true
-            });
-            this.addCouponData = false;
-            this.getList();
+        this.form.totalQuantity = this.totalQuantity;
+        return false
+      } else {
+        updateContent(this.form.activityId, this.form.totalQuantity).then(
+          res => {
+            if (res.data.status === "000000000") {
+              this.$message({
+                message: "优惠券增加成功",
+                type: "success",
+                center: true
+              });
+              this.addCouponData = false;
+              this.getList();
+            }
           }
-        })
+        );
       }
-      console.log(this.form)
     },
     // 查看优惠券信息
-    seeCouponData(id){
-      seeCoupon(id).then(res =>{
-        if(res.data.status === "000000000"){
+    seeCouponData(id) {
+      seeCoupon(id).then(res => {
+        if (res.data.status === "000000000") {
           this.title = "查看优惠券";
           this.isOver = true;
           this.addCouponData = true;
-          this.form =res.data.data
+          this.form = res.data.data;
         }
-      })
+      });
     },
-    // 修改优惠券状态
-    overCoupon(id,status){
-      if(status === "1"){
-         status = "0"
-      }else if(status === "2") {
-        status = "2"
+    // 结束 或者 删除 优惠券
+    overCoupon(id, status) {
+      if (status === "1") {
+        status = "0";
+        getOverCoupon(id, status).then(res => {
+          if (res.data.status === "000000000") {
+            this.$message({
+              message: "此优惠券活动已结束",
+              type: "success",
+              center: true
+            });
+            this.getList();
+          }
+        });
+      } else if (status === "2") {
+        status = "2";
+        getOverCoupon(id, status).then(res => {
+          if (res.data.status === "000000000") {
+            this.$message({
+              message: "此优惠券活动已删除",
+              type: "success",
+              center: true
+            });
+            this.getList();
+          }
+        });
       }
-      getOverCoupon(id,status).then(res =>{
-        if(res.data.status === "000000000"){
-          this.getList();
-        }
-
-      })
     },
     getList() {
       let formData = new FormData();
       formData.append("EQ_type", "1");
       formData.append("EQ_activityType", this.listStatus);
-      formData.append('currentPage',this.currentPage);
-      formData.append('pageSize',this.pageSize);
+      formData.append("currentPage", this.currentPage);
+      formData.append("pageSize", this.pageSize);
       couponList(formData).then(res => {
-
-        if(res.data.status === "000000000"){
-          this.tableData = res.data.data
+        if (res.data.status === "000000000") {
+          this.tableData = res.data.data;
           this.totalPages = res.data.totalPages;
-          this.totalElements = res.data.totalElements
+          this.totalElements = res.data.totalElements;
         }
       });
     },
-    handleStop() {
-
-    },
-    handelEditor() {
-
-    },
+    handleStop() {},
+    handelEditor() {},
     //  查看数据
     getData(val) {
       this.showCouponData = true;
-      getUseCoupon(val).then( res =>{
-        if(res.data.status === "000000000"){
-          this.useCoupon = res.data.data
-          console.log('res',this.useCoupon)
+      getUseCoupon(val).then(res => {
+        if (res.data.status === "000000000") {
+          this.useCoupon = res.data.data;
+          if(this.useCoupon.totallyGet === "0" || this.useCoupon.totallyGet === null || this.useCoupon.totallyUsed === "0" || this.useCoupon.totallyUsed === null){
+            this.useRage = "0";
+          }else{
+            this.useRage = (this.useCoupon.totallyUsed-0)/(this.useCoupon.totallyGet-0);
+            this.useRage = this.useRage.toFixed(2)
+          }
+          if(this.useCoupon.totallyPayNum === "0" || this.useCoupon.totallyPayNum === null || this.useCoupon.totallyPayMoney === "0" || this.useCoupon.totallyPayMoney === null){
+            this.usePrice = "0";
+          }else{      
+            this.usePrice = (this.useCoupon.totallyPayMoney-0)/(this.useCoupon.totallyPayNum-0);
+            this.usePrice = this.useRage.toFixed(2)
+          }
         }
-
-      })
+      });
     },
     handleStop() {},
     handelEditor() {
@@ -436,7 +456,7 @@ export default {
   padding: 0.1rem;
   li {
     display: inline-block;
-    width: 33%;
+    width: 32%;
     p:nth-child(1) {
       line-height: 0.5rem;
     }

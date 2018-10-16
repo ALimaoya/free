@@ -315,13 +315,13 @@ export default {
           }
           let formData = Object.assign({}, this.form);
           addCoupon(formData).then(res => {
-            if(res.status === "000000000"){
+            if(res.data.status === "000000000"){
               this.$message({
                 message: "新增店铺优惠券成功",
                 type: "success",
                 center: true
                 });
-              this.$router.push('/merchantCenter/marketing/coupons/index')
+              this.$router.push('/merchantCenter/marketing/coupons?type=2')
               // console.log('111')
             }
           });

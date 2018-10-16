@@ -16,7 +16,7 @@
       <el-table-column prop="parValue" label="面额" width="100"></el-table-column>
       <el-table-column prop="productResDto" label="可用商品" >
         <template slot-scope="scope">
-          <div class="goodsWrap">
+          <div class="goodsWrap" >
             <img v-if="scope.row.productResDto.mainImageUrl !== ''|| scope.row.productResDto.mainImageUrl !== undefined" :src="imageDomain + scope.row.productResDto.mainImageUrl"
                                 :onerror="errorImg">
             <img :src="failImg" v-else>
@@ -39,8 +39,18 @@
         </template>
       </el-table-column>
       <el-table-column prop="totalQuantity" label="发行量" width="100"></el-table-column>
-      <el-table-column prop="totallyGet" label="领取量" width="100"></el-table-column>
-      <el-table-column prop="totallyUsed" label="使用量" width="100"></el-table-column>
+      <el-table-column prop="totallyGet" label="领取量" width="100">
+        <template slot-scope="scope">
+          <span v-if="scope.row.totallyGet !== null">{{scope.row.totallyGet}}</span>
+          <span v-else>{{0}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="totallyUsed" label="使用量" width="100">
+        <template slot-scope="scope">
+          <span v-if="scope.row.totallyUsed !== null">{{scope.row.totallyUsed}}</span>
+          <span v-else>{{0}}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="status" label="状态" width="100">
         <template slot-scope="scope">
           <span v-if="scope.row.status === '1' && scope.row.totalQuantity-0 > scope.row.totallyGet-0">领取中</span>
@@ -48,7 +58,7 @@
           <span v-if="scope.row.status === '0'">已结束</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="160">
+      <el-table-column label="操作" width="150">
         <template slot-scope="scope">
           <el-button type="text" @click="getData(scope.row.activityId)">数据</el-button>
           <el-button v-if="scope.row.status === '0'" type="text" @click="overCoupon(scope.row.activityId,'2')">删除</el-button>
@@ -103,13 +113,13 @@
         </li>
         <li>
           <p>累计使用率</p>
-          <p v-if="useCoupon.totallyGet !== null && useCoupon.totallyGet !== 0">{{(useCoupon.totallyUsed-0)/(useCoupon.totallyGet-0).toFixed(2)}}%</p>
-          <p v-else>0</p>
+          <!-- <p v-if="useCoupon.totallyGet !== null && useCoupon.totallyGet !== 0">{{(useCoupon.totallyUsed-0)/(useCoupon.totallyGet-0).toFixed(2)}}%</p> -->
+          <p>{{useRage}}%</p>
         </li>
         <li>
           <p>客单价(元)</p>
-          <p v-if="useCoupon.totallyPayNum !== null && useCoupon.totallyPayNum !== 0">{{(useCoupon.totallyPayMoney-0)/(useCoupon.totallyGet-0).toFixed(2)}}</p>
-          <p v-else>0</p>
+          <!-- <p v-if="useCoupon.totallyPayNum !== null && useCoupon.totallyPayNum !== 0">{{(useCoupon.totallyPayMoney-0)/(useCoupon.totallyGet-0).toFixed(2)}}</p> -->
+          <p>{{usePrice}}</p>  
         </li>
         <li>
           <p>累计支付订单数</p>
@@ -168,10 +178,10 @@
             </el-form-item>
           </el-col>
         </el-form-item>
-        <el-form-item   labelWidth="130px"  label="发行张数：" prop="totalQuantity">
+        <el-form-item   labelWidth="130px"  label="发行张数：" >
           <el-input style="width:50%" type="number" :maxlength="6" size="small" v-model.trim="form.totalQuantity"  :disabled="isOver"></el-input>
         </el-form-item>
-        <el-form-item labelWidth="130px" label="每人限额：" prop="limitQuantity">
+        <el-form-item labelWidth="130px" label="每人限额：" >
           <el-select  size="small" clearable v-model="form.limitQuantity"  filterable :disabled="true">
             <el-option
               v-for="item in limitQuantityList"
@@ -181,8 +191,17 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item   labelWidth="130px"  label="可用商品：" prop="totalQuantity">
-
+        <el-form-item   labelWidth="130px"  label="可用商品：" >
+          <div class="goodsWrap" style="justify-content: left">
+            <img v-if="form.productResDto.mainImageUrl !== ''|| form.productResDto.mainImageUrl !== undefined" :src="imageDomain + form.productResDto.mainImageUrl"
+                                :onerror="errorImg">
+            <img :src="failImg" v-else>
+            <div class="goodsContent">
+              <div class="goodsTitle">{{form.productResDto.productName}}</div>
+              <div class="goodsCode">商品编号：{{form.productResDto.code}}</div>
+              <el-button v-if="form.productNum > 1" type="text">仅展示一个商品，其余商品可前往优惠券列表查看本活动全部商品</el-button>
+            </div>
+          </div>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer" v-if="!isOver">
@@ -248,49 +267,64 @@
 </template>
 
 <script>
-  import userPhoto from '@/assets/404_images/fail.png'
-  import { couponList,getUseCoupon,getOverCoupon ,seeCoupon,updateContent,couponGoodsList} from "@/api/merchant";
-  export default {
-    name: "goods-coupon-list",
-    data() {
-      return {
-        title:"",
-        statusList: [
-          {
-            name: '全部',
-            value: ''
-          },
-          {
-            name: '领取中',
-            value: '1'
-          },
-          {
-            name: '已领完',
-            value: '2'
-          },
-          {
-            name: '已结束',
-            value: '3'
-          }
-        ],
-        listStatus: '',
-        goodsCode:'',
-        tableData: [],
-        imageDomain: process.env.IMAGE_DOMAIN,
-        errorImg: 'this.src="' + userPhoto + '"',
-        failImg: userPhoto,
-        pageSize: 10,
-        currentPage: 1,
-        totalPages: 0,
-        totalElements: 0,
-        mask : false ,
-        bigImg : '',
-        loading : false ,
-        showCouponData: false,
-        useCoupon:{},
-        addCouponData: false,
-        form:{},
-       parValueList: [
+import userPhoto from "@/assets/404_images/fail.png";
+import {
+  couponList,
+  getUseCoupon,
+  getOverCoupon,
+  seeCoupon,
+  updateContent,
+  couponGoodsList
+} from "@/api/merchant";
+export default {
+  name: "goods-coupon-list",
+  data() {
+    return {
+      title: "",
+      statusList: [
+        {
+          name: "全部",
+          value: ""
+        },
+        {
+          name: "领取中",
+          value: "1"
+        },
+        {
+          name: "已领完",
+          value: "2"
+        },
+        {
+          name: "已结束",
+          value: "3"
+        }
+      ],
+      listStatus: "",
+      goodsCode: "",
+      tableData: [],
+      imageDomain: process.env.IMAGE_DOMAIN,
+      errorImg: 'this.src="' + userPhoto + '"',
+      failImg: userPhoto,
+      pageSize: 10,
+      currentPage: 1,
+      totalPages: 0,
+      totalElements: 0,
+      mask: false,
+      bigImg: "",
+      loading: false,
+      showCouponData: false,
+      useCoupon: {},
+      useRage:"",
+      usePrice:"",
+      addCouponData: false,
+      form: {
+        productResDto: {
+          mainImageUrl: "",
+          productName: "",
+          code: ""
+        }
+      },
+      parValueList: [
         { name: "2元", id: "2" },
         { name: "3元", id: "3" },
         { name: "4元", id: "4" },
@@ -315,175 +349,213 @@
         { name: "2张", id: "2" },
         { name: "3张", id: "3" }
       ],
-      isOver:false,
-      goodsList:[],
-      checkVisible:false,
+      isOver: false,
+      goodsList: [],
+      checkVisible: false,
       subTotalElements: 0,
       subTotalPages: 0,
       subCurrentPage: 1,
-      subPageSize: 10,
-      }
+      subPageSize: 10
+    };
+  },
+  mounted() {
+    this.getList();
+  },
+  methods: {
+    getMore(id) {
+      this.checkVisible = true;
+      let formData = new FormData();
+      formData.append("EQ_ybCouponActivity.activityId", id);
+      couponGoodsList(formData).then(res => {
+        if (res.data.status === "000000000") {
+          this.goodsList = res.data.data;
+          this.subTotalPages = res.data.totalPages;
+          this.subTotalElements = res.data.totalElements;
+        }
+        // console.log('res',res)
+      });
     },
-    mounted() {
-      this.getList();
-    },
-    methods: {
-      getMore(id){
-        this.checkVisible = true;
-        let formData = new FormData();
-        formData.append('EQ_ybCouponActivity.activityId',id)
-        couponGoodsList(formData).then(res =>{
-          if(res.data.status === "000000000"){
-            this.goodsList = res.data.data;
-            this.subTotalPages = res.data.totalPages;
-            this.subTotalElements = res.data.totalElements
-          }
-          // console.log('res',res)
-        })
-      },
-      // 增加优惠券数量
-    amendCoupon(id,num){
-      seeCoupon(id).then(res =>{
-        if(res.data.status === "000000000"){
+    // 增加优惠券数量
+    amendCoupon(id, num) {
+      seeCoupon(id).then(res => {
+        if (res.data.status === "000000000") {
           this.title = "增加优惠券";
           this.isOver = false;
           this.addCouponData = true;
-          this.form =res.data.data;
+          this.form = res.data.data;
           this.totalQuantity = res.data.data.totalQuantity;
         }
-      })
+      });
       // updateContent(id,200).then(res =>{
       //   // if(res.data.status === "")
       // })
     },
-    yesAddCouponData(){
-      if(this.totalQuantity > this.form.totalQuantity && this.totalQuantity === this.form.totalQuantity){
+    yesAddCouponData() {
+      if (
+        this.totalQuantity > this.form.totalQuantity ||
+        this.totalQuantity === this.form.totalQuantity
+      ) {
         this.$message({
-          message: "优惠券数必须大于原始优惠券数",
+          message: "新增优惠券数必须大于原始优惠券数",
           type: "error",
           center: true
         });
-      }else{
-        updateContent(this.form.activityId,this.form.totalQuantity).then(res =>{
-          if(res.data.status === "000000000"){
-            this.$message({
-              message: "优惠券增加成功",
-              type: "success",
-              center: true
-            });
-            this.addCouponData = false;
-            this.getList();
+        this.form.totalQuantity = this.totalQuantity;
+        return false;
+      } else {
+        updateContent(this.form.activityId, this.form.totalQuantity).then(
+          res => {
+            if (res.data.status === "000000000") {
+              this.$message({
+                message: "优惠券增加成功",
+                type: "success",
+                center: true
+              });
+              this.addCouponData = false;
+              this.getList();
+            }
           }
-        })
+        );
       }
     },
-       // 查看优惠券信息
-    seeCouponData(id){
-      seeCoupon(id).then(res =>{
-        if(res.data.status === "000000000"){
+    // 查看优惠券信息
+    seeCouponData(id) {
+      seeCoupon(id).then(res => {
+        if (res.data.status === "000000000") {
           this.title = "查看优惠券";
           this.isOver = true;
           this.addCouponData = true;
-          this.form =res.data.data;
+          this.form = res.data.data;
         }
-      })
+      });
     },
     // 修改优惠券状态
-    overCoupon(id,status){
-      if(status === "1"){
-         status = "0"
-      }else if(status === "2") {
-        status = "2"
+    overCoupon(id, status) {
+      if (status === "1") {
+        status = "0";
+        getOverCoupon(id, status).then(res => {
+          if (res.data.status === "000000000") {
+            this.$message({
+              message: "此优惠券活动已结束",
+              type: "success",
+              center: true
+            });
+            this.getList();
+          }
+        });
+      } else if (status === "2") {
+        status = "2";
+        getOverCoupon(id, status).then(res => {
+          if (res.data.status === "000000000") {
+            this.$message({
+              message: "此优惠券活动已删除",
+              type: "success",
+              center: true
+            });
+            this.getList();
+          }
+        });
       }
-      getOverCoupon(id,status).then(res =>{
-        if(res.data.status === "000000000"){
+      getOverCoupon(id, status).then(res => {
+        if (res.data.status === "000000000") {
           this.getList();
         }
-
-      })
+      });
     },
-      getList() {
-        let formData = new FormData();
-        formData.append("EQ_type", '2');
-        formData.append("EQ_activityType", this.listStatus);
-        formData.append("EQ_productCode", this.goodsCode);
-        formData.append('currentPage',this.currentPage);
-        formData.append('pageSize',this.pageSize);
-        couponList(formData).then(res => {
-          if(res.data.status === "000000000"){
-          this.tableData = res.data.data
+    getList() {
+      let formData = new FormData();
+      formData.append("EQ_type", "2");
+      formData.append("EQ_activityType", this.listStatus);
+      formData.append("EQ_productCode", this.goodsCode);
+      formData.append("currentPage", this.currentPage);
+      formData.append("pageSize", this.pageSize);
+      couponList(formData).then(res => {
+        if (res.data.status === "000000000") {
+          this.tableData = res.data.data;
           this.totalPages = res.data.totalPages;
-          this.totalElements = res.data.totalElements
+          this.totalElements = res.data.totalElements;
         }
-        });
-        // this.tableData =
-      },
-
-      getData(val) {
-      this.showCouponData = true;
-      getUseCoupon(val).then( res =>{
-        if(res.data.status === "000000000"){
-          this.useCoupon = res.data.data
-          console.log('res',this.useCoupon)
-        }
-
-      })
+      });
     },
-      handleSizeChange(val) {
-        this.pageSize = val ;
-        this.getList();
-      },
-      handleCurrentChange(val) {
-        console.log('val',val)
-        this.currentPage = val ;
-        this.getList();
-      },
-      handleSubSizeChange(val) {
-      this.subPageSize = val;
 
+    getData(val) {
+      this.showCouponData = true;
+      getUseCoupon(val).then(res => {
+        if (res.data.status === "000000000") {
+          this.useCoupon = res.data.data;
+          if(this.useCoupon.totallyGet === "0" || this.useCoupon.totallyGet === null || this.useCoupon.totallyUsed === "0" || this.useCoupon.totallyUsed === null){
+            this.useRage = "0";
+          }else{
+            this.useRage = (this.useCoupon.totallyUsed-0)/(this.useCoupon.totallyGet-0);
+            this.useRage = this.useRage.toFixed(2)
+          }
+          if(this.useCoupon.totallyPayNum === "0" || this.useCoupon.totallyPayNum === null || this.useCoupon.totallyPayMoney === "0" || this.useCoupon.totallyPayMoney === null){
+            this.usePrice = "0";
+          }else{
+            this.usePrice = (this.useCoupon.totallyPayMoney-0)/(this.useCoupon.totallyPayNum-0);
+            this.usePrice = this.useRage.toFixed(2)
+          }
+        }
+      });
+    },
+    handleSizeChange(val) {
+      this.pageSize = val;
+      this.getList();
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.getList();
+    },
+    handleSubSizeChange(val) {
+      this.subPageSize = val;
     },
     handleSubCurrentChange(val) {
       this.subCurrentPage = val;
     }
-    }
   }
+};
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  @import "src/styles/table.scss" ;
+@import "src/styles/table.scss";
 
-  .search{
-    margin-bottom: 0.2rem ;
-    .el-select,.el-input{
-      margin-right: 0.4rem;
-    }
-    .el-input{
-      width: 3rem;
-    }
+.search {
+  margin-bottom: 0.2rem;
+  .el-select,
+  .el-input {
+    margin-right: 0.4rem;
   }
-  .el-table{
-    width: 100%!important;
-    margin: 0;
-    .goodsWrap{
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      img{
-        width: 1rem ;
-        height: 1rem ;
-        margin-right: 0.2rem;
-      }
-      .goodsContent{
-        display: flex;
-        flex-direction: column;
-        color : #333;
-        font-size : 0.14rem;
-        line-height: 0.3rem;
-      }
-    }
+  .el-input {
+    width: 3rem;
   }
-  .CouponTop {
+}
+.el-table {
+  width: 100% !important;
+  margin: 0;
+}
+// .el-table {
+// width: 100% !important;
+// margin: 0;
+.goodsWrap {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  img {
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.2rem;
+  }
+  .goodsContent {
+    display: flex;
+    flex-direction: column;
+    color: #333;
+    font-size: 0.14rem;
+    line-height: 0.3rem;
+  }
+}
+// }
+.CouponTop {
   width: 90%;
   background-color: #f2f1f1;
   margin: 0.1rem auto;
@@ -521,7 +593,7 @@
   padding: 0.1rem;
   li {
     display: inline-block;
-    width: 33%;
+    width: 32%;
     p:nth-child(1) {
       line-height: 0.5rem;
     }
