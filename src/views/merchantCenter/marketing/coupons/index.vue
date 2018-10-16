@@ -43,11 +43,12 @@
         },
         mounted() {
           let type = this.$route.query.type;
+          console.log(typeof (type))
+
           if (typeof (type) !== undefined) {
             this.getList(type*1);
           } else {
             this.getList(0);
-
           }
         },
         methods: {

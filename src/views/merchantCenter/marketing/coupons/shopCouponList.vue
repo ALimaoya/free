@@ -30,12 +30,12 @@
         </template>
       </el-table-column>
       <el-table-column prop="totalQuantity" label="发行量" width="100"></el-table-column>
-      <el-table-column prop="limitQuantity" label="领取量" width="100"></el-table-column>
-      <el-table-column prop="useDays" label="使用量" width="100"></el-table-column>
+      <el-table-column prop="totallyGet" label="领取量" width="100"></el-table-column>
+      <el-table-column prop="totallyUsed" label="使用量" width="100"></el-table-column>
       <el-table-column prop="status" label="状态" width="100">
         <template slot-scope="scope">
-          <span v-if="scope.row.status === '1' && scope.row.totalQuantity-0 > scope.row.limitQuantity-0">领取中</span>
-          <span v-if="scope.row.status === '1' && scope.row.totalQuantity === scope.row.limitQuantity">已领完</span>
+          <span v-if="scope.row.status === '1' && scope.row.totalQuantity-0 > scope.row.totallyGet-0">领取中</span>
+          <span v-else-if="scope.row.status === '1' && (scope.row.totalQuantity === scope.row.totallyGet)">已领完</span>
           <span v-if="scope.row.status === '0'">已结束</span>
         </template>
       </el-table-column>
@@ -333,7 +333,7 @@ export default {
         if(res.data.status === "000000000"){
           this.getList();
         }
-        
+
       })
     },
     getList() {
