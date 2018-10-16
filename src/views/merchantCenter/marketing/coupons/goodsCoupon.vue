@@ -11,7 +11,7 @@
             <el-form-item   labelWidth="130px"  label="优惠券名称：" prop="name">
                 <el-input class="inputInfo" :maxlength="15" size="small" v-model.trim="form.name" placeholder="请输入15个字以内的优惠券名称"></el-input>
             </el-form-item>
-            <el-form-item  labelWidth="130px"  label="使用有效期：" >
+            <el-form-item  labelWidth="130px"  label="使用有效期：" prop="activityStartTime">
               <el-col :span="10">
                 <el-form-item class="date-label" prop="activityStartTime">
                 <el-date-picker  value-format="yyyy-MM-dd 00:00:00" size="small"
@@ -50,7 +50,6 @@
                     </li>
                     <el-button type="text" class="goodsCompile" @click="editorProduct">编辑</el-button>
                     <el-button type="text" class="goodsCompile" @click="checkProduct" v-if="this.goodsList.length>3">查看更多</el-button>
-
                   </ul>
                 </div>
               <span class="tips_warn" v-if="noProduct">请选择优惠券可用商品</span>
@@ -206,7 +205,7 @@
           <span class="totalItems">共{{ subTotalPages }}页，{{ subTotalElements }}条记录</span>
         </div>
         <div slot="footer" class="dialog-footer" >
-          <el-button type="text" @click="checkVisible = false">关闭</el-button>
+          <el-button type="info" size="small" @click="checkVisible = false">关闭</el-button>
         </div>
       </el-dialog>
     </div>

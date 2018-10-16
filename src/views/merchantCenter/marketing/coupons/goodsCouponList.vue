@@ -1,20 +1,20 @@
 <template>
   <div class="goods-coupon-list tableBox" v-loading="loading"  element-loading-text="拼命加载中">
     <div class="search">
-      <el-select size="mini" v-model="listStatus" clearable>
+      <el-select size="mini" v-model="listStatus" clearable >
         <el-option v-for="item in statusList"
                    :key="item.value"
                    :label="item.name"
                    :value="item.value">
         </el-option>
       </el-select>
-      <el-input  v-model.trim="goodsCode" :maxlength="20" placeholder="请输入商品编号" size="mini" clearable></el-input>
-      <el-button type="primary" round size="mini" @click="getList">搜索</el-button>
+      <el-input  v-model.trim="goodsCode" :maxlength="20" placeholder="请输入商品编号" size="mini" clearable ></el-input>
+      <el-button type="primary" round size="mini" @click="currentPage =1;getList()">搜索</el-button>
     </div>
     <el-table :data="tableData" border>
-      <el-table-column prop="name" label="优惠券名称" width="120"></el-table-column>
-      <el-table-column prop="parValue" label="面额" width="100"></el-table-column>
-      <el-table-column prop="productResDto" label="可用商品" >
+      <el-table-column prop="name" label="优惠券名称" ></el-table-column>
+      <el-table-column prop="parValue" label="面额（元）" width="80"></el-table-column>
+      <el-table-column prop="productResDto" label="可用商品" width="256">
         <template slot-scope="scope">
           <div class="goodsWrap" >
             <img v-if="scope.row.productResDto.mainImageUrl !== ''|| scope.row.productResDto.mainImageUrl !== undefined" :src="imageDomain + scope.row.productResDto.mainImageUrl"
@@ -33,32 +33,32 @@
           <span v-if="scope.row.channel === '1'">商品公开券</span>
         </template>
       </el-table-column>
-      <el-table-column label="活动时间" >
+      <el-table-column label="活动时间" width="182">
         <template slot-scope="scope">
-          <span>{{scope.row.activityStartTime}}</span>~<span>{{scope.row.activityEndTime}}</span>
+          <span>{{scope.row.activityStartTime.split(' ')[0]}}</span>~<span>{{scope.row.activityEndTime.split(' ')[0]}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="totalQuantity" label="发行量" width="100"></el-table-column>
-      <el-table-column prop="totallyGet" label="领取量" width="100">
+      <el-table-column prop="totalQuantity" label="发行量" width="80"></el-table-column>
+      <el-table-column prop="totallyGet" label="领取量" width="80">
         <template slot-scope="scope">
           <span v-if="scope.row.totallyGet !== null">{{scope.row.totallyGet}}</span>
-          <span v-else>{{0}}</span>
+          <span v-else>0</span>
         </template>
       </el-table-column>
-      <el-table-column prop="totallyUsed" label="使用量" width="100">
+      <el-table-column prop="totallyUsed" label="使用量" width="80">
         <template slot-scope="scope">
           <span v-if="scope.row.totallyUsed !== null">{{scope.row.totallyUsed}}</span>
-          <span v-else>{{0}}</span>
+          <span v-else>0</span>
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="状态" width="100">
+      <el-table-column label="状态" width="70">
         <template slot-scope="scope">
-          <span v-if="scope.row.status === '1' && scope.row.totalQuantity-0 > scope.row.totallyGet-0">领取中</span>
-          <span v-if="scope.row.status === '1' && scope.row.totalQuantity === scope.row.totallyGet">已领完</span>
-          <span v-if="scope.row.status === '0'">已结束</span>
+          <el-button type="success" size="mini" class="status_btn" v-if="scope.row.status === '1' && scope.row.totalQuantity-0 > scope.row.totallyGet-0">领取中</el-button>
+          <el-button type="danger" size="mini" class="status_btn" v-if="scope.row.status === '1' && scope.row.totalQuantity === scope.row.totallyGet">已领完</el-button>
+          <el-button type="info" size="mini" class="status_btn" v-if="scope.row.status === '0'">已结束</el-button>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="150">
+      <el-table-column label="操作" >
         <template slot-scope="scope">
           <el-button type="text" @click="getData(scope.row.activityId)">数据</el-button>
           <el-button v-if="scope.row.status === '0'" type="text" @click="overCoupon(scope.row.activityId,'2')">删除</el-button>
@@ -87,7 +87,7 @@
     <el-dialog
       title="优惠券信息"
       :visible.sync="showCouponData"
-      width="60%"
+      width="50%"
       center>
       <div class="CouponTop">
         <div class="topLeft">
@@ -96,7 +96,9 @@
         </div>
         <div class="topright">
           <p>{{useCoupon.name}}</p>
-          <p><span>发行{{useCoupon.totalQuantity}}张</span>|<span>限领{{useCoupon.limitQuantity}}张/人</span>|<span>推广渠道：<span v-if="useCoupon.channel === '1'">店铺公开券</span><span v-if="useCoupon.channel === '2'">店铺收藏券</span></span></p>
+          <p><span>发行{{useCoupon.totalQuantity}}张</span> | <span>限领{{useCoupon.limitQuantity}}张/人</span> |
+             <span>推广渠道：<span v-if="useCoupon.channel === '1'">店铺公开券</span>
+             <span v-if="useCoupon.channel === '2'">店铺收藏券</span></span></p>
           <p><span>{{useCoupon.activityStartTime}}</span> ~ <span>{{useCoupon.activityEndTime}}</span> 期间内有效</p>
         </div>
       </div>
@@ -119,7 +121,7 @@
         <li>
           <p>客单价(元)</p>
           <!-- <p v-if="useCoupon.totallyPayNum !== null && useCoupon.totallyPayNum !== 0">{{(useCoupon.totallyPayMoney-0)/(useCoupon.totallyGet-0).toFixed(2)}}</p> -->
-          <p>{{usePrice}}</p>  
+          <p>{{usePrice}}</p>
         </li>
         <li>
           <p>累计支付订单数</p>
@@ -133,7 +135,7 @@
         </li>
       </ul>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="showCouponData = false">确 定</el-button>
+        <el-button type="primary" @click="showCouponData = false">知道了</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -144,52 +146,42 @@
       <el-form :model="form" ref="tableData" label-position="right">
         <el-form-item   labelWidth="130px"  label="优惠券名称：" prop="name">
           <el-input class="inputInfo" size="small" v-model.trim="form.name" :disabled="true" style="width:50%"></el-input>
-          <span>注：该名称仅商家可见</span>
+          <span class="tips">注：该名称仅商家可见</span>
         </el-form-item>
-        <el-form-item  labelWidth="130px" label="面额：" prop="parValue">
-          <el-select  size="small" clearable v-model="form.parValue"  :disabled="true">
-            <el-option
-              v-for="item in parValueList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
+        <el-form-item  labelWidth="130px" label="面额（元）：" prop="parValue">
+          <el-col :span="8">
+            <el-input  size="small" v-model="form.parValue"  :disabled="true"></el-input>
+          </el-col>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="使用条件：" prop="needAmount">
-          <span>满 </span><el-input style="width:50%" type="number" :maxlength="10" size="small" v-model.trim="form.needAmount" :disabled="true"></el-input><span> 元可用</span>
+          <el-col :span="12">
+            <span>满 </span><el-input style="width:50%" type="number" :maxlength="10" size="small" v-model.trim="form.needAmount" :disabled="true"></el-input><span> 元可用</span>
+          </el-col>
         </el-form-item>
         <el-form-item  labelWidth="130px"  label="发行活动时间：" >
-          <el-col :span="8">
+          <el-col :span="10">
             <el-form-item prop="activityStartTime" style="margin: 0;">
-              <el-date-picker  value-format="yyyy-MM-dd HH:mm:ss" size="small"
-                    v-model="form.activityStartTime" clearable type="datetime" :disabled="true" >
-              </el-date-picker>
+              <el-input size="small" v-model="form.activityStartTime" :disabled="true" ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="1" style="text-align:center">
+          <el-col :span="2" style="text-align:center">
             <span> 至 </span>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="10">
             <el-form-item prop="activityEndTime" style="margin: 0;">
-              <el-date-picker size="small" v-model="form.activityEndTime"  clearable
-                              type="datetime"  value-format="yyyy-MM-dd HH:mm:ss" :disabled="true" >
-              </el-date-picker>
+              <el-input size="small" v-model="form.activityEndTime" :disabled="true" ></el-input>
             </el-form-item>
           </el-col>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="发行张数：" >
-          <el-input style="width:50%" type="number" :maxlength="6" size="small" v-model.trim="form.totalQuantity"  :disabled="isOver"></el-input>
+          <el-col :span="8">
+            <el-input  type="number" :maxlength="6" size="small" v-model.trim="form.totalQuantity"  :disabled="isOver"></el-input>
+          </el-col>
         </el-form-item>
         <el-form-item labelWidth="130px" label="每人限额：" >
-          <el-select  size="small" clearable v-model="form.limitQuantity"  filterable :disabled="true">
-            <el-option
-              v-for="item in limitQuantityList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
+          <el-col :span="8">
+            <el-input  size="small"  v-model="form.limitQuantity"  :disabled="true"></el-input>
+          </el-col>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="可用商品：" >
           <div class="goodsWrap" style="justify-content: left">
@@ -206,10 +198,10 @@
       </el-form>
       <span slot="footer" class="dialog-footer" v-if="!isOver">
         <el-button type="primary" @click="yesAddCouponData">发 布</el-button>
-        <el-button  @click="addCouponData = false">取消</el-button>
+        <el-button plain @click="addCouponData = false">取消</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="查看已选择优惠券" :visible.sync="checkVisible" width="70%" center :show-close="false">
+    <el-dialog title="查看优惠券可用商品" :visible.sync="checkVisible" width="70%" center :show-close="false">
       <el-table
         :data="goodsList"
         tooltip-effect="dark"
@@ -232,17 +224,17 @@
         </el-table-column>
         <el-table-column
           prop="code"
-          label="商品编码："
+          label="商品编码"
           width="140">
         </el-table-column>
         <el-table-column
-          prop="price"
-          label="商品库存："
+          prop="quantity"
+          label="商品库存"
           width="120">
         </el-table-column>
         <el-table-column
           prop="price"
-          label="商品价格："
+          label="商品价格（元）"
           width="100">
         </el-table-column>
       </el-table>
@@ -260,7 +252,7 @@
         <span class="totalItems">共{{ subTotalPages }}页，{{ subTotalElements }}条记录</span>
       </div>
       <div slot="footer" class="dialog-footer" >
-        <el-button type="text" @click="checkVisible = false">关闭</el-button>
+        <el-button type="info" @click="checkVisible = false">关闭</el-button>
       </div>
     </el-dialog>
   </div>
@@ -324,38 +316,14 @@ export default {
           code: ""
         }
       },
-      parValueList: [
-        { name: "2元", id: "2" },
-        { name: "3元", id: "3" },
-        { name: "4元", id: "4" },
-        { name: "5元", id: "5" },
-        { name: "6元", id: "6" },
-        { name: "7元", id: "7" },
-        { name: "8元", id: "8" },
-        { name: "9元", id: "9" },
-        { name: "10元", id: "10" },
-        { name: "15元", id: "15" },
-        { name: "20元", id: "20" },
-        { name: "30元", id: "30" },
-        { name: "40元", id: "40" },
-        { name: "50元", id: "50" },
-        { name: "100元", id: "100" },
-        { name: "200元", id: "200" },
-        { name: "300元", id: "300" },
-        { name: "999元", id: "999" }
-      ],
-      limitQuantityList: [
-        { name: "1张", id: "1" },
-        { name: "2张", id: "2" },
-        { name: "3张", id: "3" }
-      ],
       isOver: false,
       goodsList: [],
       checkVisible: false,
       subTotalElements: 0,
       subTotalPages: 0,
       subCurrentPage: 1,
-      subPageSize: 10
+      subPageSize: 10,
+      goodsId: ''
     };
   },
   mounted() {
@@ -364,8 +332,15 @@ export default {
   methods: {
     getMore(id) {
       this.checkVisible = true;
+      this.goodsId = id ;
+      this.moreList()
+    },
+    moreList(){
       let formData = new FormData();
-      formData.append("EQ_ybCouponActivity.activityId", id);
+      formData.append("EQ_ybCouponActivity.activityId", this.goodsId);
+      formData.append("currentPage", this.subCurrentPage);
+      formData.append("pageSize", this.subPageSize);
+
       couponGoodsList(formData).then(res => {
         if (res.data.status === "000000000") {
           this.goodsList = res.data.data;
@@ -483,17 +458,18 @@ export default {
       getUseCoupon(val).then(res => {
         if (res.data.status === "000000000") {
           this.useCoupon = res.data.data;
-          if(this.useCoupon.totallyGet === "0" || this.useCoupon.totallyGet === null || this.useCoupon.totallyUsed === "0" || this.useCoupon.totallyUsed === null){
+          if(this.useCoupon.totallyGet !== 0 && this.useCoupon.totallyGet !== null && this.useCoupon.totallyUsed !== 0 && this.useCoupon.totallyUsed !== null){
+            this.useRage = ((this.useCoupon.totallyUsed-0)/(this.useCoupon.totallyGet-0)).toFixed(2);
+
+          }else{
             this.useRage = "0";
-          }else{
-            this.useRage = (this.useCoupon.totallyUsed-0)/(this.useCoupon.totallyGet-0);
-            this.useRage = this.useRage.toFixed(2)
+
           }
-          if(this.useCoupon.totallyPayNum === "0" || this.useCoupon.totallyPayNum === null || this.useCoupon.totallyPayMoney === "0" || this.useCoupon.totallyPayMoney === null){
-            this.usePrice = "0";
+          if(this.useCoupon.totallyPayNum !== 0 && this.useCoupon.totallyPayNum !== null && this.useCoupon.totallyPayMoney !== 0 && this.useCoupon.totallyPayMoney !== null){
+            this.usePrice = ((this.useCoupon.totallyPayMoney-0)/(this.useCoupon.totallyPayNum-0)).toFixed(2);
           }else{
-            this.usePrice = (this.useCoupon.totallyPayMoney-0)/(this.useCoupon.totallyPayNum-0);
-            this.usePrice = this.useRage.toFixed(2)
+            this.usePrice = "0";
+
           }
         }
       });
@@ -508,9 +484,12 @@ export default {
     },
     handleSubSizeChange(val) {
       this.subPageSize = val;
+      this.moreList();
     },
     handleSubCurrentChange(val) {
       this.subCurrentPage = val;
+      this.moreList();
+
     }
   }
 };
@@ -532,6 +511,9 @@ export default {
 .el-table {
   width: 100% !important;
   margin: 0;
+  .status_btn{
+    padding: 0.1rem 0.15rem!important;
+  }
 }
 // .el-table {
 // width: 100% !important;
@@ -599,7 +581,7 @@ export default {
     }
     p:nth-child(2) {
       // line-height: 0.5rem;
-      font-size: 0.4rem;
+      font-size: 0.34rem;
     }
     p {
       display: block !important;
@@ -666,5 +648,9 @@ export default {
       height: 100%;
     }
   }
+}
+.tips{
+  font-size: 0.14rem ;
+  color: #999;
 }
 </style>

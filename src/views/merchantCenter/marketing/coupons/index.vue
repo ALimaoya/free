@@ -43,11 +43,11 @@ export default {
   },
   mounted() {
     let type = this.$route.query.type;
-    console.log(typeof type);
 
-    if (typeof type !== undefined) {
+    if (type !== undefined) {
       this.getList(type * 1);
     } else {
+
       this.getList(0);
     }
   },
@@ -68,7 +68,6 @@ export default {
       }
     },
     coupons(res) {
-      console.log("res", res);
       this.tabView = res;
     }
   }
