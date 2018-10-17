@@ -134,9 +134,9 @@
       <el-form-item labelWidth="130px" label="金额：">
         <table class="tableC">
           <tr class="thColor">
-            <th>订单总价（元）</th>
-            <th>优惠信息</th>
-            <th>支付金额（元）</th>
+            <th>订单总金额（元）</th>
+            <th>优惠券</th>
+            <th>实付金额（元）</th>
             <th>下单时间</th>
           </tr>
           <tr class="tbColor">

@@ -26,7 +26,7 @@
       </el-table-column>
       <el-table-column label="活动时间" width="182">
         <template slot-scope="scope">
-        <span>{{scope.row.activityStartTime.split(' ')[0]}}</span>~<span>{{scope.row.activityEndTime.split(' ')[0]}}</span>
+        <span>{{scope.row.activityStartTime}}<br/> ~<br/>{{scope.row.activityEndTime}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="totalQuantity" label="发行量" width="80"></el-table-column>
@@ -42,7 +42,7 @@
           <span v-else>{{0}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="状态" width="70">
+      <el-table-column prop="status" label="状态" width="80">
         <template slot-scope="scope">
           <el-button type="success" size="mini" class="status_btn" v-if="scope.row.status === '1' && scope.row.totalQuantity-0 > scope.row.totallyGet-0">领取中</el-button>
           <el-button type="danger" size="mini" class="status_btn"v-else-if="scope.row.status === '1' && (scope.row.totalQuantity === scope.row.totallyGet)">已领完</el-button>
@@ -71,10 +71,6 @@
       </el-pagination>
       <span class="totalItems">共{{ totalPages }}页，{{totalElements}}条记录</span>
     </div>
-    <div v-if="mask" @click="close" class="mask">
-      <img :src=" imageDomain + bigImg"  />
-    </div>
-
     <el-dialog
       title="优惠券信息"
       :visible.sync="showCouponData"
@@ -193,10 +189,8 @@ import {
   seeCoupon,
   updateContent
 } from "@/api/merchant";
-import ElCollapse from "element-ui/packages/collapse/src/collapse";
 
 export default {
-  components: {ElCollapse},
   name: "shop-coupon-list",
   data() {
     return {
@@ -230,8 +224,6 @@ export default {
       currentPage: 1,
       totalPages: 0,
       totalElements: 0,
-      mask: false,
-      bigImg: "",
       loading: false,
       showCouponData: false,
       useCoupon: {},
@@ -396,18 +388,25 @@ export default {
   background-color: #f2f1f1;
   margin: 0.1rem auto;
   padding: 0.1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   .topLeft {
     width: 22%;
-    margin-right: 1%;
-    display: inline-block;
-    padding-left: 0.5rem;
-    text-align: center;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.2rem;
+
     p:nth-child(1) {
-      font-size: 0.4rem;
+      font-size: 0.34rem;
       color: red;
     }
     p:nth-child(2) {
-      font-size: 0.15rem;
+      font-size: 0.16rem;
       color: red;
     }
     p {
@@ -415,14 +414,17 @@ export default {
     }
   }
   .topright {
-    display: inline-block;
-    width: 75%;
+    flex: 1;
+    flex-direction: column;
+    /*display: inline-block;*/
+    /*width: 75%;*/
     p {
       margin-bottom: 0;
       display: block;
     }
   }
 }
+
 .CouponCenter {
   width: 90%;
   background-color: #f2f1f1;

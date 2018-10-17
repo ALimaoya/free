@@ -14,7 +14,9 @@
         <ul class="category">
             <li v-for="(item,index) in couponList" :key="index" :class="target === index ?'active':''" @click="getList(index)">{{ item.name }}</li>
         </ul>
+      <keep-alive>
         <component  :is="tabView" @getContent="coupons"></component>
+      </keep-alive>
     </div>
 </template>
 

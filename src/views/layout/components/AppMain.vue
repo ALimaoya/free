@@ -1,13 +1,16 @@
 <template>
-  <section class="app-main" >
-    <transition  name="fade" mode="out-in">
+    <section class="app-main" >
+
+      <transition  name="fade" mode="out-in">
        <router-view class="content" :key="key"></router-view>
 
       <!--<router-view></router-view>-->
     </transition>
-    <back-top :visibilityHeight="300" :backPosition="50"></back-top>
+
+      <back-top :visibilityHeight="300" :backPosition="50"></back-top>
 
   </section>
+
 </template>
 
 <script>

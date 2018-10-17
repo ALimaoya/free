@@ -11,7 +11,7 @@
             <el-form-item   labelWidth="130px"  label="优惠券名称：" prop="name">
                 <el-input class="inputInfo" :maxlength="15" size="small" v-model.trim="form.name" placeholder="请输入15个字以内的优惠券名称"></el-input>
             </el-form-item>
-            <el-form-item  labelWidth="130px"  label="使用有效期：" prop="activityStartTime">
+            <el-form-item  labelWidth="130px"  label="使用有效期：" required>
               <el-col :span="10">
                 <el-form-item class="date-label" prop="activityStartTime">
                 <el-date-picker  value-format="yyyy-MM-dd 00:00:00" size="small"
@@ -33,7 +33,7 @@
           <el-form-item labelWidth="130px" prop="useDays">
             <p v-if="form.useDays!== ''">活动持续{{form.useDays}}天</p>
           </el-form-item>
-            <el-form-item   labelWidth="130px"  label="可用商品：" prop="productIds">
+            <el-form-item   labelWidth="130px"  label="可用商品：" required>
                 <el-button v-if="showList.length === 0" size="small" @click="showDialogVisible">+添加商品</el-button>
                 <div v-else>
                   <ul class="shopList">
@@ -275,6 +275,7 @@ export default {
         name: [
           { required: true, trigger: "blur", validator: validName }
         ],
+
         activityStartTime: [
           {
             required: true ,
@@ -415,9 +416,11 @@ export default {
           center: true
         });
       } else {
-        for(let i=0; i<this.goodsList.length-1; i++){
-          this.form.productIds.push(this.goodsList[i].id)
-        }
+        this.goodsList.map( i => {
+          this.form.productIds.push(i.id)
+
+        });
+
         if(this.goodsList.length>3){
           this.showList = this.goodsList.slice(0,3);
         }else{
@@ -460,6 +463,8 @@ export default {
             if (this.goodsList.length === 0) {
               this.noProduct = true ;
               return false ;
+            } else{
+              this.noProduct = false ;
             }
             if (parseInt(this.form.parValue) > this.form.needAmount) {
 
@@ -505,9 +510,8 @@ export default {
     },
     // 计算活动有多少天
     getActivityEndTime() {
-
-      if(this.form.activityEndTime !== '' && this.form.activityEndTime !== undefined &&
-        this.form.activityStartTime !== '' && this.form.activityStartTime !== undefined ){
+      if(this.form.activityEndTime !== '' && this.form.activityEndTime !== undefined && this.form.activityEndTime !== null &&
+        this.form.activityStartTime !== '' && this.form.activityStartTime !== undefined && this.form.activityStartTime !== null ){
 
       if (this.form.activityEndTime < this.form.activityStartTime) {
         this.$message({
@@ -519,9 +523,7 @@ export default {
         this.form.activityStartTime = "";
         return false;
       }
-      let start = new Date(
-        this.form.activityStartTime.replace(/-/g, "/")
-      ).getTime();
+      let start = new Date(this.form.activityStartTime.replace(/-/g, "/")).getTime();
       let end = new Date(this.form.activityEndTime.replace(/-/g, "/")).getTime();
       this.form.useDays = Math.ceil((end - start) / 24 / 60 / 60 / 1000);
 

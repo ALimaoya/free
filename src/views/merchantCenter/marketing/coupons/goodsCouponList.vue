@@ -17,8 +17,8 @@
       <el-table-column prop="productResDto" label="可用商品" width="256">
         <template slot-scope="scope">
           <div class="goodsWrap" >
-            <img v-if="scope.row.productResDto.mainImageUrl !== ''|| scope.row.productResDto.mainImageUrl !== undefined" :src="imageDomain + scope.row.productResDto.mainImageUrl"
-                                :onerror="errorImg">
+            <img v-if="scope.row.productResDto.mainImageUrl !== ''&& scope.row.productResDto.mainImageUrl !== undefined &&
+            scope.row.productResDto.mainImageUrl !== null" :src="imageDomain + scope.row.productResDto.mainImageUrl" :onerror="errorImg">
             <img :src="failImg" v-else>
             <div class="goodsContent">
               <div class="goodsTitle">{{scope.row.productResDto.productName}}</div>
@@ -35,7 +35,7 @@
       </el-table-column>
       <el-table-column label="活动时间" width="182">
         <template slot-scope="scope">
-          <span>{{scope.row.activityStartTime.split(' ')[0]}}</span>~<span>{{scope.row.activityEndTime.split(' ')[0]}}</span>
+          <span>{{scope.row.activityStartTime}}<br/> ~<br/>{{scope.row.activityEndTime}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="totalQuantity" label="发行量" width="80"></el-table-column>
@@ -51,7 +51,7 @@
           <span v-else>0</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" width="70">
+      <el-table-column label="状态" width="80">
         <template slot-scope="scope">
           <el-button type="success" size="mini" class="status_btn" v-if="scope.row.status === '1' && scope.row.totalQuantity-0 > scope.row.totallyGet-0">领取中</el-button>
           <el-button type="danger" size="mini" class="status_btn" v-if="scope.row.status === '1' && scope.row.totalQuantity === scope.row.totallyGet">已领完</el-button>
@@ -81,9 +81,9 @@
       </el-pagination>
       <span class="totalItems">共{{ totalPages }}页，{{totalElements}}条记录</span>
     </div>
-    <div v-if="mask" @click="close" class="mask">
-      <img :src=" imageDomain + bigImg"  />
-    </div>
+    <!--<div v-if="mask" @click="close" class="mask">-->
+      <!--<img :src=" imageDomain + bigImg"  />-->
+    <!--</div>-->
     <el-dialog
       title="优惠券信息"
       :visible.sync="showCouponData"
@@ -191,7 +191,7 @@
             <div class="goodsContent">
               <div class="goodsTitle">{{form.productResDto.productName}}</div>
               <div class="goodsCode">商品编号：{{form.productResDto.code}}</div>
-              <el-button v-if="form.productNum > 1" type="text">仅展示一个商品，其余商品可前往优惠券列表查看本活动全部商品</el-button>
+              <span v-if="form.productNum > 1" class="tips">仅展示一个商品，其余商品可前往优惠券列表查看本活动全部商品</span>
             </div>
           </div>
         </el-form-item>
@@ -301,8 +301,8 @@ export default {
       currentPage: 1,
       totalPages: 0,
       totalElements: 0,
-      mask: false,
-      bigImg: "",
+      // mask: false,
+      // bigImg: "",
       loading: false,
       showCouponData: false,
       useCoupon: {},
@@ -530,6 +530,7 @@ export default {
   }
   .goodsContent {
     display: flex;
+    flex: 1;
     flex-direction: column;
     color: #333;
     font-size: 0.14rem;
@@ -542,17 +543,25 @@ export default {
   background-color: #f2f1f1;
   margin: 0.1rem auto;
   padding: 0.1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   .topLeft {
     width: 22%;
-    margin-right: 1%;
-    display: inline-block;
-    padding-left: 0.5rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.2rem;
+
     p:nth-child(1) {
-      font-size: 0.4rem;
+      font-size: 0.34rem;
       color: red;
     }
     p:nth-child(2) {
-      font-size: 0.15rem;
+      font-size: 0.16rem;
       color: red;
     }
     p {
@@ -560,8 +569,10 @@ export default {
     }
   }
   .topright {
-    display: inline-block;
-    width: 75%;
+    flex: 1;
+    flex-direction: column;
+    /*display: inline-block;*/
+    /*width: 75%;*/
     p {
       margin-bottom: 0;
       display: block;

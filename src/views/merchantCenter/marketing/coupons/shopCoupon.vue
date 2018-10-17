@@ -3,7 +3,7 @@
         <h1>店铺优惠券信息</h1>
         <el-form :model="form" ref="form" :rules="formRule" label-position="right">
             <el-form-item  labelWidth="130px" label="推广渠道：" prop="channel">
-                <el-radio-group v-model="form.channel" size="small" @change="getChannel">
+                <el-radio-group v-model="form.channel" size="small" @change="getChannel(form.channel)">
                     <el-radio  v-for="(item,index) in channelList" :key="index" :label="item.id">{{item.name}}</el-radio>
                 </el-radio-group>
                 <p v-if="form.channel === '1' " class="tips">用户可以通过公开渠道主动领取优惠券，如店铺首页、商品详情页等</p>
@@ -12,7 +12,7 @@
             <el-form-item   labelWidth="130px"  label="优惠券名称：" prop="name">
                 <el-input class="inputInfo" :maxlength="15" size="small" v-model.trim="form.name" placeholder="请输入15个字以内的优惠卷名称"></el-input>
             </el-form-item>
-            <el-form-item v-if="form.channel === '1'"   labelWidth="130px" prop="useStartTime" label="使用有效期：" >
+            <el-form-item v-if="form.channel === '1'"   labelWidth="130px" label="使用有效期：" required>
               <el-col :span="10">
                 <el-form-item prop="useStartTime" class="date-label">
                   <el-date-picker  value-format="yyyy-MM-dd 00:00:00" size="small"
@@ -32,11 +32,11 @@
                   </el-date-picker>
                 </el-form-item>
               </el-col>
-              <el-col :span="24">
-                <p class="tips" >活动持续{{activityDay}}天</p>
-              </el-col>
             </el-form-item>
-            <el-form-item v-if="form.channel === '2'" prop="activityStartTime"  labelWidth="130px"  label="活动时间：" >
+          <el-form-item v-if="form.channel === '1'"   labelWidth="130px" style="margin: 0 auto ;">
+            <p v-if="activityDay!==''" class="tips">活动持续{{activityDay}}天</p>
+          </el-form-item>
+            <el-form-item v-if="form.channel === '2'"   labelWidth="130px"  label="活动时间：" required>
               <el-col :span="10">
                 <el-form-item prop="activityStartTime" class="date-label">
                   <el-date-picker  value-format="yyyy-MM-dd 00:00:00" size="small"
@@ -56,10 +56,10 @@
                   </el-date-picker>
                 </el-form-item>
               </el-col>
-              <el-col :span="24">
-                <p class="tips">活动持续{{activityDay}}天，活动期间，用户领取优惠券后，自动收藏店铺</p>
-              </el-col>
             </el-form-item>
+          <el-form-item labelWidth="130px" v-if="form.channel === '2'" style="margin: 0 auto ;" >
+            <p  v-if="activityDay!==''" class="tips">活动持续{{activityDay}}天，活动期间，用户领取优惠券后，自动收藏店铺</p>
+          </el-form-item>
             <el-form-item v-if="form.channel === '2'"  labelWidth="130px"  label="有效期限：" prop="useDays">
               <el-col :span="16">
                 <span>领取后 </span><el-input style="width:50%" type="number" :maxlength="6" size="small" v-model.trim="form.useDays" placeholder="请输入优惠券有限期"></el-input><span> 天内有效</span>
@@ -302,8 +302,9 @@ export default {
     };
   },
   methods: {
-    getChannel() {
+    getChannel(val) {
       this.resetForm("form");
+      this.form.channel = val;
     },
     //提交表格
     submitForm(formName) {
@@ -354,17 +355,18 @@ export default {
     // 计算活动有多少天
     getActivityDay() {
       this.activityDay = "0";
-      if (this.form.useStartTime !== "" && this.form.useEndTime !== "") {
+      if (this.form.useStartTime !== "" && this.form.useEndTime !== "" &&
+        this.form.useStartTime !== undefined && this.form.useEndTime !== undefined &&
+        this.form.useStartTime !== null && this.form.useEndTime !== null) {
         let start = new Date(
           this.form.useStartTime.replace(/-/g, "/")
         ).getTime();
         let end = new Date(this.form.useEndTime.replace(/-/g, "/")).getTime();
         this.activityDay = Math.ceil((end - start) / 24 / 60 / 60 / 1000);
       }
-      if (
-        this.form.activityEndTime !== "" &&
-        this.form.activityStartTime !== ""
-      ) {
+      if (this.form.activityEndTime !== "" && this.form.activityStartTime !== "" &&
+          this.form.activityEndTime !== undefined && this.form.activityStartTime !== undefined &&
+          this.form.activityEndTime !== null && this.form.activityStartTime !== null) {
         let start = new Date(
           this.form.activityStartTime.replace(/-/g, "/")
         ).getTime();
