@@ -38,6 +38,11 @@
           <span>{{scope.row.activityStartTime}}<br/> ~<br/>{{scope.row.activityEndTime}}</span>
         </template>
       </el-table-column>
+      <el-table-column label="使用时间" width="182">
+        <template slot-scope="scope">
+          <span>{{scope.row.useStartTime}}<br/> ~<br/>{{scope.row.useEndTime}}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="totalQuantity" label="发行量" width="80"></el-table-column>
       <el-table-column prop="totallyGet" label="领取量" width="80">
         <template slot-scope="scope">
@@ -172,6 +177,21 @@
               <el-input size="small" v-model="form.activityEndTime" :disabled="true" ></el-input>
             </el-form-item>
           </el-col>
+        </el-form-item>
+        <el-form-item  labelWidth="130px"  label="使用时间：" >
+        <el-col :span="10">
+        <el-form-item prop="useStartTime" style="margin: 0;">
+        <el-input size="small" v-model="form.useStartTime" :disabled="true" ></el-input>
+        </el-form-item>
+        </el-col>
+        <el-col :span="2" style="text-align:center">
+        <span> 至 </span>
+        </el-col>
+        <el-col :span="10">
+        <el-form-item prop="useEndTime" style="margin: 0;">
+        <el-input size="small" v-model="form.useEndTime" :disabled="true" ></el-input>
+        </el-form-item>
+        </el-col>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="发行张数：" >
           <el-col :span="8">

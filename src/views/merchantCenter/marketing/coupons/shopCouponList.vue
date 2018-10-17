@@ -8,6 +8,13 @@
                    :value="item.value">
         </el-option>
       </el-select>
+      <el-select size="mini" v-model="channelType" clearable >
+        <el-option v-for="item in channelList"
+                   :key="item.value"
+                   :label="item.name"
+                   :value="item.value">
+        </el-option>
+      </el-select>
       <el-button type="primary" round size="mini" @click="currentPage =1;getList()">搜索</el-button>
     </div>
     <el-table :data="tableData" border>
@@ -27,6 +34,20 @@
       <el-table-column label="活动时间" width="182">
         <template slot-scope="scope">
         <span>{{scope.row.activityStartTime}}<br/> ~<br/>{{scope.row.activityEndTime}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="使用时间" width="182">
+        <template slot-scope="scope" >
+          <span v-if="scope.row.channel === '1'">
+            <span>{{scope.row.useStartTime}}<br/> ~<br/>{{scope.row.useEndTime}}</span>
+          </span>
+          <span v-else>—</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="有效期限（天）" width="182">
+        <template slot-scope="scope">
+          <span v-if="scope.row.channel === '2'">{{scope.row.useDays}}</span>
+          <span v-else>—</span>
         </template>
       </el-table-column>
       <el-table-column prop="totalQuantity" label="发行量" width="80"></el-table-column>
@@ -161,6 +182,26 @@
             </el-form-item>
           </el-col>
         </el-form-item>
+        <el-form-item  labelWidth="130px"  label="使用时间："  v-if="form.channel === '1'">
+          <el-col :span="10">
+            <el-form-item prop="useStartTime" style="margin: 0;">
+              <el-input size="small" v-model="form.useStartTime" :disabled="true" ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="2" style="text-align:center">
+            <span> 至 </span>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item prop="useEndTime" style="margin: 0;">
+              <el-input size="small" v-model="form.useEndTime" :disabled="true" ></el-input>
+            </el-form-item>
+          </el-col>
+        </el-form-item>
+        <el-form-item  labelWidth="130px"  label="有效期限（天）：" v-if="form.channel === '2'">
+          <el-col :span="8">
+          <el-input size="small" v-model="form.useDays" :disabled="true" ></el-input>
+          </el-col>
+        </el-form-item>
         <el-form-item   labelWidth="130px"  label="发行张数：" prop="totalQuantity">
           <el-col :span="8">
             <el-input type="number" :maxlength="6" size="small" v-model.trim="form.totalQuantity"  :disabled="isOver"></el-input>
@@ -215,7 +256,9 @@ export default {
           value: "3"
         }
       ],
+      channelList: [{ name: "店铺公开券", value: "1" }, { name: "店铺收藏券", value: "2" }],
       listStatus: "",
+      channelType: "",
       tableData: [],
       imageDomain: process.env.IMAGE_DOMAIN,
       errorImg: 'this.src="' + userPhoto + '"',
@@ -316,6 +359,7 @@ export default {
     getList() {
       let formData = new FormData();
       formData.append("EQ_type", "1");
+      formData.append("EQ_channel", this.channelType);
       formData.append("EQ_activityType", this.listStatus);
       formData.append("currentPage", this.currentPage);
       formData.append("pageSize", this.pageSize);
