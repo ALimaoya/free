@@ -310,7 +310,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          if (this.form.parValue - 0 > this.form.needAmount - 0) {
+          if (this.form.parValue - 0 > this.form.needAmount - 0 || this.form.parValue === this.form.needAmount ) {
             this.$message({
               message: "使用条件必须大于优惠券面额",
               type: "error",

@@ -45,7 +45,7 @@
                           </div>
                           <div class="content">
                             <div class="name">{{item.productName}}</div>
-                            <div class="encoding">商品编码：{{item.code}}</div>
+                            <div class="encoding">商品编号：{{item.code}}</div>
                           </div>
                     </li>
                     <el-button type="text" class="goodsCompile" @click="editorProduct">编辑</el-button>
@@ -121,7 +121,7 @@
             </el-table-column>
             <el-table-column
               prop="code"
-              label="商品编码："
+              label="商品编号："
               width="140">
             </el-table-column>
             <el-table-column
@@ -177,7 +177,7 @@
           </el-table-column>
           <el-table-column
             prop="code"
-            label="商品编码："
+            label="商品编号："
             width="140">
           </el-table-column>
           <el-table-column
@@ -466,7 +466,7 @@ export default {
             } else{
               this.noProduct = false ;
             }
-            if (parseInt(this.form.parValue) > this.form.needAmount) {
+            if (parseInt(this.form.parValue) > this.form.needAmount || this.form.parValue === this.form.needAmount) {
 
               this.$message({
                 message: "使用条件面额必须大于优惠券面额",
@@ -527,17 +527,17 @@ export default {
       let end = new Date(this.form.activityEndTime.replace(/-/g, "/")).getTime();
       this.form.useDays = Math.ceil((end - start) / 24 / 60 / 60 / 1000);
 
-      if (this.form.useDays < 7 || this.form.useDays > 100) {
-        this.$message({
-          message : '优惠券有效期限制在7~100天内',
-          center: true,
-          type: 'error',
-          duration: 2000
-        });
-        this.form.activityEndTime = "";
-        this.form.useDays = "";
+      // if (this.form.useDays < 7 || this.form.useDays > 100) {
+      //   this.$message({
+      //     message : '优惠券有效期限制在7~100天内',
+      //     center: true,
+      //     type: 'error',
+      //     duration: 2000
+      //   });
+      //   this.form.activityEndTime = "";
+      //   this.form.useDays = "";
 
-      }
+      // }
       } else {
         return false ;
 

@@ -53,8 +53,9 @@
       </el-table-column>
       <el-table-column label="状态" width="80">
         <template slot-scope="scope">
-          <el-button type="success" size="mini" class="status_btn" v-if="scope.row.status === '1' && scope.row.totalQuantity-0 > scope.row.totallyGet-0">领取中</el-button>
-          <el-button type="danger" size="mini" class="status_btn" v-if="scope.row.status === '1' && scope.row.totalQuantity === scope.row.totallyGet">已领完</el-button>
+          <el-button type="info" size="mini" class="status_btn" v-if="scope.row.status === '1' && (time > scope.row.activityEndTime)">已结束</el-button>
+          <el-button type="success" size="mini" class="status_btn" v-else-if="scope.row.status === '1' && scope.row.totalQuantity-0 > scope.row.totallyGet-0">领取中</el-button>
+          <el-button type="danger" size="mini" class="status_btn" v-else-if="scope.row.status === '1' && (scope.row.totalQuantity === scope.row.totallyGet)">已领完</el-button>
           <el-button type="info" size="mini" class="status_btn" v-if="scope.row.status === '0'">已结束</el-button>
         </template>
       </el-table-column>
@@ -63,8 +64,14 @@
           <el-button type="text" @click="getData(scope.row.activityId)">数据</el-button>
           <el-button v-if="scope.row.status === '0'" type="text" @click="overCoupon(scope.row.activityId,'2')">删除</el-button>
           <el-button v-if="scope.row.status === '0'" type="text" @click="seeCouponData(scope.row.activityId)">查看</el-button>
-          <el-button v-if="scope.row.status === '1'" type="text" @click="overCoupon(scope.row.activityId,scope.row.status)">结束</el-button>
-          <el-button v-if="scope.row.status === '1'" type="text" @click="amendCoupon(scope.row.activityId)">修改</el-button>
+          <span v-if="scope.row.status === '1' && (time > scope.row.activityEndTime)">
+            <el-button type="text" @click="overCoupon(scope.row.activityId,'2')">删除</el-button>
+            <el-button type="text" @click="seeCouponData(scope.row.activityId)">查看</el-button>
+          </span>
+          <span v-else-if="scope.row.status === '1'">
+            <el-button v-if="scope.row.status === '1'" type="text" @click="overCoupon(scope.row.activityId,scope.row.status)">结束</el-button>
+            <el-button v-if="scope.row.status === '1'" type="text" @click="amendCoupon(scope.row.activityId)">修改</el-button>
+          </span>
         </template>
       </el-table-column>
 
@@ -97,8 +104,8 @@
         <div class="topright">
           <p>{{useCoupon.name}}</p>
           <p><span>发行{{useCoupon.totalQuantity}}张</span> | <span>限领{{useCoupon.limitQuantity}}张/人</span> |
-             <span>推广渠道：<span v-if="useCoupon.channel === '1'">店铺公开券</span>
-             <span v-if="useCoupon.channel === '2'">店铺收藏券</span></span></p>
+             <span>推广渠道：<span v-if="useCoupon.channel === '1'">商品公开券</span>
+             <span v-if="useCoupon.channel === '2'">商品收藏券</span></span></p>
           <p><span>{{useCoupon.activityStartTime}}</span> ~ <span>{{useCoupon.activityEndTime}}</span> 期间内有效</p>
         </div>
       </div>
@@ -255,10 +262,22 @@
         <el-button type="info" @click="checkVisible = false">关闭</el-button>
       </div>
     </el-dialog>
+    <el-dialog
+      center
+      title="提示"
+      :visible.sync="finishCoupon"
+      width="30%">
+      <span>您确定要结束此优惠券活动吗？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="yesFinishCoupon">确 定</el-button>
+        <el-button @click="noFinishCoupon">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import { parseTime } from "@/utils";
 import userPhoto from "@/assets/404_images/fail.png";
 import {
   couponList,
@@ -323,10 +342,14 @@ export default {
       subTotalPages: 0,
       subCurrentPage: 1,
       subPageSize: 10,
-      goodsId: ''
+      goodsId: '',
+      finishCoupon:false,
+      finishCouponId:"",
+      finishCouponStatus:""
     };
   },
   mounted() {
+    this.time = parseTime(new Date());
     this.getList();
   },
   methods: {
@@ -377,6 +400,13 @@ export default {
         });
         this.form.totalQuantity = this.totalQuantity;
         return false;
+      } else if(this.form.totalQuantity-0 > 50000){
+        this.$message({
+          message: "新增优惠券数必须小于50000",
+          type: "error",
+          center: true
+        });
+        return false
       } else {
         updateContent(this.form.activityId, this.form.totalQuantity).then(
           res => {
@@ -407,17 +437,9 @@ export default {
     // 修改优惠券状态
     overCoupon(id, status) {
       if (status === "1") {
-        status = "0";
-        getOverCoupon(id, status).then(res => {
-          if (res.data.status === "000000000") {
-            this.$message({
-              message: "此优惠券活动已结束",
-              type: "success",
-              center: true
-            });
-            this.getList();
-          }
-        });
+        this.finishCoupon = true;
+        this.finishCouponId = id;
+        this.finishCouponStatus = "0";
       } else if (status === "2") {
         status = "2";
         getOverCoupon(id, status).then(res => {
@@ -437,6 +459,23 @@ export default {
         }
       });
     },
+    //  结束优惠券
+    yesFinishCoupon(){
+      getOverCoupon(this.finishCouponId, this.finishCouponStatus).then(res => {
+          if (res.data.status === "000000000") {
+            this.$message({
+              message: "此优惠券活动已结束",
+              type: "success",
+              center: true
+            });
+            this.finishCoupon = false;
+            this.getList();
+          }
+        });
+    },
+    noFinishCoupon(){
+      this.finishCoupon = false;
+    },
     getList() {
       let formData = new FormData();
       formData.append("EQ_type", "2");
@@ -444,7 +483,9 @@ export default {
       formData.append("EQ_productCode", this.goodsCode);
       formData.append("currentPage", this.currentPage);
       formData.append("pageSize", this.pageSize);
+      this.time = parseTime(new Date());
       couponList(formData).then(res => {
+
         if (res.data.status === "000000000") {
           this.tableData = res.data.data;
           this.totalPages = res.data.totalPages;
