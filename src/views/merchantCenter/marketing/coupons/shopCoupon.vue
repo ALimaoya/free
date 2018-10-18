@@ -309,17 +309,13 @@ export default {
     // 计算活动有多少天
     getActivityDay() {
       this.activityDay = "";
-      if (this.form.useStartTime !== "" && this.form.useEndTime !== "" &&
-        this.form.useStartTime !== undefined && this.form.useEndTime !== undefined &&
-        this.form.useStartTime !== null && this.form.useEndTime !== null) {
+      if (this.form.useStartTime !== "" && this.form.useEndTime !== "" && this.form.useStartTime !== undefined && this.form.useEndTime !== undefined && this.form.useStartTime !== null && this.form.useEndTime !== null) {
         let start = new Date().getTime();
         let end = new Date(this.form.useEndTime.replace(/-/g, "/")).getTime();
         this.activityDay = Math.ceil((end - start) / 24 / 60 / 60 / 1000);
       }
-      if (this.form.activityEndTime !== "" && this.form.activityStartTime !== "" &&
-        this.form.activityEndTime !== undefined && this.form.activityStartTime !== undefined &&
-        this.form.activityEndTime !== null && this.form.activityStartTime !== null) {
-        let start = new Date(
+      if (this.form.activityEndTime !== "" && this.form.activityStartTime !== "" && this.form.activityEndTime !== undefined && this.form.activityStartTime !== undefined && this.form.activityEndTime !== null && this.form.activityStartTime !== null) {
+          let start = new Date(
           this.form.activityStartTime.replace(/-/g, "/")
         ).getTime();
         let end = new Date(
@@ -375,8 +371,12 @@ export default {
       });
     },
     resetForm(formName) {
-      this.activityDay = "";
       this.$refs[formName].resetFields();
+      this.activityDay = "";
+      this.form.useStartTime = "";
+      this.form.useEndTime = "";
+      this.form.activityStartTime = "";
+      this.form.activityEndTime = "";
     },
 
     //  只能选择当天之后的
