@@ -6,7 +6,7 @@
                 <el-radio-group v-model="form.channel" size="small" @change="getChannel(form.channel)">
                     <el-radio  v-for="(item,index) in channelList" :key="index" :label="item.id">{{item.name}}</el-radio>
                 </el-radio-group>
-                <p v-if="form.channel === '1' " class="tips">用户可以通过公开渠道主动领取优惠券，如店铺首页、商品详情页等</p>
+                <p v-if="form.channel === '1' " class="tips">用户可以通过公开渠道主动领取优惠券，如商品详情页等</p>
                 <p v-if="form.channel === '2' " class="tips">用户领券时必须收藏店铺，为店铺积累粉丝</p>
             </el-form-item>
             <el-form-item   labelWidth="130px"  label="优惠券名称：" prop="name">
@@ -125,7 +125,7 @@ export default {
     };
     const validUseStartTime = (rule, value, callback) => {
       if (value === "") {
-        callback(new Error("请选择活动开始时间"));
+        callback(new Error("请选择优惠券开始使用时间"));
       } else {
         if (this.form.useEndTime !== "") {
           this.$refs.form.validateField("useEndTime");
@@ -135,10 +135,10 @@ export default {
     };
     const validUseEndTime = (rule, value, callback) => {
       if (value === "") {
-        callback(new Error("请选择活动结束时间"));
+        callback(new Error("请选择优惠券结束使用时间"));
       } else {
         if (this.form.useStartTime > this.form.useEndTime) {
-          callback(new Error("活动开始时间要早于活动结束时间"));
+          callback(new Error("优惠券开始使用时间要早于结束时间"));
         }
         callback();
       }
@@ -272,7 +272,7 @@ export default {
           { required: true, validator: validActivityEndTime, trigger: "change" }
         ]
       },
-      activityDay: "0",
+      activityDay: "",
       channelList: [{ name: "公开", id: "1" }, { name: "店铺收藏", id: "2" }],
       parValueList: [
         { name: "2元", id: "2" },
@@ -306,6 +306,31 @@ export default {
       this.resetForm("form");
       this.form.channel = val;
     },
+    // 计算活动有多少天
+    getActivityDay() {
+      this.activityDay = "";
+      if (this.form.useStartTime !== "" && this.form.useEndTime !== "" &&
+        this.form.useStartTime !== undefined && this.form.useEndTime !== undefined &&
+        this.form.useStartTime !== null && this.form.useEndTime !== null) {
+        let start = new Date().getTime();
+        let end = new Date(this.form.useEndTime.replace(/-/g, "/")).getTime();
+        this.activityDay = Math.ceil((end - start) / 24 / 60 / 60 / 1000);
+      }
+      if (this.form.activityEndTime !== "" && this.form.activityStartTime !== "" &&
+        this.form.activityEndTime !== undefined && this.form.activityStartTime !== undefined &&
+        this.form.activityEndTime !== null && this.form.activityStartTime !== null) {
+        let start = new Date(
+          this.form.activityStartTime.replace(/-/g, "/")
+        ).getTime();
+        let end = new Date(
+          this.form.activityEndTime.replace(/-/g, "/")
+        ).getTime();
+        if (this.form.channel === '2') {
+          this.activityDay = Math.ceil((end - start) / 24 / 60 / 60 / 1000);
+
+        }
+      }
+    },
     //提交表格
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
@@ -324,6 +349,7 @@ export default {
           if (this.form.activityEndTime === '') {
             this.form.activityEndTime = this.form.useEndTime
           }
+
           if(this.form.channel === '2'){
             this.form.limitQuantity = "1"
           }
@@ -349,33 +375,10 @@ export default {
       });
     },
     resetForm(formName) {
-      this.activityDay = "0";
+      this.activityDay = "";
       this.$refs[formName].resetFields();
     },
-    // 计算活动有多少天
-    getActivityDay() {
-      this.activityDay = "0";
-      if (this.form.useStartTime !== "" && this.form.useEndTime !== "" &&
-        this.form.useStartTime !== undefined && this.form.useEndTime !== undefined &&
-        this.form.useStartTime !== null && this.form.useEndTime !== null) {
-        let start = new Date(
-          this.form.useStartTime.replace(/-/g, "/")
-        ).getTime();
-        let end = new Date(this.form.useEndTime.replace(/-/g, "/")).getTime();
-        this.activityDay = Math.ceil((end - start) / 24 / 60 / 60 / 1000);
-      }
-      if (this.form.activityEndTime !== "" && this.form.activityStartTime !== "" &&
-          this.form.activityEndTime !== undefined && this.form.activityStartTime !== undefined &&
-          this.form.activityEndTime !== null && this.form.activityStartTime !== null) {
-        let start = new Date(
-          this.form.activityStartTime.replace(/-/g, "/")
-        ).getTime();
-        let end = new Date(
-          this.form.activityEndTime.replace(/-/g, "/")
-        ).getTime();
-        this.activityDay = Math.ceil((end - start) / 24 / 60 / 60 / 1000);
-      }
-    },
+
     //  只能选择当天之后的
     endDate() {
       return {

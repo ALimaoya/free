@@ -13,25 +13,25 @@
             </el-form-item>
             <el-form-item  labelWidth="130px"  label="使用有效期：" required>
               <el-col :span="10">
-                <el-form-item class="date-label" prop="activityStartTime">
+                <el-form-item class="date-label" prop="useStartTime">
                 <el-date-picker  value-format="yyyy-MM-dd 00:00:00" size="small"
-                      v-model="form.activityStartTime" clearable type="date" placeholder="开始时间"
+                      v-model="form.useStartTime" clearable type="date" placeholder="开始时间"
                       :picker-options="forbidData" @change="getActivityEndTime">
                 </el-date-picker>
                 </el-form-item>
               </el-col>
               <el-col class="line" :span="2">至</el-col>
               <el-col :span="10">
-                <el-form-item prop="activityEndTime"  class="date-label">
-                <el-date-picker size="small" v-model="form.activityEndTime"  clearable
+                <el-form-item prop="useEndTime"  class="date-label">
+                <el-date-picker size="small" v-model="form.useEndTime"  clearable
                                 type="date"  value-format="yyyy-MM-dd 23:59:59" placeholder="结束时间"
                                 :picker-options="forbidData"  @change="getActivityEndTime">
                 </el-date-picker>
                 </el-form-item>
               </el-col>
             </el-form-item>
-          <el-form-item labelWidth="130px" prop="useDays">
-            <p v-if="form.useDays!== ''">活动持续{{form.useDays}}天</p>
+          <el-form-item labelWidth="130px">
+            <p v-if="expireDays!== ''">活动持续{{expireDays}}天</p>
           </el-form-item>
             <el-form-item   labelWidth="130px"  label="可用商品：" required>
                 <el-button v-if="showList.length === 0" size="small" @click="showDialogVisible">+添加商品</el-button>
@@ -121,17 +121,17 @@
             </el-table-column>
             <el-table-column
               prop="code"
-              label="商品编号："
+              label="商品编号"
               width="140">
             </el-table-column>
             <el-table-column
-              prop="price"
-              label="商品库存："
+              prop="quantity"
+              label="商品库存"
               width="120">
             </el-table-column>
             <el-table-column
               prop="price"
-              label="商品价格："
+              label="商品价格"
               width="100">
             </el-table-column>
           </el-table>
@@ -211,7 +211,8 @@
     </div>
 </template>
 <script>
-import { int, validateName} from "@/utils/validate";
+  import { parseTime } from "@/utils";
+  import { int, validateName} from "@/utils/validate";
 import { getSecondsList } from "@/api/enter";
 import { addCoupon } from "@/api/merchant";
 import userPhoto from "@/assets/404_images/fail.png";
@@ -264,26 +265,27 @@ export default {
         name: "",
         activityStartTime: "",
         activityEndTime: "",
+        useStartTime: "",
+        useEndTime: "",
         productIds: [],
         parValue: "",
         needAmount: "",
         totalQuantity: "",
         limitQuantity: "",
-        useDays: "",
       },
       formRule: {
         name: [
           { required: true, trigger: "blur", validator: validName }
         ],
 
-        activityStartTime: [
+        useStartTime: [
           {
             required: true ,
             message: "请选择使用有效期的开始时间",
             trigger: "change"
           }
         ],
-        activityEndTime: [
+        useEndTime: [
           {
             required: true,
             message: "请选择使用有效期的结束时间",
@@ -349,6 +351,7 @@ export default {
         shopName: "",
         goodsCode: ""
       },
+      expireDays:'',
       totalElements: 0,
       totalPages: 0,
       currentPage: 1,
@@ -476,9 +479,12 @@ export default {
               return false;
             }
             else {
-
+              this.form.activityStartTime = parseTime(new Date());
+              this.form.activityEndTime = this.form.useEndTime;
               let data = this.form ;
               data.type = '2';
+
+
               addCoupon(data).then( res => {
                 if ( res.data.status === '000000000') {
                   this.$message({
@@ -510,34 +516,34 @@ export default {
     },
     // 计算活动有多少天
     getActivityEndTime() {
-      if(this.form.activityEndTime !== '' && this.form.activityEndTime !== undefined && this.form.activityEndTime !== null &&
-        this.form.activityStartTime !== '' && this.form.activityStartTime !== undefined && this.form.activityStartTime !== null ){
+      if(this.form.useEndTime !== '' && this.form.useEndTime !== undefined && this.form.useEndTime !== null &&
+        this.form.useStartTime !== '' && this.form.useStartTime !== undefined && this.form.useStartTime !== null ){
 
-      if (this.form.activityEndTime < this.form.activityStartTime) {
+      if (this.form.useEndTime < this.form.useStartTime) {
         this.$message({
           message: "结束时间必须晚于开始时间",
           type: "error",
           center: true
         });
-        this.form.activityEndTime = "";
-        this.form.activityStartTime = "";
+        this.form.useEndTime = "";
+        this.form.useStartTime = "";
         return false;
       }
-      let start = new Date(this.form.activityStartTime.replace(/-/g, "/")).getTime();
-      let end = new Date(this.form.activityEndTime.replace(/-/g, "/")).getTime();
-      this.form.useDays = Math.ceil((end - start) / 24 / 60 / 60 / 1000);
+      let start = new Date(this.form.useStartTime.replace(/-/g, "/")).getTime();
+      let end = new Date(this.form.useEndTime.replace(/-/g, "/")).getTime();
+      this.expireDays = Math.ceil((end - start) / 24 / 60 / 60 / 1000);
 
-      // if (this.form.useDays < 7 || this.form.useDays > 100) {
-      //   this.$message({
-      //     message : '优惠券有效期限制在7~100天内',
-      //     center: true,
-      //     type: 'error',
-      //     duration: 2000
-      //   });
-      //   this.form.activityEndTime = "";
-      //   this.form.useDays = "";
+      if (this.expireDays < 7 || this.expireDays > 100) {
+        this.$message({
+          message : '优惠券有效期限制在7~100天内',
+          center: true,
+          type: 'error',
+          duration: 2000
+        });
+        this.form.useEndTime = "";
+        this.expireDays = "";
 
-      // }
+      }
       } else {
         return false ;
 
