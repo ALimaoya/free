@@ -142,7 +142,7 @@
           <tr class="tbColor">
             <td>{{form.price}}</td>
             <td v-if="form.deliverOrder.parValue !== null">优惠券：{{form.deliverOrder.parValue}}元</td>
-            <td v-else>—</td>
+            <td v-else>--</td>
             <td>{{form.deliverOrder.payAmount}}</td>
             <td>{{form.deliverOrder.createTime}}</td>
           </tr>
@@ -201,7 +201,7 @@
           street: ''
         },
 
-        payList: ['支付宝', '微信支付'],
+        payList: ['支付宝', '微信支付','微信小程序支付'],
         statusList: [
           // {
           //   name:'',

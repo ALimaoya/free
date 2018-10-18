@@ -84,7 +84,7 @@
             <el-button v-if="scope.row.status === '1'" type="text" @click="overCoupon(scope.row.activityId,scope.row.status)">结束</el-button>
             <el-button v-if="scope.row.status === '1'" type="text" @click="amendCoupon(scope.row.activityId)">修改</el-button>
           </span>
-          
+
         </template>
       </el-table-column>
     </el-table>
@@ -162,9 +162,9 @@
           <el-input class="inputInfo" size="small" v-model.trim="form.name" :disabled="true" style="width:50%"></el-input>
           <span class="tips">注：该名称仅商家可见</span>
         </el-form-item>
-        <el-form-item  labelWidth="130px" label="面额（元）：" prop="parValue">
-          <el-col :span="8">
-            <el-input  size="small" v-model.trim="form.parValue"  :disabled="true"></el-input>
+        <el-form-item  labelWidth="130px" label="面额：" prop="parValue">
+          <el-col :span="10">
+            <el-input style="width:80%;" size="small" v-model.trim="form.parValue"  :disabled="true"></el-input><span> 元</span>
           </el-col>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="使用条件：" prop="needAmount">
@@ -205,9 +205,9 @@
             </el-form-item>
           </el-col>
         </el-form-item>
-        <el-form-item  labelWidth="130px"  label="有效期限（天）：" v-if="form.channel === '2'">
-          <el-col :span="8">
-          <el-input size="small" v-model="form.useDays" :disabled="true" ></el-input>
+        <el-form-item  labelWidth="130px"  label="有效期限：" v-if="form.channel === '2'">
+          <el-col :span="10">
+          <el-input style="width:80%;" size="small" v-model="form.useDays" :disabled="true" ></el-input><span> 天</span>
           </el-col>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="发行张数：" prop="totalQuantity">

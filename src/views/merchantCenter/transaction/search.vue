@@ -238,6 +238,10 @@
                 value: '3',
                 name: '0.01拼团购'
               },
+              {
+                value: '4',
+                name: '分享购'
+              },
             ],
             statusList:[
               {
