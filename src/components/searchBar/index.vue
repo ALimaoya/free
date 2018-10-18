@@ -25,9 +25,9 @@
       </el-option>
     </el-select>
 
-    <el-input v-if="activityCode" size="small" :maxlength="20" v-model.trim="order.activityCode" clearable placeholder="请输入活动编号"></el-input>
-    <el-input v-if="orderCode" size="small" :maxlength="20" v-model.trim="order.orderCode" clearable placeholder="请输入订单编号"></el-input>
-    <el-input v-if="thirdOrderCode" size="small" :maxlength="20" v-model.trim="order.thirdOrderCode" placeholder="请输入第三方订单编号"></el-input>
+    <el-input v-if="activityCode" size="small" type="number" :maxlength="20" v-model.trim="order.activityCode" clearable placeholder="请输入活动编号"></el-input>
+    <el-input v-if="orderCode" size="small" type="number" :maxlength="20" v-model.trim="order.orderCode" clearable placeholder="请输入订单编号"></el-input>
+    <el-input v-if="thirdOrderCode" size="small" type="number" :maxlength="20" v-model.trim="order.thirdOrderCode" placeholder="请输入第三方订单编号"></el-input>
     <!--试用活动任务状态-->
     <el-select v-if="activityStatus" size="small" clearable v-model="order.EQ_activityStatus" filterable placeholder="请选择活动状态">
     <el-option

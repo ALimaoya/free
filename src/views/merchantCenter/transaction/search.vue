@@ -85,7 +85,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="totalNum" label="总数量" width="70"></el-table-column>
-      <el-table-column prop="payAmount" label="总价（元）" width="70"></el-table-column>
+      <el-table-column prop="payAmount" label="实付金额（元）" width="90"></el-table-column>
       <el-table-column prop="createTime" label="交易时间" width="100"></el-table-column>
       <el-table-column label="状态" width="140">
         <template slot-scope="scope">
