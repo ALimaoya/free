@@ -104,14 +104,14 @@
           <p><span>发行{{useCoupon.totalQuantity}}张</span> | <span>限领{{useCoupon.limitQuantity}}张/人</span> |
              <span>推广渠道：<span v-if="useCoupon.channel === '1'">店铺公开券</span>
              <span v-if="useCoupon.channel === '2'">店铺收藏券</span></span></p>
-          <p><span>{{useCoupon.activityStartTime}}</span> ~ <span>{{useCoupon.activityEndTime}}</span> 期间内有效</p>
+          <p><span>{{useCoupon.useStartTime}}</span> ~ <span>{{useCoupon.useEndTime}}</span> 期间内有效</p>
         </div>
       </div>
       <ul class="CouponCenter">
         <li>
           <p>累计领取数</p>
           <p v-if="useCoupon.totallyGet !== null ">{{useCoupon.totallyGet}}</p>
-          <p v-else>{{0}}</p>
+          <p v-else>0</p>
         </li>
         <li>
           <p>累计使用数</p>
