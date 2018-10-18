@@ -14,6 +14,11 @@
     <el-table :data="tableData" border>
       <el-table-column prop="name" label="优惠券名称" ></el-table-column>
       <el-table-column prop="parValue" label="面额（元）" width="80"></el-table-column>
+      <el-table-column prop="needAmount" label="门槛" width="130">
+        <template slot-scope="scope">
+          <span>满{{scope.row.needAmount}}元可用</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="productResDto" label="可用商品" width="256">
         <template slot-scope="scope">
           <div class="goodsWrap" >
@@ -128,12 +133,10 @@
         </li>
         <li>
           <p>累计使用率</p>
-          <!-- <p v-if="useCoupon.totallyGet !== null && useCoupon.totallyGet !== 0">{{(useCoupon.totallyUsed-0)/(useCoupon.totallyGet-0).toFixed(2)}}%</p> -->
-          <p>{{useRage}}%</p>
+          <p>{{useRage*100}}%</p>
         </li>
         <li>
           <p>客单价(元)</p>
-          <!-- <p v-if="useCoupon.totallyPayNum !== null && useCoupon.totallyPayNum !== 0">{{(useCoupon.totallyPayMoney-0)/(useCoupon.totallyGet-0).toFixed(2)}}</p> -->
           <p>{{usePrice}}</p>
         </li>
         <li>

@@ -377,8 +377,12 @@ export default {
       });
     },
     resetForm(formName) {
-      this.activityDay = "";
       this.$refs[formName].resetFields();
+      this.activityDay = "";
+      this.form.useStartTime = "";
+      this.form.useEndTime = "";
+      this.form.activityStartTime = "";
+      this.form.activityEndTime = "";
     },
 
     //  只能选择当天之后的

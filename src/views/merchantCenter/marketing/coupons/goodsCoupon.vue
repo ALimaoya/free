@@ -6,7 +6,7 @@
                 <el-radio-group v-model="form.channel" size="small" >
                     <el-radio  v-for="(item,index) in trenchList" :key="index" :label="item.id">{{item.name}}</el-radio>
                 </el-radio-group>
-                <p class="tips">用户可以通过公开渠道主动领取优惠券，如店铺首页、商品详情页等</p>
+                <p class="tips">用户可以通过公开渠道主动领取优惠券，如商品详情页等</p>
             </el-form-item>
             <el-form-item   labelWidth="130px"  label="优惠券名称：" prop="name">
                 <el-input class="inputInfo" :maxlength="15" size="small" v-model.trim="form.name" placeholder="请输入15个字以内的优惠券名称"></el-input>
