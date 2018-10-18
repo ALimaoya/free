@@ -41,26 +41,26 @@
           <span v-if="scope.row.channel === '1'">
             <span>{{scope.row.useStartTime}}<br/> ~<br/>{{scope.row.useEndTime}}</span>
           </span>
-          <span v-else>—</span>
+          <span v-else>--</span>
         </template>
       </el-table-column>
       <el-table-column label="有效期限（天）" width="182">
         <template slot-scope="scope">
           <span v-if="scope.row.channel === '2'">{{scope.row.useDays}}</span>
-          <span v-else>—</span>
+          <span v-else>--</span>
         </template>
       </el-table-column>
       <el-table-column prop="totalQuantity" label="发行量" width="80"></el-table-column>
       <el-table-column prop="totallyGet" label="领取量" width="80">
         <template slot-scope="scope">
           <span v-if="scope.row.totallyGet !== null">{{scope.row.totallyGet}}</span>
-          <span v-else>{{0}}</span>
+          <span v-else>0</span>
         </template>
       </el-table-column>
       <el-table-column prop="totallyUsed" label="使用量" width="80">
         <template slot-scope="scope">
           <span v-if="scope.row.totallyUsed !== null">{{scope.row.totallyUsed}}</span>
-          <span v-else>{{0}}</span>
+          <span v-else>0</span>
         </template>
       </el-table-column>
       <el-table-column prop="status" label="状态" width="80">
@@ -114,7 +114,8 @@
           <p>{{useCoupon.name}}</p>
           <p><span>发行{{useCoupon.totalQuantity}}张</span> | <span>限领{{useCoupon.limitQuantity}}张/人</span> |
             <span>推广渠道：<span v-if="useCoupon.channel === '1'">店铺公开券</span><span v-if="useCoupon.channel === '2'">店铺收藏券</span></span></p>
-          <p><span>{{useCoupon.activityStartTime}}</span> ~ <span>{{useCoupon.activityEndTime}}</span> 期间内有效</p>
+          <p v-if="useCoupon.channel === '1'"><span>{{useCoupon.useStartTime}}</span> ~ <span>{{useCoupon.useEndTime}}</span> 期间内有效</p>
+          <p v-else> 使用有效期：{{useCoupon.useDays}}天</p>
         </div>
       </div>
       <ul class="CouponCenter">
@@ -420,14 +421,16 @@ export default {
       getUseCoupon(val).then(res => {
         if (res.data.status === "000000000") {
           this.useCoupon = res.data.data;
-          if(this.useCoupon.totallyGet !== 0 && this.useCoupon.totallyGet !== null && this.useCoupon.totallyUsed !== 0 && this.useCoupon.totallyUsed !== null){
+          if(this.useCoupon.totallyGet !== 0 && this.useCoupon.totallyGet !== null &&
+            this.useCoupon.totallyUsed !== 0 && this.useCoupon.totallyUsed !== null){
             this.useRage = ((this.useCoupon.totallyUsed-0)/(this.useCoupon.totallyGet-0)).toFixed(2);
 
           }else{
             this.useRage = "0";
 
           }
-          if(this.useCoupon.totallyPayNum !== 0 && this.useCoupon.totallyPayNum !== null && this.useCoupon.totallyPayMoney !== 0 && this.useCoupon.totallyPayMoney !== null){
+          if(this.useCoupon.totallyPayNum !== 0 && this.useCoupon.totallyPayNum !== null &&
+            this.useCoupon.totallyPayMoney !== 0 && this.useCoupon.totallyPayMoney !== null){
             this.usePrice = ((this.useCoupon.totallyPayMoney-0)/(this.useCoupon.totallyPayNum-0)).toFixed(2);
           }else{
             this.usePrice = "0";

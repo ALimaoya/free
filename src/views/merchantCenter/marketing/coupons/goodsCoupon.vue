@@ -177,17 +177,17 @@
           </el-table-column>
           <el-table-column
             prop="code"
-            label="商品编号："
+            label="商品编号"
             width="140">
           </el-table-column>
           <el-table-column
-            prop="price"
-            label="商品库存："
+            prop="quantity"
+            label="商品库存"
             width="120">
           </el-table-column>
           <el-table-column
             prop="price"
-            label="商品价格："
+            label="商品价格"
             width="100">
           </el-table-column>
         </el-table>
@@ -419,6 +419,7 @@ export default {
           center: true
         });
       } else {
+        this.form.productIds = [];
         this.goodsList.map( i => {
           this.form.productIds.push(i.id)
 
@@ -460,6 +461,7 @@ export default {
 
     //提交表格
     submitForm(formName) {
+
         this.$refs[formName].validate(valid => {
           if (valid) {
 
@@ -479,8 +481,12 @@ export default {
               return false;
             }
             else {
-              this.form.activityStartTime = parseTime(new Date());
+              let now = new Date();
+              this.form.activityStartTime = parseTime(now);
               this.form.activityEndTime = this.form.useEndTime;
+              if (now.getDay() === new Date(this.form.useStartTime).getDay()) {
+                this.form.useStartTime = this.form.activityStartTime
+              }
               let data = this.form ;
               data.type = '2';
 
@@ -533,17 +539,17 @@ export default {
       let end = new Date(this.form.useEndTime.replace(/-/g, "/")).getTime();
       this.expireDays = Math.ceil((end - start) / 24 / 60 / 60 / 1000);
 
-      if (this.expireDays < 7 || this.expireDays > 100) {
-        this.$message({
-          message : '优惠券有效期限制在7~100天内',
-          center: true,
-          type: 'error',
-          duration: 2000
-        });
-        this.form.useEndTime = "";
-        this.expireDays = "";
-
-      }
+      // if (this.expireDays < 7 || this.expireDays > 100) {
+      //   this.$message({
+      //     message : '优惠券有效期限制在7~100天内',
+      //     center: true,
+      //     type: 'error',
+      //     duration: 2000
+      //   });
+      //   this.form.useEndTime = "";
+      //   this.expireDays = "";
+      //
+      // }
       } else {
         return false ;
 

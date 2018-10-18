@@ -137,7 +137,7 @@ export default {
       if (value === "") {
         callback(new Error("请选择优惠券结束使用时间"));
       } else {
-        if (this.form.useStartTime > this.form.useEndTime) {
+        if (this.form.useStartTime >= value) {
           callback(new Error("优惠券开始使用时间要早于结束时间"));
         }
         callback();
@@ -314,6 +314,7 @@ export default {
         let end = new Date(this.form.useEndTime.replace(/-/g, "/")).getTime();
         this.activityDay = Math.ceil((end - start) / 24 / 60 / 60 / 1000);
       }
+<<<<<<< HEAD
       if (this.form.activityEndTime !== "" && this.form.activityStartTime !== "" && this.form.activityEndTime !== undefined && this.form.activityStartTime !== undefined && this.form.activityEndTime !== null && this.form.activityStartTime !== null) {
           let start = new Date(
           this.form.activityStartTime.replace(/-/g, "/")
@@ -321,6 +322,13 @@ export default {
         let end = new Date(
           this.form.activityEndTime.replace(/-/g, "/")
         ).getTime();
+=======
+      if (this.form.activityEndTime !== "" && this.form.activityStartTime !== "" &&
+        this.form.activityEndTime !== undefined && this.form.activityStartTime !== undefined &&
+        this.form.activityEndTime !== null && this.form.activityStartTime !== null) {
+        let start = new Date(this.form.activityStartTime.replace(/-/g, "/")).getTime();
+        let end = new Date(this.form.activityEndTime.replace(/-/g, "/")).getTime();
+>>>>>>> ff8fa2d4761b862046a5fef7cb3b054bbffec4ff
         if (this.form.channel === '2') {
           this.activityDay = Math.ceil((end - start) / 24 / 60 / 60 / 1000);
 
@@ -329,6 +337,7 @@ export default {
     },
     //提交表格
     submitForm(formName) {
+
       this.$refs[formName].validate(valid => {
         if (valid) {
           if (this.form.parValue - 0 > this.form.needAmount - 0 || this.form.parValue === this.form.needAmount ) {
@@ -340,7 +349,12 @@ export default {
             return false;
           }
           if (this.form.activityStartTime === '') {
-            this.form.activityStartTime = parseTime(new Date());
+            let now = new Date();
+            this.form.activityStartTime = parseTime(now);
+            if (now.getDay() === new Date(this.form.useStartTime).getDay()) {
+              this.form.useStartTime = this.form.activityStartTime
+            }
+
           }
           if (this.form.activityEndTime === '') {
             this.form.activityEndTime = this.form.useEndTime
