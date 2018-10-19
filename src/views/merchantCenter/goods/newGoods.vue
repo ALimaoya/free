@@ -275,7 +275,7 @@ export default {
         productName: [
           {
             required: true,
-            trigger: "blur",
+            trigger: "change",
             validator: validGoodsName
           }
         ],
