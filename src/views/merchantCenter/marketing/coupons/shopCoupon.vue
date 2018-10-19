@@ -312,7 +312,8 @@ export default {
       if (this.form.useStartTime !== "" && this.form.useEndTime !== "" &&
         this.form.useStartTime !== undefined && this.form.useEndTime !== undefined &&
         this.form.useStartTime !== null && this.form.useEndTime !== null) {
-        let start = new Date().getTime();
+        // let start = new Date().getTime();
+        let start = new Date(this.form.useStartTime.replace(/-/g, "/")).getTime();
         let end = new Date(this.form.useEndTime.replace(/-/g, "/")).getTime();
         this.activityDay = Math.ceil((end - start) / 24 / 60 / 60 / 1000);
       }
