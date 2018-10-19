@@ -85,7 +85,7 @@
             </el-form-item>
             <el-form-item   labelWidth="130px"  label="发行张数：" prop="totalQuantity">
               <el-col :span="8">
-                <el-input type="number" :maxlength="6" size="small" v-model.trim="form.totalQuantity" placeholder="请输入发行张数"></el-input>
+                <el-input  :maxlength="5" size="small" v-model.trim="form.totalQuantity" placeholder="请输入发行张数"></el-input>
               </el-col>
             </el-form-item>
             <el-form-item v-if="form.channel === '1'"  labelWidth="130px" label="每人限额：" prop="limitQuantity">

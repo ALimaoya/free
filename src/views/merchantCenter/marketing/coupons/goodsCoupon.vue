@@ -68,7 +68,7 @@
                 <span>满 </span><el-input style="width:30%" type="number" :maxlength="10" size="small" v-model.trim="form.needAmount" placeholder="请输入正整数"></el-input><span> 元可用</span>
             </el-form-item>
             <el-form-item   labelWidth="130px"  label="发行张数：" prop="totalQuantity">
-                <el-input style="width:30%" type="number" :maxlength="6" size="small" v-model.trim="form.totalQuantity" placeholder="请输入发行张数"></el-input><span> 张</span>
+                <el-input style="width:30%"  :maxlength="5" size="small" v-model.trim="form.totalQuantity" placeholder="请输入发行张数"></el-input><span> 张</span>
             </el-form-item>
             <el-form-item  labelWidth="130px" label="每人限额：" prop="limitQuantity">
               <el-select  size="small" clearable v-model="form.limitQuantity"  filterable placeholder="请选择">

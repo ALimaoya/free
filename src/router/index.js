@@ -129,13 +129,13 @@ export const constantRouterMap = [
             path: 'approval',
             name: 'Approval',
             component: () => import('@/views/freeManage/activity/approval'),
-            meta: { title: '试用管理', icon: 'approval' }
+            meta: { title: '试用管理', icon: 'approval' ,keepAlive: true}
           },
           {
             path: 'flow',
             name: 'Flow',
             component: () => import('@/views/freeManage/activity/flow'),
-            meta: { title: '流量模式', icon: 'flow' }
+            meta: { title: '流量模式', icon: 'flow',keepAlive: true }
           },
           // {
           //   path: 'flowDetail/:order',
@@ -148,7 +148,7 @@ export const constantRouterMap = [
             path: 'group',
             name: 'Group',
             component: () => import('@/views/freeManage/activity/group'),
-            meta: { title: '开团提醒', icon: 'flow' }
+            meta: { title: '开团提醒', icon: 'flow' ,keepAlive: true}
           },
 
         ]
@@ -163,38 +163,38 @@ export const constantRouterMap = [
             path: 'activityOrder',
             name: 'ActivityOrder',
             component: () => import('@/views/freeManage/order/activityOrder'),
-            meta: { title: '试用订单查询', icon: 'activityOrder' }
+            meta: { title: '试用订单查询', icon: 'activityOrder' ,keepAlive: true}
           },
           {
             path: 'flowOrder',
             name: 'FlowOrder',
             component: () => import('@/views/freeManage/order/flowOrder'),
-            meta: { title: '流量订单查询', icon: 'flowOrder' }
+            meta: { title: '流量订单查询', icon: 'flowOrder' ,keepAlive: true}
           },
           {
             path: 'groupOrder',
             name: 'GroupOrder',
             component: () => import('@/views/freeManage/order/groupOrder'),
-            meta: { title: '开团订单查询', icon: 'flowOrder' }
+            meta: { title: '开团订单查询', icon: 'flowOrder' ,keepAlive: true}
 
           },
           {
             path: 'bonus',
             name: 'Bonus',
             component: () => import('@/views/freeManage/order/checkbonus'),
-            meta: { title: '试用领奖审核', icon: 'bonus' }
+            meta: { title: '试用领奖审核', icon: 'bonus' ,keepAlive: true}
           },
           {
             path: 'view',
             name: 'View',
             component: () => import('@/views/freeManage/order/checkview'),
-            meta: { title: '试用评价审核', icon: 'view' }
+            meta: { title: '试用评价审核', icon: 'view' ,keepAlive: true}
           },
           {
             path: 'checkFlow',
             name: 'CheckFlow',
             component: () => import('@/views/freeManage/order/checkFlow'),
-            meta: { title: '流量订单审核', icon: 'checkFlow' }
+            meta: { title: '流量订单审核', icon: 'checkFlow' ,keepAlive: true}
           },
           // {
           //   path: 'feedback',
@@ -387,7 +387,7 @@ export const constantRouterMap = [
             path: 'goodsList',
             name: 'GoodsList',
             component: () => import('@/views/merchantCenter/goods/goodsList'),
-            meta: { title: '商品清单', icon: 'goodsList' },
+            meta: { title: '商品清单', icon: 'goodsList' ,keepAlive: true},
 
           },
           {
@@ -493,14 +493,14 @@ export const constantRouterMap = [
             path: 'search',
             name: 'Search',
             component: () => import('@/views/merchantCenter/transaction/search'),
-            meta: { title: '交易查询', icon: 'search' },
+            meta: { title: '交易查询', icon: 'search' ,keepAlive: true},
 
           },
           {
             path: 'refund',
             name: 'Refund',
             component: () => import('@/views/merchantCenter/transaction/refund'),
-            meta: { title: '退款管理', icon: 'refund' },
+            meta: { title: '退款管理', icon: 'refund' ,keepAlive: true},
 
           },
           {
@@ -529,14 +529,14 @@ export const constantRouterMap = [
             path: 'current',
             name: 'Current',
             component: () => import('@/views/merchantCenter/settleManage/current'),
-            meta: { title: '当前结算', icon: 'current' },
+            meta: { title: '当前结算', icon: 'current' ,keepAlive: true},
 
           },
           {
             path: 'history',
             name: 'SettleHistory',
             component: () => import('@/views/merchantCenter/settleManage/history'),
-            meta: { title: '历史结算', icon: 'history' },
+            meta: { title: '历史结算', icon: 'history' ,keepAlive: true},
 
           },
         ]
@@ -551,14 +551,14 @@ export const constantRouterMap = [
             path: 'goodsManage',
             name: 'GoodsManage',
             component: () => import('@/views/merchantCenter/spread/goodsManage'),
-            meta: { title: '商品管理', icon: 'goodsManage' },
+            meta: { title: '商品管理', icon: 'goodsManage' ,keepAlive: true},
 
           },
           {
             path: 'orderList',
             name: 'OrderList',
             component: () => import('@/views/merchantCenter/spread/orderList'),
-            meta: { title: '订单明细', icon: 'orderList' },
+            meta: { title: '订单明细', icon: 'orderList' ,keepAlive: true},
 
           },
         ]
@@ -588,7 +588,7 @@ export const constantRouterMap = [
             path: 'history',
             name: 'SignHistory',
             component: () => import('@/views/merchantCenter/marketing/history'),
-            meta: { title: '报名记录', icon: 'history' },
+            meta: { title: '报名记录', icon: 'history' ,keepAlive: true},
             hidden: true ,
 
           },
@@ -596,7 +596,7 @@ export const constantRouterMap = [
             path: 'coupons',
             name: 'Coupons',
             component: () => import('@/views/merchantCenter/marketing/coupons/index'),
-            meta: { title: '优惠券', icon: 'coupons' },
+            meta: { title: '优惠券', icon: 'coupons' ,keepAlive: true},
           },
           {
             path: 'shopCoupon',

@@ -206,7 +206,7 @@
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="发行张数：" >
           <el-col :span="8">
-            <el-input  type="number" :maxlength="6" size="small" v-model.trim="form.totalQuantity"  :disabled="isOver"></el-input>
+            <el-input  :maxlength="5" size="small" v-model.trim="form.totalQuantity" @change="checkInput(form.totalQuantity)"  :disabled="isOver"></el-input>
           </el-col>
         </el-form-item>
         <el-form-item labelWidth="130px" label="每人限额：" >
@@ -302,6 +302,7 @@
 
 <script>
 import { parseTime } from "@/utils";
+import { int } from "@/utils/validate";
 import userPhoto from "@/assets/404_images/fail.png";
 import {
   couponList,
@@ -408,9 +409,27 @@ export default {
           this.totalQuantity = res.data.data.totalQuantity;
         }
       });
-      // updateContent(id,200).then(res =>{
-      //   // if(res.data.status === "")
-      // })
+
+    },
+    //校验修改优惠券数据
+    checkInput(val){
+      if (!int(val)) {
+        this.$message({
+          message: '请填写大于0的整数',
+          type: 'error',
+          center: 'true'
+        });
+        this.form.totalQuantity = this.totalQuantity;
+      }
+      if (val > 50000) {
+        this.$message({
+          message: "优惠券发行张数最多只能有50000张",
+          type: 'error',
+          center: 'true'
+        });
+        this.form.totalQuantity = '50000';
+
+      }
     },
     yesAddCouponData() {
       if (

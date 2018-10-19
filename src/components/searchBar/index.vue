@@ -25,9 +25,9 @@
       </el-option>
     </el-select>
 
-    <el-input v-if="activityCode" size="small" type="number" :maxlength="20" v-model.trim="order.activityCode" clearable placeholder="请输入活动编号"></el-input>
-    <el-input v-if="orderCode" size="small" type="number" :maxlength="20" v-model.trim="order.orderCode" clearable placeholder="请输入订单编号"></el-input>
-    <el-input v-if="thirdOrderCode" size="small" type="number" :maxlength="20" v-model.trim="order.thirdOrderCode" placeholder="请输入第三方订单编号"></el-input>
+    <el-input v-if="activityCode" size="small" type="tel" :maxlength="20" v-model.trim="order.activityCode" @change="checkInput(order.activityCode,1)" clearable placeholder="请输入活动编号"></el-input>
+    <el-input v-if="orderCode" size="small" type="tel" :maxlength="20" v-model.trim="order.orderCode" @change="checkInput(order.orderCode,2)" clearable placeholder="请输入订单编号"></el-input>
+    <el-input v-if="thirdOrderCode" size="small" type="tel" :maxlength="20" v-model.trim="order.thirdOrderCode" @change="checkInput(order.thirdOrderCode,3)" placeholder="请输入第三方订单编号"></el-input>
     <!--试用活动任务状态-->
     <el-select v-if="activityStatus" size="small" clearable v-model="order.EQ_activityStatus" filterable placeholder="请选择活动状态">
     <el-option
@@ -539,6 +539,26 @@
           this.$emit('searchobj',searchobj);
 
         },
+        //检查输入单号是否为数字
+        checkInput(val,type){
+          let reg = /^[0-9]+$/;
+          if (!reg.test(val)) {
+            this.$message({
+              message: '请输入数字',
+              type: 'error',
+              center: true
+            });
+            if ( type ===1 ) {
+              this.order.activityCode = ''
+            } else if (type === 2) {
+              this.order.orderCode = ''
+
+            } else if ( type === 3) {
+              this.order.thirdOrderCode = ''
+            }
+          }
+
+        }
       }
 
     }
