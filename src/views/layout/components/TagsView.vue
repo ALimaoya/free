@@ -77,6 +77,7 @@ export default {
       })
     },
     closeSelectedTag(view) {
+      console.log(this.$route)
       // this.$route.meta.keepAlive =false;
       // let route = this.$route ;
       // this.$nextTick( () => {

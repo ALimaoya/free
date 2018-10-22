@@ -37,7 +37,9 @@
       </el-table-column>
       <el-table-column prop="changeType" label="交易类型">
           <template slot-scope="scope">
-            <span v-if="scope.row.changeType=== '7'">店铺付款</span>
+            <span v-if="scope.row.changeType=== '15'">商城保证金解冻</span>
+            <span v-else-if="scope.row.changeType=== '16'">商城订单结算</span>
+            <span v-else-if="scope.row.changeType=== '7'">店铺付款</span>
             <span v-else>{{options[scope.row.changeType].label}} </span>
           </template>
       </el-table-column>
@@ -100,6 +102,14 @@
               {
                 label: '店铺付款',
                 value : '7'
+              },
+              {
+                label: '商城保证金解冻',
+                value : '15'
+              },
+              {
+                label: '商城订单结算',
+                value : '16'
               }
             ],
             tableData : [],

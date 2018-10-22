@@ -13,10 +13,12 @@
       <el-form-item   labelWidth="130px"  label="退款信息：" >
         <table class="tableC">
           <tr class="thColor">
-            <th>金额（元）</th><th>退款时间</th><th>退款状态</th>
+            <th>金额（元）</th><th>优惠券</th><th>退款时间</th><th>退款状态</th>
           </tr>
           <tr class="tbColor">
             <td>{{form.returnAmount}}</td>
+            <td v-if="form.parValue !== null"><span>{{ couponType[form.couponType-1]}}</span>：{{form.parValue}}元</td>
+            <td v-else>--</td>
             <td>{{form.returnTime}}</td>
             <td>
               <el-button plain size="mini"  :type="statusList[form.status-0].type">{{ statusList[form.status-0].name }}</el-button>
@@ -124,6 +126,7 @@ export default {
           name: "已收到货物"
         },
       ],
+      couponType:['店铺优惠券','商品优惠券'],
       loading: true ,
     };
   },

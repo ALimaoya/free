@@ -140,8 +140,8 @@
             <th>下单时间</th>
           </tr>
           <tr class="tbColor">
-            <td>{{form.price}}</td>
-            <td v-if="form.deliverOrder.parValue !== null">优惠券：{{form.deliverOrder.parValue}}元</td>
+            <td>{{form.deliverOrder.orderAmount}}</td>
+            <td v-if="form.deliverOrder.parValue !== null"><span>{{ couponType[form.deliverOrder.couPonType-1]}}</span>：{{form.deliverOrder.parValue}}元</td>
             <td v-else>--</td>
             <td>{{form.deliverOrder.payAmount}}</td>
             <td>{{form.deliverOrder.createTime}}</td>
@@ -249,6 +249,7 @@
           },
 
         ],
+        couponType:['店铺优惠券','商品优惠券'],
         loading: true,
       }
     },

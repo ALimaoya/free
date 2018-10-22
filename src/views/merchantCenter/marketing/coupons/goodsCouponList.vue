@@ -109,7 +109,7 @@
       <div class="CouponTop">
         <div class="topLeft">
           <p><span>￥</span><span>{{useCoupon.parValue}}</span></p>
-          <p>店铺优惠券</p>
+          <p>商品优惠券</p>
         </div>
         <div class="topright">
           <p>{{useCoupon.name}}</p>
