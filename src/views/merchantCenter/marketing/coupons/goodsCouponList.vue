@@ -255,7 +255,7 @@
         </el-table-column>
         <el-table-column
           prop="code"
-          label="商品编码"
+          label="商品编号"
           width="140">
         </el-table-column>
         <el-table-column
