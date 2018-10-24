@@ -19,6 +19,11 @@ export default {
       'sidebar'
     ]),
     routes(){
+      // if (this.$route.name) {
+      //
+      //   // return this.$route
+      // }
+
       if (this.$route.path.indexOf('freeManage') !== -1) {
         return this.$router.options.routes[0].children;
 

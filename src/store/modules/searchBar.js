@@ -334,6 +334,20 @@ const searchBar = {
     saveCheckGroup : (state,obj) => {
       state.checkGroup = obj ;
     },
+    deleteSearchGoods: (state) => {
+      state.goodsList ={
+        account : {
+          EQ_code: '',
+          LIKE_productName: '',
+          EQ_status: '',
+          EQ_shelveStatus: '',
+        },
+        currentPage : 1,
+        pageSize : 10,
+        thirdType: '',
+        secondType:''
+      }
+    }
   }
 };
 export default searchBar ;

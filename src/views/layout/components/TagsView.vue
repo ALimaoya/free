@@ -77,13 +77,7 @@ export default {
       })
     },
     closeSelectedTag(view) {
-      console.log(this.$route)
-      // this.$route.meta.keepAlive =false;
-      // let route = this.$route ;
-      // this.$nextTick( () => {
-      //   route.meta.keepAlive = true;
-      //
-      // });
+      this.$route.meta.keepAlive = false;
       this.$store.dispatch('delVisitedViews', view).then((views) => {
         if (this.isActive(view)) {
           const latestView = views.slice(-1)[0]

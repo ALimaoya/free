@@ -215,13 +215,21 @@ export default {
       ],
     };
   },
+
   mounted() {
     this.time = parseTime(new Date());
+    // if(this.$route.meta.keepAlive === false) {
+    //   this.$store.commit("deleteSearchGoods");
+    //   this.$route.meta.keepAlive = true ;
+    //
+    // }
     this.account = this.$store.state.searchBar.goodsList.account;
     this.currentPage = this.$store.state.searchBar.goodsList.currentPage;
     this.pageSize = this.$store.state.searchBar.goodsList.pageSize;
     this.thirdType = this.$store.state.searchBar.goodsList.thirdType;
     this.secondType = this.$store.state.searchBar.goodsList.secondType;
+    // console.log(this.$store.state.searchBar.goodsList);
+
     this.getList();
     this.getFirstList();
     this.getBondInfo();

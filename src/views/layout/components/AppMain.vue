@@ -27,13 +27,7 @@
       key() {
         return this.$route.name !== undefined ? this.$route.name + +new Date() : this.$route + +new Date()
       },
-      keepAlive(){
-          if(this.$route.meta.keepAlive!==undefined){
-            return this.$route.meta.keepAlive
-          } else {
-            return true
-          }
-  }
+  //
     }
   }
 </script>

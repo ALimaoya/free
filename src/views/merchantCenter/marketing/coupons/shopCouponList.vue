@@ -443,7 +443,7 @@ export default {
           this.useCoupon = res.data.data;
           if(this.useCoupon.totallyGet !== 0 && this.useCoupon.totallyGet !== null &&
             this.useCoupon.totallyUsed !== 0 && this.useCoupon.totallyUsed !== null){
-            this.useRage = ((this.useCoupon.totallyUsed-0)/(this.useCoupon.totallyGet-0)).toFixed(2);
+            this.useRage = (((this.useCoupon.totallyUsed-0)/(this.useCoupon.totallyGet-0))*100).toFixed(2);
 
           }else{
             this.useRage = "0";
@@ -451,7 +451,10 @@ export default {
           }
           if(this.useCoupon.totallyPayNum !== 0 && this.useCoupon.totallyPayNum !== null &&
             this.useCoupon.totallyPayMoney !== 0 && this.useCoupon.totallyPayMoney !== null){
-            this.usePrice = ((this.useCoupon.totallyPayMoney-0)/(this.useCoupon.totallyPayNum-0)).toFixed(2);
+            this.usePrice = (this.useCoupon.totallyPayMoney-0)/(this.useCoupon.totallyPayNum-0);
+            if (this.usePrice+''.indexOf('.') !== -1) {
+              this.usePrice = this.usePrice.toFixed(2) ;
+            }
           }else{
             this.usePrice = "0";
 
