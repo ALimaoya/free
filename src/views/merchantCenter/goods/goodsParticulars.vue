@@ -41,8 +41,11 @@
         </div>
       </div>
 
-      <el-form-item   labelWidth="130px"  label="价格" prop="price">
-        <el-input class="inputInfo" :maxlength="15" size="small" type="number" v-model.number="form.price" placeholder="价格"></el-input>
+      <el-form-item   labelWidth="130px"  label="售卖价格" prop="price">
+        <el-input class="inputInfo" :maxlength="15" size="small" type="number" v-model.number="form.price" placeholder="售卖价格"></el-input>
+      </el-form-item>
+      <el-form-item   labelWidth="130px"  label="市场价格" prop="marketPrice">
+        <el-input class="inputInfo" :maxlength="15" size="small" type="number" v-model.number="form.marketPrice" placeholder="市场价格"></el-input>
       </el-form-item>
       <el-form-item   labelWidth="130px"  label="运费" prop="carriage">
         <el-input class="inputInfo" :maxlength="2" size="small" v-model.trim="form.carriage" placeholder="运费"></el-input>
@@ -120,6 +123,7 @@ export default {
         secondType: "",
         class3Id: "",
         price: "",
+        marketPrice:"",
         carriage: "",
         productItems: [{ size: "", color: "", stock: "" }],
         // sizeList : [{ size: '', color : '', stock: ''}],

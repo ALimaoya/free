@@ -69,8 +69,11 @@
           </div>
         </div>
 
-        <el-form-item   labelWidth="130px"  label="价格" prop="price">
-          <el-input class="inputInfo" :maxlength="15" size="small" v-model.trim="form.price" placeholder="价格"></el-input>
+        <el-form-item   labelWidth="130px"  label="售卖价格" prop="price">
+          <el-input class="inputInfo" :maxlength="15" size="small" v-model.trim="form.price" placeholder="售卖价格"></el-input>
+        </el-form-item>
+        <el-form-item   labelWidth="130px"  label="市场价格" prop="marketPrice">
+          <el-input class="inputInfo" :maxlength="15" size="small" v-model.trim="form.marketPrice" placeholder="市场价格"></el-input>
         </el-form-item>
         <el-form-item   labelWidth="130px"  label="运费" prop="carriage">
           <el-input class="inputInfo" :maxlength="2" size="small" v-model.trim="form.carriage" placeholder="运费"></el-input>
@@ -234,6 +237,20 @@ export default {
         callback();
       }
     };
+    const validMarketPrice = (rule, value, callback) => {
+      if (value === "") {
+        callback();
+      } else {
+        if (value < 0) {
+          callback(new Error("商品价格应大于0，请重新输入"));
+        }
+
+        if (!checkFloat(value)) {
+          callback(new Error("商品价格应为数字且最多可有两位小数，请重新输入"));
+        }
+        callback();
+      }
+    };
     const validPost = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请输入运费"));
@@ -258,6 +275,7 @@ export default {
         class2Id: "",
         class3Id: "",
         price: "",
+        marketPrice:"",
         carriage: "",
         ybProductItemReqDto: [{ size: "", color: "", stock: "" }],
         imagesList: [
@@ -310,6 +328,13 @@ export default {
             required: true,
             trigger: "blur",
             validator: validPrice
+          }
+        ],
+        marketPrice:[
+            {
+            required: false,
+            trigger: "blur",
+            validator: validMarketPrice
           }
         ],
         carriage: [
@@ -463,6 +488,7 @@ export default {
             class2Id: res.data.data.cateGoryMap.categoryId2,
             class3Id: res.data.data.cateGoryMap.categoryName3,
             price: res.data.data.price,
+            marketPrice:res.data.data.marketPrice,
             carriage: res.data.data.carriage,
             imagesList: [
               { id: "", imgUrl: "" },
@@ -744,6 +770,7 @@ export default {
               brandId: this.form.brandId,
               class3Id: this.form.class3Id,
               price: this.form.price,
+              marketPrice: this.form.marketPrice,
               carriage: this.form.carriage,
               ybProductItemReqDto: this.form.ybProductItemReqDto,
               imagesList: this.form.imagesList,
